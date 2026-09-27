@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { EMBED_PATTERNS } from './embeds';
+import { LIMITS } from './limits';
 import type { ElementRegistry } from './registry';
 import { documentSchema } from './validate';
 
@@ -25,6 +27,37 @@ export function toJSONSchema(registry: ElementRegistry): Record<string, unknown>
     ...schema,
     $id: 'https://schemas.builder/document.v1.json',
     title: 'Builder document',
+    // What JSON Schema cannot say, as data the server reads rather than copies:
+    // where each element may sit, the size limits, and the embed allow-list.
+    'x-elements': Object.fromEntries(
+      registry.all().map((definition) => [
+        definition.type,
+        {
+          ...(definition.container
+            ? {
+                container: {
+                  ...(definition.container.only ? { only: definition.container.only } : {}),
+                  ...(definition.container.except ? { except: definition.container.except } : {}),
+                  ...(definition.container.min !== undefined
+                    ? { min: definition.container.min }
+                    : {}),
+                  ...(definition.container.max !== undefined
+                    ? { max: definition.container.max }
+                    : {}),
+                },
+              }
+            : {}),
+          ...(definition.parents ? { parents: definition.parents } : {}),
+        },
+      ]),
+    ),
+    'x-limits': LIMITS,
+    'x-embed-patterns': Object.fromEntries(
+      Object.entries(EMBED_PATTERNS).map(([provider, patterns]) => [
+        provider,
+        patterns.map((pattern) => pattern.source),
+      ]),
+    ),
     'x-structural-rules': [
       'nodes.root exists and has type "root"',
       'every id in a children array names a node in nodes',

@@ -316,7 +316,7 @@
       "v": 1,
       "props": {
         "media": {
-          "key": "articles/sample/front.jpg",
+          "key": "article-image/2026/01/front00000000000.jpg",
           "width": 1600,
           "height": 900,
           "mime": "image/jpeg"
@@ -346,7 +346,7 @@
         "images": [
           {
             "media": {
-              "key": "articles/sample/side.jpg",
+              "key": "article-image/2026/01/side000000000000.jpg",
               "width": 1600,
               "height": 900,
               "mime": "image/jpeg"
@@ -356,7 +356,7 @@
           },
           {
             "media": {
-              "key": "articles/sample/rear.jpg",
+              "key": "article-image/2026/01/rear000000000000.jpg",
               "width": 1600,
               "height": 900,
               "mime": "image/jpeg"
@@ -377,7 +377,7 @@
       "props": {
         "before": {
           "media": {
-            "key": "articles/sample/before.jpg",
+            "key": "article-image/2026/01/before0000000000.jpg",
             "width": 1600,
             "height": 900,
             "mime": "image/jpeg"
@@ -387,7 +387,7 @@
         },
         "after": {
           "media": {
-            "key": "articles/sample/after.jpg",
+            "key": "article-image/2026/01/after00000000000.jpg",
             "width": 1600,
             "height": 900,
             "mime": "image/jpeg"
@@ -405,7 +405,7 @@
       "v": 1,
       "props": {
         "media": {
-          "key": "articles/sample/interior.jpg",
+          "key": "article-image/2026/01/interior00000000.jpg",
           "width": 1600,
           "height": 900,
           "mime": "image/jpeg"
@@ -428,7 +428,7 @@
       "v": 1,
       "props": {
         "media": {
-          "key": "articles/sample/drive.mp4",
+          "key": "article-media/2026/01/drive00000000000.mp4",
           "mime": "video/mp4"
         },
         "poster": null,
@@ -444,7 +444,7 @@
       "v": 1,
       "props": {
         "media": {
-          "key": "articles/sample/engine.mp3",
+          "key": "article-media/2026/01/engine0000000000.mp3",
           "mime": "audio/mpeg"
         },
         "title": "Engine at idle",
@@ -468,7 +468,7 @@
       "v": 1,
       "props": {
         "media": {
-          "key": "articles/sample/checklist.pdf",
+          "key": "article-file/2026/01/checklist0000000.pdf",
           "mime": "application/pdf",
           "size": 120000,
           "name": "checklist.pdf"
@@ -955,7 +955,7 @@
     "excerpt": "Everything to check before you buy, from the service book to the test drive.",
     "cover": {
       "media": {
-        "key": "articles/sample/cover.jpg",
+        "key": "article-image/2026/01/cover00000000000.jpg",
         "width": 1600,
         "height": 900,
         "mime": "image/jpeg"

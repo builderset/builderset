@@ -16,6 +16,9 @@ export interface EmailContextValue {
   sample: Record<string, unknown>;
 }
 
+/** Window event that opens the Import HTML drawer from anywhere in the editor. */
+export const OPEN_IMPORT_HTML = 'email-builder:import-html';
+
 const EmailContext = createContext<EmailContextValue | null>(null);
 
 export function EmailProvider({

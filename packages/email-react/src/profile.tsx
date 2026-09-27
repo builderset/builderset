@@ -13,6 +13,8 @@ import {
   BRAND_COLORS,
   checkEmail,
   EMAIL_CATEGORIES,
+  EMAIL_FONTS,
+  googleFontsUrl,
   EMAIL_SCHEMA,
   emailSchema,
   ROW_LAYOUTS,
@@ -24,6 +26,7 @@ import {
 import { EmailCanvas, type BrandKit, type EditableField } from '@motors/email-render';
 
 import { EmailSettingsPanel } from './settings-panel';
+import { ImportHtmlHost } from './import-html-host';
 import { ModulesPanel } from './modules-panel';
 import type { EmailWords } from './messages';
 
@@ -139,6 +142,7 @@ export function emailProfile({
     canvasFrame: 'bare',
     canvasWidths: { desktop: 760, tablet: 680, mobile: 390 },
     settingsPanel: EmailSettingsPanel,
+    overlays: ImportHtmlHost,
     templatesPanel: ModulesPanel,
     check: (doc) => checkEmail(doc as unknown as EmailDocument, registry, type),
     parse: (raw) => {
@@ -153,6 +157,14 @@ export function emailProfile({
     titleOf: (doc) => (doc as unknown as EmailDocument).meta.name,
     styleTab: false,
     onNodeUpdated: syncColumns,
+    fonts: Object.entries(EMAIL_FONTS).map(([key, font]) => ({
+      key,
+      label: font.label,
+      stack: font.stack,
+      category: font.category,
+      web: 'google' in font,
+    })),
+    fontsPreviewUrl: googleFontsUrl(Object.keys(EMAIL_FONTS)) ?? undefined,
     colorTokens: BRAND_COLORS.map((name) => ({
       value: `brand.${name}`,
       label: name,

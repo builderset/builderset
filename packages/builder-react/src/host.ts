@@ -75,6 +75,8 @@ export interface BuilderHost {
   saveRevision?(document: BuilderDocument, label: string): Promise<boolean>;
   previewUrl?(document: BuilderDocument): Promise<string>;
   oembed?(url: string): Promise<OEmbedInfo | null>;
+  /** Copy a picture from another server into our storage (an imported email's images). */
+  importImage?(url: string): Promise<UploadResult>;
   loadSections?(): Promise<SavedSection[]>;
   saveSection?(name: string, fragment: Fragment): Promise<SavedSection | null>;
   toast(kind: 'success' | 'error' | 'info', message: string): void;

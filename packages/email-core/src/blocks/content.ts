@@ -6,7 +6,7 @@ import {
   color,
   defaultDisplay,
   displaySchema,
-  fontSchema,
+  blockFont,
   media,
   optionalColor,
   pad,
@@ -39,21 +39,28 @@ export const headingElement = defineElement({
   icon: 'heading',
   keywords: ['title', 'h1', 'h2', 'headline'],
   schema: z.object({
+    /** A web font for this block; absent follows the email's. */
+    font: blockFont(),
+    weight: z.enum(['300', '400', '500', '600', '700', '800', '900']).optional(),
+    letterSpacing: z.number().min(-2).max(12).optional(),
+    transform: z.enum(['none', 'uppercase', 'lowercase', 'capitalize']).optional(),
     text: richText(),
     level: z.union([z.literal(1), z.literal(2), z.literal(3)]),
     align: alignSchema,
     color: optionalColor(),
     size: px(14, 56),
-    font: fontSchema.nullable(),
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    letterSpacing: 0,
+    transform: 'none' as const,
+    weight: '700' as const,
     text: et('A clear, short headline'),
     level: 1 as const,
     align: 'left' as const,
     color: null,
     size: 28,
-    font: null,
     ...commonDefaults(),
   }),
   parents: BLOCK_PARENTS,
@@ -70,6 +77,11 @@ export const textElement = defineElement({
   icon: 'pilcrow',
   keywords: ['paragraph', 'body', 'copy'],
   schema: z.object({
+    /** A web font for this block; absent follows the email's. */
+    font: blockFont(),
+    weight: z.enum(['300', '400', '500', '600', '700', '800', '900']).optional(),
+    letterSpacing: z.number().min(-2).max(12).optional(),
+    transform: z.enum(['none', 'uppercase', 'lowercase', 'capitalize']).optional(),
     text: richText(),
     align: z.enum(['left', 'center', 'right', 'justify']),
     color: optionalColor(),
@@ -78,6 +90,10 @@ export const textElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    letterSpacing: 0,
+    transform: 'none' as const,
+    weight: '400' as const,
     text: et('Write something your reader will want to read.'),
     align: 'left' as const,
     color: null,
@@ -99,6 +115,8 @@ export const listElement = defineElement({
   icon: 'list',
   keywords: ['bullets', 'numbered', 'steps', 'checklist'],
   schema: z.object({
+    font: blockFont(),
+    align: alignSchema.optional(),
     style: z.enum(['bullet', 'number', 'check']),
     items: z
       .array(z.object({ text: richText() }))
@@ -110,6 +128,8 @@ export const listElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    align: 'left' as const,
     style: 'bullet' as const,
     items: [{ text: et('First point') }, { text: et('Second point') }],
     color: null,
@@ -129,6 +149,11 @@ export const buttonElement = defineElement({
   icon: 'mouse-pointer-click',
   keywords: ['cta', 'link', 'action'],
   schema: z.object({
+    /** A web font for this block; absent follows the email's. */
+    font: blockFont(),
+    weight: z.enum(['300', '400', '500', '600', '700', '800', '900']).optional(),
+    letterSpacing: z.number().min(-2).max(12).optional(),
+    transform: z.enum(['none', 'uppercase', 'lowercase', 'capitalize']).optional(),
     label: templateText(80),
     href: templateUrl(),
     align: alignSchema,
@@ -145,6 +170,10 @@ export const buttonElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    letterSpacing: 0,
+    transform: 'none' as const,
+    weight: '600' as const,
     label: 'Get started',
     href: '',
     align: 'left' as const,
@@ -215,6 +244,7 @@ export const dividerElement = defineElement({
   icon: 'minus',
   keywords: ['line', 'rule', 'separator'],
   schema: z.object({
+    align: alignSchema.optional(),
     color: color(),
     thickness: px(1, 8),
     width: px(10, 100),
@@ -222,6 +252,7 @@ export const dividerElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    align: 'center' as const,
     color: 'brand.border',
     thickness: 1,
     width: 100,
@@ -253,6 +284,8 @@ export const quoteElement = defineElement({
   icon: 'quote',
   keywords: ['testimonial', 'review', 'citation'],
   schema: z.object({
+    font: blockFont(),
+    align: alignSchema.optional(),
     text: richText(),
     cite: templateText(120),
     accent: color(),
@@ -261,6 +294,8 @@ export const quoteElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    align: 'left' as const,
     text: et('“The best decision we made this year.”'),
     cite: 'A happy customer',
     accent: 'brand.primary',
@@ -280,6 +315,9 @@ export const videoElement = defineElement({
   icon: 'square-play',
   keywords: ['youtube', 'vimeo', 'play', 'movie'],
   schema: z.object({
+    align: alignSchema.optional(),
+    /** Display width in px; null fills the column. */
+    width: px(80, 800).nullable().optional(),
     /** Email clients do not play video: a picture with a play button, linked. */
     thumbnail: media(),
     href: templateUrl(),
@@ -289,6 +327,8 @@ export const videoElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    align: 'center' as const,
+    width: null,
     thumbnail: null,
     href: '',
     alt: 'Watch the video',
@@ -381,6 +421,7 @@ export const menuElement = defineElement({
   icon: 'list-tree',
   keywords: ['nav', 'navigation', 'links', 'header'],
   schema: z.object({
+    font: blockFont(),
     items: z
       .array(z.object({ label: templateText(40), href: templateUrl() }))
       .min(1)
@@ -392,6 +433,7 @@ export const menuElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     items: [
       { label: 'Home', href: '{{ brand.website }}' },
       { label: 'Blog', href: '' },

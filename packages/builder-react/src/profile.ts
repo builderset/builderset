@@ -63,6 +63,19 @@ export interface EditorProfile {
    * whatever the document stores (`brand.primary`); `hex` is how to show it.
    */
   colorTokens?: readonly { value: string; label: string; hex: string }[] | undefined;
+  /** The fonts a `font` field offers, and a stylesheet loading them for the previews. */
+  fonts?:
+    | readonly {
+        key: string;
+        label: string;
+        stack: string;
+        category: string;
+        web?: boolean | undefined;
+      }[]
+    | undefined;
+  fontsPreviewUrl?: string | undefined;
+  /** Extra dialogs or listeners rendered inside the editor (an email's HTML import). */
+  overlays?: ComponentType | undefined;
   /** Structures the host offers as drag-and-drop fragments (email rows). */
   structures?:
     readonly { id: string; label: string; icon?: ReactNode; build: () => Fragment }[] | undefined;

@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import {
   alignSchema,
+  blockFont,
   color,
   defaultDisplay,
   displaySchema,
@@ -33,6 +34,8 @@ export const productElement = defineElement({
   icon: 'newspaper',
   keywords: ['card', 'item', 'offer', 'car'],
   schema: z.object({
+    font: blockFont(),
+    align: alignSchema.optional(),
     image: media(),
     alt: z.string().max(300),
     title: templateText(120),
@@ -46,6 +49,8 @@ export const productElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
+    align: 'left' as const,
     image: null,
     alt: '',
     title: 'Product name',
@@ -71,6 +76,7 @@ export const couponElement = defineElement({
   icon: 'split',
   keywords: ['code', 'discount', 'voucher', 'promo'],
   schema: z.object({
+    font: blockFont(),
     code: templateText(60),
     caption: templateText(160),
     background: optionalColor(),
@@ -80,6 +86,7 @@ export const couponElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     code: 'WELCOME10',
     caption: 'Use this code at checkout',
     background: null,
@@ -99,6 +106,7 @@ export const keyValueElement = defineElement({
   icon: 'table',
   keywords: ['details', 'summary', 'info', 'rows', 'appointment'],
   schema: z.object({
+    font: blockFont(),
     rows: z
       .array(z.object({ label: templateText(80), value: templateText(300) }))
       .min(1)
@@ -111,6 +119,7 @@ export const keyValueElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     rows: [
       { label: 'Date', value: '{{ now | date }}' },
       { label: 'Reference', value: 'ABC-123' },
@@ -133,6 +142,7 @@ export const lineItemsElement = defineElement({
   icon: 'list-ordered',
   keywords: ['order', 'receipt', 'invoice', 'table', 'loop'],
   schema: z.object({
+    font: blockFont(),
     /** The list variable to repeat over (`order.items`). */
     list: z.string().regex(VARIABLE_PATH),
     columns: z
@@ -155,6 +165,7 @@ export const lineItemsElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     list: 'order.items',
     columns: [
       { header: 'Item', field: 'name', align: 'left' as const },
@@ -179,6 +190,7 @@ export const surveyElement = defineElement({
   icon: 'chart-no-axes-column-increasing',
   keywords: ['nps', 'rating', 'feedback', 'score'],
   schema: z.object({
+    font: blockFont(),
     question: templateText(200),
     scale: z.union([z.literal(5), z.literal(10)]),
     /** `{score}` is replaced with each button's number. */
@@ -189,6 +201,7 @@ export const surveyElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     question: 'How likely are you to recommend us to a friend?',
     scale: 10 as const,
     href: '',
@@ -208,6 +221,7 @@ export const footerElement = defineElement({
   icon: 'shield-alert',
   keywords: ['unsubscribe', 'address', 'legal', 'bottom'],
   schema: z.object({
+    font: blockFont(),
     text: richText(),
     showAddress: z.boolean(),
     showUnsubscribe: z.boolean(),
@@ -219,6 +233,7 @@ export const footerElement = defineElement({
     ...common,
   }),
   defaults: () => ({
+    font: null,
     text: [{ text: 'You are receiving this email from ' }, v('brand.name'), { text: '.' }],
     showAddress: true,
     showUnsubscribe: true,

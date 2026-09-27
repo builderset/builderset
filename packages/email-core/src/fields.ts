@@ -1,6 +1,7 @@
 import { isSafeUrl, mediaRefSchema } from '@motors/builder-core';
 import { z } from 'zod';
 
+import { EMAIL_FONTS, FONT_KEYS, type FontKey } from './fonts';
 import { isTemplateString, TEMPLATE_TOKEN } from './variables';
 
 /**
@@ -93,16 +94,12 @@ export type Display = z.infer<typeof displaySchema>;
 
 export const defaultDisplay = (): Display => ({ hideOn: 'none', when: [] });
 
-export const FONT_STACKS = {
-  system: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-  helvetica: 'Helvetica, Arial, sans-serif',
-  georgia: "Georgia, 'Times New Roman', Times, serif",
-  verdana: 'Verdana, Geneva, sans-serif',
-  trebuchet: "'Trebuchet MS', Helvetica, sans-serif",
-  tahoma: 'Tahoma, Verdana, Segoe, sans-serif',
-  courier: "'Courier New', Courier, monospace",
-  poppins: "Poppins, 'Segoe UI', Helvetica, Arial, sans-serif",
-  inter: "Inter, 'Segoe UI', Helvetica, Arial, sans-serif",
-} as const;
-export type FontStack = keyof typeof FONT_STACKS;
-export const fontSchema = z.enum(Object.keys(FONT_STACKS) as [FontStack, ...FontStack[]]);
+/** Each font's CSS stack by key — see `fonts.ts` for the catalogue. */
+export const FONT_STACKS = Object.fromEntries(
+  Object.entries(EMAIL_FONTS).map(([key, font]) => [key, font.stack]),
+) as Record<FontKey, string>;
+export type FontStack = FontKey;
+export const fontSchema = z.enum(FONT_KEYS);
+
+/** A block's own font; absent or null follows the email's. */
+export const blockFont = () => fontSchema.nullable().optional();

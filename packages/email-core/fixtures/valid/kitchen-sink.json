@@ -40,6 +40,7 @@
       "type": "menu",
       "v": 1,
       "props": {
+        "font": null,
         "items": [
           {
             "label": "Home",
@@ -139,6 +140,10 @@
       "type": "heading",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "700",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Hi "
@@ -158,7 +163,6 @@
         "align": "left",
         "color": null,
         "size": 28,
-        "font": null,
         "display": {
           "hideOn": "none",
           "when": []
@@ -176,6 +180,10 @@
       "type": "text",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "400",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Some body text with a link."
@@ -202,6 +210,8 @@
       "type": "list",
       "v": 1,
       "props": {
+        "font": null,
+        "align": "left",
         "style": "bullet",
         "items": [
           {
@@ -239,6 +249,10 @@
       "type": "button",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "600",
+        "letterSpacing": 0,
+        "transform": "none",
         "label": "Get started",
         "href": "",
         "align": "left",
@@ -295,6 +309,7 @@
       "type": "divider",
       "v": 1,
       "props": {
+        "align": "center",
         "color": "brand.border",
         "thickness": 1,
         "width": 100,
@@ -329,6 +344,8 @@
       "type": "quote",
       "v": 1,
       "props": {
+        "font": null,
+        "align": "left",
         "text": [
           {
             "text": "“The best decision we made this year.”"
@@ -404,6 +421,8 @@
       "type": "product",
       "v": 1,
       "props": {
+        "font": null,
+        "align": "left",
         "image": {
           "key": "email-image/2026/01/sample0000000000.jpg",
           "width": 1200,
@@ -459,6 +478,7 @@
       "type": "coupon",
       "v": 1,
       "props": {
+        "font": null,
         "code": "WELCOME10",
         "caption": "Use this code at checkout",
         "background": null,
@@ -482,6 +502,8 @@
       "type": "video",
       "v": 1,
       "props": {
+        "align": "center",
+        "width": null,
         "thumbnail": {
           "key": "email-image/2026/01/sample0000000000.jpg",
           "width": 1200,
@@ -552,6 +574,7 @@
       "type": "key-value",
       "v": 1,
       "props": {
+        "font": null,
         "rows": [
           {
             "label": "Date",
@@ -604,6 +627,7 @@
       "type": "line-items",
       "v": 1,
       "props": {
+        "font": null,
         "list": "order.items",
         "columns": [
           {
@@ -645,6 +669,10 @@
       "type": "text",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "400",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Write something your reader will want to read."
@@ -690,6 +718,10 @@
       "type": "text",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "400",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Write something your reader will want to read."
@@ -777,6 +809,7 @@
       "type": "survey",
       "v": 1,
       "props": {
+        "font": null,
         "question": "How likely are you to recommend us to a friend?",
         "scale": 10,
         "href": "",
@@ -901,6 +934,7 @@
       "type": "footer",
       "v": 1,
       "props": {
+        "font": null,
         "text": [
           {
             "text": "You are receiving this email from "

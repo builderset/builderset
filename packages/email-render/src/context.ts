@@ -110,6 +110,31 @@ export function color(
   return value;
 }
 
+/** Weight, spacing and case — the typography a modern layout leans on. */
+export function typography(props: Record<string, unknown>): {
+  fontWeight?: string | undefined;
+  letterSpacing?: string | undefined;
+  textTransform?: string | undefined;
+} {
+  const spacing = props.letterSpacing;
+  const transform = props.transform;
+  return {
+    fontWeight: typeof props.weight === 'string' ? props.weight : undefined,
+    letterSpacing:
+      typeof spacing === 'number' && spacing !== 0 ? `${String(spacing)}px` : undefined,
+    textTransform: typeof transform === 'string' && transform !== 'none' ? transform : undefined,
+  };
+}
+
+/** Every font the document uses — the email's and each block's own. */
+export function fontsInUse(doc: EmailDocument): string[] {
+  const keys = new Set<string>([doc.settings.font]);
+  for (const node of Object.values(doc.nodes)) {
+    if (typeof node.props.font === 'string') keys.add(node.props.font);
+  }
+  return [...keys];
+}
+
 export function fontStack(font: string | null | undefined, context: RenderContext): string {
   const key = (font ?? context.doc.settings.font) as FontStack;
   return (FONT_STACKS as Partial<Record<string, string>>)[key] ?? FONT_STACKS.system;

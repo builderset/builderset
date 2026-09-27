@@ -17,6 +17,10 @@
       "type": "text",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "400",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Write something your reader will want to read."

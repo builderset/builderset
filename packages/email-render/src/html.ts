@@ -1,5 +1,6 @@
 import { isSafeUrl, type BuilderNode } from '@motors/builder-core';
 import {
+  googleFontsUrl,
   isSafeTemplateUrl,
   ROW_LAYOUTS,
   variableOf,
@@ -15,9 +16,11 @@ import {
   createContext,
   fill,
   fontStack,
+  fontsInUse,
   holds,
   listOf,
   str,
+  typography,
   variableText,
   type RenderContext,
   type RenderOptions,
@@ -227,7 +230,8 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
   const settings = context.doc.settings;
   const text = color(settings.textColor, context);
   const link = color(settings.linkColor, context);
-  const font = fontStack(null, context);
+  const font = fontStack(p.font as string | null | undefined, context);
+  const type = typography(p);
   const align = (p.align as string | undefined) ?? 'left';
 
   switch (node.type) {
@@ -238,7 +242,9 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
         fontFamily: fontStack(p.font as string | null, context),
         fontSize: `${String(p.size)}px`,
         lineHeight: 1.25,
-        fontWeight: 700,
+        fontWeight: type.fontWeight ?? 700,
+        letterSpacing: type.letterSpacing,
+        textTransform: type.textTransform,
         color: color(p.color as string | null, context) ?? color(settings.headingColor, context),
         textAlign: align,
       })}">${richHtml(p.text as EmailRichText, context, frame.scope, link)}</h${String(level)}>`;
@@ -251,6 +257,9 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
         lineHeight: (p.lineHeight as number | null) ?? settings.lineHeight,
         color: color(p.color as string | null, context) ?? text,
         textAlign: align,
+        fontWeight: type.fontWeight,
+        letterSpacing: type.letterSpacing,
+        textTransform: type.textTransform,
       })}">${richHtml(p.text as EmailRichText, context, frame.scope, link)}</div>`;
       return cell(inner, p);
     }
@@ -268,7 +277,10 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
           return `<tr><td valign="top" style="${style({ width: '24px', color: marker, fontWeight: 700, fontFamily: font, fontSize: `${String(p.size)}px`, lineHeight: settings.lineHeight, paddingBottom: '6px' })}">${bullet}</td><td style="${style({ fontFamily: font, fontSize: `${String(p.size)}px`, lineHeight: settings.lineHeight, color: color(p.color as string | null, context) ?? text, paddingBottom: '6px' })}">${richHtml(item.text, context, frame.scope, link)}</td></tr>`;
         })
         .join('');
-      return cell(blockTable(rows), p);
+      return cell(
+        `<table role="presentation" cellspacing="0" cellpadding="0" border="0" align="${align}">${rows}</table>`,
+        p,
+      );
     }
     case 'button': {
       const url = href(p.href as string, context, frame.scope);
@@ -284,7 +296,9 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
         padding: `${String(p.paddingY)}px ${String(p.paddingX)}px`,
         fontFamily: font,
         fontSize: `${String(p.size)}px`,
-        fontWeight: 600,
+        fontWeight: type.fontWeight ?? 600,
+        letterSpacing: type.letterSpacing,
+        textTransform: type.textTransform,
         lineHeight: 1.2,
         color: fg,
         textDecoration: 'none',
@@ -324,7 +338,7 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
       return cell(inner, p);
     }
     case 'divider': {
-      const inner = `<table role="presentation" width="${String(p.width)}%" align="center" cellspacing="0" cellpadding="0" border="0"><tr><td style="${style({ borderTop: `${String(p.thickness)}px ${String(p.style)} ${color(p.color as string, context) ?? '#e5e7eb'}`, fontSize: '0', lineHeight: '0' })}">&nbsp;</td></tr></table>`;
+      const inner = `<table role="presentation" width="${String(p.width)}%" align="${align === 'left' ? 'left' : align === 'right' ? 'right' : 'center'}" cellspacing="0" cellpadding="0" border="0"><tr><td style="${style({ borderTop: `${String(p.thickness)}px ${String(p.style)} ${color(p.color as string, context) ?? '#e5e7eb'}`, fontSize: '0', lineHeight: '0' })}">&nbsp;</td></tr></table>`;
       return cell(inner, p);
     }
     case 'spacer': {
@@ -338,7 +352,7 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
       return `<tr${cls ? ` class="${cls}"` : ''}><td style="height:${String(p.height)}px;line-height:${String(p.height)}px;font-size:1px">&nbsp;</td></tr>`;
     }
     case 'quote': {
-      const inner = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td style="${style({ borderLeft: `4px solid ${color(p.accent as string, context) ?? '#111827'}`, padding: '12px 18px', background: color(p.background as string | null, context) })}"><div style="${style({ fontFamily: font, fontSize: `${String(p.size)}px`, lineHeight: 1.5, color: text, fontStyle: 'italic' })}">${richHtml(p.text as EmailRichText, context, frame.scope, link)}</div>${p.cite ? `<div style="${style({ fontFamily: font, fontSize: '13px', color: color('brand.muted', context), marginTop: '8px' })}">— ${escapeHtml(fill(p.cite as string, context, frame.scope))}</div>` : ''}</td></tr></table>`;
+      const inner = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td style="${style({ borderLeft: `4px solid ${color(p.accent as string, context) ?? '#111827'}`, padding: '12px 18px', background: color(p.background as string | null, context) })}"><div style="${style({ fontFamily: font, fontSize: `${String(p.size)}px`, lineHeight: 1.5, color: text, fontStyle: 'italic', textAlign: align })}">${richHtml(p.text as EmailRichText, context, frame.scope, link)}</div>${p.cite ? `<div style="${style({ fontFamily: font, fontSize: '13px', color: color('brand.muted', context), marginTop: '8px' })}">— ${escapeHtml(fill(p.cite as string, context, frame.scope))}</div>` : ''}</td></tr></table>`;
       return cell(inner, p);
     }
     case 'video': {
@@ -632,6 +646,7 @@ export function renderEmail(doc: EmailDocument, options: RenderOptions): Rendere
     .join('');
   const backdrop = color(settings.backdrop, context) ?? '#f4f4f5';
   const lang = escapeHtml(context.locale);
+  const fontsUrl = googleFontsUrl(fontsInUse(doc));
 
   const html = [
     '<!DOCTYPE html>',
@@ -645,6 +660,11 @@ export function renderEmail(doc: EmailDocument, options: RenderOptions): Rendere
     '<meta name="supported-color-schemes" content="light dark">',
     `<title>${escapeHtml(subject)}</title>`,
     '<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->',
+    // Web fonts for the clients that load them; Outlook never sees the link
+    // and uses the stack's fallback, which is why every stack has one.
+    fontsUrl
+      ? `<!--[if !mso]><!--><link href="${escapeHtml(fontsUrl)}" rel="stylesheet" type="text/css"><!--<![endif]-->`
+      : '',
     `<style>${css(doc, context)}</style>`,
     '</head>',
     `<body class="body-bg" style="margin:0;padding:0;background:${backdrop}">`,

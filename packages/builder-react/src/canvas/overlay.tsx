@@ -28,6 +28,8 @@ import { useEffect, useLayoutEffect, useState, type ReactNode, type RefObject } 
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { ElementIcon } from '../icons';
+import { propsSchema } from '../inspector/schema';
+import { AlignButtons } from '../inspector/type-fields';
 import { InsertMenu } from '../panels/insert-menu';
 import { DRAG_NODES_MIME, setActiveDrag, setDragChip, type DropTarget } from './drop';
 
@@ -301,6 +303,10 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
   const index = indexInParent(doc, id);
   const siblings = parent?.children?.length ?? 0;
   const turnInto = replaceableTypes(node);
+  // Quick positioning, for any block that has an alignment.
+  const alignOptions = (propsSchema(registry, node.type)?.properties?.align?.enum ?? []).map(
+    String,
+  );
   // Below the block when there is no room above it.
   const above = box.top > 40;
   const state = () => store.getState();
@@ -379,6 +385,20 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
         </ToolbarButton>
       ) : null}
       <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+      {alignOptions.length && !node.locked ? (
+        <>
+          <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+          <AlignButtons
+            tone="toolbar"
+            label={messages.align}
+            value={typeof node.props.align === 'string' ? node.props.align : undefined}
+            options={alignOptions.filter((option) => option !== 'stretch' && option !== 'justify')}
+            onChange={(align) => {
+              state().updateNode(id, { props: { align } }, messages.align);
+            }}
+          />
+        </>
+      ) : null}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

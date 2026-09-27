@@ -705,7 +705,7 @@ function LeftRail({
               onTab(item.value);
             }}
             className={cn(
-              'relative flex h-14 items-center justify-center gap-1.5 text-xs font-medium transition-colors',
+              'relative flex h-11 items-center justify-center gap-1.5 text-xs font-medium transition-colors [&_svg]:size-3.5',
               tab === item.value
                 ? 'text-foreground'
                 : 'text-muted-foreground hover:text-foreground',

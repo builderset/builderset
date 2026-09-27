@@ -31,6 +31,7 @@ import {
 
 import { Canvas } from './canvas/canvas';
 import { HistorySheet } from './chrome/history-sheet';
+import { PANEL_CSS } from './chrome/panel-css';
 import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
@@ -158,6 +159,7 @@ export function BuilderEditor(props: BuilderEditorProps) {
   return (
     <EditorProvider value={value}>
       <TooltipProvider>
+        <style>{PANEL_CSS}</style>
         <Workspace {...props} store={store} messages={messages} />
       </TooltipProvider>
     </EditorProvider>
@@ -478,7 +480,7 @@ function Workspace({
                   }}
                   title={messages[leftTab]}
                 >
-                  <div className="h-[60vh]">{leftPanel}</div>
+                  <div className="bld-panel h-[60vh]">{leftPanel}</div>
                 </Sheet>
                 <Sheet
                   open={mobilePanel === 'right'}
@@ -487,7 +489,7 @@ function Workspace({
                   }}
                   title={messages.settings}
                 >
-                  <div className="h-[65vh]">{rightPanel}</div>
+                  <div className="bld-panel h-[65vh]">{rightPanel}</div>
                 </Sheet>
               </>
             ) : (
@@ -792,7 +794,7 @@ function SidePanel({
         !open && 'border-0',
       )}
     >
-      <div style={{ width }} className="h-full">
+      <div style={{ width }} className="bld-panel h-full">
         {children}
       </div>
     </motion.aside>
@@ -829,7 +831,7 @@ function OverlayPanel({
             exit={{ x: side === 'left' ? -320 : 360 }}
             transition={{ duration: 0.22, ease: [0.2, 0, 0, 1] }}
             className={cn(
-              'bg-sidebar border-border absolute inset-y-0 z-40 w-80 shadow-xl',
+              'bld-panel bg-sidebar border-border absolute inset-y-0 z-40 w-80 shadow-xl',
               side === 'left' ? 'left-0 border-r' : 'right-0 border-l',
             )}
           >

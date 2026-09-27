@@ -83,7 +83,7 @@ export function ColorField({
           />
         ))}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <input
           type="color"
           aria-label={label}
@@ -92,7 +92,7 @@ export function ColorField({
             onChange(event.target.value);
             setDraft(event.target.value);
           }}
-          className="border-input size-9 shrink-0 cursor-pointer rounded-md border bg-transparent p-0.5"
+          className="border-input size-[30px] shrink-0 cursor-pointer rounded-md border bg-transparent p-0.5"
         />
         <Input
           id={id}
@@ -263,7 +263,7 @@ export function DisplayField({
                 label: `${variable.label} (${variable.path})`,
               }))}
             />
-            <div className="flex gap-1.5">
+            <div className="grid min-w-0 grid-cols-2 gap-1.5">
               <Select
                 value={condition.op}
                 onValueChange={(op) => {

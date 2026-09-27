@@ -137,7 +137,7 @@ export function ImportHtmlDialog({
           <OverlayTitle>{w.title}</OverlayTitle>
           <OverlayDescription>{w.body}</OverlayDescription>
         </OverlayHeader>
-        <OverlayBody className="flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-4">
+        <OverlayBody className="bld-panel flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-4">
           <SegmentedControl
             aria-label={w.mode}
             value={mode}

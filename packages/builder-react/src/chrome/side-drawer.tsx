@@ -49,7 +49,7 @@ export function SideDrawer({
           <OverlayTitle>{title}</OverlayTitle>
           {description ? <OverlayDescription>{description}</OverlayDescription> : null}
         </OverlayHeader>
-        <OverlayBody className="flex-1 overflow-y-auto">{children}</OverlayBody>
+        <OverlayBody className="bld-panel flex-1 overflow-y-auto">{children}</OverlayBody>
       </DrawerPanel>
     </Overlay>
   );

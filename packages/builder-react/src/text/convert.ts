@@ -31,10 +31,18 @@ interface VariableMark {
   fallback?: string | undefined;
 }
 
-type AnyMark = Mark | VariableMark;
+/** A font on part of a text (an email's), by catalogue key. */
+interface FontMark {
+  type: 'font';
+  family: string;
+}
+
+type AnyMark = Mark | VariableMark | FontMark;
 
 function toTiptapMark(mark: AnyMark): TiptapMark {
   switch (mark.type) {
+    case 'font':
+      return { type: 'font', attrs: { family: mark.family } };
     case 'variable':
       return {
         type: 'variable',
@@ -58,6 +66,10 @@ function toTiptapMark(mark: AnyMark): TiptapMark {
 
 function fromTiptapMark(mark: TiptapMark): AnyMark | null {
   switch (mark.type) {
+    case 'font': {
+      const family = typeof mark.attrs?.family === 'string' ? mark.attrs.family : '';
+      return family ? { type: 'font', family } : null;
+    }
     case 'variable': {
       const path = typeof mark.attrs?.path === 'string' ? mark.attrs.path : '';
       if (!path) return null;

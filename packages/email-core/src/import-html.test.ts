@@ -89,6 +89,15 @@ describe('importEmailHtml', () => {
     expect(JSON.stringify(text?.props.text)).toContain('https://shop.test/sale');
   });
 
+  it('keeps a font set on part of a text', () => {
+    const imported = importEmailHtml(
+      `<p>Plain and <span style="font-family: 'Playfair Display', serif">elegant</span></p>`,
+      registry,
+    );
+    const text = Object.values(imported.document.nodes).find((node) => node.type === 'text');
+    expect(JSON.stringify(text?.props.text)).toContain('"family":"playfair-display"');
+  });
+
   it('lays side-by-side cells out as a row of columns', () => {
     const twoColumn = of('row').find((row) => row.props.layout === '50-50');
     expect(twoColumn?.children).toHaveLength(2);

@@ -30,6 +30,7 @@ import { useEditor, useEditorContext } from '../context';
 import { InlineContent } from './inline-content';
 import { SlashMenu, slashMatches } from './slash-menu';
 import { TextToolbar } from './text-toolbar';
+import { FontMark } from './font-mark';
 import { VariableMark } from './variable-mark';
 import {
   fromTiptap,
@@ -193,6 +194,9 @@ export function InlineText({ field }: { field: EditableTextField }) {
       Superscript,
       Footnote,
       VariableMark,
+      FontMark.configure({
+        stackOf: (family) => profile.fonts?.find((font) => font.key === family)?.stack,
+      }),
       Link.configure({
         openOnClick: false,
         autolink: false,
@@ -201,7 +205,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       }),
       Placeholder.configure({ placeholder: placeholder ?? '' }),
     ],
-    [placeholder],
+    [placeholder, profile.fonts],
   );
 
   const editor = useTiptap({

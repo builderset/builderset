@@ -218,6 +218,10 @@ function inlineRuns(nodes: Iterable<Node>, marks: Mark[] = []): EmailRun[] {
     if (tag === 'SUP') next.push({ type: 'sup' });
     if (tag === 'SUB') next.push({ type: 'sub' });
     if (tag === 'MARK') next.push({ type: 'highlight' });
+    // A font on part of the text (`<span style="font-family:…">`), when it
+    // is one of ours.
+    const family = fontOf(element);
+    if (family) next.push({ type: 'font', family });
     if (tag === 'A') {
       const href = (element.getAttribute('href') ?? '').trim();
       if (href && isSafeUrl(href)) {
@@ -236,7 +240,8 @@ function inlineRuns(nodes: Iterable<Node>, marks: Mark[] = []): EmailRun[] {
 function dedupe(marks: Mark[]): Mark[] {
   const seen = new Set<string>();
   return marks.filter((mark) => {
-    const key = mark.type === 'link' ? `link:${mark.href}` : mark.type;
+    const key =
+      mark.type === 'link' ? `link:${mark.href}` : mark.type === 'font' ? 'font' : mark.type;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;

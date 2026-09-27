@@ -6,6 +6,7 @@ import { useEditorState } from '@tiptap/react';
 import {
   Bold,
   Braces,
+  ChevronDown,
   Code,
   Highlighter,
   Italic,
@@ -34,6 +35,8 @@ export function TextToolbar({ editor }: { editor: Editor }) {
   const variables = profile.variables ?? [];
   const [linking, setLinking] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [choosingFont, setChoosingFont] = useState(false);
+  const fonts = profile.fonts ?? [];
   const [query, setQuery] = useState('');
   const [href, setHref] = useState('');
   const state = useEditorState({
@@ -50,12 +53,17 @@ export function TextToolbar({ editor }: { editor: Editor }) {
       code: e.isActive('code'),
       highlight: e.isActive('highlight'),
       link: e.isActive('link'),
+      font: (e.getAttributes('font').family as string | undefined) ?? null,
     }),
   });
 
   // With variables to offer, the bar stays up at a caret too: inserting a
   // variable where the cursor is is the common case in an email.
-  const visible = ((!state.empty || variables.length > 0) && state.focused) || linking || picking;
+  const visible =
+    ((!state.empty || variables.length > 0 || fonts.length > 0) && state.focused) ||
+    linking ||
+    picking ||
+    choosingFont;
   let position: { left: number; top: number } | null = null;
   if (visible) {
     const start = editor.view.coordsAtPos(state.from);
@@ -70,6 +78,20 @@ export function TextToolbar({ editor }: { editor: Editor }) {
   const toggle = (name: string) => () => {
     editor.chain().focus().toggleMark(name).run();
   };
+
+  /**
+   * Set the font of the selection — or, with nothing selected, of the whole
+   * field, which is what "change this text's font" means with a caret.
+   */
+  const applyFont = (family: string | null) => {
+    const chain = editor.chain().focus();
+    const scoped = editor.state.selection.empty ? chain.selectAll() : chain;
+    if (family) scoped.setMark('font', { family }).run();
+    else scoped.unsetMark('font').run();
+    setChoosingFont(false);
+    setQuery('');
+  };
+  const currentFont = fonts.find((font) => font.key === state.font);
 
   const insertVariable = (path: string) => {
     editor
@@ -110,7 +132,74 @@ export function TextToolbar({ editor }: { editor: Editor }) {
           className="border-border bg-popover text-popover-foreground fixed z-[80] flex items-center gap-0.5 rounded-[var(--radius-control)] border p-1 shadow-lg"
           style={{ left: position.left, top: position.top }}
         >
-          {picking ? (
+          {choosingFont ? (
+            <div className="w-72">
+              {profile.fontsPreviewUrl ? (
+                <link
+                  rel="stylesheet"
+                  href={profile.fontsPreviewUrl}
+                  precedence="builder-font-previews"
+                />
+              ) : null}
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') setChoosingFont(false);
+                }}
+                placeholder={messages.searchFonts}
+                className="border-input bg-background mb-1 h-7 w-full rounded-md border px-2 text-sm outline-none"
+              />
+              <div className="max-h-72 overflow-y-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    applyFont(null);
+                  }}
+                  className={cn(
+                    'flex w-full items-center rounded px-2 py-1.5 text-left text-sm',
+                    !state.font ? 'bg-accent' : 'hover:bg-accent',
+                  )}
+                >
+                  {messages.inheritFont}
+                </button>
+                {[...new Set(fonts.map((font) => font.category))].map((group) => {
+                  const inGroup = fonts.filter(
+                    (font) =>
+                      font.category === group &&
+                      font.label.toLowerCase().includes(query.trim().toLowerCase()),
+                  );
+                  if (!inGroup.length) return null;
+                  return (
+                    <div key={group}>
+                      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[10px] font-semibold tracking-wider uppercase">
+                        {messages.fontGroups[group] ?? group}
+                      </p>
+                      {inGroup.map((font) => (
+                        <button
+                          key={font.key}
+                          type="button"
+                          onClick={() => {
+                            applyFont(font.key);
+                          }}
+                          className={cn(
+                            'flex w-full items-center rounded px-2 py-1.5 text-left text-[15px]',
+                            state.font === font.key ? 'bg-accent' : 'hover:bg-accent',
+                          )}
+                          style={{ fontFamily: font.stack }}
+                        >
+                          {font.label}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : picking ? (
             <div className="w-64">
               <input
                 autoFocus
@@ -175,6 +264,28 @@ export function TextToolbar({ editor }: { editor: Editor }) {
             </form>
           ) : (
             <>
+              {fonts.length ? (
+                <>
+                  <button
+                    type="button"
+                    title={messages.font}
+                    aria-label={messages.font}
+                    onClick={() => {
+                      setChoosingFont(true);
+                    }}
+                    className="hover:bg-accent flex h-7 max-w-36 items-center gap-1 rounded-md px-2 text-xs"
+                  >
+                    <span
+                      className="truncate"
+                      style={currentFont ? { fontFamily: currentFont.stack } : undefined}
+                    >
+                      {currentFont?.label ?? messages.inheritFont}
+                    </span>
+                    <ChevronDown className="size-3 shrink-0 opacity-60" aria-hidden="true" />
+                  </button>
+                  <span className="bg-border mx-0.5 h-5 w-px" aria-hidden="true" />
+                </>
+              ) : null}
               <ToolButton label="Bold" active={state.bold} onClick={toggle('bold')}>
                 <Bold />
               </ToolButton>

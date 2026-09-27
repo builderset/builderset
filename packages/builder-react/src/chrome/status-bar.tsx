@@ -2,37 +2,86 @@
 
 import { countWords, plainText, readingMinutes, type Issue } from '@motors/builder-core';
 import { Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
-import { AlertCircle, AlertTriangle, CheckCircle2, Keyboard } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  Blocks,
+  CheckCircle2,
+  Clock,
+  Keyboard,
+  Monitor,
+  Smartphone,
+  Tablet,
+  Type,
+} from 'lucide-react';
 import { motion } from 'motion/react';
-import { useDeferredValue, useMemo } from 'react';
+import { useDeferredValue, useMemo, type ReactNode } from 'react';
 
+import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 
+const DEVICE_ICON = { desktop: Monitor, tablet: Tablet, mobile: Smartphone } as const;
+
+function Stat({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <span className="flex items-center gap-1.5 whitespace-nowrap tabular-nums [&_svg]:size-3.5 [&_svg]:opacity-70">
+      {icon}
+      {children}
+    </span>
+  );
+}
+
+/**
+ * The bottom strip, in the same three zones as the top bar: what the article
+ * is (left), whether it is ready (center), how you are looking at it (right).
+ */
 export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcuts: () => void }) {
   const { registry, messages, store } = useEditorContext();
   const doc = useDeferredValue(useEditor((state) => state.doc));
-  const { words, minutes } = useMemo(() => {
+  const viewport = useEditor((state) => state.viewport);
+  const zoom = useEditor((state) => state.zoom);
+  const { words, minutes, blocks } = useMemo(() => {
     const text = plainText(doc, registry);
-    return { words: countWords(text), minutes: readingMinutes(doc, registry) };
+    return {
+      words: countWords(text),
+      minutes: readingMinutes(doc, registry),
+      blocks: Object.keys(doc.nodes).length - 1,
+    };
   }, [doc, registry]);
   const errors = issues.filter((issue) => issue.severity === 'error').length;
+  const Device = DEVICE_ICON[viewport];
 
   return (
-    <footer className="border-border bg-sidebar text-muted-foreground flex h-8 shrink-0 items-center gap-4 border-t px-3 text-xs">
-      <span className="tabular-nums">{messages.words(words)}</span>
-      <span className="tabular-nums">{messages.readingTime(minutes)}</span>
+    <footer className="border-border bg-sidebar text-muted-foreground grid h-9 shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-t px-3 text-xs">
+      {/* ── Left: the article in numbers ── */}
+      <div className="flex min-w-0 items-center gap-4">
+        <Stat icon={<Type aria-hidden="true" />}>{messages.words(words)}</Stat>
+        <Stat icon={<Clock aria-hidden="true" />}>{messages.readingTime(minutes)}</Stat>
+        <span className="hidden md:flex">
+          <Stat icon={<Blocks aria-hidden="true" />}>{blocks}</Stat>
+        </span>
+      </div>
+
+      {/* ── Center: is it ready ── */}
       <Popover>
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="hover:text-foreground flex items-center gap-1.5 rounded px-1 transition-colors"
+            className={cn(
+              'flex h-6 items-center gap-1.5 rounded-full border px-2.5 font-medium transition-[colors,transform] active:scale-95',
+              issues.length === 0
+                ? 'border-ok/25 bg-ok/10 text-ok'
+                : errors
+                  ? 'border-destructive/25 bg-destructive/10 text-destructive'
+                  : 'border-warn/25 bg-warn/10 text-warn',
+            )}
           >
             {issues.length === 0 ? (
-              <CheckCircle2 className="text-ok size-3.5" aria-hidden="true" />
+              <CheckCircle2 className="size-3.5" aria-hidden="true" />
             ) : errors ? (
-              <AlertCircle className="text-destructive size-3.5" aria-hidden="true" />
+              <AlertCircle className="size-3.5" aria-hidden="true" />
             ) : (
-              <AlertTriangle className="text-warn size-3.5" aria-hidden="true" />
+              <AlertTriangle className="size-3.5" aria-hidden="true" />
             )}
             <motion.span
               key={issues.length}
@@ -46,7 +95,7 @@ export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcut
           </button>
         </PopoverTrigger>
         {issues.length ? (
-          <PopoverContent align="start" className="max-h-80 w-80 overflow-y-auto p-1">
+          <PopoverContent align="center" side="top" className="max-h-80 w-80 overflow-y-auto p-1">
             {issues.map((issue, index) => (
               <div
                 key={`${issue.code}-${issue.nodeId ?? ''}-${String(index)}`}
@@ -81,14 +130,23 @@ export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcut
           </PopoverContent>
         ) : null}
       </Popover>
-      <button
-        type="button"
-        onClick={onShortcuts}
-        className="hover:text-foreground ml-auto flex items-center gap-1.5 transition-colors"
-      >
-        <Keyboard className="size-3.5" aria-hidden="true" />
-        <span className="hidden sm:inline">{messages.shortcuts}</span>
-      </button>
+
+      {/* ── Right: how you are looking at it ── */}
+      <div className="flex min-w-0 items-center justify-end gap-4">
+        <span className="hidden md:flex">
+          <Stat icon={<Device aria-hidden="true" />}>
+            {messages[viewport]} · {zoom}%
+          </Stat>
+        </span>
+        <button
+          type="button"
+          onClick={onShortcuts}
+          className="hover:text-foreground flex items-center gap-1.5 transition-colors"
+        >
+          <Keyboard className="size-3.5" aria-hidden="true" />
+          <span className="hidden sm:inline">{messages.shortcuts}</span>
+        </button>
+      </div>
     </footer>
   );
 }

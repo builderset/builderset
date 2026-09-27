@@ -12,9 +12,10 @@ import {
   type RichText,
 } from '@motors/builder-core';
 import { ChevronRight, Eye, EyeOff, Lock, LockOpen } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type DragEvent, type KeyboardEvent } from 'react';
 
-import { DRAG_NODES_MIME, setActiveDrag } from '../canvas/drop';
+import { DRAG_NODES_MIME, setActiveDrag, setDragChip } from '../canvas/drop';
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { ElementIcon } from '../icons';
@@ -156,8 +157,15 @@ function Row({
   const showDrop = drop?.id === id ? drop.placement : null;
 
   return (
-    <div role="treeitem" aria-selected={selected} aria-expanded={hasChildren ? open : undefined}>
+    <motion.div
+      layout="position"
+      transition={{ type: 'spring', stiffness: 520, damping: 44 }}
+      role="treeitem"
+      aria-selected={selected}
+      aria-expanded={hasChildren ? open : undefined}
+    >
       <div
+        data-layer={id}
         tabIndex={0}
         draggable={!node.locked && !renaming}
         onDragStart={(event) => {
@@ -165,7 +173,13 @@ function Row({
           const ids = state.selection.includes(id) ? state.selection : [id];
           event.dataTransfer.setData(DRAG_NODES_MIME, JSON.stringify(ids));
           event.dataTransfer.effectAllowed = 'move';
-          setActiveDrag({ kind: 'nodes', ids });
+          setDragChip(
+            event.dataTransfer,
+            ids.length > 1 ? messages.multipleSelected(ids.length) : label,
+          );
+          requestAnimationFrame(() => {
+            setActiveDrag({ kind: 'nodes', ids });
+          });
         }}
         onDragEnd={() => {
           setDrop(null);
@@ -198,19 +212,28 @@ function Row({
         onKeyDown={onKeyDown}
         style={{ paddingLeft: 6 + depth * 14 }}
         className={cn(
-          'group relative flex h-8 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control)] pr-1 outline-none',
+          'group relative flex h-8 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control)] pr-1 transition-[background-color,opacity] duration-150 outline-none data-[dragging]:opacity-40',
           selected ? 'bg-primary/10 text-foreground' : 'hover:bg-accent/60',
           'focus-visible:ring-ring/50 focus-visible:ring-2',
           showDrop === 'inside' && 'ring-primary ring-2',
           node.hidden && 'opacity-50',
         )}
       >
-        {showDrop === 'before' ? (
-          <span className="bg-primary absolute -top-px right-1 left-1 h-0.5 rounded-full" />
-        ) : null}
-        {showDrop === 'after' ? (
-          <span className="bg-primary absolute right-1 -bottom-px left-1 h-0.5 rounded-full" />
-        ) : null}
+        <AnimatePresence>
+          {showDrop === 'before' || showDrop === 'after' ? (
+            <motion.span
+              key={showDrop}
+              initial={{ opacity: 0, scaleX: 0.6 }}
+              animate={{ opacity: 1, scaleX: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14 }}
+              className={cn(
+                'bg-primary absolute right-1 left-1 h-0.5 rounded-full',
+                showDrop === 'before' ? '-top-px' : '-bottom-px',
+              )}
+            />
+          ) : null}
+        </AnimatePresence>
         <button
           type="button"
           tabIndex={-1}
@@ -304,7 +327,7 @@ function Row({
           ))}
         </div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
 

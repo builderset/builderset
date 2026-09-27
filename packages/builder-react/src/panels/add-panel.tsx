@@ -4,7 +4,7 @@ import { CATEGORIES } from '@motors/builder-core';
 import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
-import { setActiveDrag, DRAG_TYPE_MIME } from '../canvas/drop';
+import { DRAG_TYPE_MIME, setActiveDrag, setDragChip } from '../canvas/drop';
 import { useEditor, useEditorContext } from '../context';
 import { ElementIcon } from '../icons';
 import { elementChoices, matchChoices, type ElementChoice } from '../text/slash-menu';
@@ -119,6 +119,7 @@ function Grid({
           onDragStart={(event) => {
             event.dataTransfer.setData(DRAG_TYPE_MIME, choice.type);
             event.dataTransfer.effectAllowed = 'copy';
+            setDragChip(event.dataTransfer, `+ ${choice.name}`);
             setActiveDrag({ kind: 'type', type: choice.type });
           }}
           onDragEnd={() => {

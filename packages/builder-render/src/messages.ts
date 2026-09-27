@@ -8,6 +8,9 @@
 export interface RenderMessages {
   contents: string;
   notes: string;
+  /** Editor only: what an empty heading / paragraph shows. */
+  headingPlaceholder: string;
+  paragraphPlaceholder: string;
   copy: string;
   copied: string;
   loadEmbed: string;
@@ -39,6 +42,8 @@ export interface RenderMessages {
 const en: RenderMessages = {
   contents: 'Contents',
   notes: 'Notes',
+  headingPlaceholder: 'Heading',
+  paragraphPlaceholder: 'Type something, or press / for blocks',
   copy: 'Copy',
   copied: 'Copied',
   loadEmbed: 'Load content',
@@ -68,6 +73,8 @@ const en: RenderMessages = {
 const sq: RenderMessages = {
   contents: 'Përmbajtja',
   notes: 'Shënime',
+  headingPlaceholder: 'Titull',
+  paragraphPlaceholder: 'Shkruani diçka, ose shtypni / për blloqe',
   copy: 'Kopjo',
   copied: 'U kopjua',
   loadEmbed: 'Ngarko përmbajtjen',
@@ -97,6 +104,8 @@ const sq: RenderMessages = {
 const de: RenderMessages = {
   contents: 'Inhalt',
   notes: 'Anmerkungen',
+  headingPlaceholder: 'Überschrift',
+  paragraphPlaceholder: 'Etwas schreiben oder / für Blöcke drücken',
   copy: 'Kopieren',
   copied: 'Kopiert',
   loadEmbed: 'Inhalt laden',

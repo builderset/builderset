@@ -46,6 +46,16 @@ function expectFile(relative: string, content: string) {
   expect(committed, `${relative} is stale — run with UPDATE_FIXTURES=1`).toBe(content);
 }
 
+/**
+ * A fixture, committed here AND mirrored under the API's tests — its containers
+ * mount only `api/`, so the contract test there reads its own copy, kept
+ * identical by this test.
+ */
+function expectFixture(relative: string, content: string) {
+  expectFile(`fixtures/${relative}`, content);
+  expectFile(`../../api/tests/fixtures/builder/${relative}`, content);
+}
+
 /** A small valid document to break in one specific way per invalid fixture. */
 function base(): BuilderDocument {
   const doc = createDocument({ title: 'Broken on purpose' });
@@ -150,7 +160,11 @@ const INVALID: Record<string, { code: string; build: () => BuilderDocument }> = 
 
 describe('the server contract', () => {
   it('commits the JSON Schema of the standard document', () => {
-    expectFile('schema/document.schema.json', stable(toJSONSchema(registry)));
+    const schema = stable(toJSONSchema(registry));
+    expectFile('schema/document.schema.json', schema);
+    // The API's copy: its containers mount only `api/`, so it cannot read this
+    // package at runtime. Kept identical here, where both are in reach.
+    expectFile('../../api/app/domains/content/builder_schema.json', schema);
   });
 
   it('commits valid fixtures the checker accepts', () => {
@@ -164,7 +178,12 @@ describe('the server contract', () => {
             { kind: 'paragraph', text: 'A paragraph.' },
             { kind: 'list', items: ['One', 'Two'] },
             { kind: 'quote', text: 'A quote.' },
-            { kind: 'image', key: 'articles/sample/legacy.jpg', alt: 'Legacy', caption: 'Caption' },
+            {
+              kind: 'image',
+              key: 'article-image/2026/01/legacy0000000000.jpg',
+              alt: 'Legacy',
+              caption: 'Caption',
+            },
           ],
           registry,
           { title: 'Legacy article' },
@@ -174,7 +193,7 @@ describe('the server contract', () => {
     for (const [name, doc] of Object.entries(valid)) {
       const errors = checkDocument(doc, registry).filter((issue) => issue.severity === 'error');
       expect(errors, name).toEqual([]);
-      expectFile(`fixtures/valid/${name}.json`, stable(doc));
+      expectFixture(`valid/${name}.json`, stable(doc));
     }
   });
 
@@ -187,8 +206,8 @@ describe('the server contract', () => {
         .map((issue) => issue.code);
       expect(found, name).toContain(code);
       manifest[`${name}.json`] = code;
-      expectFile(`fixtures/invalid/${name}.json`, stable(doc));
+      expectFixture(`invalid/${name}.json`, stable(doc));
     }
-    expectFile('fixtures/invalid/manifest.json', stable(manifest));
+    expectFixture('invalid/manifest.json', stable(manifest));
   });
 });

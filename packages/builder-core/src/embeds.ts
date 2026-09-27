@@ -23,7 +23,11 @@ export const EMBED_PROVIDERS = [
 
 export type EmbedProvider = (typeof EMBED_PROVIDERS)[number];
 
-const PATTERNS: Record<EmbedProvider, RegExp[]> = {
+/**
+ * The patterns, exported for the JSON Schema so the server matches with the
+ * very same expressions. All are case-insensitive (`i`) and nothing else.
+ */
+export const EMBED_PATTERNS: Record<EmbedProvider, RegExp[]> = {
   youtube: [
     /^https:\/\/(www\.|m\.)?youtube\.com\/(watch\?v=|shorts\/|embed\/)[\w-]{6,}/i,
     /^https:\/\/youtu\.be\/[\w-]{6,}/i,
@@ -43,7 +47,7 @@ const PATTERNS: Record<EmbedProvider, RegExp[]> = {
 export function detectEmbedProvider(url: string): EmbedProvider | null {
   const value = url.trim();
   for (const provider of EMBED_PROVIDERS) {
-    if (PATTERNS[provider].some((pattern) => pattern.test(value))) return provider;
+    if (EMBED_PATTERNS[provider].some((pattern) => pattern.test(value))) return provider;
   }
   return null;
 }

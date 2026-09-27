@@ -4113,6 +4113,198 @@
   },
   "$id": "https://schemas.builder/document.v1.json",
   "title": "Builder document",
+  "x-elements": {
+    "root": {
+      "container": {
+        "except": [
+          "root",
+          "column",
+          "accordion-item",
+          "tab-item"
+        ]
+      }
+    },
+    "section": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root"
+        ]
+      }
+    },
+    "container": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root"
+        ]
+      }
+    },
+    "columns": {
+      "container": {
+        "only": [
+          "column"
+        ],
+        "min": 2,
+        "max": 4
+      }
+    },
+    "column": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root",
+          "container",
+          "columns"
+        ]
+      },
+      "parents": [
+        "columns"
+      ]
+    },
+    "group": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root"
+        ]
+      }
+    },
+    "spacer": {},
+    "divider": {},
+    "heading": {},
+    "paragraph": {},
+    "list": {},
+    "quote": {},
+    "pull-quote": {},
+    "callout": {},
+    "code": {},
+    "table": {},
+    "footnote": {},
+    "takeaways": {},
+    "definitions": {},
+    "image": {},
+    "gallery": {},
+    "before-after": {},
+    "media-text": {},
+    "video": {},
+    "audio": {},
+    "embed": {},
+    "file": {},
+    "toc": {},
+    "faq": {},
+    "howto": {},
+    "timeline": {},
+    "pros-cons": {},
+    "stats": {},
+    "rating": {},
+    "author": {},
+    "cta": {},
+    "buttons": {},
+    "related": {},
+    "newsletter": {},
+    "accordion": {
+      "container": {
+        "only": [
+          "accordion-item"
+        ],
+        "min": 1,
+        "max": 20
+      }
+    },
+    "accordion-item": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root",
+          "accordion",
+          "tabs"
+        ]
+      },
+      "parents": [
+        "accordion"
+      ]
+    },
+    "tabs": {
+      "container": {
+        "only": [
+          "tab-item"
+        ],
+        "min": 1,
+        "max": 8
+      }
+    },
+    "tab-item": {
+      "container": {
+        "except": [
+          "section",
+          "column",
+          "accordion-item",
+          "tab-item",
+          "root",
+          "accordion",
+          "tabs"
+        ]
+      },
+      "parents": [
+        "tabs"
+      ]
+    },
+    "disclaimer": {}
+  },
+  "x-limits": {
+    "nodes": 1000,
+    "depth": 8,
+    "bytes": 200000,
+    "richTextChars": 10000,
+    "shortText": 300,
+    "longText": 20000,
+    "listItems": 40,
+    "tableRows": 60,
+    "tableColumns": 8,
+    "galleryImages": 24,
+    "historySteps": 200
+  },
+  "x-embed-patterns": {
+    "youtube": [
+      "^https:\\/\\/(www\\.|m\\.)?youtube\\.com\\/(watch\\?v=|shorts\\/|embed\\/)[\\w-]{6,}",
+      "^https:\\/\\/youtu\\.be\\/[\\w-]{6,}"
+    ],
+    "vimeo": [
+      "^https:\\/\\/(www\\.|player\\.)?vimeo\\.com\\/(video\\/)?\\d+"
+    ],
+    "x": [
+      "^https:\\/\\/(www\\.)?(twitter|x)\\.com\\/\\w{1,15}\\/status\\/\\d+"
+    ],
+    "instagram": [
+      "^https:\\/\\/(www\\.)?instagram\\.com\\/(p|reel|tv)\\/[\\w-]+"
+    ],
+    "tiktok": [
+      "^https:\\/\\/(www\\.)?tiktok\\.com\\/@[\\w.]+\\/video\\/\\d+"
+    ],
+    "spotify": [
+      "^https:\\/\\/open\\.spotify\\.com\\/(track|album|playlist|episode|show)\\/[A-Za-z0-9]+"
+    ],
+    "google-maps": [
+      "^https:\\/\\/(www\\.)?google\\.[a-z.]+\\/maps\\/",
+      "^https:\\/\\/maps\\.app\\.goo\\.gl\\/\\w+"
+    ]
+  },
   "x-structural-rules": [
     "nodes.root exists and has type \"root\"",
     "every id in a children array names a node in nodes",

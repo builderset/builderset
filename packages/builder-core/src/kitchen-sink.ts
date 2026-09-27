@@ -15,8 +15,16 @@ import { rt, type RichText } from './rich-text';
 
 const para = (text: string): RichText => rt(text);
 
+/**
+ * Keys in the server's own format (`folder/yyyy/mm/random.ext`), so the
+ * fixtures built from this document pass the API's key check as well as the
+ * schema — the server refuses anything else.
+ */
+const sampleKey = (folder: string, name: string, extension: string) =>
+  `${folder}/2026/01/${name.replace(/[^a-z0-9]/g, '').padEnd(16, '0')}.${extension}`;
+
 const SAMPLE_MEDIA = (name: string) => ({
-  key: `articles/sample/${name}.jpg`,
+  key: sampleKey('article-image', name, 'jpg'),
   width: 1600,
   height: 900,
   mime: 'image/jpeg',
@@ -126,12 +134,15 @@ const SPECS: Spec[] = [
   },
   {
     type: 'video',
-    props: { media: { key: 'articles/sample/drive.mp4', mime: 'video/mp4' }, title: 'Test drive' },
+    props: {
+      media: { key: sampleKey('article-media', 'drive', 'mp4'), mime: 'video/mp4' },
+      title: 'Test drive',
+    },
   },
   {
     type: 'audio',
     props: {
-      media: { key: 'articles/sample/engine.mp3', mime: 'audio/mpeg' },
+      media: { key: sampleKey('article-media', 'engine', 'mp3'), mime: 'audio/mpeg' },
       title: 'Engine at idle',
     },
   },
@@ -147,7 +158,7 @@ const SPECS: Spec[] = [
     type: 'file',
     props: {
       media: {
-        key: 'articles/sample/checklist.pdf',
+        key: sampleKey('article-file', 'checklist', 'pdf'),
         mime: 'application/pdf',
         size: 120000,
         name: 'checklist.pdf',

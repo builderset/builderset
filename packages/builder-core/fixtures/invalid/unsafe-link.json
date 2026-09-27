@@ -1,0 +1,39 @@
+{
+  "schema": "builder/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n1"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "x",
+            "marks": [
+              {
+                "type": "link",
+                "href": "javascript:alert(1)"
+              }
+            ]
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    }
+  },
+  "meta": {
+    "title": "Broken on purpose"
+  }
+}

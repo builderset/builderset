@@ -1,0 +1,10 @@
+{
+  "unsafe-link.json": "url.unsafe",
+  "orphan.json": "document.orphan",
+  "column-in-root.json": "placement.notAllowed",
+  "unknown-element.json": "element.unknown",
+  "duplicate-anchor.json": "anchor.duplicate",
+  "external-media.json": "media.external",
+  "embed-not-allowed.json": "embed.notAllowed",
+  "missing-title.json": "meta.titleMissing"
+}

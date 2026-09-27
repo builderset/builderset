@@ -1,0 +1,53 @@
+{
+  "schema": "builder/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n1",
+        "n2"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Hello"
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "media": null,
+        "pendingUrl": "https://elsewhere.test/a.jpg",
+        "alt": "A",
+        "caption": [],
+        "credit": "",
+        "aspect": "original",
+        "focalX": 50,
+        "focalY": 50,
+        "size": "prose",
+        "rounded": true,
+        "lightbox": true,
+        "link": null
+      }
+    }
+  },
+  "meta": {
+    "title": "Broken on purpose"
+  }
+}

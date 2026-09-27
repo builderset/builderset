@@ -1,0 +1,966 @@
+{
+  "schema": "builder/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18",
+        "n19",
+        "n20",
+        "n21",
+        "n22",
+        "n23",
+        "n24",
+        "n25",
+        "n26",
+        "n27",
+        "n28",
+        "n29",
+        "n36",
+        "n38",
+        "n40",
+        "n41",
+        "n42",
+        "n43",
+        "n44",
+        "n45",
+        "n46",
+        "n49",
+        "n54"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "level": 2,
+        "text": [
+          {
+            "text": "Why buy a used car now"
+          }
+        ]
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Prices have "
+          },
+          {
+            "text": "settled",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "text": " after two years, and "
+          },
+          {
+            "text": "our guide",
+            "marks": [
+              {
+                "type": "link",
+                "href": "/guides/used-cars"
+              }
+            ]
+          },
+          {
+            "text": " explains what that means."
+          }
+        ],
+        "dropCap": true,
+        "lead": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "toc",
+      "v": 1,
+      "props": {
+        "title": "In this article",
+        "depth": 3,
+        "numbered": false,
+        "sticky": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "list",
+      "v": 1,
+      "props": {
+        "style": "bullet",
+        "items": [
+          {
+            "text": [
+              {
+                "text": "Lower depreciation"
+              }
+            ]
+          },
+          {
+            "text": [
+              {
+                "text": "Wider choice"
+              }
+            ],
+            "children": [
+              {
+                "text": [
+                  {
+                    "text": "Especially diesels"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "quote",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "A good used car is a new car someone else paid for."
+          }
+        ],
+        "cite": "Service manager",
+        "source": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "pull-quote",
+      "v": 1,
+      "props": {
+        "text": "Buy the car, not the story.",
+        "cite": "Anonymous",
+        "align": "center"
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "callout",
+      "v": 1,
+      "props": {
+        "tone": "tip",
+        "title": "Before you go",
+        "text": [
+          {
+            "text": "Bring the service book."
+          }
+        ],
+        "showIcon": true
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "code",
+      "v": 1,
+      "props": {
+        "code": "const vin = \"WVWZZZ1KZAW000000\";",
+        "language": "typescript",
+        "filename": "vin.ts",
+        "lineNumbers": false,
+        "highlight": ""
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "table",
+      "v": 1,
+      "props": {
+        "rows": [
+          [
+            [
+              {
+                "text": "Model"
+              }
+            ],
+            [
+              {
+                "text": "Year"
+              }
+            ],
+            [
+              {
+                "text": "Price"
+              }
+            ]
+          ],
+          [
+            [
+              {
+                "text": "Golf"
+              }
+            ],
+            [
+              {
+                "text": "2019"
+              }
+            ],
+            [
+              {
+                "text": "€14 500"
+              }
+            ]
+          ]
+        ],
+        "headerRow": true,
+        "headerColumn": false,
+        "striped": true,
+        "align": [
+          "start",
+          "center",
+          "end"
+        ],
+        "caption": "Average prices"
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "footnote",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Source: our 2026 valuation data."
+          }
+        ]
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "takeaways",
+      "v": 1,
+      "props": {
+        "title": "Key points",
+        "items": [
+          [
+            {
+              "text": "Check the history"
+            }
+          ],
+          [
+            {
+              "text": "Test drive twice"
+            }
+          ]
+        ]
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "definitions",
+      "v": 1,
+      "props": {
+        "items": [
+          {
+            "term": "VIN",
+            "description": [
+              {
+                "text": "The vehicle identification number."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "level": 3,
+        "text": [
+          {
+            "text": "Photos"
+          }
+        ]
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "articles/sample/front.jpg",
+          "width": 1600,
+          "height": 900,
+          "mime": "image/jpeg"
+        },
+        "pendingUrl": null,
+        "alt": "A grey hatchback from the front",
+        "caption": [
+          {
+            "text": "The test car"
+          }
+        ],
+        "credit": "",
+        "aspect": "original",
+        "focalX": 50,
+        "focalY": 50,
+        "size": "prose",
+        "rounded": true,
+        "lightbox": true,
+        "link": null
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "gallery",
+      "v": 1,
+      "props": {
+        "images": [
+          {
+            "media": {
+              "key": "articles/sample/side.jpg",
+              "width": 1600,
+              "height": 900,
+              "mime": "image/jpeg"
+            },
+            "alt": "Side view",
+            "caption": ""
+          },
+          {
+            "media": {
+              "key": "articles/sample/rear.jpg",
+              "width": 1600,
+              "height": 900,
+              "mime": "image/jpeg"
+            },
+            "alt": "Rear view",
+            "caption": ""
+          }
+        ],
+        "layout": "grid",
+        "columns": 3,
+        "lightbox": true
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "before-after",
+      "v": 1,
+      "props": {
+        "before": {
+          "media": {
+            "key": "articles/sample/before.jpg",
+            "width": 1600,
+            "height": 900,
+            "mime": "image/jpeg"
+          },
+          "alt": "Scratched door",
+          "label": "Before"
+        },
+        "after": {
+          "media": {
+            "key": "articles/sample/after.jpg",
+            "width": 1600,
+            "height": 900,
+            "mime": "image/jpeg"
+          },
+          "alt": "Repaired door",
+          "label": "After"
+        },
+        "start": 50,
+        "caption": ""
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "media-text",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "articles/sample/interior.jpg",
+          "width": 1600,
+          "height": 900,
+          "mime": "image/jpeg"
+        },
+        "alt": "Interior",
+        "side": "start",
+        "ratio": "1-1",
+        "title": "Inside",
+        "text": [
+          {
+            "text": "Clean and quiet."
+          }
+        ],
+        "verticalAlign": "center"
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "video",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "articles/sample/drive.mp4",
+          "mime": "video/mp4"
+        },
+        "poster": null,
+        "title": "Test drive",
+        "caption": "",
+        "loop": false,
+        "muted": false
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "audio",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "articles/sample/engine.mp3",
+          "mime": "audio/mpeg"
+        },
+        "title": "Engine at idle",
+        "caption": ""
+      }
+    },
+    "n20": {
+      "id": "n20",
+      "type": "embed",
+      "v": 1,
+      "props": {
+        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "provider": "youtube",
+        "title": "Review",
+        "caption": ""
+      }
+    },
+    "n21": {
+      "id": "n21",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "articles/sample/checklist.pdf",
+          "mime": "application/pdf",
+          "size": 120000,
+          "name": "checklist.pdf"
+        },
+        "label": "Inspection checklist",
+        "description": ""
+      }
+    },
+    "n22": {
+      "id": "n22",
+      "type": "faq",
+      "v": 1,
+      "props": {
+        "title": "Questions",
+        "items": [
+          {
+            "question": "Is a diesel worth it?",
+            "answer": [
+              {
+                "text": "For long commutes, yes."
+              }
+            ]
+          }
+        ],
+        "firstOpen": true
+      }
+    },
+    "n23": {
+      "id": "n23",
+      "type": "howto",
+      "v": 1,
+      "props": {
+        "title": "Inspect a car",
+        "totalMinutes": 30,
+        "steps": [
+          {
+            "title": "Walk around",
+            "text": [
+              {
+                "text": "Look for uneven gaps."
+              }
+            ],
+            "media": null,
+            "alt": ""
+          }
+        ]
+      }
+    },
+    "n24": {
+      "id": "n24",
+      "type": "timeline",
+      "v": 1,
+      "props": {
+        "items": [
+          {
+            "date": "2019",
+            "title": "First registered",
+            "text": [
+              {
+                "text": "Imported from Germany."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "n25": {
+      "id": "n25",
+      "type": "pros-cons",
+      "v": 1,
+      "props": {
+        "prosTitle": "Pros",
+        "consTitle": "Cons",
+        "pros": [
+          "Cheap to run"
+        ],
+        "cons": [
+          "Small boot"
+        ]
+      }
+    },
+    "n26": {
+      "id": "n26",
+      "type": "stats",
+      "v": 1,
+      "props": {
+        "items": [
+          {
+            "value": "14 500 €",
+            "label": "Average price",
+            "trend": "down",
+            "note": ""
+          }
+        ]
+      }
+    },
+    "n27": {
+      "id": "n27",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "title": "Our verdict",
+        "scale": 5,
+        "score": 4,
+        "summary": [
+          {
+            "text": "A safe choice."
+          }
+        ],
+        "criteria": [
+          {
+            "label": "Comfort",
+            "score": 4
+          }
+        ],
+        "itemName": "VW Golf 2019"
+      }
+    },
+    "n28": {
+      "id": "n28",
+      "type": "author",
+      "v": 1,
+      "props": {
+        "name": "Arben Hoxha",
+        "role": "Editor",
+        "avatar": null,
+        "bio": [
+          {
+            "text": "Writes about cars."
+          }
+        ],
+        "links": [
+          {
+            "label": "Site",
+            "href": "https://example.com"
+          }
+        ]
+      }
+    },
+    "n29": {
+      "id": "n29",
+      "type": "section",
+      "v": 1,
+      "props": {
+        "background": "muted",
+        "image": null,
+        "overlay": 40,
+        "paddingY": "lg",
+        "width": "wide"
+      },
+      "children": [
+        "n30",
+        "n31"
+      ]
+    },
+    "n30": {
+      "id": "n30",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "level": 2,
+        "text": [
+          {
+            "text": "Ready to sell?"
+          }
+        ]
+      }
+    },
+    "n31": {
+      "id": "n31",
+      "type": "columns",
+      "v": 1,
+      "props": {
+        "layout": "1-1",
+        "gap": "md",
+        "verticalAlign": "start",
+        "stackOn": "mobile",
+        "reverseOnStack": false
+      },
+      "children": [
+        "n32",
+        "n34"
+      ]
+    },
+    "n32": {
+      "id": "n32",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "span": 6
+      },
+      "children": [
+        "n33"
+      ]
+    },
+    "n33": {
+      "id": "n33",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Left column"
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n34": {
+      "id": "n34",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "span": 6
+      },
+      "children": [
+        "n35"
+      ]
+    },
+    "n35": {
+      "id": "n35",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Right column"
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n36": {
+      "id": "n36",
+      "type": "container",
+      "v": 1,
+      "props": {
+        "width": "wide"
+      },
+      "children": [
+        "n37"
+      ]
+    },
+    "n37": {
+      "id": "n37",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Wide text"
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n38": {
+      "id": "n38",
+      "type": "group",
+      "v": 1,
+      "props": {
+        "direction": "vertical",
+        "gap": "md",
+        "align": "stretch",
+        "wrap": true
+      },
+      "children": [
+        "n39"
+      ]
+    },
+    "n39": {
+      "id": "n39",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Grouped"
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n40": {
+      "id": "n40",
+      "type": "spacer",
+      "v": 1,
+      "props": {
+        "size": "lg"
+      }
+    },
+    "n41": {
+      "id": "n41",
+      "type": "divider",
+      "v": 1,
+      "props": {
+        "variant": "dots",
+        "width": "full"
+      }
+    },
+    "n42": {
+      "id": "n42",
+      "type": "cta",
+      "v": 1,
+      "props": {
+        "title": "Get a valuation",
+        "text": [
+          {
+            "text": "Free, in two minutes."
+          }
+        ],
+        "buttons": [
+          {
+            "label": "Start",
+            "href": "/valuation",
+            "variant": "primary",
+            "icon": "arrow-right",
+            "newTab": false
+          }
+        ],
+        "tone": "neutral",
+        "layout": "card",
+        "align": "center"
+      }
+    },
+    "n43": {
+      "id": "n43",
+      "type": "buttons",
+      "v": 1,
+      "props": {
+        "buttons": [
+          {
+            "label": "Contact us",
+            "href": "/contact",
+            "variant": "outline",
+            "icon": "mail",
+            "newTab": false
+          }
+        ],
+        "align": "start",
+        "size": "md"
+      }
+    },
+    "n44": {
+      "id": "n44",
+      "type": "related",
+      "v": 1,
+      "props": {
+        "title": "Read next",
+        "mode": "auto",
+        "items": [],
+        "count": 3
+      }
+    },
+    "n45": {
+      "id": "n45",
+      "type": "newsletter",
+      "v": 1,
+      "props": {
+        "title": "Stay in the loop",
+        "text": [],
+        "placeholder": "you@example.com",
+        "button": "Subscribe"
+      }
+    },
+    "n46": {
+      "id": "n46",
+      "type": "accordion",
+      "v": 1,
+      "props": {
+        "allowMultiple": false,
+        "firstOpen": true
+      },
+      "children": [
+        "n47"
+      ]
+    },
+    "n47": {
+      "id": "n47",
+      "type": "accordion-item",
+      "v": 1,
+      "props": {
+        "title": "Warranty"
+      },
+      "children": [
+        "n48"
+      ]
+    },
+    "n48": {
+      "id": "n48",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Twelve months."
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n49": {
+      "id": "n49",
+      "type": "tabs",
+      "v": 1,
+      "props": {
+        "align": "start"
+      },
+      "children": [
+        "n50",
+        "n52"
+      ]
+    },
+    "n50": {
+      "id": "n50",
+      "type": "tab-item",
+      "v": 1,
+      "props": {
+        "title": "Petrol"
+      },
+      "children": [
+        "n51"
+      ]
+    },
+    "n51": {
+      "id": "n51",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Quieter."
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n52": {
+      "id": "n52",
+      "type": "tab-item",
+      "v": 1,
+      "props": {
+        "title": "Diesel"
+      },
+      "children": [
+        "n53"
+      ]
+    },
+    "n53": {
+      "id": "n53",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Thriftier."
+          }
+        ],
+        "dropCap": false,
+        "lead": false
+      }
+    },
+    "n54": {
+      "id": "n54",
+      "type": "disclaimer",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Prices are indicative."
+          }
+        ]
+      }
+    }
+  },
+  "meta": {
+    "title": "Buying a used car in 2026",
+    "excerpt": "Everything to check before you buy, from the service book to the test drive.",
+    "cover": {
+      "media": {
+        "key": "articles/sample/cover.jpg",
+        "width": 1600,
+        "height": 900,
+        "mime": "image/jpeg"
+      },
+      "alt": "A row of used cars"
+    }
+  }
+}

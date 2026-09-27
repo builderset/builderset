@@ -105,8 +105,8 @@ function NodeInspector({ id }: { id: NodeId }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border flex h-14 shrink-0 items-center gap-2.5 border-b px-4">
-        <span className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-md">
+      <div className="border-border flex h-11 shrink-0 items-center gap-2 border-b px-3">
+        <span className="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-md">
           <ElementIcon name={definition?.icon ?? 'box'} className="size-4" />
         </span>
         <div className="min-w-0">
@@ -125,10 +125,16 @@ function NodeInspector({ id }: { id: NodeId }) {
         }}
         className="flex min-h-0 flex-1 flex-col"
       >
-        <TabsList className="mx-4 mt-3 grid grid-cols-3">
-          <TabsTrigger value="content">{messages.content}</TabsTrigger>
-          <TabsTrigger value="style">{messages.style}</TabsTrigger>
-          <TabsTrigger value="advanced">{messages.advanced}</TabsTrigger>
+        <TabsList className="mx-3 grid shrink-0 grid-cols-3 gap-0">
+          <TabsTrigger value="content" className="px-2 py-1.5 text-xs">
+            {messages.content}
+          </TabsTrigger>
+          <TabsTrigger value="style" className="px-2 py-1.5 text-xs">
+            {messages.style}
+          </TabsTrigger>
+          <TabsTrigger value="advanced" className="px-2 py-1.5 text-xs">
+            {messages.advanced}
+          </TabsTrigger>
         </TabsList>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <TabsContent value="content" className="p-4">

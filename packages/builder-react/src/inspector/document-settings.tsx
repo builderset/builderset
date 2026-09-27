@@ -71,15 +71,21 @@ export function DocumentSettings() {
   const [tab, setTab] = useState('general');
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border flex h-14 shrink-0 flex-col justify-center border-b px-4">
+      <div className="border-border flex h-11 shrink-0 flex-col justify-center border-b px-3">
         <p className="text-sm font-semibold">{messages.document}</p>
         <p className="text-muted-foreground text-xs">{messages.nothingSelected}</p>
       </div>
       <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
-        <TabsList className="mx-4 mt-3 grid grid-cols-3">
-          <TabsTrigger value="general">{messages.general}</TabsTrigger>
-          <TabsTrigger value="seo">{messages.seo}</TabsTrigger>
-          <TabsTrigger value="publishing">{messages.publishing}</TabsTrigger>
+        <TabsList className="mx-3 grid shrink-0 grid-cols-3 gap-0">
+          <TabsTrigger value="general" className="px-2 py-1.5 text-xs">
+            {messages.general}
+          </TabsTrigger>
+          <TabsTrigger value="seo" className="px-2 py-1.5 text-xs">
+            {messages.seo}
+          </TabsTrigger>
+          <TabsTrigger value="publishing" className="px-2 py-1.5 text-xs">
+            {messages.publishing}
+          </TabsTrigger>
         </TabsList>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <TabsContent value="general" className="space-y-4 p-4">

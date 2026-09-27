@@ -67,7 +67,18 @@ export const documentMetaSchema = z.object({
 
 export type DocumentMeta = z.infer<typeof documentMetaSchema>;
 
-export interface BuilderDocument {
+/**
+ * What every tree the builders edit has in common: a root and its nodes. The
+ * operations, the history, the tree helpers and the structural checks need no
+ * more than this, which is what lets another kind of document (an email) share
+ * them without pretending to be an article.
+ */
+export interface NodeTree {
+  root: NodeId;
+  nodes: Record<NodeId, BuilderNode>;
+}
+
+export interface BuilderDocument extends NodeTree {
   schema: typeof DOCUMENT_SCHEMA;
   version: number;
   root: NodeId;

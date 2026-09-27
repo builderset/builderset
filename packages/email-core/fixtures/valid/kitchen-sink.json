@@ -1,0 +1,1035 @@
+{
+  "schema": "email/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n5",
+        "n34",
+        "n39"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "media": null,
+        "width": 140,
+        "align": "center",
+        "href": "{{ brand.website }}",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "menu",
+      "v": 1,
+      "props": {
+        "items": [
+          {
+            "label": "Home",
+            "href": "{{ brand.website }}"
+          },
+          {
+            "label": "Blog",
+            "href": ""
+          },
+          {
+            "label": "Contact",
+            "href": ""
+          }
+        ],
+        "align": "center",
+        "color": null,
+        "size": 14,
+        "separator": "dot",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n1",
+        "n2"
+      ]
+    },
+    "n4": {
+      "id": "n4",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "100",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n3"
+      ]
+    },
+    "n5": {
+      "id": "n5",
+      "type": "section",
+      "v": 1,
+      "props": {
+        "backdrop": "#eef2ff",
+        "background": null,
+        "backgroundImage": null,
+        "fullWidth": false,
+        "padding": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        },
+        "radius": 0
+      },
+      "children": [
+        "n4"
+      ]
+    },
+    "n6": {
+      "id": "n6",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Hi "
+          },
+          {
+            "text": "{{recipient.name}}",
+            "marks": [
+              {
+                "type": "variable",
+                "path": "recipient.name",
+                "fallback": "there"
+              }
+            ]
+          }
+        ],
+        "level": 1,
+        "align": "left",
+        "color": null,
+        "size": 28,
+        "font": null,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Some body text with a link."
+          }
+        ],
+        "align": "left",
+        "color": null,
+        "size": 16,
+        "lineHeight": null,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "list",
+      "v": 1,
+      "props": {
+        "style": "bullet",
+        "items": [
+          {
+            "text": [
+              {
+                "text": "First point"
+              }
+            ]
+          },
+          {
+            "text": [
+              {
+                "text": "Second point"
+              }
+            ]
+          }
+        ],
+        "color": null,
+        "markerColor": "brand.primary",
+        "size": 16,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "label": "Get started",
+        "href": "",
+        "align": "left",
+        "background": "brand.primary",
+        "textColor": "#ffffff",
+        "borderColor": null,
+        "borderWidth": 0,
+        "radius": 8,
+        "paddingX": 24,
+        "paddingY": 12,
+        "size": 16,
+        "fullWidthMobile": true,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "media": {
+          "key": "email-image/2026/01/sample0000000000.jpg",
+          "width": 1200,
+          "height": 600
+        },
+        "alt": "A car",
+        "href": "",
+        "width": null,
+        "align": "center",
+        "radius": 0,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "divider",
+      "v": 1,
+      "props": {
+        "color": "brand.border",
+        "thickness": 1,
+        "width": 100,
+        "style": "solid",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 16,
+          "right": 0,
+          "bottom": 16,
+          "left": 0
+        }
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "spacer",
+      "v": 1,
+      "props": {
+        "height": 24,
+        "mobileHeight": null,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        }
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "quote",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "“The best decision we made this year.”"
+          }
+        ],
+        "cite": "A happy customer",
+        "accent": "brand.primary",
+        "background": null,
+        "size": 18,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    },
+    "n15": {
+      "id": "n15",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "100",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n14"
+      ]
+    },
+    "n16": {
+      "id": "n16",
+      "type": "product",
+      "v": 1,
+      "props": {
+        "image": {
+          "key": "email-image/2026/01/sample0000000000.jpg",
+          "width": 1200,
+          "height": 600
+        },
+        "alt": "A product",
+        "title": "Product name",
+        "description": [
+          {
+            "text": "One or two lines about why it is worth a look."
+          }
+        ],
+        "price": "€0",
+        "oldPrice": "",
+        "buttonLabel": "View",
+        "href": "",
+        "layout": "stacked",
+        "accent": "brand.primary",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n16"
+      ]
+    },
+    "n18": {
+      "id": "n18",
+      "type": "coupon",
+      "v": 1,
+      "props": {
+        "code": "WELCOME10",
+        "caption": "Use this code at checkout",
+        "background": null,
+        "borderColor": "brand.primary",
+        "textColor": null,
+        "align": "center",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "video",
+      "v": 1,
+      "props": {
+        "thumbnail": {
+          "key": "email-image/2026/01/sample0000000000.jpg",
+          "width": 1200,
+          "height": 600
+        },
+        "href": "",
+        "alt": "Watch the video",
+        "playColor": "#ffffff",
+        "radius": 8,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n20": {
+      "id": "n20",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n18",
+        "n19"
+      ]
+    },
+    "n21": {
+      "id": "n21",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "50-50",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n17",
+        "n20"
+      ]
+    },
+    "n22": {
+      "id": "n22",
+      "type": "key-value",
+      "v": 1,
+      "props": {
+        "rows": [
+          {
+            "label": "Date",
+            "value": "{{ now | date }}"
+          },
+          {
+            "label": "Reference",
+            "value": "ABC-123"
+          }
+        ],
+        "labelColor": null,
+        "valueColor": null,
+        "background": null,
+        "borderColor": "brand.border",
+        "size": 15,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n23": {
+      "id": "n23",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n22"
+      ]
+    },
+    "n24": {
+      "id": "n24",
+      "type": "line-items",
+      "v": 1,
+      "props": {
+        "list": "order.items",
+        "columns": [
+          {
+            "header": "Item",
+            "field": "name",
+            "align": "left"
+          },
+          {
+            "header": "Qty",
+            "field": "quantity",
+            "align": "center"
+          },
+          {
+            "header": "Price",
+            "field": "price",
+            "align": "right"
+          }
+        ],
+        "totalLabel": "Total",
+        "totalValue": "{{ order.total | money }}",
+        "max": 50,
+        "headerBackground": null,
+        "borderColor": "brand.border",
+        "size": 14,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n25": {
+      "id": "n25",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Write something your reader will want to read."
+          }
+        ],
+        "align": "left",
+        "color": null,
+        "size": 16,
+        "lineHeight": null,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n26": {
+      "id": "n26",
+      "type": "conditional",
+      "v": 1,
+      "props": {
+        "display": {
+          "hideOn": "none",
+          "when": [
+            {
+              "var": "recipient.name",
+              "op": "exists"
+            }
+          ]
+        }
+      },
+      "children": [
+        "n25"
+      ]
+    },
+    "n27": {
+      "id": "n27",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "Write something your reader will want to read."
+          }
+        ],
+        "align": "left",
+        "color": null,
+        "size": 16,
+        "lineHeight": null,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 8,
+          "right": 0,
+          "bottom": 8,
+          "left": 0
+        }
+      }
+    },
+    "n28": {
+      "id": "n28",
+      "type": "repeat",
+      "v": 1,
+      "props": {
+        "list": "order.items",
+        "max": 20,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        }
+      },
+      "children": [
+        "n27"
+      ]
+    },
+    "n29": {
+      "id": "n29",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n24",
+        "n26",
+        "n28"
+      ]
+    },
+    "n30": {
+      "id": "n30",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "33-67",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n23",
+        "n29"
+      ]
+    },
+    "n31": {
+      "id": "n31",
+      "type": "survey",
+      "v": 1,
+      "props": {
+        "question": "How likely are you to recommend us to a friend?",
+        "scale": 10,
+        "href": "",
+        "lowLabel": "Not likely",
+        "highLabel": "Very likely",
+        "color": "brand.primary",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n32": {
+      "id": "n32",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n31"
+      ]
+    },
+    "n33": {
+      "id": "n33",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "100",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n32"
+      ]
+    },
+    "n34": {
+      "id": "n34",
+      "type": "section",
+      "v": 1,
+      "props": {
+        "backdrop": null,
+        "background": null,
+        "backgroundImage": null,
+        "fullWidth": false,
+        "padding": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        },
+        "radius": 0
+      },
+      "children": [
+        "n15",
+        "n21",
+        "n30",
+        "n33"
+      ]
+    },
+    "n35": {
+      "id": "n35",
+      "type": "social",
+      "v": 1,
+      "props": {
+        "items": [
+          {
+            "network": "facebook",
+            "href": "https://facebook.com/"
+          },
+          {
+            "network": "instagram",
+            "href": "https://instagram.com/"
+          },
+          {
+            "network": "linkedin",
+            "href": "https://linkedin.com/"
+          }
+        ],
+        "style": "dark",
+        "size": 28,
+        "gap": 10,
+        "align": "center",
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n36": {
+      "id": "n36",
+      "type": "footer",
+      "v": 1,
+      "props": {
+        "text": [
+          {
+            "text": "You are receiving this email from "
+          },
+          {
+            "text": "{{brand.name}}",
+            "marks": [
+              {
+                "type": "variable",
+                "path": "brand.name"
+              }
+            ]
+          },
+          {
+            "text": "."
+          }
+        ],
+        "showAddress": true,
+        "showUnsubscribe": true,
+        "showPreferences": false,
+        "showViewInBrowser": true,
+        "align": "center",
+        "color": "brand.muted",
+        "size": 12,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 16,
+          "right": 0,
+          "bottom": 16,
+          "left": 0
+        }
+      }
+    },
+    "n37": {
+      "id": "n37",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n35",
+        "n36"
+      ]
+    },
+    "n38": {
+      "id": "n38",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "100",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n37"
+      ]
+    },
+    "n39": {
+      "id": "n39",
+      "type": "section",
+      "v": 1,
+      "props": {
+        "backdrop": null,
+        "background": null,
+        "backgroundImage": null,
+        "fullWidth": false,
+        "padding": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        },
+        "radius": 0
+      },
+      "children": [
+        "n38"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Kitchen sink",
+    "subject": "Everything, {{ recipient.name }}",
+    "preheader": "Every block once"
+  },
+  "settings": {
+    "width": 600,
+    "backdrop": "#f4f4f5",
+    "background": "#ffffff",
+    "font": "system",
+    "fontSize": 16,
+    "lineHeight": 1.6,
+    "textColor": "brand.text",
+    "headingColor": "brand.text",
+    "linkColor": "brand.primary",
+    "darkMode": "auto",
+    "dark": {
+      "backdrop": "#0b0b0c",
+      "background": "#18181b",
+      "text": "#e4e4e7",
+      "heading": "#fafafa",
+      "link": "#93c5fd"
+    },
+    "utm": {
+      "enabled": false,
+      "source": "email",
+      "medium": "email",
+      "campaign": ""
+    }
+  }
+}

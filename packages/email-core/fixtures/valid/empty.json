@@ -1,0 +1,44 @@
+{
+  "schema": "email/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": []
+    }
+  },
+  "meta": {
+    "name": "",
+    "subject": "Empty",
+    "preheader": ""
+  },
+  "settings": {
+    "width": 600,
+    "backdrop": "#f4f4f5",
+    "background": "#ffffff",
+    "font": "system",
+    "fontSize": 16,
+    "lineHeight": 1.6,
+    "textColor": "brand.text",
+    "headingColor": "brand.text",
+    "linkColor": "brand.primary",
+    "darkMode": "auto",
+    "dark": {
+      "backdrop": "#0b0b0c",
+      "background": "#18181b",
+      "text": "#e4e4e7",
+      "heading": "#fafafa",
+      "link": "#93c5fd"
+    },
+    "utm": {
+      "enabled": false,
+      "source": "email",
+      "medium": "email",
+      "campaign": ""
+    }
+  }
+}

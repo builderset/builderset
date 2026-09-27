@@ -1,6 +1,6 @@
 import { current, enablePatches, isDraft, produceWithPatches, type Draft, type Patch } from 'immer';
 
-import type { BuilderDocument, BuilderNode, Fragment } from './document';
+import type { BuilderNode, Fragment, NodeTree } from './document';
 import { createId, type NodeId } from './ids';
 import { LIMITS } from './limits';
 import type { ElementRegistry } from './registry';
@@ -41,32 +41,29 @@ export class BuilderError extends Error {
   }
 }
 
-export interface Change<T> {
-  doc: BuilderDocument;
+export interface Change<T, D extends NodeTree = NodeTree> {
+  doc: D;
   patches: Patch[];
   inversePatches: Patch[];
   result: T;
 }
 
-export function applyChange<T>(
-  doc: BuilderDocument,
-  change: (draft: BuilderDocument) => T,
-): Change<T> {
+export function applyChange<T, D extends NodeTree = NodeTree>(
+  doc: D,
+  change: (draft: D) => T,
+): Change<T, D> {
   // Boxed, so the recipe's return value is captured without being handed to
   // immer — which would take a returned value as a REPLACEMENT document.
   const box: { value?: T } = {};
-  const [next, patches, inversePatches] = produceWithPatches(
-    doc,
-    (draft: Draft<BuilderDocument>) => {
-      box.value = change(draft);
-    },
-  );
+  const [next, patches, inversePatches] = produceWithPatches(doc, (draft: Draft<D>) => {
+    box.value = change(draft as D);
+  });
   return { doc: next, patches, inversePatches, result: box.value as T };
 }
 
 // ── Small lookups that refuse instead of asserting ─────────────────────────
 
-function nodeOf(doc: BuilderDocument, id: NodeId): BuilderNode {
+function nodeOf(doc: NodeTree, id: NodeId): BuilderNode {
   const node = doc.nodes[id];
   if (!node) throw new BuilderError('node.missing', { id });
   return node;
@@ -77,7 +74,7 @@ function childrenOf(node: BuilderNode): NodeId[] {
   return node.children;
 }
 
-function parentOfOrThrow(doc: BuilderDocument, id: NodeId): BuilderNode {
+function parentOfOrThrow(doc: NodeTree, id: NodeId): BuilderNode {
   const parent = parentOf(doc, id);
   if (!parent) throw new BuilderError('node.isRoot', { id });
   return parent;
@@ -97,7 +94,7 @@ function plainClone<T>(value: T): T {
   return structuredClone(isDraft(value) ? current(value) : value);
 }
 
-function removeNode(doc: BuilderDocument, id: NodeId): void {
+function removeNode(doc: NodeTree, id: NodeId): void {
   Reflect.deleteProperty(doc.nodes, id);
 }
 
@@ -131,8 +128,80 @@ export function createFragment(
   return { roots: [build(type, props)], nodes };
 }
 
+/**
+ * The containers to build around `childType` so it can go into `parentType`,
+ * outermost first — `['section', 'row', 'column']` for a text block dropped on
+ * an email's empty body. `[]` when it fits as it is; `null` when nothing makes
+ * it fit. Breadth-first, so the SHORTEST chain wins.
+ */
+export function wrapChain(
+  registry: ElementRegistry,
+  parentType: string,
+  childType: string,
+  maxDepth = 4,
+): string[] | null {
+  if (registry.canContain(parentType, childType)) return [];
+  const containers = registry
+    .all()
+    .filter((definition) => definition.container)
+    .map((definition) => definition.type);
+  let frontier: { type: string; chain: string[] }[] = [{ type: parentType, chain: [] }];
+  for (let depth = 0; depth < maxDepth; depth += 1) {
+    const next: { type: string; chain: string[] }[] = [];
+    for (const { type, chain } of frontier) {
+      for (const candidate of containers) {
+        if (chain.includes(candidate) || !registry.canContain(type, candidate)) continue;
+        const path = [...chain, candidate];
+        if (registry.canContain(candidate, childType)) return path;
+        next.push({ type: candidate, chain: path });
+      }
+    }
+    frontier = next;
+  }
+  return null;
+}
+
+/**
+ * A new element wrapped in `chain`'s containers, each holding only the next —
+ * built empty rather than with their `initial` children, which would put a
+ * second, unwanted block beside the one being inserted.
+ */
+export function createWrappedFragment(
+  registry: ElementRegistry,
+  chain: readonly string[],
+  type: string,
+  props: Record<string, unknown> = {},
+  wrapperProps: Readonly<Record<string, Record<string, unknown>>> = {},
+): Fragment {
+  const inner = createFragment(registry, type, props);
+  let fragment = inner;
+  for (const wrapperType of [...chain].reverse()) {
+    const definition = registry.require(wrapperType);
+    const parsed = definition.schema.safeParse({
+      ...definition.defaults(),
+      ...(wrapperProps[wrapperType] ?? {}),
+    });
+    if (!parsed.success) throw new BuilderError('props.invalid', { type: wrapperType });
+    const id = createId();
+    fragment = {
+      roots: [id],
+      nodes: {
+        ...fragment.nodes,
+        [id]: {
+          id,
+          type: wrapperType,
+          v: definition.version,
+          props: parsed.data,
+          children: [...fragment.roots],
+        },
+      },
+    };
+  }
+  return fragment;
+}
+
 /** A deep copy of `ids` and everything under them, with fresh ids. */
-export function extractFragment(doc: BuilderDocument, ids: readonly NodeId[]): Fragment {
+export function extractFragment(doc: NodeTree, ids: readonly NodeId[]): Fragment {
   const top = topLevelIds(doc, ids);
   const nodes: Record<NodeId, BuilderNode> = {};
   for (const id of top) {
@@ -200,7 +269,7 @@ function clampIndex(index: number, length: number): number {
 
 /** Insert a fragment's roots under `parentId` at `index`. Returns their ids. */
 export function insert(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   parentId: NodeId,
   index: number,
@@ -242,7 +311,7 @@ export function insert(
  * container shift it down accordingly.
  */
 export function move(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   ids: readonly NodeId[],
   parentId: NodeId,
@@ -298,7 +367,7 @@ export function move(
 
 /** Remove nodes and everything under them. */
 export function remove(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   ids: readonly NodeId[],
 ): NodeId[] {
@@ -322,7 +391,7 @@ export function remove(
 
 /** Copies of `ids`, each placed right after its original. Returns the copies. */
 export function duplicate(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   ids: readonly NodeId[],
 ): NodeId[] {
@@ -354,7 +423,7 @@ export interface NodePatch {
  * accepts exactly one change: being unlocked.
  */
 export function update(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   id: NodeId,
   patch: NodePatch,
@@ -399,7 +468,7 @@ export function update(
 
 /** Put `ids` (siblings) inside a new container of `type`, where the first was. */
 export function wrap(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   ids: readonly NodeId[],
   type: string,
@@ -434,7 +503,7 @@ export function wrap(
 }
 
 /** Replace a container by its children, in place. */
-export function unwrap(draft: BuilderDocument, registry: ElementRegistry, id: NodeId): NodeId[] {
+export function unwrap(draft: NodeTree, registry: ElementRegistry, id: NodeId): NodeId[] {
   const node = nodeOf(draft, id);
   assertUnlocked(node);
   const children = [...childrenOf(node)];
@@ -483,7 +552,7 @@ function textProps(type: string, text: RichText): Record<string, unknown> {
 
 /** Turn a text element into another, keeping its words. */
 export function replaceType(
-  draft: BuilderDocument,
+  draft: NodeTree,
   registry: ElementRegistry,
   id: NodeId,
   type: string,

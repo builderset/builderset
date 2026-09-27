@@ -6,6 +6,7 @@ import {
   nodeShapeSchema,
   type BuilderDocument,
   type BuilderNode,
+  type NodeTree,
 } from './document';
 import { ROOT_ID } from './ids';
 import { error, warning, type Issue } from './issues';
@@ -66,7 +67,7 @@ export function documentSchema(registry: ElementRegistry) {
  * The shape of the TREE: one root, every child present, every node reachable
  * exactly once, placement rules kept, within the limits.
  */
-export function structuralIssues(doc: BuilderDocument, registry: ElementRegistry): Issue[] {
+export function structuralIssues(doc: NodeTree, registry: ElementRegistry): Issue[] {
   const issues: Issue[] = [];
   const root = doc.nodes[ROOT_ID];
   if (root?.type !== 'root') return [error('document.noRoot')];

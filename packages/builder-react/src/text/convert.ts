@@ -19,8 +19,27 @@ interface TiptapMark {
   attrs?: Record<string, unknown>;
 }
 
-function toTiptapMark(mark: Mark): TiptapMark {
+/**
+ * An email's variable, as a mark on the run that stands for it. Not in the
+ * article's mark set — the article schema refuses it — but passed through
+ * untouched so an email field keeps its variables when edited.
+ */
+interface VariableMark {
+  type: 'variable';
+  path: string;
+  format?: string | undefined;
+  fallback?: string | undefined;
+}
+
+type AnyMark = Mark | VariableMark;
+
+function toTiptapMark(mark: AnyMark): TiptapMark {
   switch (mark.type) {
+    case 'variable':
+      return {
+        type: 'variable',
+        attrs: { path: mark.path, format: mark.format ?? null, fallback: mark.fallback ?? null },
+      };
     case 'sub':
       return { type: 'subscript' };
     case 'sup':
@@ -37,8 +56,20 @@ function toTiptapMark(mark: Mark): TiptapMark {
   }
 }
 
-function fromTiptapMark(mark: TiptapMark): Mark | null {
+function fromTiptapMark(mark: TiptapMark): AnyMark | null {
   switch (mark.type) {
+    case 'variable': {
+      const path = typeof mark.attrs?.path === 'string' ? mark.attrs.path : '';
+      if (!path) return null;
+      const format = typeof mark.attrs?.format === 'string' ? mark.attrs.format : undefined;
+      const fallback = typeof mark.attrs?.fallback === 'string' ? mark.attrs.fallback : undefined;
+      return {
+        type: 'variable',
+        path,
+        ...(format ? { format } : {}),
+        ...(fallback ? { fallback } : {}),
+      };
+    }
     case 'bold':
     case 'italic':
     case 'underline':
@@ -69,7 +100,7 @@ function fromTiptapMark(mark: TiptapMark): Mark | null {
 export function toTiptap(value: RichText): JSONContent {
   const content: JSONContent[] = [];
   for (const run of value) {
-    const marks = (run.marks ?? []).map(toTiptapMark);
+    const marks = ((run.marks ?? []) as AnyMark[]).map(toTiptapMark);
     run.text.split('\n').forEach((part, index) => {
       if (index > 0) content.push({ type: 'hardBreak' });
       if (part) content.push({ type: 'text', text: part, ...(marks.length ? { marks } : {}) });
@@ -89,7 +120,7 @@ export function fromTiptap(json: JSONContent): RichText {
       } else if (child.type === 'text' && child.text) {
         const marks = (child.marks ?? [])
           .map((mark) => fromTiptapMark(mark as TiptapMark))
-          .filter((mark): mark is Mark => mark !== null);
+          .filter((mark): mark is AnyMark => mark !== null) as Mark[];
         runs.push(marks.length ? { text: child.text, marks } : { text: child.text });
       }
     }

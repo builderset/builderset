@@ -29,7 +29,7 @@ import { useId, useMemo, useState, type ReactNode } from 'react';
 import { z } from 'zod';
 
 import { cn } from '../cn';
-import { useEditor, useEditorContext } from '../context';
+import { useEditor, useEditorContext, useProfile } from '../context';
 import { ElementIcon } from '../icons';
 import { humanize } from '../messages';
 import { DocumentSettings } from './document-settings';
@@ -55,7 +55,7 @@ export function Inspector() {
         className="h-full"
       >
         {selection.length === 0 ? (
-          <DocumentSettings />
+          <Settings />
         ) : selection.length === 1 && selection[0] ? (
           <NodeInspector id={selection[0]} />
         ) : (
@@ -64,6 +64,11 @@ export function Inspector() {
       </motion.div>
     </AnimatePresence>
   );
+}
+
+function Settings() {
+  const Panel = useProfile().settingsPanel ?? DocumentSettings;
+  return <Panel />;
 }
 
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
@@ -96,9 +101,11 @@ function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
 }
 
 function NodeInspector({ id }: { id: NodeId }) {
-  const { registry, messages, store } = useEditorContext();
+  const { registry, messages, store, profile } = useEditorContext();
   const node = useEditor((state) => state.doc.nodes[id]);
-  const tab = useEditor((state) => state.rightTab);
+  const storedTab = useEditor((state) => state.rightTab);
+  const showStyle = profile.styleTab !== false;
+  const tab = !showStyle && storedTab === 'style' ? 'content' : storedTab;
   if (!node) return null;
   const definition = registry.get(node.type);
   const schema = propsSchema(registry, node.type);
@@ -125,13 +132,17 @@ function NodeInspector({ id }: { id: NodeId }) {
         }}
         className="flex min-h-0 flex-1 flex-col"
       >
-        <TabsList className="mx-3 grid shrink-0 grid-cols-3 gap-0">
+        <TabsList
+          className={cn('mx-3 grid shrink-0 gap-0', showStyle ? 'grid-cols-3' : 'grid-cols-2')}
+        >
           <TabsTrigger value="content" className="px-2 py-1.5 text-xs">
             {messages.content}
           </TabsTrigger>
-          <TabsTrigger value="style" className="px-2 py-1.5 text-xs">
-            {messages.style}
-          </TabsTrigger>
+          {showStyle ? (
+            <TabsTrigger value="style" className="px-2 py-1.5 text-xs">
+              {messages.style}
+            </TabsTrigger>
+          ) : null}
           <TabsTrigger value="advanced" className="px-2 py-1.5 text-xs">
             {messages.advanced}
           </TabsTrigger>

@@ -19,6 +19,7 @@ import { useEffect, useRef } from 'react';
 
 import { fromTiptap, toTiptap } from './convert';
 import { TextToolbar } from './text-toolbar';
+import { VariableMark } from './variable-mark';
 
 /**
  * A rich-text value as a form control — for the inspector, where a caption or
@@ -59,6 +60,7 @@ export function RichTextInput({
       Highlight,
       Subscript,
       Superscript,
+      VariableMark,
       Link.configure({
         openOnClick: false,
         autolink: false,

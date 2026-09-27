@@ -1,6 +1,6 @@
 'use client';
 
-import { CATEGORIES } from '@motors/builder-core';
+import { CATEGORIES, parentOf, type Fragment } from '@motors/builder-core';
 import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -14,7 +14,7 @@ import { elementChoices, matchChoices, type ElementChoice } from '../text/slash-
  * selected container), or drag onto the canvas.
  */
 export function AddPanel() {
-  const { registry, messages, store } = useEditorContext();
+  const { registry, messages, store, profile } = useEditorContext();
   const recent = useEditor((state) => state.recent);
   const [query, setQuery] = useState('');
   const all = elementChoices(registry, messages);
@@ -22,6 +22,25 @@ export function AddPanel() {
 
   const insert = (type: string) => {
     store.getState().insertElement(type);
+  };
+
+  /** A structure goes after the top-level block holding the selection, or last. */
+  const insertStructure = (build: () => Fragment) => {
+    const state = store.getState();
+    const { doc } = state;
+    let current = state.selection[0];
+    while (current) {
+      const parent = parentOf(doc, current);
+      if (!parent || parent.id === doc.root) break;
+      current = parent.id;
+    }
+    const children = doc.nodes[doc.root]?.children ?? [];
+    const index = current ? children.indexOf(current) + 1 : children.length;
+    state.insertFragment(
+      build(),
+      { parentId: doc.root, index: index || children.length },
+      'Add structure',
+    );
   };
 
   return (
@@ -61,6 +80,40 @@ export function AddPanel() {
           )
         ) : (
           <>
+            {profile.structures?.length ? (
+              <Group title={messages.structures}>
+                <div className="grid grid-cols-2 gap-2">
+                  {profile.structures.map((structure) => (
+                    <button
+                      key={structure.id}
+                      type="button"
+                      draggable
+                      title={structure.label}
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData(DRAG_TYPE_MIME, `structure:${structure.id}`);
+                        event.dataTransfer.effectAllowed = 'copy';
+                        setDragChip(event.dataTransfer, `+ ${structure.label}`);
+                        setActiveDrag({
+                          kind: 'fragment',
+                          rootType: 'section',
+                          build: structure.build,
+                        });
+                      }}
+                      onDragEnd={() => {
+                        setActiveDrag(null);
+                      }}
+                      onClick={() => {
+                        insertStructure(structure.build);
+                      }}
+                      className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 flex cursor-grab flex-col items-center gap-2 rounded-[var(--radius-control)] border px-2 py-3 transition-[colors,transform] active:scale-95 active:cursor-grabbing"
+                    >
+                      {structure.icon}
+                      <span className="text-xs font-medium">{structure.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </Group>
+            ) : null}
             {recent.length ? (
               <Group title={messages.recentlyUsed}>
                 <Grid
@@ -71,7 +124,7 @@ export function AddPanel() {
                 />
               </Group>
             ) : null}
-            {CATEGORIES.map((category) => {
+            {(profile.categories ?? CATEGORIES).map((category) => {
               const inCategory = all.filter((choice) => choice.category === category);
               if (inCategory.length === 0) return null;
               return (

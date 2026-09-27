@@ -8,6 +8,11 @@
 
 export { BuilderEditor, type BuilderEditorProps } from './editor';
 export type { ArticleFacts } from './context';
+export { useEditor, useEditorContext, useMessages, useProfile } from './context';
+export type { EditorProfile } from './profile';
+export { MediaField } from './inspector/media-field';
+export { ColorField, SpacingField } from './inspector/special-fields';
+export { RichTextInput } from './text/rich-text-input';
 export type {
   BuilderHost,
   OEmbedInfo,
@@ -17,6 +22,6 @@ export type {
   SaveResult,
   UploadResult,
 } from './host';
-export { editorMessages, type EditorMessages } from './messages';
+export { editorMessages, type EditorMessages, type ElementText } from './messages';
 export { createEditorStore, type EditorStore } from './store';
 export { fromTiptap, toTiptap } from './text/convert';

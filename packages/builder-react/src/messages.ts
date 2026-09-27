@@ -158,6 +158,16 @@ export interface EditorMessages {
   dragToMove: string;
   moreOptions: string;
   close: string;
+  insertVariable: string;
+  structures: string;
+  showEverywhere: string;
+  hideOnMobile: string;
+  hideOnDesktop: string;
+  showWhen: string;
+  variable: string;
+  addCondition: string;
+  ops: Record<string, string>;
+  searchVariables: string;
   versionLabel: string;
   saved: string;
   published: string;
@@ -489,6 +499,24 @@ const EN: EditorMessages = {
   dragToMove: 'Drag to move',
   moreOptions: 'More options',
   close: 'Close',
+  insertVariable: 'Insert a variable',
+  structures: 'Structures',
+  showEverywhere: 'Everywhere',
+  hideOnMobile: 'Not on phones',
+  hideOnDesktop: 'Phones only',
+  showWhen: 'Show only when',
+  variable: 'Variable',
+  addCondition: 'Add a condition',
+  ops: {
+    exists: 'has a value',
+    missing: 'is empty',
+    eq: 'equals',
+    neq: 'is not',
+    gt: 'is more than',
+    lt: 'is less than',
+    contains: 'contains',
+  },
+  searchVariables: 'Search variables…',
   versionLabel: 'Version name',
   saved: 'Saved.',
   published: 'Published.',
@@ -705,6 +733,24 @@ const SQ: EditorMessages = {
   dragToMove: 'Tërhiqeni për ta lëvizur',
   moreOptions: 'Më shumë opsione',
   close: 'Mbyll',
+  insertVariable: 'Fut një variabël',
+  structures: 'Strukturat',
+  showEverywhere: 'Kudo',
+  hideOnMobile: 'Jo në celular',
+  hideOnDesktop: 'Vetëm në celular',
+  showWhen: 'Shfaq vetëm kur',
+  variable: 'Variabla',
+  addCondition: 'Shto një kusht',
+  ops: {
+    exists: 'ka vlerë',
+    missing: 'është bosh',
+    eq: 'është e barabartë me',
+    neq: 'nuk është',
+    gt: 'është më e madhe se',
+    lt: 'është më e vogël se',
+    contains: 'përmban',
+  },
+  searchVariables: 'Kërko variabla…',
   versionLabel: 'Emri i versionit',
   saved: 'U ruajt.',
   published: 'U publikua.',
@@ -854,6 +900,24 @@ const DE: EditorMessages = {
   deleteTitle: 'Diesen Artikel löschen?',
   moreOptions: 'Weitere Optionen',
   close: 'Schließen',
+  insertVariable: 'Variable einfügen',
+  structures: 'Strukturen',
+  showEverywhere: 'Überall',
+  hideOnMobile: 'Nicht auf dem Handy',
+  hideOnDesktop: 'Nur auf dem Handy',
+  showWhen: 'Nur anzeigen, wenn',
+  variable: 'Variable',
+  addCondition: 'Bedingung hinzufügen',
+  ops: {
+    exists: 'einen Wert hat',
+    missing: 'leer ist',
+    eq: 'gleich ist',
+    neq: 'nicht ist',
+    gt: 'größer ist als',
+    lt: 'kleiner ist als',
+    contains: 'enthält',
+  },
+  searchVariables: 'Variablen suchen…',
   elements: DE_ELEMENTS,
 };
 

@@ -5,6 +5,7 @@ import type { Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import {
   Bold,
+  Braces,
   Code,
   Highlighter,
   Italic,
@@ -19,6 +20,7 @@ import { useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '../cn';
+import { useEditorContext } from '../context';
 
 /**
  * The formatting bar over a text selection: marks, a link, and clear.
@@ -28,7 +30,11 @@ import { cn } from '../cn';
  * formatted.
  */
 export function TextToolbar({ editor }: { editor: Editor }) {
+  const { profile, messages } = useEditorContext();
+  const variables = profile.variables ?? [];
   const [linking, setLinking] = useState(false);
+  const [picking, setPicking] = useState(false);
+  const [query, setQuery] = useState('');
   const [href, setHref] = useState('');
   const state = useEditorState({
     editor,
@@ -47,7 +53,9 @@ export function TextToolbar({ editor }: { editor: Editor }) {
     }),
   });
 
-  const visible = (!state.empty && state.focused) || linking;
+  // With variables to offer, the bar stays up at a caret too: inserting a
+  // variable where the cursor is is the common case in an email.
+  const visible = ((!state.empty || variables.length > 0) && state.focused) || linking || picking;
   let position: { left: number; top: number } | null = null;
   if (visible) {
     const start = editor.view.coordsAtPos(state.from);
@@ -61,6 +69,19 @@ export function TextToolbar({ editor }: { editor: Editor }) {
 
   const toggle = (name: string) => () => {
     editor.chain().focus().toggleMark(name).run();
+  };
+
+  const insertVariable = (path: string) => {
+    editor
+      .chain()
+      .focus()
+      .insertContent([
+        { type: 'text', text: `{{${path}}}`, marks: [{ type: 'variable', attrs: { path } }] },
+        { type: 'text', text: ' ' },
+      ])
+      .run();
+    setPicking(false);
+    setQuery('');
   };
 
   const applyLink = () => {
@@ -89,7 +110,45 @@ export function TextToolbar({ editor }: { editor: Editor }) {
           className="border-border bg-popover text-popover-foreground fixed z-[80] flex items-center gap-0.5 rounded-[var(--radius-control)] border p-1 shadow-lg"
           style={{ left: position.left, top: position.top }}
         >
-          {linking ? (
+          {picking ? (
+            <div className="w-64">
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') setPicking(false);
+                }}
+                placeholder={messages.searchVariables}
+                className="border-input bg-background mb-1 h-7 w-full rounded-md border px-2 text-sm outline-none"
+              />
+              <div className="max-h-56 overflow-y-auto">
+                {variables
+                  .filter((variable) =>
+                    `${variable.path} ${variable.label}`
+                      .toLowerCase()
+                      .includes(query.toLowerCase()),
+                  )
+                  .map((variable) => (
+                    <button
+                      key={variable.path}
+                      type="button"
+                      onClick={() => {
+                        insertVariable(variable.path);
+                      }}
+                      className="hover:bg-accent flex w-full items-center justify-between gap-2 rounded px-2 py-1 text-left text-xs"
+                    >
+                      <span className="truncate">{variable.label}</span>
+                      <code className="text-muted-foreground shrink-0 text-[10px]">
+                        {variable.path}
+                      </code>
+                    </button>
+                  ))}
+              </div>
+            </div>
+          ) : linking ? (
             <form
               className="flex items-center gap-1"
               onSubmit={(event) => {
@@ -156,6 +215,16 @@ export function TextToolbar({ editor }: { editor: Editor }) {
               >
                 <Link2 />
               </ToolButton>
+              {variables.length ? (
+                <ToolButton
+                  label={messages.insertVariable}
+                  onClick={() => {
+                    setPicking(true);
+                  }}
+                >
+                  <Braces />
+                </ToolButton>
+              ) : null}
               <ToolButton
                 label="Clear formatting"
                 onClick={() => {

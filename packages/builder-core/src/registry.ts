@@ -67,6 +67,9 @@ export interface ElementDefinition<P extends Record<string, unknown> = Record<st
   check?: ((props: P, context: CheckContext) => Issue[]) | undefined;
 }
 
+/** The props type of an element definition: `PropsOf<typeof headingElement>`. */
+export type PropsOf<D> = D extends ElementDefinition<infer P> ? P : never;
+
 /** Identity with inference — the way to declare an element. */
 export function defineElement<P extends Record<string, unknown>>(
   definition: ElementDefinition<P>,

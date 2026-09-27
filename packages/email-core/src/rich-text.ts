@@ -1,6 +1,7 @@
 import { markSchema } from '@motors/builder-core';
 import { z } from 'zod';
 
+import { FONT_KEYS } from './fonts';
 import { FORMATS, VARIABLE_PATH } from './variables';
 
 /**
@@ -19,7 +20,14 @@ export const variableMarkSchema = z.object({
 });
 export type VariableMark = z.infer<typeof variableMarkSchema>;
 
-export const emailMarkSchema = z.union([markSchema, variableMarkSchema]);
+/** A font for part of a text — "this word in Playfair Display", as in Word. */
+export const fontMarkSchema = z.object({
+  type: z.literal('font'),
+  family: z.enum(FONT_KEYS),
+});
+export type FontMark = z.infer<typeof fontMarkSchema>;
+
+export const emailMarkSchema = z.union([markSchema, variableMarkSchema, fontMarkSchema]);
 export type EmailMark = z.infer<typeof emailMarkSchema>;
 
 export const emailRunSchema = z.object({

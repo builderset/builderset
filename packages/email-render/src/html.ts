@@ -145,6 +145,9 @@ function richHtml(
           case 'sup':
             html = `<sup>${html}</sup>`;
             break;
+          case 'font':
+            html = `<span style="font-family:${escapeHtml(fontStack(mark.family, context))}">${html}</span>`;
+            break;
           case 'link': {
             const url = href(mark.href, context, scope);
             if (url) {

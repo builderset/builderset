@@ -63,6 +63,26 @@ describe('renderEmail', () => {
     expect(result.html).toContain('there');
   });
 
+  it('draws a font set on part of a text, and loads it', () => {
+    const doc = buildEmail(registry, { meta: { subject: 'x' } }, [
+      section({}, [
+        row('100', [
+          [
+            block('text', {
+              text: [
+                { text: 'Hello ' },
+                { text: 'world', marks: [{ type: 'font', family: 'playfair-display' }] },
+              ],
+            }),
+          ],
+        ]),
+      ]),
+    ]);
+    const { html } = renderEmail(doc, { assetUrl });
+    expect(html).toContain('font-family:&#39;Playfair Display&#39;, Georgia');
+    expect(html).toContain('family=Playfair+Display');
+  });
+
   it('writes the plain-text part', () => {
     const doc = starterEmail(registry, { subject: 'Hi', preheader: 'Hello' });
     const { text } = renderEmail(doc, { assetUrl, data: { recipient: { name: 'Arta' } } });

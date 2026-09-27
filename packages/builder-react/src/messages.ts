@@ -161,6 +161,7 @@ export interface EditorMessages {
   insertVariable: string;
   structures: string;
   inheritFont: string;
+  font: string;
   searchFonts: string;
   webFontHint: string;
   fontGroups: Record<string, string>;
@@ -507,6 +508,7 @@ const EN: EditorMessages = {
   insertVariable: 'Insert a variable',
   structures: 'Structures',
   inheritFont: 'Email default',
+  font: 'Font',
   searchFonts: 'Search fonts…',
   webFontHint: 'Shown by Apple Mail, iOS and most apps; Gmail and Outlook use the fallback.',
   fontGroups: {
@@ -752,6 +754,7 @@ const SQ: EditorMessages = {
   insertVariable: 'Fut një variabël',
   structures: 'Strukturat',
   inheritFont: 'Si emaili',
+  font: 'Shkronja',
   searchFonts: 'Kërko shkronja…',
   webFontHint:
     'Shfaqet në Apple Mail, iOS dhe shumicën e aplikacioneve; Gmail dhe Outlook përdorin alternativën.',
@@ -931,6 +934,7 @@ const DE: EditorMessages = {
   insertVariable: 'Variable einfügen',
   structures: 'Strukturen',
   inheritFont: 'Wie die E-Mail',
+  font: 'Schrift',
   searchFonts: 'Schriften suchen…',
   webFontHint:
     'In Apple Mail, iOS und den meisten Apps; Gmail und Outlook nutzen die Ersatzschrift.',

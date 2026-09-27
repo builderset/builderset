@@ -129,8 +129,19 @@ export function typography(props: Record<string, unknown>): {
 /** Every font the document uses — the email's and each block's own. */
 export function fontsInUse(doc: EmailDocument): string[] {
   const keys = new Set<string>([doc.settings.font]);
+  // Fonts set on parts of a text, anywhere in a block's props.
+  const scan = (value: unknown): void => {
+    if (Array.isArray(value)) {
+      for (const item of value) scan(item);
+    } else if (value && typeof value === 'object') {
+      const mark = value as { type?: unknown; family?: unknown };
+      if (mark.type === 'font' && typeof mark.family === 'string') keys.add(mark.family);
+      for (const item of Object.values(value)) scan(item);
+    }
+  };
   for (const node of Object.values(doc.nodes)) {
     if (typeof node.props.font === 'string') keys.add(node.props.font);
+    scan(node.props);
   }
   return [...keys];
 }

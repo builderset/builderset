@@ -2990,6 +2990,76 @@
             "path"
           ],
           "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "font"
+            },
+            "family": {
+              "type": "string",
+              "enum": [
+                "system",
+                "helvetica",
+                "verdana",
+                "tahoma",
+                "trebuchet",
+                "georgia",
+                "times",
+                "courier",
+                "inter",
+                "poppins",
+                "montserrat",
+                "roboto",
+                "open-sans",
+                "lato",
+                "raleway",
+                "nunito",
+                "dm-sans",
+                "manrope",
+                "plus-jakarta-sans",
+                "space-grotesk",
+                "work-sans",
+                "rubik",
+                "outfit",
+                "sora",
+                "urbanist",
+                "ibm-plex-sans",
+                "source-sans-3",
+                "figtree",
+                "lexend",
+                "red-hat-display",
+                "albert-sans",
+                "onest",
+                "playfair-display",
+                "merriweather",
+                "lora",
+                "libre-baskerville",
+                "cormorant-garamond",
+                "dm-serif-display",
+                "fraunces",
+                "eb-garamond",
+                "oswald",
+                "bebas-neue",
+                "anton",
+                "archivo-black",
+                "syne",
+                "unbounded",
+                "caveat",
+                "dancing-script",
+                "pacifico",
+                "jetbrains-mono",
+                "space-mono"
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "family"
+          ],
+          "additionalProperties": false
         }
       ]
     },

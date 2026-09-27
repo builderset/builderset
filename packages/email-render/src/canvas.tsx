@@ -104,7 +104,9 @@ function RichRuns({
           else if (mark.type === 'highlight') node = <mark>{node}</mark>;
           else if (mark.type === 'sub') node = <sub>{node}</sub>;
           else if (mark.type === 'sup') node = <sup>{node}</sup>;
-          else if (mark.type === 'link') {
+          else if (mark.type === 'font') {
+            node = <span style={{ fontFamily: fontStack(mark.family, context) }}>{node}</span>;
+          } else if (mark.type === 'link') {
             node = (
               <a
                 href="#"

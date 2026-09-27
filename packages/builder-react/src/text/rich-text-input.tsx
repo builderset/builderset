@@ -19,6 +19,8 @@ import { useEffect, useRef } from 'react';
 
 import { fromTiptap, toTiptap } from './convert';
 import { TextToolbar } from './text-toolbar';
+import { useEditorContext } from '../context';
+import { FontMark } from './font-mark';
 import { VariableMark } from './variable-mark';
 
 /**
@@ -37,6 +39,7 @@ export function RichTextInput({
   id?: string | undefined;
   multiline?: boolean;
 }) {
+  const { profile } = useEditorContext();
   const last = useRef(value);
   const change = useRef(onChange);
   change.current = onChange;
@@ -61,6 +64,9 @@ export function RichTextInput({
       Subscript,
       Superscript,
       VariableMark,
+      FontMark.configure({
+        stackOf: (family) => profile.fonts?.find((font) => font.key === family)?.stack,
+      }),
       Link.configure({
         openOnClick: false,
         autolink: false,

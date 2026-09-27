@@ -694,7 +694,7 @@ function LeftRail({
   ];
   return (
     <div className="flex h-full flex-col">
-      <div role="tablist" className="border-border grid grid-cols-3 border-b">
+      <div role="tablist" className="border-border grid grid-cols-[1fr_1fr_1.35fr] border-b">
         {tabs.map((item) => (
           <button
             key={item.value}
@@ -705,7 +705,7 @@ function LeftRail({
               onTab(item.value);
             }}
             className={cn(
-              'relative flex h-11 items-center justify-center gap-1.5 text-xs font-medium transition-colors [&_svg]:size-3.5',
+              'relative flex h-11 cursor-pointer items-center justify-center gap-1.5 text-xs font-medium whitespace-nowrap transition-colors [&_svg]:size-3.5',
               tab === item.value
                 ? 'text-foreground'
                 : 'text-muted-foreground hover:text-foreground',

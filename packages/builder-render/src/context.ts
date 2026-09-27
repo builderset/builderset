@@ -3,6 +3,7 @@ import type {
   BuilderNode,
   ElementRegistry,
   OutlineEntry,
+  RichText,
 } from '@motors/builder-core';
 import type { ComponentType, ReactNode } from 'react';
 
@@ -60,6 +61,24 @@ export interface RenderOptions {
   editing?: boolean | undefined;
   /** Extra renderers for a host's own elements, by type. */
   elements?: Readonly<Record<string, ElementRenderer>> | undefined;
+  /**
+   * Editor only: draws an editable field in place of a rich-text value. The
+   * text elements name which prop they are showing (`{ nodeId, path }`), so the
+   * editor can write straight back to it; everything else stays static.
+   */
+  editText?: ((field: EditableTextField) => ReactNode) | undefined;
+}
+
+/** A rich-text value the editor may edit in place. */
+export interface EditableTextField {
+  nodeId: string;
+  /** Dot path of the prop: `text`, `items.2.text`. */
+  path: string;
+  value: RichText;
+  /** What an empty field shows while editing. */
+  placeholder?: string | undefined;
+  /** The element the text sits in — a heading's `h2`, a list's `li`. */
+  multiline?: boolean | undefined;
 }
 
 export interface RenderContext {
@@ -86,6 +105,8 @@ export interface NodeFrame {
   className: string;
   style?: React.CSSProperties | undefined;
   'data-node'?: string | undefined;
+  /** Editor only: set on a hidden node, which the canvas dims. */
+  'data-hidden-node'?: string | undefined;
 }
 
 export interface ElementRenderProps<P = Record<string, unknown>> {

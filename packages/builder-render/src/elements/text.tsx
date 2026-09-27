@@ -51,12 +51,17 @@ export function HeadingView({
     <Tag
       {...frameProps({ ...frame, id: frame.id ?? anchor }, cn('scroll-mt-24 text-balance', size))}
     >
-      <RichTextView value={props.text} context={context} />
+      <RichTextView
+        value={props.text}
+        context={context}
+        field={{ node: node.id, path: 'text', placeholder: context.messages.headingPlaceholder }}
+      />
     </Tag>
   );
 }
 
 export function ParagraphView({
+  node,
   props,
   frame,
   context,
@@ -73,7 +78,11 @@ export function ParagraphView({
         ),
       )}
     >
-      <RichTextView value={props.text} context={context} />
+      <RichTextView
+        value={props.text}
+        context={context}
+        field={{ node: node.id, path: 'text', placeholder: context.messages.paragraphPlaceholder }}
+      />
     </p>
   );
 }
@@ -103,10 +112,12 @@ function ItemBody({
   item,
   style,
   context,
+  field,
 }: {
   item: { text: RichText; checked?: boolean | undefined };
   style: PropsOf<typeof listElement>['style'];
   context: RenderContext;
+  field?: { node: string; path: string } | undefined;
 }) {
   return (
     <>
@@ -121,13 +132,14 @@ function ItemBody({
           style === 'check' && item.checked && 'text-muted-foreground/80 line-through',
         )}
       >
-        <RichTextView value={item.text} context={context} />
+        <RichTextView value={item.text} context={context} field={field} />
       </span>
     </>
   );
 }
 
 export function ListView({
+  node,
   props,
   frame,
   context,
@@ -137,15 +149,28 @@ export function ListView({
     'text-muted-foreground leading-relaxed',
     props.style === 'number' ? 'marker:text-primary pl-1 marker:font-semibold' : 'flex gap-3',
   );
-  const renderItems = (items: readonly ListItem[] | ListItem['children']) =>
+  // Only top-level items are edited in place (`prefix` is set for them);
+  // nested ones are edited in the inspector.
+  const renderItems = (items: readonly ListItem[] | ListItem['children'], prefix?: string) =>
     (items ?? []).map((item, index) => (
       <li key={index} className={itemClass}>
         {props.style === 'number' ? (
-          <RichTextView value={item.text} context={context} />
+          <RichTextView
+            value={item.text}
+            context={context}
+            field={prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined}
+          />
         ) : (
           <div className="flex min-w-0 flex-1 flex-col gap-2.5">
             <div className="flex gap-3">
-              <ItemBody item={item} style={props.style} context={context} />
+              <ItemBody
+                item={item}
+                style={props.style}
+                context={context}
+                field={
+                  prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined
+                }
+              />
             </div>
           </div>
         )}
@@ -172,12 +197,13 @@ export function ListView({
         ),
       )}
     >
-      {renderItems(props.items)}
+      {renderItems(props.items, 'items')}
     </Tag>
   );
 }
 
 export function QuoteView({
+  node,
   props,
   frame,
   context,
@@ -189,7 +215,11 @@ export function QuoteView({
         className="border-primary bg-muted/50 rounded-r-[var(--radius-card,0.625rem)] border-l-2 px-6 py-5 text-lg leading-relaxed font-medium"
         {...(props.source ? { cite: props.source } : {})}
       >
-        <RichTextView value={props.text} context={context} />
+        <RichTextView
+          value={props.text}
+          context={context}
+          field={{ node: node.id, path: 'text' }}
+        />
       </blockquote>
       {props.cite ? (
         <figcaption className="text-muted-foreground mt-3 pl-6 text-sm">
@@ -246,6 +276,7 @@ const CALLOUT: Record<
 };
 
 export function CalloutView({
+  node,
   props,
   frame,
   context,
@@ -265,7 +296,11 @@ export function CalloutView({
       <div className="min-w-0 flex-1">
         {props.title ? <p className="text-foreground mb-1 font-semibold">{props.title}</p> : null}
         <div className="text-muted-foreground leading-relaxed">
-          <RichTextView value={props.text} context={context} />
+          <RichTextView
+            value={props.text}
+            context={context}
+            field={{ node: node.id, path: 'text' }}
+          />
         </div>
       </div>
     </aside>
@@ -466,7 +501,7 @@ export function FootnoteView({
   return (
     <p {...frameProps(frame, 'text-muted-foreground border-border my-4 border-l-2 pl-3 text-sm')}>
       <sup className="text-primary mr-1 font-semibold">{context.footnotes.get(node.id)}</sup>
-      <RichTextView value={props.text} context={context} />
+      <RichTextView value={props.text} context={context} field={{ node: node.id, path: 'text' }} />
     </p>
   );
 }

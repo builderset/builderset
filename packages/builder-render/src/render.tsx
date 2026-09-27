@@ -198,6 +198,7 @@ export function frameFor(id: string, context: RenderContext): NodeFrame {
     className: styleClasses(node?.style),
     ...(style ? { style } : {}),
     ...(context.options.editing ? { 'data-node': id } : {}),
+    ...(context.options.editing && node?.hidden ? { 'data-hidden-node': '' } : {}),
   };
 }
 

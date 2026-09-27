@@ -87,10 +87,22 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
 export function RichTextView({
   value,
   context,
+  field,
 }: {
   value: RichText | undefined | null;
   context: RenderContext;
+  /** Which prop this is — lets the editor edit it in place. */
+  field?: { node: string; path: string; placeholder?: string } | undefined;
 }) {
+  const { editText } = context.options;
+  if (editText && field) {
+    return editText({
+      nodeId: field.node,
+      path: field.path,
+      value: value ?? [],
+      placeholder: field.placeholder,
+    });
+  }
   if (!value?.length) return null;
   return (
     <>

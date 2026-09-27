@@ -1,0 +1,194 @@
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { describe, expect, it } from 'vitest';
+
+import { createDocument, type BuilderDocument } from './document';
+import { createStandardRegistry } from './elements';
+import { toJSONSchema } from './json-schema';
+import { kitchenSinkDocument, renumber } from './kitchen-sink';
+import { fromLegacyBody } from './legacy';
+import { checkDocument } from './validate';
+
+/**
+ * The CONTRACT with the server, as files.
+ *
+ * `schema/document.schema.json` and `fixtures/` are committed. The API's
+ * contract test reads the same files: every valid fixture must be accepted,
+ * and every invalid one refused with the code the manifest names. This test
+ * keeps the files honest — it regenerates them in memory and fails when the
+ * committed copy differs. Run with `UPDATE_FIXTURES=1` to rewrite them after
+ * an intentional change, and commit the result alongside the change.
+ */
+
+const registry = createStandardRegistry();
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const update = process.env.UPDATE_FIXTURES === '1';
+
+function stable(value: unknown): string {
+  return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+function expectFile(relative: string, content: string) {
+  const path = join(root, relative);
+  if (update) {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, content);
+    return;
+  }
+  let committed = '';
+  try {
+    committed = readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
+  } catch {
+    throw new Error(`${relative} is missing — run the tests with UPDATE_FIXTURES=1 and commit it.`);
+  }
+  expect(committed, `${relative} is stale — run with UPDATE_FIXTURES=1`).toBe(content);
+}
+
+/** A small valid document to break in one specific way per invalid fixture. */
+function base(): BuilderDocument {
+  const doc = createDocument({ title: 'Broken on purpose' });
+  doc.nodes.root = { id: 'root', type: 'root', v: 1, props: {}, children: ['n1'] };
+  doc.nodes.n1 = {
+    id: 'n1',
+    type: 'paragraph',
+    v: 1,
+    props: { text: [{ text: 'Hello' }], dropCap: false, lead: false },
+  };
+  return doc;
+}
+
+const INVALID: Record<string, { code: string; build: () => BuilderDocument }> = {
+  'unsafe-link': {
+    code: 'url.unsafe',
+    build: () => {
+      const doc = base();
+      if (doc.nodes.n1) {
+        doc.nodes.n1.props.text = [
+          { text: 'x', marks: [{ type: 'link', href: 'javascript:alert(1)' }] },
+        ];
+      }
+      return doc;
+    },
+  },
+  orphan: {
+    code: 'document.orphan',
+    build: () => {
+      const doc = base();
+      doc.nodes.n2 = { id: 'n2', type: 'divider', v: 1, props: { variant: 'line', width: 'full' } };
+      return doc;
+    },
+  },
+  'column-in-root': {
+    code: 'placement.notAllowed',
+    build: () => {
+      const doc = base();
+      doc.nodes.root?.children?.push('n2');
+      doc.nodes.n2 = { id: 'n2', type: 'column', v: 1, props: { span: 6 }, children: [] };
+      return doc;
+    },
+  },
+  'unknown-element': {
+    code: 'element.unknown',
+    build: () => {
+      const doc = base();
+      doc.nodes.root?.children?.push('n2');
+      doc.nodes.n2 = { id: 'n2', type: 'marquee', v: 1, props: {} };
+      return doc;
+    },
+  },
+  'duplicate-anchor': {
+    code: 'anchor.duplicate',
+    build: () => {
+      const doc = base();
+      doc.nodes.root?.children?.push('n2');
+      const first = doc.nodes.n1;
+      if (!first) throw new Error('base() lost its paragraph');
+      first.anchor = 'same';
+      doc.nodes.n2 = { ...structuredClone(first), id: 'n2' };
+      return doc;
+    },
+  },
+  'external-media': {
+    code: 'media.external',
+    build: () => {
+      const doc = base();
+      doc.nodes.root?.children?.push('n2');
+      doc.nodes.n2 = {
+        id: 'n2',
+        type: 'image',
+        v: 1,
+        props: {
+          ...registry.require('image').defaults(),
+          pendingUrl: 'https://elsewhere.test/a.jpg',
+          alt: 'A',
+        },
+      };
+      return doc;
+    },
+  },
+  'embed-not-allowed': {
+    code: 'embed.notAllowed',
+    build: () => {
+      const doc = base();
+      doc.nodes.root?.children?.push('n2');
+      doc.nodes.n2 = {
+        id: 'n2',
+        type: 'embed',
+        v: 1,
+        props: { url: 'https://evil.test/v', provider: null, title: '', caption: '' },
+      };
+      return doc;
+    },
+  },
+  'missing-title': {
+    code: 'meta.titleMissing',
+    build: () => ({ ...base(), meta: { title: '' } }),
+  },
+};
+
+describe('the server contract', () => {
+  it('commits the JSON Schema of the standard document', () => {
+    expectFile('schema/document.schema.json', stable(toJSONSchema(registry)));
+  });
+
+  it('commits valid fixtures the checker accepts', () => {
+    const valid: Record<string, BuilderDocument> = {
+      'kitchen-sink': kitchenSinkDocument(registry),
+      empty: createDocument({ title: 'Empty' }),
+      legacy: renumber(
+        fromLegacyBody(
+          [
+            { kind: 'heading', text: 'A heading' },
+            { kind: 'paragraph', text: 'A paragraph.' },
+            { kind: 'list', items: ['One', 'Two'] },
+            { kind: 'quote', text: 'A quote.' },
+            { kind: 'image', key: 'articles/sample/legacy.jpg', alt: 'Legacy', caption: 'Caption' },
+          ],
+          registry,
+          { title: 'Legacy article' },
+        ),
+      ),
+    };
+    for (const [name, doc] of Object.entries(valid)) {
+      const errors = checkDocument(doc, registry).filter((issue) => issue.severity === 'error');
+      expect(errors, name).toEqual([]);
+      expectFile(`fixtures/valid/${name}.json`, stable(doc));
+    }
+  });
+
+  it('commits invalid fixtures, each refused with its named code', () => {
+    const manifest: Record<string, string> = {};
+    for (const [name, { code, build }] of Object.entries(INVALID)) {
+      const doc = build();
+      const found = checkDocument(doc, registry)
+        .filter((issue) => issue.severity === 'error')
+        .map((issue) => issue.code);
+      expect(found, name).toContain(code);
+      manifest[`${name}.json`] = code;
+      expectFile(`fixtures/invalid/${name}.json`, stable(doc));
+    }
+    expectFile('fixtures/invalid/manifest.json', stable(manifest));
+  });
+});

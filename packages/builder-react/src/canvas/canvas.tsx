@@ -5,7 +5,15 @@ import { renderDocument, type EditableTextField } from '@motors/builder-render';
 import { EmptyState } from '@motors/ui';
 import { FilePlus2, PenLine } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useCallback, useMemo, useRef, useState, type DragEvent, type MouseEvent } from 'react';
+import {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+  type MouseEvent,
+} from 'react';
 
 import { useEditor, useEditorContext } from '../context';
 import { InlineText } from '../text/inline-text';
@@ -22,8 +30,33 @@ import { useFlip } from './flip';
 import { Overlay } from './overlay';
 import { TitleField } from './title-field';
 
-/** Canvas width per device, in CSS pixels, before zoom. */
-export const VIEWPORT_WIDTH = { desktop: 1040, tablet: 820, mobile: 390 } as const;
+/**
+ * The widest the page gets per device, in CSS pixels, before zoom. Desktop is a
+ * ceiling — it fills whatever room the panels leave; tablet and mobile are the
+ * devices' own widths, shrunk only if the window cannot fit them.
+ */
+export const VIEWPORT_WIDTH = { desktop: 1200, tablet: 820, mobile: 390 } as const;
+
+/** Breathing room around the page inside the canvas, per side. */
+const GUTTER = 24;
+
+/** The canvas area's width, kept current as panels open and the window resizes. */
+function useWidth(ref: React.RefObject<HTMLElement | null>): number {
+  const [width, setWidth] = useState(0);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    setWidth(element.clientWidth);
+    const observer = new ResizeObserver(() => {
+      setWidth(element.clientWidth);
+    });
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref]);
+  return width;
+}
 
 function nodeElement(target: EventTarget | null): HTMLElement | null {
   return target instanceof Element ? target.closest<HTMLElement>('[data-node]') : null;
@@ -48,6 +81,12 @@ export function Canvas() {
   const [drop, setDrop] = useState<DropTarget | null>(null);
   const scale = zoom / 100;
   useFlip(pageRef, doc, scale);
+  const available = useWidth(scrollRef);
+  // In page pixels: what fits beside the gutters at this zoom, never more than
+  // the device's width. Until the first measure, the device width.
+  const pageWidth = available
+    ? Math.max(320, Math.min(VIEWPORT_WIDTH[viewport], (available - GUTTER * 2) / scale))
+    : VIEWPORT_WIDTH[viewport];
 
   const editText = useCallback(
     (field: EditableTextField) => (
@@ -149,21 +188,20 @@ export function Canvas() {
   return (
     <div
       ref={scrollRef}
-      className="bld-canvas bg-muted/40 relative h-full overflow-auto"
+      className="bld-canvas bg-muted/40 relative h-full overflow-x-hidden overflow-y-auto"
       onClick={(event) => {
         if (event.target === event.currentTarget) store.getState().select([]);
       }}
     >
       <style>{CANVAS_CSS}</style>
       <motion.div
-        className="mx-auto py-8"
+        className="mx-auto py-6"
         initial={false}
-        animate={{ width: VIEWPORT_WIDTH[viewport] * scale }}
+        animate={{ width: pageWidth * scale }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
-        style={{ maxWidth: '100%' }}
       >
         <div
-          style={{ width: VIEWPORT_WIDTH[viewport], zoom: scale }}
+          style={{ width: pageWidth, zoom: scale }}
           className="bg-background border-border min-h-[70vh] rounded-[var(--radius-card)] border shadow-sm"
         >
           <div

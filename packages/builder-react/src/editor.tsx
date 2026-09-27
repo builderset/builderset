@@ -31,6 +31,7 @@ import {
 
 import { Canvas } from './canvas/canvas';
 import { HistorySheet } from './chrome/history-sheet';
+import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
@@ -646,7 +647,7 @@ function Workspace({
         }}
       />
 
-      <Sheet
+      <SideDrawer
         open={shortcuts}
         onClose={() => {
           setShortcuts(false);
@@ -665,7 +666,7 @@ function Workspace({
             </div>
           ))}
         </dl>
-      </Sheet>
+      </SideDrawer>
     </div>
   );
 }
@@ -851,7 +852,7 @@ function ScheduleDialog({
   const valid = !Number.isNaN(when.getTime()) && when.getTime() > Date.now();
 
   return (
-    <Sheet
+    <SideDrawer
       open={open}
       onClose={onClose}
       title={messages.schedule.replace('…', '')}
@@ -887,7 +888,7 @@ function ScheduleDialog({
           </Button>
         </div>
       </div>
-    </Sheet>
+    </SideDrawer>
   );
 }
 

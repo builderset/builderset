@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, EmptyState, Input, Sheet, Spinner } from '@motors/ui';
+import { Button, EmptyState, Input, Spinner } from '@motors/ui';
 import { Clock, RotateCcw, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useEditorContext } from '../context';
 import type { RevisionSummary } from '../host';
+import { SideDrawer } from './side-drawer';
 
 /**
  * Saved versions of the article: autosaves, named saves and what went live.
@@ -58,7 +59,7 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={messages.revisions}>
+    <SideDrawer open={open} onClose={onClose} title={messages.revisions}>
       {host.saveRevision ? (
         <form
           className="mb-4 flex gap-2"
@@ -130,6 +131,6 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
           ))}
         </ol>
       )}
-    </Sheet>
+    </SideDrawer>
   );
 }

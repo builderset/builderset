@@ -18,6 +18,7 @@ import {
   type DragPayload,
   type DropTarget,
 } from './drop';
+import { useFlip } from './flip';
 import { Overlay } from './overlay';
 import { TitleField } from './title-field';
 
@@ -43,7 +44,10 @@ export function Canvas() {
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
   const pageRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [drop, setDrop] = useState<DropTarget | null>(null);
+  const scale = zoom / 100;
+  useFlip(pageRef, doc, scale);
 
   const editText = useCallback(
     (field: EditableTextField) => (
@@ -93,9 +97,23 @@ export function Canvas() {
   const payloadOf = (event: DragEvent): DragPayload | null =>
     activeDrag() ?? readPayload(event.dataTransfer);
 
+  /** Near the top or bottom edge while dragging: scroll, faster the closer. */
+  const autoScroll = (clientY: number) => {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+    const rect = scroller.getBoundingClientRect();
+    const edge = 80;
+    if (clientY < rect.top + edge) {
+      scroller.scrollBy({ top: -Math.ceil(((rect.top + edge - clientY) / edge) * 18) });
+    } else if (clientY > rect.bottom - edge) {
+      scroller.scrollBy({ top: Math.ceil(((clientY - (rect.bottom - edge)) / edge) * 18) });
+    }
+  };
+
   const onDragOver = (event: DragEvent) => {
     const payload = payloadOf(event);
     if (!payload) return;
+    autoScroll(event.clientY);
     const element = nodeElement(event.target);
     const id = element?.dataset.node;
     const target =
@@ -128,10 +146,9 @@ export function Canvas() {
     }
   };
 
-  const scale = zoom / 100;
-
   return (
     <div
+      ref={scrollRef}
       className="bld-canvas bg-muted/40 relative h-full overflow-auto"
       onClick={(event) => {
         if (event.target === event.currentTarget) store.getState().select([]);
@@ -155,6 +172,7 @@ export function Canvas() {
             className="relative px-6 py-10 sm:px-12"
             onClick={onClick}
             onMouseOver={(event) => {
+              if (activeDrag()) return;
               store.getState().hover(nodeElement(event.target)?.dataset.node ?? null);
             }}
             onMouseLeave={() => {
@@ -213,6 +231,8 @@ export function Canvas() {
 const CANVAS_CSS = `
 .bld-canvas [data-node]:empty { min-height: 3rem; border: 1px dashed var(--border); border-radius: var(--radius-control, 0.4rem); }
 .bld-canvas [data-hidden-node] { opacity: 0.45; }
+.bld-canvas [data-node] { transition: opacity 160ms ease; }
+.bld-canvas [data-dragging] { opacity: 0.3; filter: saturate(0.6); }
 .bld-canvas .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--muted-foreground); opacity: 0.7; pointer-events: none; float: left; height: 0; }
 .bld-canvas .ProseMirror { white-space: pre-wrap; word-break: break-word; }
 .bld-canvas [data-node] { cursor: default; }

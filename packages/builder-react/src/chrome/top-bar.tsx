@@ -153,52 +153,59 @@ export function TopBar(actions: TopBarActions) {
   const statusKey = scheduled ? 'status_scheduled' : (`status_${article.status}` as 'status_draft');
 
   return (
-    <header className="border-border bg-sidebar flex h-14 shrink-0 items-center gap-2 border-b px-2 sm:px-3">
-      <Tooltip content={messages.back}>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={messages.back}
-          onClick={actions.onBack}
-        >
-          <ArrowLeft aria-hidden="true" />
-        </Button>
-      </Tooltip>
-      <Tooltip content="[">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={messages.add}
-          aria-pressed={leftOpen}
-          className="hidden md:inline-flex"
-          onClick={() => {
-            store.getState().toggleLeft();
-          }}
-        >
-          <PanelLeft aria-hidden="true" />
-        </Button>
-      </Tooltip>
-
-      <div className="flex min-w-0 flex-1 items-center gap-2">
-        <span className="truncate text-sm font-semibold">{title || messages.untitled}</span>
-        <Badge
-          tone={published ? 'finalized' : scheduled ? 'scheduled' : 'pending'}
-          className="hidden sm:inline-flex"
-        >
-          {messages[statusKey]}
-        </Badge>
+    // Three zones: where you are (left), how you are looking at it (center),
+    // what you do with it (right). The outer two share the leftover width
+    // equally, so the center group sits in the true middle of the window.
+    <header className="border-border bg-sidebar grid h-14 shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b px-2 sm:px-3">
+      {/* ── Left: navigation and identity ── */}
+      <div className="flex min-w-0 items-center gap-1">
+        <Tooltip content={messages.back}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={messages.back}
+            onClick={actions.onBack}
+          >
+            <ArrowLeft aria-hidden="true" />
+          </Button>
+        </Tooltip>
+        <Divider />
+        <Tooltip content={`${messages.add} · [`}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={messages.add}
+            aria-pressed={leftOpen}
+            className="hidden md:inline-flex"
+            onClick={() => {
+              store.getState().toggleLeft();
+            }}
+          >
+            <PanelLeft aria-hidden="true" />
+          </Button>
+        </Tooltip>
+        <div className="ml-1 flex min-w-0 items-center gap-2">
+          <span className="truncate text-sm font-semibold">{title || messages.untitled}</span>
+          <Badge
+            tone={published ? 'finalized' : scheduled ? 'scheduled' : 'pending'}
+            className="hidden shrink-0 sm:inline-flex"
+          >
+            {messages[statusKey]}
+          </Badge>
+        </div>
       </div>
 
-      <div className="flex items-center gap-1">
+      {/* ── Center: view controls, one group ── */}
+      <div className="border-border bg-background/70 flex items-center gap-0.5 rounded-[var(--radius-control)] border p-0.5 shadow-xs">
         <Tooltip
           content={canUndo ? `${messages.undo}: ${undoLabel ?? ''}` : messages.nothingToUndo}
         >
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             aria-label={messages.undo}
             disabled={!canUndo}
             onClick={() => {
@@ -214,7 +221,7 @@ export function TopBar(actions: TopBarActions) {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-sm"
             aria-label={messages.redo}
             disabled={!canRedo}
             onClick={() => {
@@ -224,153 +231,159 @@ export function TopBar(actions: TopBarActions) {
             <Redo2 aria-hidden="true" />
           </Button>
         </Tooltip>
-      </div>
-
-      <SegmentedControl
-        aria-label={messages.breakpoint}
-        value={viewport}
-        onValueChange={(value) => {
-          store.getState().setViewport(value);
-        }}
-        options={DEVICES.map((device) => ({
-          value: device.value,
-          label: device.icon,
-          ariaLabel: messages[device.value],
-        }))}
-        className="hidden md:flex"
-      />
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="hidden tabular-nums lg:inline-flex"
-          >
-            {zoom}%
-            <ChevronDown aria-hidden="true" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {ZOOMS.map((value) => (
-            <DropdownMenuItem
-              key={value}
-              onSelect={() => {
-                store.getState().setZoom(value);
-              }}
-            >
-              {value}%
-              {value === zoom ? <Check className="ml-auto size-4" aria-hidden="true" /> : null}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <SaveIndicator />
-
-      {actions.onHistory ? (
-        <Tooltip content={messages.revisions}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={messages.revisions}
-            onClick={actions.onHistory}
-          >
-            <History aria-hidden="true" />
-          </Button>
-        </Tooltip>
-      ) : null}
-
-      {actions.onPreview ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          icon={<Eye aria-hidden="true" />}
-          onClick={actions.onPreview}
-          className="hidden sm:inline-flex"
-        >
-          {messages.preview}
-        </Button>
-      ) : null}
-
-      <div className="flex items-center">
-        <Button
-          type="button"
-          size="sm"
-          loading={actions.busy}
-          icon={<Rocket aria-hidden="true" />}
-          onClick={actions.onPublish}
-          className="rounded-r-none"
-        >
-          {published ? messages.update : messages.publish}
-        </Button>
+        <span className="bg-border mx-1 hidden h-5 w-px md:block" aria-hidden="true" />
+        <SegmentedControl
+          aria-label={messages.breakpoint}
+          value={viewport}
+          onValueChange={(value) => {
+            store.getState().setViewport(value);
+          }}
+          options={DEVICES.map((device) => ({
+            value: device.value,
+            label: device.icon,
+            ariaLabel: messages[device.value],
+          }))}
+          className="hidden border-0 bg-transparent p-0 md:flex"
+        />
+        <span className="bg-border mx-1 hidden h-5 w-px lg:block" aria-hidden="true" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               type="button"
-              size="icon-sm"
-              aria-label={messages.moreOptions}
-              className="border-primary-foreground/20 rounded-l-none border-l"
-              disabled={actions.busy}
+              variant="ghost"
+              size="sm"
+              aria-label={messages.zoom}
+              className="hidden w-[4.5rem] justify-between tabular-nums lg:inline-flex"
             >
+              {zoom}%
               <ChevronDown aria-hidden="true" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onSelect={actions.onSave}>
-              <Save className="size-4" aria-hidden="true" />
-              {messages.saveDraft}
-              <span className="text-muted-foreground ml-auto text-xs">Ctrl S</span>
-            </DropdownMenuItem>
-            {!published ? (
-              <DropdownMenuItem onSelect={actions.onSchedule}>
-                <CalendarClock className="size-4" aria-hidden="true" />
-                {messages.schedule}
+          <DropdownMenuContent align="center">
+            {ZOOMS.map((value) => (
+              <DropdownMenuItem
+                key={value}
+                onSelect={() => {
+                  store.getState().setZoom(value);
+                }}
+              >
+                {value}%
+                {value === zoom ? <Check className="ml-auto size-4" aria-hidden="true" /> : null}
               </DropdownMenuItem>
-            ) : null}
-            {published && actions.onUnpublish ? (
-              <DropdownMenuItem onSelect={actions.onUnpublish}>
-                <Undo className="size-4" aria-hidden="true" />
-                {messages.unpublish}
-              </DropdownMenuItem>
-            ) : null}
-            {actions.onDuplicate ? (
-              <DropdownMenuItem onSelect={actions.onDuplicate}>
-                <Copy className="size-4" aria-hidden="true" />
-                {messages.duplicateArticle}
-              </DropdownMenuItem>
-            ) : null}
-            {actions.onDelete ? (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={actions.onDelete} className="text-destructive">
-                  <Trash2 className="size-4" aria-hidden="true" />
-                  {messages.deleteArticle}
-                </DropdownMenuItem>
-              </>
-            ) : null}
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <Tooltip content="]">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={messages.settings}
-          aria-pressed={rightOpen}
-          className="hidden md:inline-flex"
-          onClick={() => {
-            store.getState().toggleRight();
-          }}
-        >
-          <PanelRight aria-hidden="true" />
-        </Button>
-      </Tooltip>
+      {/* ── Right: saving and publishing ── */}
+      <div className="flex min-w-0 items-center justify-end gap-1">
+        <SaveIndicator />
+        {actions.onHistory ? (
+          <Tooltip content={messages.revisions}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={messages.revisions}
+              onClick={actions.onHistory}
+            >
+              <History aria-hidden="true" />
+            </Button>
+          </Tooltip>
+        ) : null}
+        {actions.onPreview ? (
+          <Tooltip content={messages.preview}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={messages.preview}
+              onClick={actions.onPreview}
+            >
+              <Eye aria-hidden="true" />
+            </Button>
+          </Tooltip>
+        ) : null}
+        <div className="ml-1 flex items-center">
+          <Button
+            type="button"
+            size="sm"
+            loading={actions.busy}
+            icon={<Rocket aria-hidden="true" />}
+            onClick={actions.onPublish}
+            className="rounded-r-none"
+          >
+            {published ? messages.update : messages.publish}
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                size="icon-sm"
+                aria-label={messages.moreOptions}
+                className="border-primary-foreground/20 rounded-l-none border-l"
+                disabled={actions.busy}
+              >
+                <ChevronDown aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onSelect={actions.onSave}>
+                <Save className="size-4" aria-hidden="true" />
+                {messages.saveDraft}
+                <span className="text-muted-foreground ml-auto text-xs">Ctrl S</span>
+              </DropdownMenuItem>
+              {!published ? (
+                <DropdownMenuItem onSelect={actions.onSchedule}>
+                  <CalendarClock className="size-4" aria-hidden="true" />
+                  {messages.schedule}
+                </DropdownMenuItem>
+              ) : null}
+              {published && actions.onUnpublish ? (
+                <DropdownMenuItem onSelect={actions.onUnpublish}>
+                  <Undo className="size-4" aria-hidden="true" />
+                  {messages.unpublish}
+                </DropdownMenuItem>
+              ) : null}
+              {actions.onDuplicate ? (
+                <DropdownMenuItem onSelect={actions.onDuplicate}>
+                  <Copy className="size-4" aria-hidden="true" />
+                  {messages.duplicateArticle}
+                </DropdownMenuItem>
+              ) : null}
+              {actions.onDelete ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={actions.onDelete} className="text-destructive">
+                    <Trash2 className="size-4" aria-hidden="true" />
+                    {messages.deleteArticle}
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <Divider />
+        <Tooltip content={`${messages.settings} · ]`}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={messages.settings}
+            aria-pressed={rightOpen}
+            className="hidden md:inline-flex"
+            onClick={() => {
+              store.getState().toggleRight();
+            }}
+          >
+            <PanelRight aria-hidden="true" />
+          </Button>
+        </Tooltip>
+      </div>
     </header>
   );
+}
+
+function Divider() {
+  return <span className="bg-border mx-1 hidden h-6 w-px md:block" aria-hidden="true" />;
 }

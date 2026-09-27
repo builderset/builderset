@@ -105,7 +105,7 @@ function NodeInspector({ id }: { id: NodeId }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border flex items-center gap-2.5 border-b px-4 py-3">
+      <div className="border-border flex h-14 shrink-0 items-center gap-2.5 border-b px-4">
         <span className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-md">
           <ElementIcon name={definition?.icon ?? 'box'} className="size-4" />
         </span>

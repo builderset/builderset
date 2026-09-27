@@ -134,6 +134,48 @@ let active: DragPayload | null = null;
 
 export function setActiveDrag(payload: DragPayload | null): void {
   active = payload;
+  // The blocks being moved fade where they are, so the writer sees what is
+  // travelling and where the gap it leaves will be.
+  for (const element of document.querySelectorAll('[data-dragging]')) {
+    element.removeAttribute('data-dragging');
+  }
+  if (payload?.kind === 'nodes') {
+    for (const id of payload.ids) {
+      for (const element of document.querySelectorAll(
+        `[data-node="${CSS.escape(id)}"], [data-layer="${CSS.escape(id)}"]`,
+      )) {
+        element.setAttribute('data-dragging', '');
+      }
+    }
+  }
+}
+
+/**
+ * The picture that follows the pointer: a small labelled chip instead of the
+ * browser's ghost of the whole block, which for a gallery is half the screen.
+ */
+export function setDragChip(data: DataTransfer, label: string): void {
+  const chip = document.createElement('div');
+  chip.textContent = label;
+  chip.style.cssText = [
+    'position:fixed',
+    'top:-100px',
+    'left:-100px',
+    'padding:6px 12px',
+    'border-radius:999px',
+    'font:600 12px/1.2 var(--font-sans, system-ui)',
+    'color:var(--primary-foreground, #fff)',
+    'background:var(--primary, #111)',
+    'box-shadow:0 8px 24px rgb(0 0 0 / 0.18)',
+    'white-space:nowrap',
+    'pointer-events:none',
+  ].join(';');
+  document.body.appendChild(chip);
+  data.setDragImage(chip, 14, 14);
+  // The browser snapshots the chip synchronously; it can go right after.
+  setTimeout(() => {
+    chip.remove();
+  }, 0);
 }
 
 export function activeDrag(): DragPayload | null {

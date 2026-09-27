@@ -71,7 +71,7 @@ export function DocumentSettings() {
   const [tab, setTab] = useState('general');
   return (
     <div className="flex h-full flex-col">
-      <div className="border-border border-b px-4 py-3">
+      <div className="border-border flex h-14 shrink-0 flex-col justify-center border-b px-4">
         <p className="text-sm font-semibold">{messages.document}</p>
         <p className="text-muted-foreground text-xs">{messages.nothingSelected}</p>
       </div>

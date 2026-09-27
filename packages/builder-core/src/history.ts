@@ -1,6 +1,6 @@
 import { applyPatches, type Draft, type Patch } from 'immer';
 
-import type { BuilderDocument } from './document';
+import type { BuilderDocument, NodeTree } from './document';
 import type { NodeId } from './ids';
 import { LIMITS } from './limits';
 import { applyChange } from './operations';
@@ -51,7 +51,7 @@ export interface HistoryOptions {
   now?: () => number;
 }
 
-export class History {
+export class History<D extends NodeTree = BuilderDocument> {
   private undoStack: HistoryEntry[] = [];
   private redoStack: HistoryEntry[] = [];
   private pending: HistoryEntry | null = null;
@@ -60,7 +60,7 @@ export class History {
   private readonly now: () => number;
 
   constructor(
-    private current: BuilderDocument,
+    private current: D,
     private selection: Selection = { ids: [] },
     options: HistoryOptions = {},
   ) {
@@ -69,7 +69,7 @@ export class History {
     this.now = options.now ?? (() => Date.now());
   }
 
-  get doc(): BuilderDocument {
+  get doc(): D {
     return this.current;
   }
 
@@ -103,8 +103,10 @@ export class History {
    * Run a change and record it. Returns the change's own result. A change that
    * throws leaves the document, the stacks and the selection untouched.
    */
-  commit<T>(change: (draft: Draft<BuilderDocument>) => T, options: CommitOptions): T {
-    const { doc, patches, inversePatches, result } = applyChange(this.current, change);
+  commit<T>(change: (draft: Draft<D>) => T, options: CommitOptions): T {
+    const { doc, patches, inversePatches, result } = applyChange<T, D>(this.current, (draft) =>
+      change(draft as Draft<D>),
+    );
     if (patches.length === 0) {
       if (options.selectionAfter) this.selection = options.selectionAfter;
       return result;
@@ -160,7 +162,7 @@ export class History {
     }
   }
 
-  undo(): { doc: BuilderDocument; selection: Selection } | null {
+  undo(): { doc: D; selection: Selection } | null {
     const entry = this.undoStack.pop();
     if (!entry) return null;
     this.current = applyPatches(this.current, entry.inversePatches);
@@ -169,7 +171,7 @@ export class History {
     return { doc: this.current, selection: this.selection };
   }
 
-  redo(): { doc: BuilderDocument; selection: Selection } | null {
+  redo(): { doc: D; selection: Selection } | null {
     const entry = this.redoStack.pop();
     if (!entry) return null;
     this.current = applyPatches(this.current, entry.patches);
@@ -179,7 +181,7 @@ export class History {
   }
 
   /** Forget every step — after loading a different document, say. */
-  reset(doc: BuilderDocument, selection: Selection = { ids: [] }): void {
+  reset(doc: D, selection: Selection = { ids: [] }): void {
     this.current = doc;
     this.selection = selection;
     this.undoStack = [];

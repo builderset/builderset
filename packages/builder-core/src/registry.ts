@@ -20,7 +20,11 @@ import type { MediaRef } from './media';
  */
 
 export const CATEGORIES = ['layout', 'text', 'media', 'article', 'engagement', 'plugin'] as const;
-export type ElementCategory = (typeof CATEGORIES)[number];
+/**
+ * The article categories are the known ones; another builder (email) brings
+ * its own, so the type stays open while keeping these as suggestions.
+ */
+export type ElementCategory = (typeof CATEGORIES)[number] | (string & {});
 
 export interface ContainerRule {
   /** Only these child types. Wins over `except`. */

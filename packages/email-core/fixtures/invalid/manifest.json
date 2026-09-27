@@ -1,0 +1,6 @@
+{
+  "unsafe-link.json": "url.unsafe",
+  "block-in-section.json": "placement.notAllowed",
+  "unknown-block.json": "element.unknown",
+  "orphan.json": "document.orphan"
+}

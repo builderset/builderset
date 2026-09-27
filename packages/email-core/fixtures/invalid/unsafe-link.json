@@ -1,0 +1,138 @@
+{
+  "schema": "email/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "label": "Get started",
+        "href": "javascript:alert(1)",
+        "align": "left",
+        "background": "brand.primary",
+        "textColor": "#ffffff",
+        "borderColor": null,
+        "borderWidth": 0,
+        "radius": 8,
+        "paddingX": 24,
+        "paddingY": 12,
+        "size": 16,
+        "fullWidthMobile": true,
+        "display": {
+          "hideOn": "none",
+          "when": []
+        },
+        "padding": {
+          "top": 12,
+          "right": 0,
+          "bottom": 12,
+          "left": 0
+        }
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "column",
+      "v": 1,
+      "props": {
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "radius": 0,
+        "borderWidth": 0,
+        "borderColor": "brand.border"
+      },
+      "children": [
+        "n1"
+      ]
+    },
+    "n3": {
+      "id": "n3",
+      "type": "row",
+      "v": 1,
+      "props": {
+        "layout": "100",
+        "gap": 16,
+        "stackOnMobile": true,
+        "reverseOnMobile": false,
+        "verticalAlign": "top",
+        "background": null,
+        "padding": {
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      },
+      "children": [
+        "n2"
+      ]
+    },
+    "n4": {
+      "id": "n4",
+      "type": "section",
+      "v": 1,
+      "props": {
+        "backdrop": null,
+        "background": null,
+        "backgroundImage": null,
+        "fullWidth": false,
+        "padding": {
+          "top": 24,
+          "right": 24,
+          "bottom": 24,
+          "left": 24
+        },
+        "radius": 0
+      },
+      "children": [
+        "n3"
+      ]
+    }
+  },
+  "meta": {
+    "name": "",
+    "subject": "Broken on purpose",
+    "preheader": ""
+  },
+  "settings": {
+    "width": 600,
+    "backdrop": "#f4f4f5",
+    "background": "#ffffff",
+    "font": "system",
+    "fontSize": 16,
+    "lineHeight": 1.6,
+    "textColor": "brand.text",
+    "headingColor": "brand.text",
+    "linkColor": "brand.primary",
+    "darkMode": "auto",
+    "dark": {
+      "backdrop": "#0b0b0c",
+      "background": "#18181b",
+      "text": "#e4e4e7",
+      "heading": "#fafafa",
+      "link": "#93c5fd"
+    },
+    "utm": {
+      "enabled": false,
+      "source": "email",
+      "medium": "email",
+      "campaign": ""
+    }
+  }
+}

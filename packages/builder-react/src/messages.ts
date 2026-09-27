@@ -157,6 +157,7 @@ export interface EditorMessages {
   noSections: string;
   dragToMove: string;
   moreOptions: string;
+  close: string;
   versionLabel: string;
   saved: string;
   published: string;
@@ -487,6 +488,7 @@ const EN: EditorMessages = {
   noSections: 'Select blocks and name them to reuse them in any article.',
   dragToMove: 'Drag to move',
   moreOptions: 'More options',
+  close: 'Close',
   versionLabel: 'Version name',
   saved: 'Saved.',
   published: 'Published.',
@@ -702,6 +704,7 @@ const SQ: EditorMessages = {
   noSections: "Zgjidhni blloqe dhe emërtojini për t'i ripërdorur në çdo artikull.",
   dragToMove: 'Tërhiqeni për ta lëvizur',
   moreOptions: 'Më shumë opsione',
+  close: 'Mbyll',
   versionLabel: 'Emri i versionit',
   saved: 'U ruajt.',
   published: 'U publikua.',
@@ -850,6 +853,7 @@ const DE: EditorMessages = {
   scheduled: 'Geplant.',
   deleteTitle: 'Diesen Artikel löschen?',
   moreOptions: 'Weitere Optionen',
+  close: 'Schließen',
   elements: DE_ELEMENTS,
 };
 

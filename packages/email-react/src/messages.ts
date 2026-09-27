@@ -9,7 +9,25 @@ import type { EditorMessages, ElementText } from '@motors/builder-react';
 type EmailWords = Partial<EditorMessages> & {
   elements: Record<string, ElementText>;
   email: EmailSettingsWords;
+  importHtml: ImportHtmlWords;
 };
+
+export interface ImportHtmlWords {
+  open: string;
+  title: string;
+  body: string;
+  mode: string;
+  replace: string;
+  append: string;
+  hint: string;
+  chooseFile: string;
+  import: string;
+  cancel: string;
+  nothingFound: string;
+  done: (blocks: number) => string;
+  imagesDone: (count: number) => string;
+  imagesFailed: (count: number) => string;
+}
 
 export interface EmailSettingsWords {
   settings: string;
@@ -131,6 +149,22 @@ const DE_ELEMENTS: Record<string, ElementText> = {
 
 const EN: EmailWords = {
   elements: EN_ELEMENTS,
+  importHtml: {
+    open: 'Import HTML',
+    title: 'Import HTML',
+    body: 'Paste an email’s code, or pick an .html file. It is rebuilt with our blocks — headings, text, buttons, images, columns — so you can edit it like any other design.',
+    mode: 'What to do with it',
+    replace: 'Replace this design',
+    append: 'Add below',
+    hint: 'Scripts, forms and anything unsafe are dropped. Pictures are copied into our storage after the import.',
+    chooseFile: 'Choose a file',
+    import: 'Import',
+    cancel: 'Cancel',
+    nothingFound: 'Nothing in that HTML could be turned into blocks.',
+    done: (blocks) => `Imported ${String(blocks)} blocks.`,
+    imagesDone: (count) => `${String(count)} pictures copied into storage.`,
+    imagesFailed: (count) => `${String(count)} pictures could not be copied — choose them again.`,
+  },
   categories: {
     structure: 'Structure',
     content: 'Content',
@@ -220,6 +254,22 @@ const EN: EmailWords = {
 const SQ: EmailWords = {
   ...EN,
   elements: SQ_ELEMENTS,
+  importHtml: {
+    open: 'Importo HTML',
+    title: 'Importo HTML',
+    body: 'Ngjitni kodin e një emaili ose zgjidhni një skedar .html. Rindërtohet me blloqet tona — tituj, tekst, butona, imazhe, kolona — që ta ndryshoni si çdo dizajn tjetër.',
+    mode: 'Çfarë të bëhet',
+    replace: 'Zëvendëso këtë dizajn',
+    append: 'Shto poshtë',
+    hint: 'Skriptet, formularët dhe çdo gjë e pasigurt hiqen. Imazhet kopjohen në ruajtjen tonë pas importit.',
+    chooseFile: 'Zgjidh një skedar',
+    import: 'Importo',
+    cancel: 'Anulo',
+    nothingFound: 'Asgjë në këtë HTML nuk mund të kthehej në blloqe.',
+    done: (blocks) => `U importuan ${String(blocks)} blloqe.`,
+    imagesDone: (count) => `${String(count)} imazhe u kopjuan.`,
+    imagesFailed: (count) => `${String(count)} imazhe nuk u kopjuan — zgjidhini përsëri.`,
+  },
   categories: {
     structure: 'Struktura',
     content: 'Përmbajtja',
@@ -308,6 +358,22 @@ const SQ: EmailWords = {
 const DE: EmailWords = {
   ...EN,
   elements: DE_ELEMENTS,
+  importHtml: {
+    open: 'HTML importieren',
+    title: 'HTML importieren',
+    body: 'Den Code einer E-Mail einfügen oder eine .html-Datei wählen. Sie wird aus unseren Blöcken neu aufgebaut und lässt sich wie jedes Design bearbeiten.',
+    mode: 'Was damit geschehen soll',
+    replace: 'Dieses Design ersetzen',
+    append: 'Unten anfügen',
+    hint: 'Skripte, Formulare und Unsicheres werden entfernt. Bilder werden danach in unseren Speicher kopiert.',
+    chooseFile: 'Datei wählen',
+    import: 'Importieren',
+    cancel: 'Abbrechen',
+    nothingFound: 'Aus diesem HTML ließen sich keine Blöcke erstellen.',
+    done: (blocks) => `${String(blocks)} Blöcke importiert.`,
+    imagesDone: (count) => `${String(count)} Bilder kopiert.`,
+    imagesFailed: (count) => `${String(count)} Bilder konnten nicht kopiert werden.`,
+  },
   categories: {
     structure: 'Struktur',
     content: 'Inhalt',

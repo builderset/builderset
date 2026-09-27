@@ -3,10 +3,10 @@
 import { parentOf, reidFragment, type Fragment } from '@motors/builder-core';
 import { useEditor, useEditorContext, type SavedSection } from '@motors/builder-react';
 import { Button, EmptyState, Input, Spinner } from '@motors/ui';
-import { BookmarkPlus, Boxes } from 'lucide-react';
+import { BookmarkPlus, Boxes, FileCode2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { useEmail } from './context';
+import { OPEN_IMPORT_HTML, useEmail } from './context';
 
 /**
  * Saved modules: a section designed once — a header, a footer, a promo band —
@@ -84,6 +84,19 @@ export function ModulesPanel() {
 
   return (
     <div className="h-full space-y-4 overflow-y-auto p-3">
+      <button
+        type="button"
+        onClick={() => {
+          window.dispatchEvent(new CustomEvent(OPEN_IMPORT_HTML));
+        }}
+        className="border-primary/40 bg-primary/5 hover:bg-primary/10 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border border-dashed px-3 py-3 text-left transition-[colors,transform] active:scale-[0.98]"
+      >
+        <FileCode2 className="text-primary size-5 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium">{words.importHtml.open}</span>
+          <span className="text-muted-foreground block truncate text-xs">.html</span>
+        </span>
+      </button>
       <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
         {w.modules}
       </h3>

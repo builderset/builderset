@@ -160,6 +160,11 @@ export interface EditorMessages {
   close: string;
   insertVariable: string;
   structures: string;
+  inheritFont: string;
+  searchFonts: string;
+  webFontHint: string;
+  fontGroups: Record<string, string>;
+  align: string;
   showEverywhere: string;
   hideOnMobile: string;
   hideOnDesktop: string;
@@ -501,6 +506,17 @@ const EN: EditorMessages = {
   close: 'Close',
   insertVariable: 'Insert a variable',
   structures: 'Structures',
+  inheritFont: 'Email default',
+  searchFonts: 'Search fonts…',
+  webFontHint: 'Shown by Apple Mail, iOS and most apps; Gmail and Outlook use the fallback.',
+  fontGroups: {
+    sans: 'Sans serif',
+    serif: 'Serif',
+    display: 'Display',
+    handwriting: 'Handwriting',
+    mono: 'Monospace',
+  },
+  align: 'Position',
   showEverywhere: 'Everywhere',
   hideOnMobile: 'Not on phones',
   hideOnDesktop: 'Phones only',
@@ -735,6 +751,18 @@ const SQ: EditorMessages = {
   close: 'Mbyll',
   insertVariable: 'Fut një variabël',
   structures: 'Strukturat',
+  inheritFont: 'Si emaili',
+  searchFonts: 'Kërko shkronja…',
+  webFontHint:
+    'Shfaqet në Apple Mail, iOS dhe shumicën e aplikacioneve; Gmail dhe Outlook përdorin alternativën.',
+  fontGroups: {
+    sans: 'Pa serif',
+    serif: 'Me serif',
+    display: 'Dekorative',
+    handwriting: 'Dorëshkrim',
+    mono: 'Monospace',
+  },
+  align: 'Pozicioni',
   showEverywhere: 'Kudo',
   hideOnMobile: 'Jo në celular',
   hideOnDesktop: 'Vetëm në celular',
@@ -902,6 +930,18 @@ const DE: EditorMessages = {
   close: 'Schließen',
   insertVariable: 'Variable einfügen',
   structures: 'Strukturen',
+  inheritFont: 'Wie die E-Mail',
+  searchFonts: 'Schriften suchen…',
+  webFontHint:
+    'In Apple Mail, iOS und den meisten Apps; Gmail und Outlook nutzen die Ersatzschrift.',
+  fontGroups: {
+    sans: 'Serifenlos',
+    serif: 'Serif',
+    display: 'Display',
+    handwriting: 'Handschrift',
+    mono: 'Monospace',
+  },
+  align: 'Position',
   showEverywhere: 'Überall',
   hideOnMobile: 'Nicht auf dem Handy',
   hideOnDesktop: 'Nur auf dem Handy',

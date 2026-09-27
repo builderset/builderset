@@ -1,5 +1,6 @@
 import type { BuilderNode } from '@motors/builder-core';
 import {
+  googleFontsUrl,
   ROW_LAYOUTS,
   variableOf,
   type Display,
@@ -15,8 +16,10 @@ import {
   createContext,
   fill,
   fontStack,
+  fontsInUse,
   holds,
   listOf,
+  typography,
   variableText,
   type RenderContext,
   type RenderOptions,
@@ -176,7 +179,10 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
   const settings = context.doc.settings;
   const text = color(settings.textColor, context);
   const link = color(settings.linkColor, context);
-  const font = fontStack(null, context);
+  const font = fontStack(p.font as string | null | undefined, context);
+  const type = typography(p) as Pick<CSSProperties, 'fontWeight' | 'letterSpacing'> & {
+    textTransform?: CSSProperties['textTransform'];
+  };
   const align = ((p.align as string | undefined) ?? 'left') as CSSProperties['textAlign'];
   const muted = color('brand.muted', context);
   if (hiddenHere(node, env, frame.scope)) return null;
@@ -209,7 +215,9 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
             fontFamily: fontStack(p.font as string | null, context),
             fontSize: p.size as number,
             lineHeight: 1.25,
-            fontWeight: 700,
+            fontWeight: type.fontWeight ?? 700,
+            letterSpacing: type.letterSpacing,
+            textTransform: type.textTransform,
             color:
               color(p.color as string | null, context) ?? color(settings.headingColor, context),
             textAlign: align,
@@ -237,6 +245,9 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
             color: color(p.color as string | null, context) ?? text,
             textAlign: align,
             whiteSpace: 'pre-wrap',
+            fontWeight: type.fontWeight,
+            letterSpacing: type.letterSpacing,
+            textTransform: type.textTransform,
           }}
         >
           <Text
@@ -260,6 +271,9 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
             fontSize: p.size as number,
             lineHeight: settings.lineHeight,
             color: color(p.color as string | null, context) ?? text,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: justify,
           }}
         >
           {items.map((item, index) => (
@@ -301,7 +315,9 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
               color: color(p.textColor as string, context),
               fontFamily: font,
               fontSize: p.size as number,
-              fontWeight: 600,
+              fontWeight: type.fontWeight ?? 600,
+              letterSpacing: type.letterSpacing,
+              textTransform: type.textTransform,
               lineHeight: 1.2,
               borderRadius: p.radius as number,
               border:
@@ -374,7 +390,8 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
         <div
           style={{
             width: `${String(p.width)}%`,
-            margin: '0 auto',
+            marginLeft: align === 'left' ? 0 : 'auto',
+            marginRight: align === 'right' ? 0 : 'auto',
             borderTop: `${String(p.thickness)}px ${String(p.style)} ${color(p.color as string, context) ?? '#e5e7eb'}`,
           }}
         />,
@@ -400,6 +417,7 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
               lineHeight: 1.5,
               color: text,
               fontStyle: 'italic',
+              textAlign: align,
             }}
           >
             <Text
@@ -944,6 +962,7 @@ export function EmailCanvas({
   const env: Env = { context, editText, mobile, editing };
   const settings = doc.settings;
   const root = doc.nodes[doc.root];
+  const fontsUrl = googleFontsUrl(fontsInUse(doc));
   return (
     <div
       style={{
@@ -952,6 +971,7 @@ export function EmailCanvas({
         minHeight: '100%',
       }}
     >
+      {fontsUrl ? <link rel="stylesheet" href={fontsUrl} precedence="email-fonts" /> : null}
       {(root?.children ?? []).map((id) => {
         const section = doc.nodes[id];
         if (!section || hiddenHere(section, env, {})) return null;

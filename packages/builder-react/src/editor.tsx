@@ -662,6 +662,8 @@ function Workspace({
 
       <ConflictDialog store={store} messages={messages} host={host} save={save} />
 
+      {profile.overlays ? <profile.overlays /> : null}
+
       <HistorySheet
         open={history}
         onClose={() => {

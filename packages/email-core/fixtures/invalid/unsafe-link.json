@@ -17,6 +17,10 @@
       "type": "button",
       "v": 1,
       "props": {
+        "font": null,
+        "letterSpacing": 0,
+        "transform": "none",
+        "weight": "600",
         "label": "Get started",
         "href": "javascript:alert(1)",
         "align": "left",

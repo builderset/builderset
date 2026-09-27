@@ -12,6 +12,7 @@ import { humanize } from '../messages';
 import { RichTextInput } from '../text/rich-text-input';
 import { MediaField } from './media-field';
 import { classify, defaultFor, HIDDEN_PROPS, type JsonSchema } from './schema';
+import { AlignField, FontField, isAlignField, isFontField } from './type-fields';
 import {
   ColorField,
   DisplayField,
@@ -80,6 +81,25 @@ export function SchemaField(props: FieldProps) {
   const field = classify(schema, name);
 
   // Shapes with a control of their own.
+  if (isFontField(name) && (field.kind === 'enum' || field.kind === 'nullable')) {
+    return (
+      <FontField
+        value={typeof value === 'string' ? value : null}
+        nullable={field.kind === 'nullable'}
+        onChange={onChange}
+      />
+    );
+  }
+  if (field.kind === 'enum' && isAlignField(name, field.options)) {
+    return (
+      <AlignField
+        name={name}
+        value={typeof value === 'string' ? value : undefined}
+        options={field.options}
+        onChange={onChange}
+      />
+    );
+  }
   if (field.kind === 'string' && isColorField(name)) {
     return (
       <ColorField

@@ -1,8 +1,7 @@
 'use client';
 
-import { ColorField, useEditor, useEditorContext } from '@motors/builder-react';
+import { ColorField, FontField, useEditor, useEditorContext } from '@motors/builder-react';
 import {
-  FONT_STACKS,
   variablesOf,
   type EmailDocument,
   type EmailMeta,
@@ -17,7 +16,6 @@ import {
   Input,
   Label,
   SegmentedControl,
-  Select,
   Tabs,
   TabsContent,
   TabsList,
@@ -265,21 +263,13 @@ export function EmailSettingsPanel() {
                 />
               )}
             </Row>
-            <Row label={w.font}>
-              {(id) => (
-                <Select
-                  id={id}
-                  value={settings.font}
-                  onValueChange={(font) => {
-                    setSettings({ font: font as EmailSettings['font'] }, w.font, 'font');
-                  }}
-                  options={Object.keys(FONT_STACKS).map((font) => ({
-                    value: font,
-                    label: font.charAt(0).toUpperCase() + font.slice(1),
-                  }))}
-                />
-              )}
-            </Row>
+            <FontField
+              value={settings.font}
+              nullable={false}
+              onChange={(font) => {
+                if (font) setSettings({ font: font as EmailSettings['font'] }, w.font, 'font');
+              }}
+            />
             <Row label={`${w.fontSize} · ${String(settings.fontSize)}px`}>
               {(id) => (
                 <input

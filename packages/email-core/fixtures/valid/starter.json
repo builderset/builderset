@@ -103,6 +103,10 @@
       "type": "heading",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "700",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Hello "
@@ -125,7 +129,6 @@
         "align": "left",
         "color": null,
         "size": 28,
-        "font": null,
         "display": {
           "hideOn": "none",
           "when": []
@@ -143,6 +146,10 @@
       "type": "text",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "400",
+        "letterSpacing": 0,
+        "transform": "none",
         "text": [
           {
             "text": "Write something your reader will want to read."
@@ -169,6 +176,10 @@
       "type": "button",
       "v": 1,
       "props": {
+        "font": null,
+        "weight": "600",
+        "letterSpacing": 0,
+        "transform": "none",
         "label": "Get started",
         "href": "",
         "align": "left",
@@ -263,6 +274,7 @@
       "type": "divider",
       "v": 1,
       "props": {
+        "align": "center",
         "color": "brand.border",
         "thickness": 1,
         "width": 100,
@@ -284,6 +296,7 @@
       "type": "footer",
       "v": 1,
       "props": {
+        "font": null,
         "text": [
           {
             "text": "You are receiving this email from "

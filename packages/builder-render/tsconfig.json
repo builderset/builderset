@@ -1,0 +1,7 @@
+{
+  "extends": "@motors/config/tsconfig/library",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["src"]
+}

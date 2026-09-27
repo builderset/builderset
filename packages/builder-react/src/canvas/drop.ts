@@ -2,9 +2,11 @@ import {
   contains,
   indexInParent,
   parentOf,
-  type BuilderDocument,
+  wrapChain,
   type ElementRegistry,
+  type Fragment,
   type NodeId,
+  type NodeTree,
 } from '@motors/builder-core';
 
 /**
@@ -16,7 +18,11 @@ import {
  * indicator never promises a drop that would fail.
  */
 
-export type DragPayload = { kind: 'type'; type: string } | { kind: 'nodes'; ids: NodeId[] };
+export type DragPayload =
+  | { kind: 'type'; type: string }
+  | { kind: 'nodes'; ids: NodeId[] }
+  /** A ready-made piece of layout (an email structure), built on drop. */
+  | { kind: 'fragment'; rootType: string; build: () => Fragment };
 
 export interface DropTarget {
   parentId: NodeId;
@@ -29,14 +35,14 @@ export interface DropTarget {
 export const DRAG_TYPE_MIME = 'application/x-builder-type';
 export const DRAG_NODES_MIME = 'application/x-builder-nodes';
 
-function typesOf(doc: BuilderDocument, payload: DragPayload): string[] {
-  return payload.kind === 'type'
-    ? [payload.type]
-    : payload.ids.map((id) => doc.nodes[id]?.type).filter((type): type is string => !!type);
+function typesOf(doc: NodeTree, payload: DragPayload): string[] {
+  if (payload.kind === 'type') return [payload.type];
+  if (payload.kind === 'fragment') return [payload.rootType];
+  return payload.ids.map((id) => doc.nodes[id]?.type).filter((type): type is string => !!type);
 }
 
 function accepts(
-  doc: BuilderDocument,
+  doc: NodeTree,
   registry: ElementRegistry,
   parentId: NodeId,
   payload: DragPayload,
@@ -47,11 +53,15 @@ function accepts(
     // Not into itself or anything inside itself.
     if (payload.ids.some((id) => id === parentId || contains(doc, id, parentId))) return false;
   }
+  // A NEW block may land where it needs containers built around it (a text
+  // block between an email's sections gets its own section, row and column);
+  // blocks being MOVED keep their place in the tree, so they may not.
+  if (payload.kind === 'type') return wrapChain(registry, parent.type, payload.type) !== null;
   return typesOf(doc, payload).every((type) => registry.canContain(parent.type, type));
 }
 
 export function dropTargetAt(
-  doc: BuilderDocument,
+  doc: NodeTree,
   registry: ElementRegistry,
   nodeId: NodeId,
   rect: DOMRect,
@@ -93,7 +103,7 @@ export function dropTargetAt(
 
 /** A drop onto the empty page, or below the last block. */
 export function dropAtEnd(
-  doc: BuilderDocument,
+  doc: NodeTree,
   registry: ElementRegistry,
   payload: DragPayload,
 ): DropTarget | null {
@@ -111,7 +121,8 @@ export function dropAtEnd(
 export function readPayload(data: DataTransfer | null): DragPayload | null {
   if (!data) return null;
   const type = data.getData(DRAG_TYPE_MIME);
-  if (type) return { kind: 'type', type };
+  // A structure travels as `structure:<id>`; its builder is in `activeDrag`.
+  if (type && !type.startsWith('structure:')) return { kind: 'type', type };
   const nodes = data.getData(DRAG_NODES_MIME);
   if (nodes) {
     try {

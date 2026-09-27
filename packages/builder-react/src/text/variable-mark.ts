@@ -1,0 +1,34 @@
+import { Mark, mergeAttributes } from '@tiptap/core';
+
+/**
+ * A variable in the text — `{{ recipient.name }}` — drawn as a chip.
+ *
+ * Not inclusive: typing right after a chip writes plain text, not more of the
+ * variable. The chip's text is only a label; what is sent is the value.
+ */
+export const VariableMark = Mark.create({
+  name: 'variable',
+  inclusive: false,
+  excludes: '_',
+  addAttributes() {
+    return {
+      path: { default: null },
+      format: { default: null },
+      fallback: { default: null },
+    };
+  },
+  parseHTML() {
+    return [{ tag: 'span[data-variable]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'span',
+      mergeAttributes(HTMLAttributes, {
+        'data-variable': '',
+        class:
+          'rounded bg-blue-500/12 px-1 font-medium text-blue-700 dark:text-blue-300 whitespace-nowrap',
+      }),
+      0,
+    ];
+  },
+});

@@ -30,6 +30,7 @@ import { useEditor, useEditorContext } from '../context';
 import { InlineContent } from './inline-content';
 import { SlashMenu, slashMatches } from './slash-menu';
 import { TextToolbar } from './text-toolbar';
+import { VariableMark } from './variable-mark';
 import {
   fromTiptap,
   joinRichText,
@@ -58,7 +59,7 @@ const Footnote = Mark.create({
 });
 
 /** Where Enter and Backspace may create or merge blocks. */
-const BLOCK_TEXT = new Set(['paragraph', 'heading', 'quote', 'callout', 'disclaimer']);
+const BLOCK_TEXT = new Set(['paragraph', 'text', 'heading', 'quote', 'callout', 'disclaimer']);
 
 /** `## ` → heading, and friends. Checked on every change of an empty-ish paragraph. */
 const MARKDOWN: { pattern: RegExp; type: string; props?: Record<string, unknown> }[] = [
@@ -72,7 +73,8 @@ const MARKDOWN: { pattern: RegExp; type: string; props?: Record<string, unknown>
 ];
 
 export function InlineText({ field }: { field: EditableTextField }) {
-  const { store, registry, messages } = useEditorContext();
+  const { store, registry, messages, profile } = useEditorContext();
+  const textType = profile.paragraphType ?? 'paragraph';
   const { nodeId, path, value, placeholder } = field;
   const editingThis = useEditor((state) => state.editingId === nodeId);
   const nodeType = useEditor((state) => state.doc.nodes[nodeId]?.type);
@@ -98,12 +100,19 @@ export function InlineText({ field }: { field: EditableTextField }) {
     const state = store.getState();
     const { doc } = state;
     const parent = parentOf(doc, nodeId);
-    if (!parent) return false;
-    const fragment = createFragment(
-      registry,
-      type,
-      type === 'list' ? { ...props, items: [{ text: rest }] } : { ...props, text: rest },
-    );
+    if (!parent || !registry.has(type)) return false;
+    let fragment;
+    try {
+      fragment = createFragment(
+        registry,
+        type,
+        type === 'list' ? { ...props, items: [{ text: rest }] } : { ...props, text: rest },
+      );
+    } catch {
+      // This host's element refuses these props (an email heading has no
+      // level 4): leave the text as typed.
+      return false;
+    }
     const index = indexInParent(doc, nodeId);
     const inserted = state.insertFragment(
       fragment,
@@ -128,7 +137,9 @@ export function InlineText({ field }: { field: EditableTextField }) {
       const offset = editor.state.selection.from - 1;
       const [before, after] = splitRichText(current, offset);
       write(before);
-      const fragment = createFragment(registry, 'paragraph', { text: after });
+      const fragment = createFragment(registry, profile.paragraphType ?? 'paragraph', {
+        text: after,
+      });
       const inserted = state.insertFragment(
         fragment,
         { parentId: parent.id, index: indexInParent(state.doc, nodeId) + 1 },
@@ -181,6 +192,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       Subscript,
       Superscript,
       Footnote,
+      VariableMark,
       Link.configure({
         openOnClick: false,
         autolink: false,
@@ -245,7 +257,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       const plain = next.map((run) => run.text).join('');
 
       // The slash menu: "/" typed into an otherwise empty paragraph.
-      if (nodeType === 'paragraph' && path === 'text' && /^\/[\w-]*$/.test(plain)) {
+      if (nodeType === textType && path === 'text' && /^\/[\w-]*$/.test(plain)) {
         setSlash(plain.slice(1));
         setSlashIndex(0);
       } else if (slashRef.current.slash !== null) {
@@ -253,7 +265,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       }
 
       // Markdown shortcuts, only at the very start of a paragraph.
-      if (nodeType === 'paragraph' && path === 'text') {
+      if (nodeType === textType && path === 'text') {
         if (plain === '---') {
           convert('divider', {}, []);
           return;

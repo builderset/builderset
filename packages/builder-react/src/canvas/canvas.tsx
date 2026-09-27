@@ -1,6 +1,5 @@
 'use client';
 
-import { createFragment } from '@motors/builder-core';
 import { renderDocument, type EditableTextField } from '@motors/builder-render';
 import { EmptyState } from '@motors/ui';
 import { FilePlus2, PenLine } from 'lucide-react';
@@ -72,7 +71,9 @@ function nodeElement(target: EventTarget | null): HTMLElement | null {
  * markup that would change the layout it is showing.
  */
 export function Canvas() {
-  const { registry, host, messages, store } = useEditorContext();
+  const { registry, host, messages, store, profile } = useEditorContext();
+  const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
+  const bare = profile.canvasFrame === 'bare';
   const doc = useEditor((state) => state.doc);
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
@@ -85,8 +86,8 @@ export function Canvas() {
   // In page pixels: what fits beside the gutters at this zoom, never more than
   // the device's width. Until the first measure, the device width.
   const pageWidth = available
-    ? Math.max(320, Math.min(VIEWPORT_WIDTH[viewport], (available - GUTTER * 2) / scale))
-    : VIEWPORT_WIDTH[viewport];
+    ? Math.max(320, Math.min(widths[viewport], (available - GUTTER * 2) / scale))
+    : widths[viewport];
 
   const editText = useCallback(
     (field: EditableTextField) => (
@@ -97,13 +98,15 @@ export function Canvas() {
 
   const body = useMemo(
     () =>
-      renderDocument(doc, registry, {
-        editing: true,
-        resolveMedia: (key: string) => host.resolveMedia(key),
-        locale: host.contentLocale,
-        editText,
-      }),
-    [doc, registry, host, editText],
+      profile.renderCanvas
+        ? profile.renderCanvas({ doc, editText, viewport })
+        : renderDocument(doc, registry, {
+            editing: true,
+            resolveMedia: (key: string) => host.resolveMedia(key),
+            locale: host.contentLocale,
+            editText,
+          }),
+    [doc, registry, host, editText, profile, viewport],
   );
 
   const empty = (doc.nodes[doc.root]?.children?.length ?? 0) === 0;
@@ -161,7 +164,7 @@ export function Canvas() {
         : dropAtEnd(doc, registry, payload);
     if (target) {
       event.preventDefault();
-      event.dataTransfer.dropEffect = payload.kind === 'type' ? 'copy' : 'move';
+      event.dataTransfer.dropEffect = payload.kind === 'nodes' ? 'move' : 'copy';
     }
     setDrop((current) =>
       current?.anchorId === target?.anchorId && current?.placement === target?.placement
@@ -180,6 +183,8 @@ export function Canvas() {
     const state = store.getState();
     if (payload.kind === 'type') {
       state.insertElement(payload.type, { parentId: target.parentId, index: target.index });
+    } else if (payload.kind === 'fragment') {
+      state.insertFragment(payload.build(), { parentId: target.parentId, index: target.index });
     } else {
       state.moveNodes(payload.ids, target.parentId, target.index);
     }
@@ -202,12 +207,16 @@ export function Canvas() {
       >
         <div
           style={{ width: pageWidth, zoom: scale }}
-          className="bg-background border-border min-h-[70vh] rounded-[var(--radius-card)] border shadow-sm"
+          className={
+            bare
+              ? 'border-border min-h-[70vh] overflow-hidden rounded-[var(--radius-card)] border shadow-sm'
+              : 'bg-background border-border min-h-[70vh] rounded-[var(--radius-card)] border shadow-sm'
+          }
         >
           <div
             ref={pageRef}
             role="presentation"
-            className="relative px-6 py-10 sm:px-12"
+            className={bare ? 'relative min-h-[70vh]' : 'relative px-6 py-10 sm:px-12'}
             onClick={onClick}
             onMouseOver={(event) => {
               if (activeDrag()) return;
@@ -222,8 +231,8 @@ export function Canvas() {
             }}
             onDrop={onDrop}
           >
-            <article className="mx-auto max-w-[var(--maxw-prose,68ch)]">
-              <TitleField />
+            <article className={bare ? 'min-h-[70vh]' : 'mx-auto max-w-[var(--maxw-prose,68ch)]'}>
+              {bare ? null : <TitleField />}
               {empty ? (
                 <EmptyState
                   size="compact"
@@ -236,12 +245,13 @@ export function Canvas() {
                       className="bg-primary text-primary-foreground inline-flex h-9 items-center gap-2 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-transform active:scale-95"
                       onClick={() => {
                         const state = store.getState();
-                        const fragment = createFragment(registry, 'paragraph');
-                        const ids = state.insertFragment(fragment, {
+                        // Through `insertElement`, so a host whose text must sit
+                        // in containers (an email) gets them built around it.
+                        const id = state.insertElement(profile.paragraphType ?? 'paragraph', {
                           parentId: doc.root,
                           index: 0,
                         });
-                        if (ids[0]) state.setEditing(ids[0]);
+                        if (id) state.setEditing(id);
                       }}
                     >
                       <PenLine className="size-4" aria-hidden="true" />

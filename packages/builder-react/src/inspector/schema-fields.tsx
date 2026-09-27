@@ -12,6 +12,14 @@ import { humanize } from '../messages';
 import { RichTextInput } from '../text/rich-text-input';
 import { MediaField } from './media-field';
 import { classify, defaultFor, HIDDEN_PROPS, type JsonSchema } from './schema';
+import {
+  ColorField,
+  DisplayField,
+  isColorField,
+  isDisplay,
+  isPadding,
+  SpacingField,
+} from './special-fields';
 
 export interface FieldProps {
   name: string;
@@ -70,6 +78,38 @@ export function SchemaField(props: FieldProps) {
   const label = useLabel(name);
   const { messages } = useEditorContext();
   const field = classify(schema, name);
+
+  // Shapes with a control of their own.
+  if (field.kind === 'string' && isColorField(name)) {
+    return (
+      <ColorField
+        name={name}
+        value={typeof value === 'string' ? value : null}
+        nullable={false}
+        onChange={onChange}
+      />
+    );
+  }
+  if (
+    field.kind === 'nullable' &&
+    isColorField(name) &&
+    classify(field.inner, name).kind === 'string'
+  ) {
+    return (
+      <ColorField
+        name={name}
+        value={typeof value === 'string' ? value : null}
+        nullable
+        onChange={onChange}
+      />
+    );
+  }
+  if (field.kind === 'object' && isPadding(value)) {
+    return <SpacingField name={name} value={value} onChange={onChange} />;
+  }
+  if (field.kind === 'object' && isDisplay(value)) {
+    return <DisplayField value={value} onChange={onChange} />;
+  }
 
   switch (field.kind) {
     case 'boolean':

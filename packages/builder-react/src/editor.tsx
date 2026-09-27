@@ -35,8 +35,15 @@ import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
-import { EditorProvider, useEditor, type ArticleFacts, type EditorContextValue } from './context';
+import {
+  EditorProvider,
+  useEditor,
+  useProfile,
+  type ArticleFacts,
+  type EditorContextValue,
+} from './context';
 import type { BuilderHost } from './host';
+import type { EditorProfile } from './profile';
 import { Inspector } from './inspector/inspector';
 import { editorMessages, type EditorMessages } from './messages';
 import { AddPanel } from './panels/add-panel';
@@ -58,9 +65,12 @@ export interface BuilderEditorProps {
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
+  /** What kind of document this is. Omitted: an article. */
+  profile?: EditorProfile | undefined;
 }
 
 const AUTOSAVE_MS = 2000;
+const EMPTY_PROFILE: EditorProfile = {};
 const RETRY_MS = 8000;
 
 function readLocal(key: string | undefined): { doc: unknown; at: number } | null {
@@ -111,6 +121,7 @@ export function BuilderEditor(props: BuilderEditorProps) {
     createEditorStore({
       document: props.document,
       registry: props.registry,
+      onNodeUpdated: props.profile?.onNodeUpdated,
       onRefused: (code) => {
         hostRef.current.toast(
           'error',
@@ -139,8 +150,9 @@ export function BuilderEditor(props: BuilderEditorProps) {
       messages,
       article: props.article,
       setArticle,
+      profile: props.profile ?? EMPTY_PROFILE,
     }),
-    [store, props.registry, props.host, messages, props.article, setArticle],
+    [store, props.registry, props.host, messages, props.article, setArticle, props.profile],
   );
 
   return (
@@ -163,10 +175,15 @@ function Workspace({
   onDelete,
   storageKey,
   savedAt,
+  profile = EMPTY_PROFILE,
 }: BuilderEditorProps & { store: EditorStore; messages: EditorMessages }) {
+  const check = useCallback(
+    (doc: BuilderDocument) => (profile.check ? profile.check(doc) : checkDocument(doc, registry)),
+    [profile, registry],
+  );
   const doc = useEditor((state) => state.doc);
   const deferred = useDeferredValue(doc);
-  const issues: Issue[] = useMemo(() => checkDocument(deferred, registry), [deferred, registry]);
+  const issues: Issue[] = useMemo(() => check(deferred), [check, deferred]);
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const leftTab = useEditor((state) => state.leftTab);
@@ -262,9 +279,14 @@ function Workspace({
       writeLocal(storageKey, null);
       return;
     }
-    const parsed = parseDocument(local.doc, registry);
-    if (parsed.ok && JSON.stringify(parsed.doc) !== JSON.stringify(store.getState().doc)) {
-      setRestoreOffer(parsed.doc);
+    const restored = profile.parse
+      ? profile.parse(local.doc)
+      : (() => {
+          const parsed = parseDocument(local.doc, registry);
+          return parsed.ok ? parsed.doc : null;
+        })();
+    if (restored && JSON.stringify(restored) !== JSON.stringify(store.getState().doc)) {
+      setRestoreOffer(restored);
     }
     // Only on mount: this is about what was left behind last time.
   }, []);
@@ -274,7 +296,7 @@ function Workspace({
   const publish = async (scheduledAt?: string | null) => {
     if (!host.publish) return;
     const current = store.getState().doc;
-    const errors = checkDocument(current, registry).filter((issue) => issue.severity === 'error');
+    const errors = check(current).filter((issue) => issue.severity === 'error');
     if (errors.length) {
       setBlocking(errors);
       return;
@@ -671,6 +693,12 @@ function Workspace({
   );
 }
 
+/** The left rail's third tab: the profile's, or the article templates. */
+function ThirdTab() {
+  const Panel = useProfile().templatesPanel ?? TemplatesPanel;
+  return <Panel />;
+}
+
 function LeftRail({
   tab,
   onTab,
@@ -733,7 +761,7 @@ function LeftRail({
             transition={{ duration: 0.12 }}
             className="h-full"
           >
-            {tab === 'add' ? <AddPanel /> : tab === 'layers' ? <LayersPanel /> : <TemplatesPanel />}
+            {tab === 'add' ? <AddPanel /> : tab === 'layers' ? <LayersPanel /> : <ThirdTab />}
           </motion.div>
         </AnimatePresence>
       </div>

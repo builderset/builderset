@@ -5,6 +5,7 @@ import { createContext, useContext, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 
 import type { BuilderHost } from './host';
+import type { EditorProfile } from './profile';
 import type { EditorMessages } from './messages';
 import type { EditorActions, EditorState, EditorStore } from './store';
 
@@ -22,6 +23,8 @@ export interface EditorContextValue {
   article: ArticleFacts;
   /** Changes to those facts, kept by the host (they are row columns, not document). */
   setArticle: (patch: Partial<ArticleFacts>) => void;
+  /** What kind of document this editor edits — see `EditorProfile`. */
+  profile: EditorProfile;
 }
 
 /** The row's own columns — what the document settings edit beside `meta`. */
@@ -57,6 +60,10 @@ export function useEditorContext(): EditorContextValue {
 /** A slice of the editor state. Re-renders only when the slice changes. */
 export function useEditor<T>(selector: (state: EditorState & EditorActions) => T): T {
   return useStore(useEditorContext().store, selector);
+}
+
+export function useProfile(): EditorProfile {
+  return useEditorContext().profile;
 }
 
 export function useMessages(): EditorMessages {

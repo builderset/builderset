@@ -1,6 +1,7 @@
 import {
   BuilderError,
   createFragment,
+  createWrappedFragment,
   duplicate as duplicateNodes,
   History,
   indexInParent,
@@ -11,6 +12,7 @@ import {
   replaceType,
   update,
   wrap,
+  wrapChain,
   type Breakpoint,
   type BuilderDocument,
   type DocumentMeta,
@@ -86,6 +88,12 @@ export interface EditorActions {
   insertFragment(fragment: Fragment, target?: InsertTarget, label?: string): NodeId[];
   updateNode(id: NodeId, patch: NodePatch, label: string, coalesceKey?: string): boolean;
   updateMeta(meta: Partial<DocumentMeta>, label: string, coalesceKey?: string): void;
+  /** Any other change to the document itself (an email's settings). */
+  updateDocument(
+    label: string,
+    recipe: (draft: BuilderDocument) => void,
+    coalesceKey?: string,
+  ): void;
   moveNodes(ids: NodeId[], parentId: NodeId, index: number): boolean;
   moveBy(id: NodeId, delta: -1 | 1): boolean;
   removeNodes(ids: NodeId[]): boolean;
@@ -108,12 +116,16 @@ export interface CreateEditorOptions {
   registry: ElementRegistry;
   /** Called with a core error code when an operation is refused. */
   onRefused?: ((code: string) => void) | undefined;
+  /** See `EditorProfile.onNodeUpdated`. */
+  onNodeUpdated?:
+    ((draft: BuilderDocument, nodeId: NodeId, registry: ElementRegistry) => void) | undefined;
 }
 
 export function createEditorStore({
   document,
   registry,
   onRefused,
+  onNodeUpdated,
 }: CreateEditorOptions): EditorStore {
   const history = new History(document);
 
@@ -240,7 +252,14 @@ export function createEditorStore({
         const where = target ?? defaultTarget(type);
         let fragment: Fragment;
         try {
-          fragment = createFragment(registry, type, props);
+          // Build whatever the target needs around the block: a text block
+          // dropped on an email's empty body arrives in a section, a row and
+          // a column, as in every email builder.
+          const parent = get().doc.nodes[where.parentId];
+          const chain = parent ? wrapChain(registry, parent.type, type) : [];
+          fragment = chain?.length
+            ? createWrappedFragment(registry, chain, type, props)
+            : createFragment(registry, type, props);
         } catch (error) {
           if (error instanceof BuilderError) {
             onRefused?.(error.code);
@@ -248,14 +267,20 @@ export function createEditorStore({
           }
           throw error;
         }
+        // The block itself — inside any containers built around it — is what
+        // gets selected and returned, so typing starts where the writer expects.
+        let block = fragment.roots[0];
+        while (block && fragment.nodes[block]?.type !== type) {
+          block = fragment.nodes[block]?.children?.[0];
+        }
         const result = commit(
           `Add ${type}`,
           (draft) => insert(draft, registry, where.parentId, where.index, fragment),
-          { select: (ids) => ids },
+          { select: (ids) => (block ? [block] : ids) },
         );
         if (!result.ok) return null;
         set({ recent: [type, ...get().recent.filter((t) => t !== type)].slice(0, 6) });
-        return result.value[0] ?? null;
+        return block ?? result.value[0] ?? null;
       },
       insertFragment(fragment, target, label = 'Insert') {
         const where = target ?? defaultTarget();
@@ -271,6 +296,7 @@ export function createEditorStore({
           label,
           (draft) => {
             update(draft, registry, id, patch);
+            if (patch.props) onNodeUpdated?.(draft, id, registry);
           },
           { coalesceKey },
         ).ok;
@@ -286,6 +312,9 @@ export function createEditorStore({
           },
           { coalesceKey },
         );
+      },
+      updateDocument(label, recipe, coalesceKey) {
+        commit(label, recipe, { coalesceKey });
       },
       moveNodes(ids, parentId, index) {
         return commit('Move', (draft) => move(draft, registry, ids, parentId, index), {

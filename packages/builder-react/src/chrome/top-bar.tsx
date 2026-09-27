@@ -145,7 +145,10 @@ export function TopBar(actions: TopBarActions) {
   const redoLabel = useEditor((state) => state.redoLabel);
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
-  const title = useEditor((state) => state.doc.meta.title);
+  const { profile } = useEditorContext();
+  const title = useEditor((state) =>
+    profile.titleOf ? profile.titleOf(state.doc) : state.doc.meta.title,
+  );
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const published = article.status === 'published';

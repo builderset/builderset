@@ -58,10 +58,24 @@ describe('the editor store', () => {
 
   it('reports a refused placement instead of throwing', () => {
     const { state, refused } = setup();
-    const result = state().insertElement('column');
+    const paragraph = state().insertElement('paragraph');
+    if (!paragraph) throw new Error('no paragraph');
+    // Nothing can go INSIDE a paragraph, whatever is built around it.
+    const result = state().insertElement('heading', { parentId: paragraph, index: 0 });
     expect(result).toBeNull();
     expect(refused).toHaveBeenCalled();
-    expect(state().doc.nodes[state().doc.root]?.children).toEqual([]);
+    expect(state().doc.nodes[state().doc.root]?.children).toEqual([paragraph]);
+  });
+
+  it('builds the containers a block needs', () => {
+    const { state } = setup();
+    // A column only lives in columns: inserting one at the root builds them.
+    const column = state().insertElement('column');
+    expect(column && state().doc.nodes[column]?.type).toBe('column');
+    expect(state().selection).toEqual([column]);
+    const root = state().doc.nodes[state().doc.root];
+    const wrapper = root?.children?.[0] ? state().doc.nodes[root.children[0]] : undefined;
+    expect(wrapper?.type).toBe('columns');
   });
 
   it('moves, duplicates and deletes, keeping a sensible selection', () => {

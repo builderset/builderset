@@ -7,6 +7,7 @@ import { useId, useState } from 'react';
 import { cn } from '../cn';
 import { useEditorContext } from '../context';
 import { humanize } from '../messages';
+import { NumberStepper } from './number-stepper';
 
 /**
  * Field controls for shapes the generic schema walk would draw badly: a colour
@@ -150,20 +151,19 @@ export function SpacingField({
     );
   };
 
-  const box = (side: keyof Padding, className: string) => (
-    <input
-      type="number"
+  const stepper = (side: keyof Padding, ariaLabel: string) => (
+    <NumberStepper
+      size="sm"
       min={0}
       max={160}
-      aria-label={`${label} ${side}`}
+      integer
+      aria-label={ariaLabel}
+      decreaseLabel={messages.decrease}
+      increaseLabel={messages.increase}
       value={value[side]}
-      onChange={(event) => {
-        set(side, Number(event.target.value));
+      onChange={(next) => {
+        if (next !== null) set(side, next);
       }}
-      className={cn(
-        'border-input bg-background focus:ring-ring/40 h-7 w-12 rounded-md border px-1 text-center text-xs tabular-nums outline-none focus:ring-2',
-        className,
-      )}
     />
   );
 
@@ -178,22 +178,25 @@ export function SpacingField({
           onClick={() => {
             setLinked(!linked);
           }}
-          className="text-muted-foreground hover:text-foreground [&_svg]:size-3.5"
+          className="text-muted-foreground hover:text-foreground cursor-pointer [&_svg]:size-3.5"
         >
           {linked ? <Link2 aria-hidden="true" /> : <Link2Off aria-hidden="true" />}
         </button>
       </div>
-      <div className="border-border bg-muted/30 grid grid-cols-3 grid-rows-3 place-items-center gap-1 rounded-[var(--radius-control)] border p-2">
-        <span />
-        {box('top', '')}
-        <span />
-        {box('left', '')}
-        <span className="border-border bg-background h-6 w-10 rounded border border-dashed" />
-        {box('right', '')}
-        <span />
-        {box('bottom', '')}
-        <span />
-      </div>
+      {linked ? (
+        stepper('top', `${label} · ${messages.allSides}`)
+      ) : (
+        <div className="grid min-w-0 grid-cols-2 gap-x-2 gap-y-1.5">
+          {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
+            <div key={side} className="min-w-0 space-y-0.5">
+              <span className="text-muted-foreground block text-[10px] font-medium tracking-wide uppercase">
+                {messages.sides[side]}
+              </span>
+              {stepper(side, `${label} · ${messages.sides[side]}`)}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

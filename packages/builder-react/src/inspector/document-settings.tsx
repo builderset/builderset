@@ -19,6 +19,7 @@ import { useId, useState, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { MediaField } from './media-field';
+import { NumberStepper } from './number-stepper';
 
 /** Recommended lengths — Google truncates around these. */
 const SEO_TITLE = { min: 30, max: 60 };
@@ -389,22 +390,20 @@ function Publishing() {
       />
       <FieldRow label={messages.readingMinutes} hint={messages.readingMinutesHint}>
         {(id) => (
-          <Input
+          <NumberStepper
             id={id}
-            type="number"
             min={1}
             max={240}
-            value={readingMinutes ?? ''}
-            onChange={(event) => {
-              const value = Number(event.target.value);
-              store.getState().updateMeta(
-                {
-                  readingMinutes:
-                    event.target.value && value >= 1 ? Math.min(240, Math.round(value)) : null,
-                },
-                'Reading time',
-                'meta:reading',
-              );
+            integer
+            nullable
+            suffix=" min"
+            decreaseLabel={messages.decrease}
+            increaseLabel={messages.increase}
+            value={readingMinutes ?? null}
+            onChange={(value) => {
+              store
+                .getState()
+                .updateMeta({ readingMinutes: value }, 'Reading time', 'meta:reading');
             }}
           />
         )}

@@ -1,6 +1,12 @@
 'use client';
 
-import { ColorField, FontField, useEditor, useEditorContext } from '@motors/builder-react';
+import {
+  ColorField,
+  FontField,
+  NumberStepper,
+  useEditor,
+  useEditorContext,
+} from '@motors/builder-react';
 import {
   variablesOf,
   type EmailDocument,
@@ -54,7 +60,7 @@ function Row({
  * mode and link tracking.
  */
 export function EmailSettingsPanel() {
-  const { store } = useEditorContext();
+  const { store, messages } = useEditorContext();
   const { words, type, locale, sample, brand } = useEmail();
   const w = words.email;
   const doc = useEditor((state) => state.doc) as unknown as EmailDocument;
@@ -247,19 +253,21 @@ export function EmailSettingsPanel() {
           </TabsContent>
 
           <TabsContent value="style" className="space-y-4 p-4">
-            <Row label={`${w.width} · ${String(settings.width)}px`}>
+            <Row label={w.width}>
               {(id) => (
-                <input
+                <NumberStepper
                   id={id}
-                  type="range"
                   min={480}
                   max={800}
                   step={10}
+                  integer
+                  suffix="px"
+                  decreaseLabel={messages.decrease}
+                  increaseLabel={messages.increase}
                   value={settings.width}
-                  onChange={(event) => {
-                    setSettings({ width: Number(event.target.value) }, w.width, 'width');
+                  onChange={(value) => {
+                    if (value !== null) setSettings({ width: value }, w.width, 'width');
                   }}
-                  className="accent-primary w-full"
                 />
               )}
             </Row>
@@ -270,38 +278,38 @@ export function EmailSettingsPanel() {
                 if (font) setSettings({ font: font as EmailSettings['font'] }, w.font, 'font');
               }}
             />
-            <Row label={`${w.fontSize} · ${String(settings.fontSize)}px`}>
+            <Row label={w.fontSize}>
               {(id) => (
-                <input
+                <NumberStepper
                   id={id}
-                  type="range"
                   min={12}
                   max={22}
+                  integer
+                  suffix="px"
+                  decreaseLabel={messages.decrease}
+                  increaseLabel={messages.increase}
                   value={settings.fontSize}
-                  onChange={(event) => {
-                    setSettings({ fontSize: Number(event.target.value) }, w.fontSize, 'fontSize');
+                  onChange={(value) => {
+                    if (value !== null) setSettings({ fontSize: value }, w.fontSize, 'fontSize');
                   }}
-                  className="accent-primary w-full"
                 />
               )}
             </Row>
-            <Row label={`${w.lineHeight} · ${settings.lineHeight.toFixed(1)}`}>
+            <Row label={w.lineHeight}>
               {(id) => (
-                <input
+                <NumberStepper
                   id={id}
-                  type="range"
                   min={1.1}
                   max={2.2}
                   step={0.1}
+                  decreaseLabel={messages.decrease}
+                  increaseLabel={messages.increase}
                   value={settings.lineHeight}
-                  onChange={(event) => {
-                    setSettings(
-                      { lineHeight: Number(event.target.value) },
-                      w.lineHeight,
-                      'lineHeight',
-                    );
+                  onChange={(value) => {
+                    if (value !== null) {
+                      setSettings({ lineHeight: value }, w.lineHeight, 'lineHeight');
+                    }
                   }}
-                  className="accent-primary w-full"
                 />
               )}
             </Row>

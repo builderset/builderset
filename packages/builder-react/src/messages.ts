@@ -163,6 +163,10 @@ export interface EditorMessages {
   inheritFont: string;
   font: string;
   searchFonts: string;
+  decrease: string;
+  increase: string;
+  allSides: string;
+  sides: { top: string; right: string; bottom: string; left: string };
   webFontHint: string;
   fontGroups: Record<string, string>;
   align: string;
@@ -510,6 +514,10 @@ const EN: EditorMessages = {
   inheritFont: 'Email default',
   font: 'Font',
   searchFonts: 'Search fonts…',
+  decrease: 'Decrease',
+  increase: 'Increase',
+  allSides: 'All sides',
+  sides: { top: 'Top', right: 'Right', bottom: 'Bottom', left: 'Left' },
   webFontHint: 'Shown by Apple Mail, iOS and most apps; Gmail and Outlook use the fallback.',
   fontGroups: {
     sans: 'Sans serif',
@@ -756,6 +764,10 @@ const SQ: EditorMessages = {
   inheritFont: 'Si emaili',
   font: 'Shkronja',
   searchFonts: 'Kërko shkronja…',
+  decrease: 'Zvogëlo',
+  increase: 'Rrit',
+  allSides: 'Të gjitha anët',
+  sides: { top: 'Lart', right: 'Djathtas', bottom: 'Poshtë', left: 'Majtas' },
   webFontHint:
     'Shfaqet në Apple Mail, iOS dhe shumicën e aplikacioneve; Gmail dhe Outlook përdorin alternativën.',
   fontGroups: {
@@ -936,6 +948,10 @@ const DE: EditorMessages = {
   inheritFont: 'Wie die E-Mail',
   font: 'Schrift',
   searchFonts: 'Schriften suchen…',
+  decrease: 'Verringern',
+  increase: 'Erhöhen',
+  allSides: 'Alle Seiten',
+  sides: { top: 'Oben', right: 'Rechts', bottom: 'Unten', left: 'Links' },
   webFontHint:
     'In Apple Mail, iOS und den meisten Apps; Gmail und Outlook nutzen die Ersatzschrift.',
   fontGroups: {

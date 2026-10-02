@@ -19,3 +19,4 @@ export * from './sample';
 export * from './validate';
 export * from './variables';
 export * from './designs/newsletter';
+export * from './designs/verification-code';

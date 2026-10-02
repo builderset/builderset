@@ -376,7 +376,8 @@ function renderBlock(node: BuilderNode, context: RenderContext, frame: Frame): s
         .map((item) => {
           const url = href(item.href, context, frame.scope);
           if (!url) return '';
-          const icon = context.socialIcon?.(item.network, p.style as string);
+          const icon =
+            p.appearance === 'icons' ? context.socialIcon?.(item.network, p.style as string) : null;
           const content = icon
             ? `<img src="${escapeHtml(icon)}" width="${String(size)}" height="${String(size)}" alt="${escapeHtml(item.network)}" style="display:block;border:0">`
             : `<span style="${style({ display: 'inline-block', fontFamily: font, fontSize: '13px', fontWeight: 600, color: link, padding: '4px 8px', border: `1px solid ${color('brand.border', context) ?? '#e5e7eb'}`, borderRadius: '999px' })}">${escapeHtml(item.network.charAt(0).toUpperCase() + item.network.slice(1))}</span>`;
@@ -569,6 +570,10 @@ function renderRow(
           (cp.borderWidth as number) > 0
             ? `${String(cp.borderWidth)}px solid ${color(cp.borderColor as string, context) ?? '#e5e7eb'}`
             : undefined,
+        // The row centres its inline-block columns; the blocks inside must not
+        // inherit that — a table cell or a list with no alignment of its own
+        // reads left, as it does in the editor.
+        textAlign: 'left',
       });
       const ghostOpen =
         index === 0

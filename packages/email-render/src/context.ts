@@ -63,6 +63,15 @@ export interface RenderOptions {
   currency?: string | undefined;
 }
 
+/**
+ * Where the social icons live: `<site>/email/social/<network>-<style>.png`,
+ * 96px PNGs shipped in the web app's `public/` (Gmail and Outlook show no SVG).
+ */
+export function socialIconUrl(base: string): (network: string, style: string) => string {
+  const root = base.replace(/\/+$/, '');
+  return (network, style) => `${root}/email/social/${network}-${style}.png`;
+}
+
 export interface RenderContext {
   doc: EmailDocument;
   brand: BrandKit;

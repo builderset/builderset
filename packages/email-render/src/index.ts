@@ -9,6 +9,7 @@ export {
   createContext,
   DEFAULT_BRAND,
   fill,
+  socialIconUrl,
   type BrandKit,
   type RenderContext,
   type RenderOptions,

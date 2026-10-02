@@ -24,6 +24,7 @@ import {
   type RenderContext,
   type RenderOptions,
 } from './context';
+import { useStylesheet } from './use-stylesheet';
 
 /**
  * The email as React, for the builder's canvas (and for thumbnails).
@@ -495,7 +496,10 @@ function Block({ node, env, frame }: { node: BuilderNode; env: Env; frame: Frame
           }}
         >
           {(p.items as { network: string }[]).map((item, index) => {
-            const icon = context.socialIcon?.(item.network, p.style as string);
+            const icon =
+              p.appearance === 'icons'
+                ? context.socialIcon?.(item.network, p.style as string)
+                : null;
             return icon ? (
               <img
                 key={index}
@@ -965,6 +969,7 @@ export function EmailCanvas({
   const settings = doc.settings;
   const root = doc.nodes[doc.root];
   const fontsUrl = googleFontsUrl(fontsInUse(doc));
+  useStylesheet(fontsUrl);
   return (
     <div
       style={{
@@ -973,7 +978,6 @@ export function EmailCanvas({
         minHeight: '100%',
       }}
     >
-      {fontsUrl ? <link rel="stylesheet" href={fontsUrl} precedence="email-fonts" /> : null}
       {(root?.children ?? []).map((id) => {
         const section = doc.nodes[id];
         if (!section || hiddenHere(section, env, {})) return null;

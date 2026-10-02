@@ -913,6 +913,7 @@
             "href": "https://linkedin.com/"
           }
         ],
+        "appearance": "icons",
         "style": "dark",
         "size": 28,
         "gap": 10,

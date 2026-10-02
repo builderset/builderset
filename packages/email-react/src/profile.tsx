@@ -23,7 +23,12 @@ import {
   type EmailType,
   type RowLayout,
 } from '@motors/email-core';
-import { EmailCanvas, type BrandKit, type EditableField } from '@motors/email-render';
+import {
+  EmailCanvas,
+  socialIconUrl,
+  type BrandKit,
+  type EditableField,
+} from '@motors/email-render';
 
 import { EmailSettingsPanel } from './settings-panel';
 import { ImportHtmlHost } from './import-html-host';
@@ -42,6 +47,8 @@ export interface EmailProfileOptions {
   type: EmailType | null;
   brand: BrandKit;
   assetUrl: (key: string) => string;
+  /** The public site, where the social icons are served. */
+  socialIconBase?: string | undefined;
   locale: string;
   words: EmailWords;
 }
@@ -117,9 +124,11 @@ export function emailProfile({
   type,
   brand,
   assetUrl,
+  socialIconBase,
   locale,
   words,
 }: EmailProfileOptions): EditorProfile {
+  const socialIcon = socialIconBase ? socialIconUrl(socialIconBase) : undefined;
   const variables = variablesOf(type).map((variable) => ({
     path: variable.path,
     label: variable.label[locale] ?? variable.label.en ?? variable.path,
@@ -137,6 +146,7 @@ export function emailProfile({
         brand={brand}
         locale={locale}
         mode="preview-raw"
+        socialIcon={socialIcon}
       />
     ),
     canvasFrame: 'bare',

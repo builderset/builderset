@@ -10,6 +10,7 @@ import {
   OverlayBody,
   OverlayDescription,
   OverlayFooter,
+  barButtonClass,
   OverlayHeader,
   OverlayTitle,
   SegmentedControl,
@@ -171,10 +172,11 @@ export function ImportHtmlDialog({
           />
           <p className="text-muted-foreground text-xs">{w.hint}</p>
         </OverlayBody>
-        <OverlayFooter className="border-border grid grid-cols-2 gap-2 border-t p-3">
+        <OverlayFooter>
           <Button
             type="button"
-            variant="outline"
+            variant="secondary"
+            className={barButtonClass}
             icon={<Upload aria-hidden="true" />}
             onClick={() => file.current?.click()}
           >
@@ -184,6 +186,7 @@ export function ImportHtmlDialog({
             type="button"
             loading={busy}
             disabled={!html.trim()}
+            className={barButtonClass}
             icon={<FileCode2 aria-hidden="true" />}
             onClick={() => void run()}
           >

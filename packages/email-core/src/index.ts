@@ -20,3 +20,4 @@ export * from './validate';
 export * from './variables';
 export * from './designs/newsletter';
 export * from './designs/verification-code';
+export * from './designs/application-received';

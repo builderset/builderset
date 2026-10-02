@@ -11,6 +11,7 @@ import { useEditorContext } from '../context';
 import { humanize } from '../messages';
 import { RichTextInput } from '../text/rich-text-input';
 import { MediaField } from './media-field';
+import { NumberStepper } from './number-stepper';
 import { classify, defaultFor, HIDDEN_PROPS, type JsonSchema } from './schema';
 import { AlignField, FontField, isAlignField, isFontField } from './type-fields';
 import {
@@ -210,38 +211,18 @@ export function SchemaField(props: FieldProps) {
     case 'number':
       return (
         <Row id={id} label={label}>
-          <div className="flex min-w-0 items-center gap-2">
-            {field.min !== undefined && field.max !== undefined && field.max - field.min <= 100 ? (
-              <input
-                type="range"
-                aria-label={label}
-                min={field.min}
-                max={field.max}
-                value={typeof value === 'number' ? value : field.min}
-                onChange={(event) => {
-                  onChange(Number(event.target.value));
-                }}
-                className="accent-primary min-w-0 flex-1"
-              />
-            ) : null}
-            <Input
-              id={id}
-              type="number"
-              min={field.min}
-              max={field.max}
-              step={field.integer ? 1 : 'any'}
-              value={typeof value === 'number' ? value : ''}
-              className={
-                field.min !== undefined && field.max !== undefined && field.max - field.min <= 100
-                  ? 'w-16 shrink-0'
-                  : 'w-full'
-              }
-              onChange={(event) => {
-                const next = Number(event.target.value);
-                if (Number.isFinite(next)) onChange(field.integer ? Math.round(next) : next);
-              }}
-            />
-          </div>
+          <NumberStepper
+            id={id}
+            value={typeof value === 'number' ? value : null}
+            min={field.min}
+            max={field.max}
+            integer={field.integer}
+            decreaseLabel={messages.decrease}
+            increaseLabel={messages.increase}
+            onChange={(next) => {
+              if (next !== null) onChange(next);
+            }}
+          />
         </Row>
       );
 

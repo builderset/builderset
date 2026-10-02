@@ -13,6 +13,7 @@ export type { EditorProfile } from './profile';
 export { MediaField } from './inspector/media-field';
 export { ColorField, SpacingField } from './inspector/special-fields';
 export { AlignButtons, FontField } from './inspector/type-fields';
+export { NumberStepper, type NumberStepperProps } from './inspector/number-stepper';
 export { RichTextInput } from './text/rich-text-input';
 export type {
   BuilderHost,

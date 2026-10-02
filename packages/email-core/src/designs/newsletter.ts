@@ -4,22 +4,8 @@ import type { EmailDocument } from '../document';
 import { pad } from '../fields';
 import { v } from '../rich-text';
 import { block, buildEmail, row, section } from '../sample';
-import {
-  bold,
-  eyebrow,
-  INK,
-  LINE,
-  MIST,
-  MUTED,
-  ORANGE,
-  ORANGE_DEEP,
-  ORANGE_SOFT,
-  PAPER,
-  t,
-  TEXT,
-  when,
-  wordmark,
-} from './palette';
+import { bold, eyebrow, INK, LINE, MUTED, ORANGE_DEEP, PAPER, t, TEXT, when } from './palette';
+import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFooter } from './parts';
 
 /**
  * The monthly newsletter, in the site's own look: the near-black hero and the
@@ -34,27 +20,6 @@ import {
  * condition rather than showing a hollow box, and the welcome note shows only
  * on the email sent right after signing up.
  */
-
-/** The three things every issue carries — the same promise the signup form makes. */
-const promise = (icon: string, title: string, body: string) => ({
-  props: {
-    background: MIST,
-    radius: 14,
-    padding: pad(20, 18, 18, 18),
-  },
-  blocks: [
-    block('text', { text: t(icon), size: 26, lineHeight: 1, padding: pad(0, 0, 10, 0) }),
-    block('heading', {
-      text: t(title),
-      level: 3,
-      size: 16,
-      font: 'sora',
-      color: TEXT,
-      padding: pad(0, 0, 6, 0),
-    }),
-    block('text', { text: t(body), size: 14, lineHeight: 1.55, color: MUTED, padding: pad(0) }),
-  ],
-});
 
 export function newsletterEmail(
   registry: ElementRegistry,
@@ -85,192 +50,67 @@ export function newsletterEmail(
       },
     },
     [
-      // ── Masthead ────────────────────────────────────────────────────────
-      section({ background: INK, padding: pad(22, 32, 18, 32), radius: 0 }, [
-        row(
-          '50-50',
-          [
-            [wordmark()],
-            [
-              block('text', {
-                text: [{ text: 'Newsletter · ' }, v('edition.label')],
-                size: 12,
-                weight: '500',
-                letterSpacing: 1,
-                transform: 'uppercase',
-                align: 'right',
-                color: '#9aa3ae',
-                padding: pad(6, 0, 0, 0),
-              }),
-            ],
-          ],
-          { verticalAlign: 'middle', gap: 12 },
-        ),
-      ]),
+      masthead([{ text: 'Newsletter · ' }, v('edition.label')]),
 
-      // ── Hero ────────────────────────────────────────────────────────────
-      section({ background: INK, padding: pad(28, 32, 44, 32) }, [
-        row('100', [
-          [
-            eyebrow('Mirë se erdhe në listë', ORANGE, { display: when('is_welcome', 'exists') }),
-            eyebrow('Përmbledhja e muajit', ORANGE, { display: when('is_welcome', 'missing') }),
-            block('heading', {
-              text: t('Çmimet e tregut, një herë në muaj'),
-              level: 1,
-              size: 38,
-              font: 'sora',
-              weight: '700',
-              letterSpacing: -1,
-              color: PAPER,
-              padding: pad(0, 0, 14, 0),
-            }),
-            block('text', {
-              text: t(
-                'Si lëvizën çmimet e makinave, çfarë ndryshoi në ligj dhe disa këshilla praktike për ta shitur makinën tuaj me kokë të ftohtë. Shkurt, një herë në muaj — pa reklama.',
-              ),
-              size: 16,
-              lineHeight: 1.65,
-              color: '#c6ccd4',
-              padding: pad(0, 0, 26, 0),
-            }),
-            block('button', {
-              label: 'Merr një ofertë për makinën →',
-              href: '{{ site.valuation_url }}',
-              background: ORANGE,
-              textColor: PAPER,
-              radius: 40,
-              paddingX: 26,
-              paddingY: 14,
-              size: 15,
-              weight: '600',
-              align: 'left',
-              padding: pad(0),
-            }),
-          ],
-        ]),
-      ]),
-
-      // ── Welcome note (the email right after signing up only) ────────────
-      section(
-        {
-          background: ORANGE_SOFT,
-          padding: pad(22, 32, 22, 32),
-          display: when('is_welcome', 'exists'),
-        },
-        [
-          row('100', [
-            [
-              block('text', {
-                text: [
-                  bold('Faleminderit që u abonuat! '),
-                  { text: 'Adresa ' },
-                  {
-                    text: '{{subscriber.email}}',
-                    marks: [{ type: 'bold' }, { type: 'variable', path: 'subscriber.email' }],
-                  },
-                  {
-                    text: ' është në listë. Newsletter-i vjen në fillim të çdo muaji — asgjë tjetër, dhe adresën nuk ia japim askujt.',
-                  },
-                ],
-                size: 15,
-                lineHeight: 1.6,
-                color: '#5a2a07',
-                padding: pad(0),
-              }),
-            ],
-          ]),
+      hero({
+        eyebrows: [
+          heroEyebrow('Mirë se erdhe në listë', when('is_welcome', 'exists')),
+          heroEyebrow('Përmbledhja e muajit', when('is_welcome', 'missing')),
         ],
+        title: 'Çmimet e tregut, një herë në muaj',
+        body: t(
+          'Si lëvizën çmimet e makinave, çfarë ndryshoi në ligj dhe disa këshilla praktike për ta shitur makinën tuaj me kokë të ftohtë. Shkurt, një herë në muaj — pa reklama.',
+        ),
+        button: { label: 'Merr një ofertë për makinën →', href: '{{ site.valuation_url }}' },
+      }),
+
+      // The welcome note — only on the email sent right after signing up.
+      note(
+        [
+          bold('Faleminderit që u abonuat! '),
+          { text: 'Adresa ' },
+          {
+            text: '{{subscriber.email}}',
+            marks: [{ type: 'bold' }, { type: 'variable', path: 'subscriber.email' }],
+          },
+          {
+            text: ' është në listë. Newsletter-i vjen në fillim të çdo muaji — asgjë tjetër, dhe adresën nuk ia japim askujt.',
+          },
+        ],
+        when('is_welcome', 'exists'),
       ),
 
-      // ── What every issue carries ────────────────────────────────────────
-      section({ background: PAPER, padding: pad(36, 32, 12, 32) }, [
-        row('100', [
-          [
-            eyebrow('Çfarë gjeni në çdo numër', ORANGE_DEEP),
-            block('heading', {
-              text: t('Tre gjëra, të shpjeguara qartë'),
-              level: 2,
-              size: 24,
-              font: 'sora',
-              letterSpacing: -0.5,
-              padding: pad(0, 0, 18, 0),
-            }),
-          ],
-        ]),
-        row(
-          '33-33-33',
-          [
-            promise(
-              '📈',
-              'Lëvizjet e çmimeve',
-              'Si ndryshuan çmimet sipas markës dhe vitit gjatë muajit të fundit.',
-            ),
-            promise(
-              '⚖️',
-              'Ndryshimet ligjore',
-              'Taksa, kontroll teknik dhe rregulla që prekin shitjen e një automjeti.',
-            ),
-            promise(
-              '💡',
-              'Këshilla praktike',
-              'Si ta përgatisni makinën dhe dokumentet për një shitje të shpejtë.',
-            ),
-          ],
-          { gap: 12, padding: pad(0, 0, 24, 0) },
-        ),
+      cards('Çfarë gjeni në çdo numër', 'Tre gjëra, të shpjeguara qartë', [
+        {
+          icon: '📈',
+          title: 'Lëvizjet e çmimeve',
+          body: 'Si ndryshuan çmimet sipas markës dhe vitit gjatë muajit të fundit.',
+        },
+        {
+          icon: '⚖️',
+          title: 'Ndryshimet ligjore',
+          body: 'Taksa, kontroll teknik dhe rregulla që prekin shitjen e një automjeti.',
+        },
+        {
+          icon: '💡',
+          title: 'Këshilla praktike',
+          body: 'Si ta përgatisni makinën dhe dokumentet për një shitje të shpejtë.',
+        },
       ]),
 
-      // ── The market in numbers (only when there were valuations) ─────────
-      section(
-        {
-          background: PAPER,
-          padding: pad(12, 32, 28, 32),
-          display: when('market.valuations', 'gt', '0'),
-        },
-        [
-          row('100', [
-            {
-              props: {
-                background: MIST,
-                radius: 16,
-                padding: pad(24, 24, 18, 24),
-                borderWidth: 1,
-                borderColor: LINE,
-              },
-              blocks: [
-                eyebrow('Tregu në shifra · 30 ditët e fundit', ORANGE_DEEP),
-                block('key-value', {
-                  rows: [
-                    { label: 'Makina të vlerësuara', value: '{{ market.valuations | number }}' },
-                    {
-                      label: 'Oferta mesatare (cash)',
-                      value: '{{ market.average_offer | money }}',
-                    },
-                    { label: 'Marka më e kërkuar', value: '{{ market.top_brand }}' },
-                  ],
-                  size: 15,
-                  labelColor: MUTED,
-                  valueColor: TEXT,
-                  borderColor: LINE,
-                  background: null,
-                  padding: pad(0, 0, 10, 0),
-                }),
-                block('text', {
-                  text: [
-                    {
-                      text: 'Shifrat vijnë nga vlerësimet që ekipi ynë ka bërë këtë muaj — jo nga shpallje me çmime të fryra.',
-                    },
-                  ],
-                  size: 13,
-                  lineHeight: 1.5,
-                  color: MUTED,
-                  padding: pad(4, 0, 0, 0),
-                }),
-              ],
-            },
-          ]),
+      // The market in numbers — only when there were valuations.
+      facts({
+        label: 'Tregu në shifra · 30 ditët e fundit',
+        rows: [
+          { label: 'Makina të vlerësuara', value: '{{ market.valuations | number }}' },
+          { label: 'Oferta mesatare (cash)', value: '{{ market.average_offer | money }}' },
+          { label: 'Marka më e kërkuar', value: '{{ market.top_brand }}' },
         ],
-      ),
+        note: t(
+          'Shifrat vijnë nga vlerësimet që ekipi ynë ka bërë këtë muaj — jo nga shpallje me çmime të fryra.',
+        ),
+        display: when('market.valuations', 'gt', '0'),
+      }),
 
       // ── From the blog (only when there is something to read) ──────────
       section(
@@ -357,103 +197,34 @@ export function newsletterEmail(
         ],
       ),
 
-      // ── Selling? ────────────────────────────────────────────────────────
-      section({ background: PAPER, padding: pad(16, 32, 36, 32) }, [
-        row('100', [
-          {
-            props: { background: INK, radius: 18, padding: pad(30, 28, 30, 28) },
-            blocks: [
-              block('heading', {
-                text: t('Po mendoni ta shisni makinën?'),
-                level: 2,
-                size: 24,
-                font: 'sora',
-                letterSpacing: -0.5,
-                color: PAPER,
-                align: 'center',
-                padding: pad(0, 0, 10, 0),
-              }),
-              block('text', {
-                text: t(
-                  'Plotësoni formularin në dy minuta dhe merrni një ofertë reale, me pagesë të menjëhershme pas kontrollit.',
-                ),
-                size: 15,
-                lineHeight: 1.6,
-                color: '#c6ccd4',
-                align: 'center',
-                padding: pad(0, 0, 20, 0),
-              }),
-              block('button', {
-                label: 'Vlerëso makinën falas',
-                href: '{{ site.valuation_url }}',
-                background: ORANGE,
-                textColor: PAPER,
-                radius: 40,
-                paddingX: 26,
-                paddingY: 14,
-                size: 15,
-                align: 'center',
-                padding: pad(0),
-              }),
-            ],
-          },
-        ]),
-      ]),
+      callToAction({
+        title: 'Po mendoni ta shisni makinën?',
+        body: t(
+          'Plotësoni formularin në dy minuta dhe merrni një ofertë reale, me pagesë të menjëhershme pas kontrollit.',
+        ),
+        button: { label: 'Vlerëso makinën falas', href: '{{ site.valuation_url }}' },
+      }),
 
-      // ── Footer ──────────────────────────────────────────────────────────
-      section({ background: MIST, padding: pad(28, 32, 30, 32) }, [
-        row('100', [
-          [
-            block('menu', {
-              items: [
-                { label: 'Blogu', href: '{{ site.blog_url }}' },
-                { label: 'Vlerëso makinën', href: '{{ site.valuation_url }}' },
-                { label: 'Kontakt', href: '{{ site.contact_url }}' },
-              ],
-              color: TEXT,
-              size: 13,
-              separator: 'dot',
-              align: 'center',
-              padding: pad(0, 0, 14, 0),
-            }),
-            block('social', {
-              items: [
-                { network: 'instagram', href: 'https://www.instagram.com/blejmauto' },
-                { network: 'facebook', href: 'https://www.facebook.com/blejmauto' },
-                { network: 'tiktok', href: 'https://www.tiktok.com/@blejmauto' },
-              ],
-              appearance: 'icons',
-              style: 'dark',
-              size: 32,
-              gap: 10,
-              align: 'center',
-              padding: pad(0, 0, 18, 0),
-            }),
-            block('footer', {
-              text: [
-                { text: 'Ju e merrni këtë email sepse u abonuat në ' },
-                v('brand.name'),
-                { text: ' më ' },
-                {
-                  text: '{{subscriber.since}}',
-                  marks: [{ type: 'variable', path: 'subscriber.since', format: 'date' }],
-                },
-                { text: ' me adresën ' },
-                v('subscriber.email'),
-                { text: '.' },
-              ],
-              showAddress: true,
-              showUnsubscribe: true,
-              showPreferences: false,
-              showViewInBrowser: false,
-              color: MUTED,
-              size: 12,
-              align: 'center',
-              padding: pad(0),
-            }),
-          ],
-        ]),
-      ]),
+      siteFooter({
+        links: [
+          { label: 'Blogu', href: '{{ site.blog_url }}' },
+          { label: 'Vlerëso makinën', href: '{{ site.valuation_url }}' },
+          { label: 'Kontakt', href: '{{ site.contact_url }}' },
+        ],
+        text: [
+          { text: 'Ju e merrni këtë email sepse u abonuat në ' },
+          v('brand.name'),
+          { text: ' më ' },
+          {
+            text: '{{subscriber.since}}',
+            marks: [{ type: 'variable', path: 'subscriber.since', format: 'date' }],
+          },
+          { text: ' me adresën ' },
+          v('subscriber.email'),
+          { text: '.' },
+        ],
+        unsubscribe: true,
+      }),
     ],
   );
 }

@@ -33,7 +33,6 @@ import { useEditor, useEditorContext, useProfile } from '../context';
 import { ElementIcon } from '../icons';
 import { humanize } from '../messages';
 import { DocumentSettings } from './document-settings';
-import { FieldLayoutProvider } from './field-layout';
 import { MediaField } from './media-field';
 import { propsSchema, type JsonSchema } from './schema';
 import { ObjectFields } from './schema-fields';
@@ -150,37 +149,35 @@ function NodeInspector({ id }: { id: NodeId }) {
         </TabsList>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <TabsContent value="content" className="p-4">
-            <FieldLayoutProvider layout="inline">
-              {schema && Object.keys(schema.properties ?? {}).length ? (
-                <fieldset disabled={!!node.locked} className="disabled:opacity-60">
-                  <ObjectFields
-                    schema={schema}
-                    value={node.props}
-                    mediaKind={MEDIA_KIND[node.type] ?? 'image'}
-                    onChange={(props) => {
-                      const changed = Object.keys(props).find(
-                        (key) => props[key] !== node.props[key],
+            {schema && Object.keys(schema.properties ?? {}).length ? (
+              <fieldset disabled={!!node.locked} className="disabled:opacity-60">
+                <ObjectFields
+                  schema={schema}
+                  value={node.props}
+                  mediaKind={MEDIA_KIND[node.type] ?? 'image'}
+                  onChange={(props) => {
+                    const changed = Object.keys(props).find(
+                      (key) => props[key] !== node.props[key],
+                    );
+                    const patch: Record<string, unknown> = { ...props };
+                    // A freshly uploaded picture replaces one still waiting to be.
+                    if (node.type === 'image' && changed === 'media' && props.media) {
+                      patch.pendingUrl = null;
+                    }
+                    store
+                      .getState()
+                      .updateNode(
+                        id,
+                        { props: patch },
+                        `Edit ${changed ?? 'block'}`,
+                        `prop:${id}:${changed ?? ''}`,
                       );
-                      const patch: Record<string, unknown> = { ...props };
-                      // A freshly uploaded picture replaces one still waiting to be.
-                      if (node.type === 'image' && changed === 'media' && props.media) {
-                        patch.pendingUrl = null;
-                      }
-                      store
-                        .getState()
-                        .updateNode(
-                          id,
-                          { props: patch },
-                          `Edit ${changed ?? 'block'}`,
-                          `prop:${id}:${changed ?? ''}`,
-                        );
-                    }}
-                  />
-                </fieldset>
-              ) : (
-                <p className="text-muted-foreground text-sm">—</p>
-              )}
-            </FieldLayoutProvider>
+                  }}
+                />
+              </fieldset>
+            ) : (
+              <p className="text-muted-foreground text-sm">—</p>
+            )}
           </TabsContent>
           <TabsContent value="style" className="p-4">
             <StylePanel id={id} />

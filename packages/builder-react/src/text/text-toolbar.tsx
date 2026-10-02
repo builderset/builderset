@@ -22,6 +22,7 @@ import { createPortal } from 'react-dom';
 
 import { cn } from '../cn';
 import { useEditorContext } from '../context';
+import { useStylesheet } from '../use-stylesheet';
 
 /**
  * The formatting bar over a text selection: marks, a link, and clear.
@@ -37,6 +38,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
   const [picking, setPicking] = useState(false);
   const [choosingFont, setChoosingFont] = useState(false);
   const fonts = profile.fonts ?? [];
+  useStylesheet(choosingFont ? profile.fontsPreviewUrl : null);
   const [query, setQuery] = useState('');
   const [href, setHref] = useState('');
   const state = useEditorState({
@@ -134,13 +136,6 @@ export function TextToolbar({ editor }: { editor: Editor }) {
         >
           {choosingFont ? (
             <div className="w-72">
-              {profile.fontsPreviewUrl ? (
-                <link
-                  rel="stylesheet"
-                  href={profile.fontsPreviewUrl}
-                  precedence="builder-font-previews"
-                />
-              ) : null}
               <input
                 autoFocus
                 value={query}

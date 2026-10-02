@@ -1,7 +1,7 @@
 'use client';
 
 import type { MediaKind, MediaRef, RichText } from '@motors/builder-core';
-import { Button, Input, SegmentedControl, Select, Switch, Textarea } from '@motors/ui';
+import { Button, Input, Label, SegmentedControl, Select, Switch, Textarea } from '@motors/ui';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useId, useState } from 'react';
@@ -10,7 +10,6 @@ import { cn } from '../cn';
 import { useEditorContext } from '../context';
 import { humanize } from '../messages';
 import { RichTextInput } from '../text/rich-text-input';
-import { LabeledRow, useFieldLayout } from './field-layout';
 import { MediaField } from './media-field';
 import { NumberStepper } from './number-stepper';
 import { classify, defaultFor, HIDDEN_PROPS, type JsonSchema } from './schema';
@@ -80,7 +79,6 @@ export function SchemaField(props: FieldProps) {
   const id = useId();
   const label = useLabel(name);
   const { messages } = useEditorContext();
-  const layout = useFieldLayout();
   const field = classify(schema, name);
 
   // Shapes with a control of their own.
@@ -154,10 +152,7 @@ export function SchemaField(props: FieldProps) {
 
     case 'enum': {
       const options = field.options.map((option) => ({ value: option, label: humanize(option) }));
-      const short =
-        layout === 'inline'
-          ? options.length <= 3 && options.every((option) => option.label.length <= 6)
-          : options.length <= 4 && options.every((option) => option.label.length <= 8);
+      const short = options.length <= 4 && options.every((option) => option.label.length <= 8);
       return (
         <Row id={id} label={label}>
           {short ? (
@@ -186,7 +181,7 @@ export function SchemaField(props: FieldProps) {
 
     case 'string':
       return (
-        <Row id={id} label={label} wide={field.multiline}>
+        <Row id={id} label={label}>
           {field.multiline ? (
             <Textarea
               id={id}
@@ -233,7 +228,7 @@ export function SchemaField(props: FieldProps) {
 
     case 'richText':
       return (
-        <Row id={id} label={label} wide>
+        <Row id={id} label={label}>
           <RichTextInput
             id={id}
             value={Array.isArray(value) ? (value as RichText) : []}
@@ -244,7 +239,7 @@ export function SchemaField(props: FieldProps) {
 
     case 'media':
       return (
-        <Row id={id} label={label} wide>
+        <Row id={id} label={label}>
           <MediaField
             id={id}
             kind={mediaKind}
@@ -267,7 +262,6 @@ export function SchemaField(props: FieldProps) {
               type="button"
               variant="outline"
               size="sm"
-              className="w-full"
               icon={<Plus aria-hidden="true" />}
               onClick={() => {
                 onChange(defaultFor(field.inner));
@@ -279,19 +273,17 @@ export function SchemaField(props: FieldProps) {
         );
       }
       return (
-        <div className="space-y-1">
+        <div className="relative">
           <SchemaField {...props} schema={field.inner} />
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                onChange(null);
-              }}
-              className="text-muted-foreground hover:text-destructive cursor-pointer text-[11px]"
-            >
-              {messages.clear}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              onChange(null);
+            }}
+            className="text-muted-foreground hover:text-destructive absolute top-0 right-0 text-xs"
+          >
+            {messages.clear}
+          </button>
         </div>
       );
     }
@@ -340,21 +332,14 @@ export function SchemaField(props: FieldProps) {
   }
 }
 
-function Row({
-  id,
-  label,
-  wide,
-  children,
-}: {
-  id: string;
-  label: string;
-  wide?: boolean;
-  children: React.ReactNode;
-}) {
+function Row({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
-    <LabeledRow id={id} label={label} wide={wide}>
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-xs font-medium">
+        {label}
+      </Label>
       {children}
-    </LabeledRow>
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
+import { Label, Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
 import {
   AlignCenter,
   AlignHorizontalJustifyCenter,
@@ -20,7 +20,6 @@ import { useId, useState } from 'react';
 import { cn } from '../cn';
 import { useEditorContext } from '../context';
 import { humanize } from '../messages';
-import { LabeledRow } from './field-layout';
 
 /**
  * Typography and position controls: a font picker that shows each font in
@@ -58,9 +57,10 @@ export function AlignField({
   const { messages } = useEditorContext();
   const label = messages.fieldLabels[name] ?? messages.styleKeys[name] ?? humanize(name);
   return (
-    <LabeledRow label={label}>
+    <div className="space-y-1.5">
+      <Label className="text-xs font-medium">{label}</Label>
       <AlignButtons value={value} options={options} onChange={onChange} label={label} />
-    </LabeledRow>
+    </div>
   );
 }
 
@@ -152,25 +152,25 @@ export function FontField({
   const groups = [...new Set(shown.map((font) => font.category))];
 
   return (
-    <LabeledRow id={id} label={messages.fieldLabels.font ?? humanize('font')}>
+    <div className="space-y-1.5">
       {/* The previews need every font loaded — only while the list is open. */}
       {open && profile.fontsPreviewUrl ? (
         <link rel="stylesheet" href={profile.fontsPreviewUrl} precedence="builder-font-previews" />
       ) : null}
+      <Label htmlFor={id} className="text-xs font-medium">
+        {messages.fieldLabels.font ?? humanize('font')}
+      </Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
             id={id}
             type="button"
-            className="border-input bg-background hover:bg-accent/40 flex h-[30px] w-full cursor-pointer items-center justify-between gap-2 rounded-[var(--radius-control)] border px-2 text-left text-xs"
+            className="border-input bg-background hover:bg-accent/40 flex h-9 w-full items-center justify-between gap-2 rounded-[var(--radius-control)] border px-3 text-left text-sm"
           >
             <span className="truncate" style={current ? { fontFamily: current.stack } : undefined}>
               {current?.label ?? messages.inheritFont}
             </span>
-            <ChevronsUpDown
-              className="text-muted-foreground size-3.5 shrink-0"
-              aria-hidden="true"
-            />
+            <ChevronsUpDown className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
           </button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-72 p-1">
@@ -222,7 +222,7 @@ export function FontField({
           </div>
         </PopoverContent>
       </Popover>
-    </LabeledRow>
+    </div>
   );
 }
 

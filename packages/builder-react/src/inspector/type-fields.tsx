@@ -20,6 +20,7 @@ import { useId, useState } from 'react';
 import { cn } from '../cn';
 import { useEditorContext } from '../context';
 import { humanize } from '../messages';
+import { useStylesheet } from '../use-stylesheet';
 
 /**
  * Typography and position controls: a font picker that shows each font in
@@ -150,13 +151,11 @@ export function FontField({
     font.label.toLowerCase().includes(query.trim().toLowerCase()),
   );
   const groups = [...new Set(shown.map((font) => font.category))];
+  // The previews need every font loaded — only once the list has been opened.
+  useStylesheet(open ? profile.fontsPreviewUrl : null);
 
   return (
     <div className="space-y-1.5">
-      {/* The previews need every font loaded — only while the list is open. */}
-      {open && profile.fontsPreviewUrl ? (
-        <link rel="stylesheet" href={profile.fontsPreviewUrl} precedence="builder-font-previews" />
-      ) : null}
       <Label htmlFor={id} className="text-xs font-medium">
         {messages.fieldLabels.font ?? humanize('font')}
       </Label>

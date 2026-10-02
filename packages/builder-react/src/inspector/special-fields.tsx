@@ -7,6 +7,7 @@ import { useId, useState } from 'react';
 import { cn } from '../cn';
 import { useEditorContext } from '../context';
 import { humanize } from '../messages';
+import { LabeledRow } from './field-layout';
 import { NumberStepper } from './number-stepper';
 
 /**
@@ -42,71 +43,75 @@ export function ColorField({
   const [draft, setDraft] = useState(value ?? '');
   const label = messages.fieldLabels[name] ?? messages.styleKeys[name] ?? humanize(name);
 
+  // The picker first, so it sits level with the label inline; the brand's
+  // swatches under it, and only when there are any.
+  const hasSwatches = nullable || tokens.length > 0;
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
-        {label}
-      </Label>
-      <div className="flex flex-wrap gap-1.5">
-        {nullable ? (
-          <button
-            type="button"
-            title={messages.none}
-            aria-label={messages.none}
-            aria-pressed={value === null || value === undefined}
-            onClick={() => {
-              onChange(null);
+    <LabeledRow id={id} label={label}>
+      <div className="space-y-1.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <input
+            type="color"
+            aria-label={label}
+            value={hex}
+            onChange={(event) => {
+              onChange(event.target.value);
+              setDraft(event.target.value);
             }}
-            className={cn(
-              'border-border relative size-6 overflow-hidden rounded-md border bg-white transition-transform active:scale-90',
-              (value === null || value === undefined) && 'ring-primary ring-2 ring-offset-1',
-            )}
-          >
-            <span className="absolute inset-0 m-auto h-px w-8 -rotate-45 bg-red-500" />
-          </button>
-        ) : null}
-        {tokens.map((token) => (
-          <button
-            key={token.value}
-            type="button"
-            title={token.label}
-            aria-label={token.label}
-            aria-pressed={value === token.value}
-            onClick={() => {
-              onChange(token.value);
-              setDraft(token.value);
-            }}
-            className={cn(
-              'border-border size-6 rounded-md border transition-transform active:scale-90',
-              value === token.value && 'ring-primary ring-2 ring-offset-1',
-            )}
-            style={{ background: token.hex }}
+            className="border-input size-[30px] shrink-0 cursor-pointer rounded-md border bg-transparent p-0.5"
           />
-        ))}
+          <Input
+            id={id}
+            value={draft}
+            placeholder="#rrggbb"
+            className="font-mono text-xs"
+            onChange={(event) => {
+              setDraft(event.target.value);
+              if (HEX.test(event.target.value)) onChange(event.target.value);
+            }}
+          />
+        </div>
+        {hasSwatches ? (
+          <div className="flex flex-wrap gap-1">
+            {nullable ? (
+              <button
+                type="button"
+                title={messages.none}
+                aria-label={messages.none}
+                aria-pressed={value === null || value === undefined}
+                onClick={() => {
+                  onChange(null);
+                }}
+                className={cn(
+                  'border-border relative size-6 overflow-hidden rounded-md border bg-white transition-transform active:scale-90',
+                  (value === null || value === undefined) && 'ring-primary ring-2 ring-offset-1',
+                )}
+              >
+                <span className="absolute inset-0 m-auto h-px w-8 -rotate-45 bg-red-500" />
+              </button>
+            ) : null}
+            {tokens.map((token) => (
+              <button
+                key={token.value}
+                type="button"
+                title={token.label}
+                aria-label={token.label}
+                aria-pressed={value === token.value}
+                onClick={() => {
+                  onChange(token.value);
+                  setDraft(token.value);
+                }}
+                className={cn(
+                  'border-border size-6 rounded-md border transition-transform active:scale-90',
+                  value === token.value && 'ring-primary ring-2 ring-offset-1',
+                )}
+                style={{ background: token.hex }}
+              />
+            ))}
+          </div>
+        ) : null}
       </div>
-      <div className="flex min-w-0 items-center gap-2">
-        <input
-          type="color"
-          aria-label={label}
-          value={hex}
-          onChange={(event) => {
-            onChange(event.target.value);
-            setDraft(event.target.value);
-          }}
-          className="border-input size-[30px] shrink-0 cursor-pointer rounded-md border bg-transparent p-0.5"
-        />
-        <Input
-          id={id}
-          value={draft}
-          placeholder="#rrggbb"
-          className="font-mono text-xs"
-          onChange={(event) => {
-            setDraft(event.target.value);
-            if (HEX.test(event.target.value)) onChange(event.target.value);
-          }}
-        />
-      </div>
-    </div>
+    </LabeledRow>
   );
 }
 
@@ -167,25 +172,33 @@ export function SpacingField({
     />
   );
 
+  const toggle = (
+    <button
+      type="button"
+      aria-pressed={linked}
+      title={linked ? 'Unlink' : 'Link'}
+      onClick={() => {
+        setLinked(!linked);
+      }}
+      className="text-muted-foreground hover:text-foreground hover:bg-accent flex size-[30px] shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-control)] [&_svg]:size-3.5"
+    >
+      {linked ? <Link2 aria-hidden="true" /> : <Link2Off aria-hidden="true" />}
+    </button>
+  );
+
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <Label className="text-xs font-medium">{label}</Label>
-        <button
-          type="button"
-          aria-pressed={linked}
-          title={linked ? 'Unlink' : 'Link'}
-          onClick={() => {
-            setLinked(!linked);
-          }}
-          className="text-muted-foreground hover:text-foreground cursor-pointer [&_svg]:size-3.5"
-        >
-          {linked ? <Link2 aria-hidden="true" /> : <Link2Off aria-hidden="true" />}
-        </button>
-      </div>
-      {linked ? (
-        stepper('top', `${label} · ${messages.allSides}`)
-      ) : (
+      <LabeledRow label={label}>
+        <div className="flex min-w-0 items-center justify-end gap-1">
+          {linked ? (
+            <div className="min-w-0 flex-1">
+              {stepper('top', `${label} · ${messages.allSides}`)}
+            </div>
+          ) : null}
+          {toggle}
+        </div>
+      </LabeledRow>
+      {linked ? null : (
         <div className="grid min-w-0 grid-cols-2 gap-x-2 gap-y-1.5">
           {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
             <div key={side} className="min-w-0 space-y-0.5">

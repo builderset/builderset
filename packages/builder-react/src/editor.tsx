@@ -727,7 +727,10 @@ function LeftRail({
   ];
   return (
     <div className="flex h-full flex-col">
-      <div role="tablist" className="border-border grid grid-cols-[1fr_1fr_1.35fr] border-b">
+      <div
+        role="tablist"
+        className="border-border mx-3 mt-1 grid shrink-0 grid-cols-[1fr_1fr_1.35fr] border-b"
+      >
         {tabs.map((item) => (
           <button
             key={item.value}
@@ -738,7 +741,7 @@ function LeftRail({
               onTab(item.value);
             }}
             className={cn(
-              'relative flex h-11 cursor-pointer items-center justify-center gap-1.5 text-xs font-medium whitespace-nowrap transition-colors [&_svg]:size-3.5',
+              'relative flex h-7 min-w-0 cursor-pointer items-center justify-center gap-1 px-1.5 text-xs font-medium whitespace-nowrap transition-colors [&_svg]:size-3.5 [&_svg]:shrink-0',
               tab === item.value
                 ? 'text-foreground'
                 : 'text-muted-foreground hover:text-foreground',
@@ -749,7 +752,7 @@ function LeftRail({
             {tab === item.value ? (
               <motion.span
                 layoutId="bld-left-tab"
-                className="bg-primary absolute inset-x-3 bottom-0 h-0.5 rounded-full"
+                className="bg-primary absolute inset-x-0 -bottom-px h-0.5 rounded-full"
               />
             ) : null}
           </button>

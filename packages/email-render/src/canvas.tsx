@@ -990,7 +990,9 @@ export function EmailCanvas({
               style={{
                 maxWidth: p.fullWidth ? '100%' : settings.width,
                 margin: '0 auto',
-                background:
+                // Longhands only: React warns (and mis-updates) when a
+                // `background` shorthand sits beside `backgroundImage`.
+                backgroundColor:
                   color(p.background as string | null, context) ??
                   color(settings.background, context),
                 backgroundImage: image ? `url('${context.assetUrl(image.key)}')` : undefined,

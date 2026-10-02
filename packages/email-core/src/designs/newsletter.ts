@@ -1,9 +1,25 @@
 import type { ElementRegistry } from '@motors/builder-core';
 
-import { pad } from '../fields';
-import { v, type EmailRichText } from '../rich-text';
-import { block, buildEmail, row, section } from '../sample';
 import type { EmailDocument } from '../document';
+import { pad } from '../fields';
+import { v } from '../rich-text';
+import { block, buildEmail, row, section } from '../sample';
+import {
+  bold,
+  eyebrow,
+  INK,
+  LINE,
+  MIST,
+  MUTED,
+  ORANGE,
+  ORANGE_DEEP,
+  ORANGE_SOFT,
+  PAPER,
+  t,
+  TEXT,
+  when,
+  wordmark,
+} from './palette';
 
 /**
  * The monthly newsletter, in the site's own look: the near-black hero and the
@@ -18,35 +34,6 @@ import type { EmailDocument } from '../document';
  * condition rather than showing a hollow box, and the welcome note shows only
  * on the email sent right after signing up.
  */
-
-const INK = '#0b1018';
-const ORANGE = '#da6c1e';
-const ORANGE_DEEP = '#ba5702';
-const ORANGE_SOFT = '#fff4ec';
-const TEXT = '#1b1e22';
-const MUTED = '#626569';
-const LINE = '#e6e8eb';
-const PAPER = '#ffffff';
-const MIST = '#f6f7f9';
-
-const t = (text: string): EmailRichText => [{ text }];
-const bold = (text: string) => ({ text, marks: [{ type: 'bold' as const }] });
-const when = (variable: string, op: 'exists' | 'missing' | 'gt', value?: string) => ({
-  hideOn: 'none' as const,
-  when: [{ var: variable, op, ...(value === undefined ? {} : { value }) }],
-});
-
-const eyebrow = (text: string, color: string, extra: Record<string, unknown> = {}) =>
-  block('text', {
-    text: t(text),
-    size: 12,
-    weight: '600',
-    letterSpacing: 2,
-    transform: 'uppercase',
-    color,
-    padding: pad(0, 0, 10, 0),
-    ...extra,
-  });
 
 /** The three things every issue carries — the same promise the signup form makes. */
 const promise = (icon: string, title: string, body: string) => ({
@@ -103,17 +90,7 @@ export function newsletterEmail(
         row(
           '50-50',
           [
-            [
-              block('text', {
-                text: [{ text: 'blejmauto', marks: [{ type: 'bold' }] }, { text: '.com' }],
-                font: 'sora',
-                size: 22,
-                lineHeight: 1.2,
-                letterSpacing: -0.5,
-                color: PAPER,
-                padding: pad(0),
-              }),
-            ],
+            [wordmark()],
             [
               block('text', {
                 text: [{ text: 'Newsletter · ' }, v('edition.label')],

@@ -1,7 +1,7 @@
 import { defineElement } from '@motors/builder-core';
 import { z } from 'zod';
 
-import { color, media, optionalColor, pad, paddingSchema, px } from '../fields';
+import { color, displaySchema, media, optionalColor, pad, paddingSchema, px } from '../fields';
 
 /**
  * The email's skeleton: sections hold rows, rows hold 1–4 columns, columns
@@ -40,6 +40,12 @@ export const sectionElement = defineElement({
     fullWidth: z.boolean(),
     padding: paddingSchema,
     radius: px(0, 32),
+    /**
+     * Show the whole band on a condition — a welcome note only on the first
+     * email, a stats box only when there are stats. Optional, so a document
+     * saved before it existed is still valid.
+     */
+    display: displaySchema.optional(),
   }),
   defaults: () => ({
     backdrop: null,

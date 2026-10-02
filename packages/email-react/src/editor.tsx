@@ -17,6 +17,8 @@ export interface EmailEditorProps {
   /** The email type this template is for: its variables and samples. */
   type: EmailType | null;
   brand: BrandKit;
+  /** The public site, where the social block's icons are served from. */
+  socialIconBase?: string | undefined;
   /** `status: 'published'` means the design is the ACTIVE one. */
   facts: ArticleFacts;
   onFactsChange: (patch: Partial<ArticleFacts>) => void;
@@ -37,6 +39,7 @@ export function EmailEditor({
   host,
   type,
   brand,
+  socialIconBase,
   facts,
   onFactsChange,
   onBack,
@@ -53,10 +56,11 @@ export function EmailEditor({
         type,
         brand,
         assetUrl: (key) => host.resolveMedia(key),
+        socialIconBase,
         locale: host.contentLocale,
         words,
       }),
-    [registry, type, brand, host, words],
+    [registry, type, brand, host, words, socialIconBase],
   );
   const sample = type?.samples.default ?? Object.values(type?.samples ?? {})[0] ?? {};
   const { email, ...messages } = words;

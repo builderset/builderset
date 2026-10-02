@@ -18,3 +18,4 @@ export * from './rich-text';
 export * from './sample';
 export * from './validate';
 export * from './variables';
+export * from './designs/newsletter';

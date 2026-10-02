@@ -392,6 +392,12 @@ export const socialElement = defineElement({
       .array(z.object({ network: z.enum(SOCIAL_NETWORKS), href: templateUrl() }))
       .min(1)
       .max(10),
+    /**
+     * Round icons (PNG, hosted on the site — mail clients do not draw SVG) or
+     * the networks' names as text pills. Optional: a block saved before the
+     * choice existed keeps showing text.
+     */
+    appearance: z.enum(['icons', 'text']).optional(),
     style: z.enum(['color', 'dark', 'light', 'outline']),
     size: px(20, 48),
     gap: px(0, 24),
@@ -404,6 +410,7 @@ export const socialElement = defineElement({
       { network: 'instagram' as const, href: 'https://instagram.com/' },
       { network: 'linkedin' as const, href: 'https://linkedin.com/' },
     ],
+    appearance: 'icons' as const,
     style: 'dark' as const,
     size: 28,
     gap: 10,

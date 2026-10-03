@@ -468,6 +468,30 @@ const CASES: GoldenCase[] = [
     locale: 'sq',
     brand: SITE_BRAND,
   },
+  // Every ready-made design in its other two languages.
+  ...(['en', 'de'] as const).flatMap((locale) =>
+    (
+      [
+        ['application-received', applicationReceivedEmail, APPLICATION_RECEIVED_SAMPLE],
+        ['valuation-offer', valuationOfferEmail, VALUATION_OFFER_SAMPLE],
+        ['job-application-received', jobApplicationReceivedEmail, JOB_APPLICATION_RECEIVED_SAMPLE],
+        [
+          'partner-application-received',
+          partnerApplicationReceivedEmail,
+          PARTNER_APPLICATION_RECEIVED_SAMPLE,
+        ],
+        ['contact-received', contactReceivedEmail, CONTACT_RECEIVED_SAMPLE],
+        ['verification-code', verificationCodeEmail, VERIFICATION_CODE_SAMPLE],
+        ['newsletter-welcome', newsletterEmail, NEWSLETTER_SAMPLE],
+      ] as const
+    ).map(([name, design, sample]) => ({
+      name: `${name}-${locale}`,
+      document: design(registry, { stable: true }),
+      data: { ...NOW, ...sample },
+      locale,
+      brand: SITE_BRAND,
+    })),
+  ),
   {
     name: 'verification-code-bare',
     document: verificationCodeEmail(registry, { stable: true }),

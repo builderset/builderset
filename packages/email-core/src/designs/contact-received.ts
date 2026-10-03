@@ -3,8 +3,21 @@ import type { ElementRegistry } from '@motors/builder-core';
 import type { EmailDocument } from '../document';
 import { pad } from '../fields';
 import { v } from '../rich-text';
-import { block, buildEmail, row, section, type SectionSpec } from '../sample';
-import { bold, eyebrow, LINE, MIST, MUTED, ORANGE_DEEP, PAPER, t, TEXT, when } from './palette';
+import { block, buildEmail, row, section, tr, type SectionSpec } from '../sample';
+import {
+  bold,
+  eyebrow,
+  inEvery,
+  LINE,
+  MIST,
+  MUTED,
+  ORANGE_DEEP,
+  PAPER,
+  say,
+  TEXT,
+  tt,
+  when,
+} from './palette';
 import { callToAction, cards, hero, heroEyebrow, masthead, note, siteFooter } from './parts';
 
 /**
@@ -14,6 +27,9 @@ import { callToAction, cards, hero, heroEyebrow, masthead, note, siteFooter } fr
  * Their own message is quoted back, so the email is also their copy of what
  * they asked — the subject line only when they gave one. The reply itself
  * comes later, as the `contact_response` email.
+ *
+ * Written in Albanian, English and German: one design, sent in the language
+ * the visitor wrote from.
  *
  * The variables are the `contact_received` type's: `code`, the sender, the
  * message (`title`, `description`), `submitted_at` and the site's links.
@@ -33,9 +49,16 @@ export function contactReceivedEmail(
       stable: options.stable ?? false,
       meta: {
         name: 'Mesazhi u mor',
-        subject: 'E morëm mesazhin tuaj · {{ code }}',
-        preheader:
+        subject: tr(
+          'E morëm mesazhin tuaj · {{ code }}',
+          'We have your message · {{ code }}',
+          'Ihre Nachricht ist eingegangen · {{ code }}',
+        ),
+        preheader: tr(
           'Faleminderit, {{ first_name }}! Një person nga ekipi ynë ju përgjigjet me email sa më shpejt.',
+          'Thank you, {{ first_name }}! Someone from our team will reply by email as soon as possible.',
+          'Vielen Dank, {{ first_name }}! Jemand aus unserem Team antwortet Ihnen so bald wie möglich per E-Mail.',
+        ),
       },
       settings: {
         width: 640,
@@ -51,67 +74,137 @@ export function contactReceivedEmail(
       },
     },
     [
-      masthead([{ text: 'Kontakt · ' }, v('code')]),
+      masthead(
+        inEvery((l) => [{ text: say(l, 'Kontakt · ', 'Contact · ', 'Kontakt · ') }, v('code')]),
+      ),
 
       hero({
-        eyebrows: [heroEyebrow('✓  Mesazhi u mor')],
-        title: 'Faleminderit që na shkruat',
-        body: [
-          { text: 'Përshëndetje ' },
+        eyebrows: [
+          heroEyebrow(tr('✓  Mesazhi u mor', '✓  Message received', '✓  Nachricht eingegangen')),
+        ],
+        title: tr(
+          'Faleminderit që na shkruat',
+          'Thank you for writing to us',
+          'Danke für Ihre Nachricht',
+        ),
+        body: inEvery((l) => [
+          { text: say(l, 'Përshëndetje ', 'Hello ', 'Hallo ') },
           strong('first_name'),
           {
-            text: ', mesazhi juaj arriti te ekipi ynë. Një person e lexon dhe ju përgjigjet me email në këtë adresë, sa më shpejt që të jetë e mundur.',
+            text: say(
+              l,
+              ', mesazhi juaj arriti te ekipi ynë. Një person e lexon dhe ju përgjigjet me email në këtë adresë, sa më shpejt që të jetë e mundur.',
+              ', your message has reached our team. A person reads it and replies by email to this address as soon as possible.',
+              ', Ihre Nachricht ist bei unserem Team angekommen. Ein Mensch liest sie und antwortet Ihnen so bald wie möglich per E-Mail an diese Adresse.',
+            ),
           },
-        ],
+        ]),
       }),
 
-      note([
-        bold('Numri i referencës: '),
-        strong('code'),
-        { text: ' — nëse na shkruani sërish për të njëjtën çështje, përmendeni.' },
-      ]),
+      note(
+        inEvery((l) => [
+          bold(say(l, 'Numri i referencës: ', 'Reference number: ', 'Referenznummer: ')),
+          strong('code'),
+          {
+            text: say(
+              l,
+              ' — nëse na shkruani sërish për të njëjtën çështje, përmendeni.',
+              ' — if you write to us again about the same matter, mention it.',
+              ' — bitte angeben, wenn Sie uns erneut zum selben Anliegen schreiben.',
+            ),
+          },
+        ]),
+      ),
 
       message(),
 
-      cards('Çfarë ndodh më pas', 'Nga mesazhi te përgjigjja', [
-        {
-          icon: '📨',
-          title: 'E lexojmë',
-          body: 'Mesazhi shkon te personi që merret me këtë lloj pyetjeje.',
-        },
-        {
-          icon: '💬',
-          title: 'Ju përgjigjemi',
-          body: 'Përgjigjen e merrni me email, në adresën nga e cila na shkruat.',
-        },
-        {
-          icon: '📞',
-          title: 'Nëse duhet',
-          body: 'Kur një çështje kërkon më shumë detaje, ju telefonojmë në numrin që latë.',
-        },
-      ]),
+      cards(
+        tr('Çfarë ndodh më pas', 'What happens next', 'Wie es weitergeht'),
+        tr('Nga mesazhi te përgjigjja', 'From message to answer', 'Von der Nachricht zur Antwort'),
+        [
+          {
+            icon: '📨',
+            title: tr('E lexojmë', 'We read it', 'Wir lesen sie'),
+            body: tr(
+              'Mesazhi shkon te personi që merret me këtë lloj pyetjeje.',
+              'Your message goes to the person who handles this kind of question.',
+              'Ihre Nachricht geht an die Person, die solche Fragen bearbeitet.',
+            ),
+          },
+          {
+            icon: '💬',
+            title: tr('Ju përgjigjemi', 'We reply', 'Wir antworten'),
+            body: tr(
+              'Përgjigjen e merrni me email, në adresën nga e cila na shkruat.',
+              'You get the answer by email, at the address you wrote from.',
+              'Die Antwort erhalten Sie per E-Mail an die Adresse, von der Sie geschrieben haben.',
+            ),
+          },
+          {
+            icon: '📞',
+            title: tr('Nëse duhet', 'If needed', 'Falls nötig'),
+            body: tr(
+              'Kur një çështje kërkon më shumë detaje, ju telefonojmë në numrin që latë.',
+              'When a matter needs more detail, we call you on the number you left.',
+              'Braucht es mehr Details, rufen wir Sie unter der angegebenen Nummer an.',
+            ),
+          },
+        ],
+      ),
 
       callToAction({
-        title: 'Doni të dini sa vlen makina juaj?',
-        body: t(
-          'Plotësoni formularin në dy minuta dhe merrni një ofertë të shkruar brenda 24 orësh — pa asnjë detyrim.',
+        title: tr(
+          'Doni të dini sa vlen makina juaj?',
+          'Want to know what your car is worth?',
+          'Möchten Sie wissen, was Ihr Auto wert ist?',
         ),
-        button: { label: 'Vlerëso makinën falas', href: '{{ site.valuation_url }}' },
+        body: tt(
+          tr(
+            'Plotësoni formularin në dy minuta dhe merrni një ofertë të shkruar brenda 24 orësh — pa asnjë detyrim.',
+            'Fill in the form in two minutes and get a written offer within 24 hours — with no obligation.',
+            'Füllen Sie das Formular in zwei Minuten aus und erhalten Sie innerhalb von 24 Stunden ein schriftliches Angebot — unverbindlich.',
+          ),
+        ),
+        button: {
+          label: tr('Vlerëso makinën falas', 'Value your car for free', 'Auto kostenlos bewerten'),
+          href: '{{ site.valuation_url }}',
+        },
       }),
 
       siteFooter({
         links: [
           { label: 'blejmauto.com', href: '{{ brand.website }}' },
-          { label: 'Blogu', href: '{{ site.blog_url }}' },
-          { label: 'Kontakt', href: '{{ site.contact_url }}' },
+          { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
+          { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
-        text: [
-          { text: 'Ky email u dërgua te ' },
+        text: inEvery((l) => [
+          {
+            text: say(
+              l,
+              'Ky email u dërgua te ',
+              'This email was sent to ',
+              'Diese E-Mail wurde an ',
+            ),
+          },
           v('recipient.email'),
-          { text: ' sepse na shkruat nga formulari i kontaktit në ' },
+          {
+            text: say(
+              l,
+              ' sepse na shkruat nga formulari i kontaktit në ',
+              ' because you wrote to us from the contact form at ',
+              ' gesendet, weil Sie uns über das Kontaktformular von ',
+            ),
+          },
           v('brand.name'),
-          { text: '. Ju lutemi mos iu përgjigjni drejtpërdrejt.' },
-        ],
+          {
+            text: say(
+              l,
+              '. Ju lutemi mos iu përgjigjni drejtpërdrejt.',
+              '. Please do not reply to it directly.',
+              ' geschrieben haben. Bitte antworten Sie nicht direkt darauf.',
+            ),
+          },
+        ]),
         unsubscribe: false,
       }),
     ],
@@ -131,7 +224,7 @@ function message(): SectionSpec {
           borderColor: LINE,
         },
         blocks: [
-          eyebrow('Mesazhi juaj', ORANGE_DEEP),
+          eyebrow(tr('Mesazhi juaj', 'Your message', 'Ihre Nachricht'), ORANGE_DEEP),
           block('heading', {
             text: [v('title')],
             level: 3,
@@ -149,15 +242,15 @@ function message(): SectionSpec {
             padding: pad(0, 0, 14, 0),
           }),
           block('text', {
-            text: [
-              { text: 'Dërguar më ' },
+            text: inEvery((l) => [
+              { text: say(l, 'Dërguar më ', 'Sent on ', 'Gesendet am ') },
               {
                 text: '{{submitted_at}}',
                 marks: [{ type: 'variable', path: 'submitted_at', format: 'datetime' }],
               },
-              { text: ' nga ' },
+              { text: say(l, ' nga ', ' by ', ' von ') },
               v('full_name'),
-            ],
+            ]),
             size: 13,
             lineHeight: 1.5,
             color: MUTED,

@@ -1,6 +1,6 @@
 import { pad } from '../fields';
 import type { EmailRichText } from '../rich-text';
-import { block, row, section, type BlockSpec, type SectionSpec } from '../sample';
+import { block, row, section, type BlockSpec, type SectionSpec, type Words } from '../sample';
 import {
   eyebrow,
   INK,
@@ -14,6 +14,7 @@ import {
   PAPER,
   t,
   TEXT,
+  tt,
   wordmark,
 } from './palette';
 
@@ -35,7 +36,7 @@ const withDisplay = (props: Record<string, unknown>, display?: Display) =>
   display ? { ...props, display } : props;
 
 /** The dark bar: the wordmark left, a small label (the month, the code) right. */
-export function masthead(label: EmailRichText): SectionSpec {
+export function masthead(label: Words<EmailRichText>): SectionSpec {
   return section({ background: INK, padding: pad(22, 32, 18, 32), radius: 0 }, [
     row(
       '50-50',
@@ -62,9 +63,9 @@ export function masthead(label: EmailRichText): SectionSpec {
 export interface HeroOptions {
   /** One or more eyebrows — several when they show on different conditions. */
   eyebrows: BlockSpec[];
-  title: string;
-  body: EmailRichText;
-  button?: { label: string; href: string } | undefined;
+  title: Words;
+  body: Words<EmailRichText>;
+  button?: { label: Words; href: string } | undefined;
 }
 
 /** The dark hero: eyebrow, a large Sora headline, a line of copy, an orange button. */
@@ -74,7 +75,7 @@ export function hero({ eyebrows, title, body, button }: HeroOptions): SectionSpe
       [
         ...eyebrows,
         block('heading', {
-          text: t(title),
+          text: tt(title),
           level: 1,
           size: 38,
           font: 'sora',
@@ -112,11 +113,11 @@ export function hero({ eyebrows, title, body, button }: HeroOptions): SectionSpe
   ]);
 }
 
-export const heroEyebrow = (text: string, display?: Display) =>
+export const heroEyebrow = (text: Words, display?: Display) =>
   eyebrow(text, ORANGE, display ? { display } : {});
 
 /** The soft orange band right under the hero: a thank-you, a code to keep. */
-export function note(text: EmailRichText, display?: Display): SectionSpec {
+export function note(text: Words<EmailRichText>, display?: Display): SectionSpec {
   return section(withDisplay({ background: ORANGE_SOFT, padding: pad(22, 32, 22, 32) }, display), [
     row('100', [
       [
@@ -134,8 +135,8 @@ export function note(text: EmailRichText, display?: Display): SectionSpec {
 
 export interface Card {
   icon: string;
-  title: string;
-  body: string;
+  title: Words;
+  body: Words;
 }
 
 const card = ({ icon, title, body }: Card) => ({
@@ -147,29 +148,25 @@ const card = ({ icon, title, body }: Card) => ({
   blocks: [
     block('text', { text: t(icon), size: 26, lineHeight: 1, padding: pad(0, 0, 10, 0) }),
     block('heading', {
-      text: t(title),
+      text: tt(title),
       level: 3,
       size: 16,
       font: 'sora',
       color: TEXT,
       padding: pad(0, 0, 6, 0),
     }),
-    block('text', { text: t(body), size: 14, lineHeight: 1.55, color: MUTED, padding: pad(0) }),
+    block('text', { text: tt(body), size: 14, lineHeight: 1.55, color: MUTED, padding: pad(0) }),
   ],
 });
 
 /** An eyebrow, a heading, and three soft cards with an emoji each. */
-export function cards(
-  label: string,
-  title: string,
-  items: readonly [Card, Card, Card],
-): SectionSpec {
+export function cards(label: Words, title: Words, items: readonly [Card, Card, Card]): SectionSpec {
   return section({ background: PAPER, padding: pad(36, 32, 12, 32) }, [
     row('100', [
       [
         eyebrow(label, ORANGE_DEEP),
         block('heading', {
-          text: t(title),
+          text: tt(title),
           level: 2,
           size: 24,
           font: 'sora',
@@ -183,9 +180,9 @@ export function cards(
 }
 
 export interface FactsOptions {
-  label: string;
-  rows: { label: string; value: string }[];
-  note?: EmailRichText | undefined;
+  label: Words;
+  rows: { label: Words; value: Words }[];
+  note?: Words<EmailRichText> | undefined;
   display?: Display | undefined;
 }
 
@@ -230,9 +227,9 @@ export function facts({ label, rows, note: footnote, display }: FactsOptions): S
 }
 
 export interface CallOptions {
-  title: string;
-  body: EmailRichText;
-  button: { label: string; href: string };
+  title: Words;
+  body: Words<EmailRichText>;
+  button: { label: Words; href: string };
 }
 
 /** The dark rounded box near the end: one question, one line, one orange button. */
@@ -243,7 +240,7 @@ export function callToAction({ title, body, button }: CallOptions): SectionSpec 
         props: { background: INK, radius: 18, padding: pad(30, 28, 30, 28) },
         blocks: [
           block('heading', {
-            text: t(title),
+            text: tt(title),
             level: 2,
             size: 24,
             font: 'sora',
@@ -279,8 +276,8 @@ export function callToAction({ title, body, button }: CallOptions): SectionSpec 
 }
 
 export interface FooterOptions {
-  links: { label: string; href: string }[];
-  text: EmailRichText;
+  links: { label: Words; href: string }[];
+  text: Words<EmailRichText>;
   /** Marketing mail must carry it; a transactional email must not pretend to. */
   unsubscribe: boolean;
 }

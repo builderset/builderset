@@ -17,6 +17,8 @@ import {
   partnerApplicationReceivedEmail,
   VALUATION_OFFER_SAMPLE,
   valuationOfferEmail,
+  STAFF_NOTIFICATION_SAMPLE,
+  staffNotificationEmail,
   NEWSLETTER_SAMPLE,
   newsletterEmail,
   VERIFICATION_CODE_SAMPLE,
@@ -483,6 +485,7 @@ const CASES: GoldenCase[] = [
         ['contact-received', contactReceivedEmail, CONTACT_RECEIVED_SAMPLE],
         ['verification-code', verificationCodeEmail, VERIFICATION_CODE_SAMPLE],
         ['newsletter-welcome', newsletterEmail, NEWSLETTER_SAMPLE],
+        ['staff-notification', staffNotificationEmail, STAFF_NOTIFICATION_SAMPLE],
       ] as const
     ).map(([name, design, sample]) => ({
       name: `${name}-${locale}`,
@@ -492,6 +495,13 @@ const CASES: GoldenCase[] = [
       brand: SITE_BRAND,
     })),
   ),
+  {
+    name: 'staff-notification',
+    document: staffNotificationEmail(registry, { stable: true }),
+    data: { ...NOW, ...STAFF_NOTIFICATION_SAMPLE },
+    locale: 'sq',
+    brand: SITE_BRAND,
+  },
   {
     name: 'verification-code-bare',
     document: verificationCodeEmail(registry, { stable: true }),
@@ -526,6 +536,16 @@ describe('golden fixtures for the Python port', () => {
     expectFile(
       '../../api/app/domains/email_builder/render/render_data.json',
       `${JSON.stringify({ fonts, rowLayouts: ROW_LAYOUTS }, null, 2)}\n`,
+    );
+  });
+
+  it('writes the staff notification email the API sends until one is designed', () => {
+    // `app/domains/notifications/delivery.py` renders this when no ACTIVE
+    // `staff_notification` template exists, so the email channel works the
+    // day it ships rather than the day somebody designs one.
+    expectFile(
+      '../../api/app/domains/notifications/staff_email.json',
+      `${JSON.stringify(staffNotificationEmail(registry, { stable: true }), null, 2)}\n`,
     );
   });
 

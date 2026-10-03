@@ -25,3 +25,4 @@ export * from './designs/valuation-offer';
 export * from './designs/job-application-received';
 export * from './designs/partner-application-received';
 export * from './designs/contact-received';
+export * from './designs/staff-notification';

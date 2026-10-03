@@ -84,9 +84,7 @@ export type Words<T = string> = T | Tr<T>;
 
 /** `f` applied to every language of `value` — `t` over a `tr` of strings, say. */
 export function mapWords<T, U>(value: Words<T>, f: (value: T) => U): Words<U> {
-  return isTr(value)
-    ? tr(f(value.__tr.sq), f(value.__tr.en), f(value.__tr.de))
-    : f(value);
+  return isTr(value) ? tr(f(value.__tr.sq), f(value.__tr.en), f(value.__tr.de)) : f(value);
 }
 
 const OTHER_LOCALES = ['en', 'de'] as const satisfies readonly ContentLocale[];

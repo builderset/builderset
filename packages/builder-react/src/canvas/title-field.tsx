@@ -13,7 +13,7 @@ import { useEditor, useEditorContext } from '../context';
  */
 export function TitleField() {
   const { store, messages } = useEditorContext();
-  const title = useEditor((state) => state.doc.meta.title);
+  const title = useEditor((state) => state.view.meta.title);
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {

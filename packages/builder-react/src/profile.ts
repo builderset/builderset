@@ -25,6 +25,8 @@ export interface EditorProfile {
         doc: BuilderDocument;
         editText: (field: EditableTextField) => ReactNode;
         viewport: Breakpoint;
+        /** The language being written, when it is not the base one. */
+        locale?: string | undefined;
       }) => ReactNode)
     | undefined;
   /**

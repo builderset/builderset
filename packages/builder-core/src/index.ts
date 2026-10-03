@@ -13,6 +13,7 @@ export * from './document';
 export * from './elements';
 export * from './embeds';
 export * from './history';
+export * from './i18n';
 export * from './ids';
 export * from './import-html';
 export * from './import-markdown';

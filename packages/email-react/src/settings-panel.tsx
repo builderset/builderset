@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  MultilingualToggle,
   ColorField,
   FontField,
   NumberStepper,
@@ -63,18 +64,15 @@ export function EmailSettingsPanel() {
   const { store, messages } = useEditorContext();
   const { words, type, locale, sample, brand } = useEmail();
   const w = words.email;
-  const doc = useEditor((state) => state.doc) as unknown as EmailDocument;
+  // As it reads in the language being written: the subject and preheader
+  // typed here are that language's.
+  const doc = useEditor((state) => state.view) as unknown as EmailDocument;
+  const lang = useEditor((state) => state.lang);
   const [tab, setTab] = useState('general');
   const settings = doc.settings;
 
   const setMeta = (patch: Partial<EmailMeta>, label: string, key: string) => {
-    store.getState().updateDocument(
-      label,
-      (draft) => {
-        Object.assign((draft as unknown as EmailDocument).meta, patch);
-      },
-      `email:meta:${key}`,
-    );
+    store.getState().updateMeta(patch, label, `email:meta:${key}`);
   };
   const setSettings = (patch: Partial<EmailSettings>, label: string, key: string) => {
     store.getState().updateDocument(
@@ -91,7 +89,12 @@ export function EmailSettingsPanel() {
     path: variable.path,
     label: variable.label[locale] ?? variable.label.en ?? variable.path,
   }));
-  const context = createRenderContext(doc, { assetUrl: () => '', brand, data: sample, locale });
+  const context = createRenderContext(doc, {
+    assetUrl: () => '',
+    brand,
+    data: sample,
+    locale: lang ?? locale,
+  });
   const subjectPreview = fill(doc.meta.subject, context);
   const preheaderPreview = fill(doc.meta.preheader, context);
 
@@ -164,6 +167,7 @@ export function EmailSettingsPanel() {
         </TabsList>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <TabsContent value="general" className="space-y-4 p-4">
+            <MultilingualToggle />
             {/* What the reader sees before opening it. */}
             <div className="border-border bg-card rounded-[var(--radius-control)] border p-3">
               <p className="text-muted-foreground mb-2 text-[11px] font-semibold tracking-wider uppercase">

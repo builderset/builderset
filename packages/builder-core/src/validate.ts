@@ -8,6 +8,7 @@ import {
   type BuilderNode,
   type NodeTree,
 } from './document';
+import { i18nSchema, localize, type ContentLocale, type Localizable } from './i18n';
 import { ROOT_ID } from './ids';
 import { error, warning, type Issue } from './issues';
 import { LIMITS } from './limits';
@@ -55,12 +56,48 @@ export function documentSchema(registry: ElementRegistry) {
       root: z.literal(ROOT_ID),
       nodes: z.record(z.string(), nodeSchema),
       meta: documentMetaSchema,
+      i18n: i18nSchema.optional(),
     })
     .superRefine((doc, ctx) => {
       for (const issue of structuralIssues(doc as unknown as BuilderDocument, registry)) {
         ctx.addIssue({ code: 'custom', message: issue.code, path: ['nodes', issue.nodeId ?? ''] });
       }
+      for (const issue of translationIssues(doc as unknown as BuilderDocument, registry)) {
+        ctx.addIssue({ code: 'custom', message: issue.code, path: ['i18n', issue.path ?? ''] });
+      }
     });
+}
+
+/**
+ * Each language, read as a document of its own, must still be a valid one: a
+ * translated heading within its length, a translated label still text. The
+ * tree is shared, so only what a translation changed is checked again.
+ */
+export function translationIssues(doc: Localizable, registry: ElementRegistry): Issue[] {
+  const i18n = doc.i18n;
+  if (!i18n) return [];
+  const issues: Issue[] = [];
+  for (const [locale, translation] of Object.entries(i18n.translations)) {
+    if (!translation) continue;
+    const view = localize({ ...doc, i18n: { ...i18n, enabled: true } }, locale as ContentLocale);
+    for (const id of Object.keys(translation.nodes ?? {})) {
+      const node = view.nodes[id];
+      if (!node || node === doc.nodes[id]) continue;
+      const parsed = registry.get(node.type)?.schema.safeParse(node.props);
+      if (parsed && !parsed.success) {
+        for (const problem of parsed.error.issues) {
+          issues.push(
+            error('props.invalid', {
+              nodeId: id,
+              path: `${locale}.${problem.path.join('.')}`,
+              params: { locale },
+            }),
+          );
+        }
+      }
+    }
+  }
+  return issues;
 }
 
 /**
@@ -142,7 +179,7 @@ export function structuralIssues(doc: NodeTree, registry: ElementRegistry): Issu
 
 /** Every issue worth showing the writer, errors first. */
 export function checkDocument(doc: BuilderDocument, registry: ElementRegistry): Issue[] {
-  const issues: Issue[] = [...structuralIssues(doc, registry)];
+  const issues: Issue[] = [...structuralIssues(doc, registry), ...translationIssues(doc, registry)];
   const nodes = Object.values(doc.nodes);
 
   // Props against each element's schema, reported per node and field.

@@ -89,7 +89,9 @@ export function InlineText({ field }: { field: EditableTextField }) {
 
   const write = (next: RichText) => {
     lastWritten.current = next;
-    const node = store.getState().doc.nodes[nodeId];
+    // From the props as they read in the language being written, so the
+    // other fields of a translation are not overwritten with the base's.
+    const node = store.getState().view.nodes[nodeId];
     if (!node) return;
     store
       .getState()
@@ -130,6 +132,8 @@ export function InlineText({ field }: { field: EditableTextField }) {
   const actions = useRef({
     enter(editor: Editor): boolean {
       const state = store.getState();
+      // A translation changes words, not blocks: Enter does not split one.
+      if (state.lang) return true;
       const node = state.doc.nodes[nodeId];
       if (!node || !BLOCK_TEXT.has(node.type) || path !== 'text') return false;
       const parent = parentOf(state.doc, nodeId);
@@ -154,6 +158,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
     },
     backspaceAtStart(editor: Editor): boolean {
       const state = store.getState();
+      if (state.lang) return false;
       const node = state.doc.nodes[nodeId];
       if (!node || !BLOCK_TEXT.has(node.type) || path !== 'text') return false;
       const parent = parentOf(state.doc, nodeId);
@@ -260,8 +265,12 @@ export function InlineText({ field }: { field: EditableTextField }) {
       const next = fromTiptap(instance.getJSON());
       const plain = next.map((run) => run.text).join('');
 
+      // Shortcuts that make blocks are the base language's; a translation
+      // only writes words.
+      const structural = nodeType === textType && path === 'text' && !store.getState().lang;
+
       // The slash menu: "/" typed into an otherwise empty paragraph.
-      if (nodeType === textType && path === 'text' && /^\/[\w-]*$/.test(plain)) {
+      if (structural && /^\/[\w-]*$/.test(plain)) {
         setSlash(plain.slice(1));
         setSlashIndex(0);
       } else if (slashRef.current.slash !== null) {
@@ -269,7 +278,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       }
 
       // Markdown shortcuts, only at the very start of a paragraph.
-      if (nodeType === textType && path === 'text') {
+      if (structural) {
         if (plain === '---') {
           convert('divider', {}, []);
           return;

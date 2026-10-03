@@ -39,6 +39,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type ReactNode } from 'react';
 
 import { useEditor, useEditorContext } from '../context';
+import { LanguageSwitch } from './language-switch';
 
 export interface TopBarActions {
   onBack: () => void;
@@ -147,8 +148,9 @@ export function TopBar(actions: TopBarActions) {
   const zoom = useEditor((state) => state.zoom);
   const { profile } = useEditorContext();
   const title = useEditor((state) =>
-    profile.titleOf ? profile.titleOf(state.doc) : state.doc.meta.title,
+    profile.titleOf ? profile.titleOf(state.view) : state.view.meta.title,
   );
+  const multilingual = useEditor((state) => state.doc.i18n?.enabled === true);
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const published = article.status === 'published';
@@ -234,6 +236,12 @@ export function TopBar(actions: TopBarActions) {
             <Redo2 aria-hidden="true" />
           </Button>
         </Tooltip>
+        {multilingual ? (
+          <>
+            <span className="bg-border mx-1 h-5 w-px" aria-hidden="true" />
+            <LanguageSwitch className="border-0 bg-transparent p-0" />
+          </>
+        ) : null}
         <span className="bg-border mx-1 hidden h-5 w-px md:block" aria-hidden="true" />
         <SegmentedControl
           aria-label={messages.breakpoint}

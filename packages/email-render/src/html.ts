@@ -1,4 +1,4 @@
-import { isSafeUrl, type BuilderNode } from '@motors/builder-core';
+import { isSafeUrl, localize, type BuilderNode } from '@motors/builder-core';
 import {
   googleFontsUrl,
   isSafeTemplateUrl,
@@ -640,8 +640,12 @@ function css(doc: EmailDocument, context: RenderContext): string {
   ].join('');
 }
 
-/** Render a whole email. */
-export function renderEmail(doc: EmailDocument, options: RenderOptions): RenderedEmail {
+/**
+ * Render a whole email — in `options.locale`, when the template is written in
+ * several languages (whatever is not translated reads in its base language).
+ */
+export function renderEmail(source: EmailDocument, options: RenderOptions): RenderedEmail {
+  const doc = localize(source, options.locale);
   const context = createContext(doc, options);
   const settings = doc.settings;
   const subject = fill(doc.meta.subject, context);

@@ -11,17 +11,23 @@ import {
   remove,
   replaceType,
   update,
+  isTranslating,
+  localize,
+  withValueAt,
   wrap,
   wrapChain,
   type Breakpoint,
   type BuilderDocument,
-  type DocumentMeta,
+  type ContentLocale,
   type ElementRegistry,
   type Fragment,
   type NodeId,
   type NodePatch,
 } from '@motors/builder-core';
 import { createStore, type StoreApi } from 'zustand/vanilla';
+
+import { propsSchema } from './inspector/schema';
+import { splitEdit, splitMeta } from './translate';
 
 /**
  * One store per editor: the document, what is selected, what the panels show,
@@ -39,6 +45,13 @@ export type SaveState = 'idle' | 'saving' | 'error' | 'conflict';
 
 export interface EditorState {
   doc: BuilderDocument;
+  /**
+   * The language being written, when the document is multi-language and it is
+   * not the base one; `null` otherwise. Text typed now goes to its translation.
+   */
+  lang: ContentLocale | null;
+  /** The document as it reads in `lang` — what the canvas and inspector show. */
+  view: BuilderDocument;
   selection: NodeId[];
   hoverId: NodeId | null;
   viewport: Breakpoint;
@@ -87,7 +100,12 @@ export interface EditorActions {
   ): NodeId | null;
   insertFragment(fragment: Fragment, target?: InsertTarget, label?: string): NodeId[];
   updateNode(id: NodeId, patch: NodePatch, label: string, coalesceKey?: string): boolean;
-  updateMeta(meta: Partial<DocumentMeta>, label: string, coalesceKey?: string): void;
+  /** The document's own fields — an article's title and SEO, an email's subject. */
+  updateMeta(meta: Record<string, unknown>, label: string, coalesceKey?: string): void;
+  /** Write in another language of a multi-language document (`null`: the base). */
+  setLang(lang: ContentLocale | null): void;
+  /** Turn multi-language on or off; its translations are kept either way. */
+  setMultilingual(enabled: boolean, base: ContentLocale): void;
   /** Any other change to the document itself (an email's settings). */
   updateDocument(
     label: string,
@@ -121,6 +139,11 @@ export interface CreateEditorOptions {
     ((draft: BuilderDocument, nodeId: NodeId, registry: ElementRegistry) => void) | undefined;
 }
 
+/** What the canvas and the inspector show: the document in the language being written. */
+function viewOf(doc: BuilderDocument, lang: ContentLocale | null): BuilderDocument {
+  return lang ? localize(doc, lang, { keepEmpty: true }) : doc;
+}
+
 export function createEditorStore({
   document,
   registry,
@@ -133,8 +156,11 @@ export function createEditorStore({
     /** Mirror the history into the state after it changed. */
     const sync = (extra: Partial<EditorState> = {}) => {
       const changed = history.doc !== get().doc;
+      const lang = isTranslating(history.doc, get().lang) ? get().lang : null;
       set({
         doc: history.doc,
+        lang,
+        view: viewOf(history.doc, lang),
         selection: history.selected.ids.filter((id) => id in history.doc.nodes),
         canUndo: history.canUndo,
         canRedo: history.canRedo,
@@ -173,6 +199,25 @@ export function createEditorStore({
       }
     };
 
+    /** The language being written, if it is a translation; with its words so far. */
+    const translating = (): ContentLocale | null => {
+      const { doc, lang } = get();
+      return isTranslating(doc, lang) ? lang : null;
+    };
+
+    /** Write `words` into `lang`'s translation of node `id` (or of the meta when `id` is null). */
+    const writeWords = (
+      draft: BuilderDocument,
+      lang: ContentLocale,
+      id: NodeId | null,
+      words: [string, unknown][],
+    ) => {
+      if (!words.length || !draft.i18n) return;
+      const translation = (draft.i18n.translations[lang] ??= {});
+      const fields = id ? ((translation.nodes ??= {})[id] ??= {}) : (translation.meta ??= {});
+      for (const [path, value] of words) fields[path] = value;
+    };
+
     /**
      * Where "insert" goes when the caller does not say: INTO a selected
      * container that takes this type, otherwise right after the selection,
@@ -194,6 +239,8 @@ export function createEditorStore({
 
     return {
       doc: document,
+      lang: null,
+      view: document,
       selection: [],
       hoverId: null,
       viewport: 'desktop',
@@ -292,26 +339,80 @@ export function createEditorStore({
         return result.ok ? result.value : [];
       },
       updateNode(id, patch, label, coalesceKey) {
+        const lang = translating();
+        const { doc, view } = get();
+        const node = doc.nodes[id];
+        if (!lang || !patch.props || !node) {
+          return commit(
+            label,
+            (draft) => {
+              update(draft, registry, id, patch);
+              if (patch.props) onNodeUpdated?.(draft, id, registry);
+            },
+            { coalesceKey },
+          ).ok;
+        }
+
+        // Translating: the words to this language, the rest to the shared base.
+        const split = splitEdit(
+          propsSchema(registry, node.type),
+          view.nodes[id]?.props ?? node.props,
+          node.props,
+          patch.props,
+        );
+        if (split.structural) {
+          onRefused?.('i18n.structureInBase');
+          return false;
+        }
+        let props = node.props;
+        for (const [path, value] of split.shared) props = withValueAt(props, path, value);
         return commit(
           label,
           (draft) => {
-            update(draft, registry, id, patch);
-            if (patch.props) onNodeUpdated?.(draft, id, registry);
+            const rest = { ...patch };
+            Reflect.deleteProperty(rest, 'props');
+            if (props !== node.props || Object.keys(rest).length) {
+              update(draft, registry, id, { ...rest, ...(props !== node.props ? { props } : {}) });
+            }
+            writeWords(draft, lang, id, split.words);
+            // The language, read on its own, must still be a valid block.
+            const shown = localize(draft, lang, { keepEmpty: true }).nodes[id];
+            const definition = registry.get(node.type);
+            if (shown && definition && !definition.schema.safeParse(shown.props).success) {
+              throw new BuilderError('props.invalid');
+            }
+            if (props !== node.props) onNodeUpdated?.(draft, id, registry);
           },
           { coalesceKey },
         ).ok;
       },
       updateMeta(meta, label, coalesceKey) {
+        const lang = translating();
+        const { doc, view } = get();
+        const split = lang ? splitMeta(view.meta, doc.meta, meta) : { words: [], shared: meta };
         commit(
           label,
           (draft) => {
-            Object.assign(draft.meta, meta);
-            for (const [key, value] of Object.entries(meta)) {
+            Object.assign(draft.meta, split.shared);
+            for (const [key, value] of Object.entries(split.shared)) {
               if (value === undefined) Reflect.deleteProperty(draft.meta, key);
             }
+            if (lang) writeWords(draft, lang, null, split.words);
           },
           { coalesceKey },
         );
+      },
+      setLang(lang) {
+        const { doc } = get();
+        const next = isTranslating(doc, lang) ? lang : null;
+        if (next === get().lang) return;
+        set({ lang: next, view: viewOf(doc, next), editingId: null });
+      },
+      setMultilingual(enabled, base) {
+        commit(enabled ? 'Multi-language on' : 'Multi-language off', (draft) => {
+          if (draft.i18n) draft.i18n.enabled = enabled;
+          else draft.i18n = { enabled, base, translations: {} };
+        });
       },
       updateDocument(label, recipe, coalesceKey) {
         commit(label, recipe, { coalesceKey });
@@ -370,6 +471,14 @@ export function createEditorStore({
             draft.nodes = structuredClone(doc.nodes);
             draft.root = doc.root;
             draft.meta = structuredClone(doc.meta);
+            // Everything else the document carries: its translations, an
+            // email's settings.
+            const target = draft as unknown as Record<string, unknown>;
+            const source = doc as unknown as Record<string, unknown>;
+            for (const key of ['i18n', 'settings']) {
+              if (key in source) target[key] = structuredClone(source[key]);
+              else Reflect.deleteProperty(target, key);
+            }
           });
           return;
         }

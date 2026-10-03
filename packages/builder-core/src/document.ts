@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { i18nSchema, type DocumentI18n } from './i18n';
 import { ROOT_ID, type NodeId } from './ids';
 import { mediaRefSchema } from './media';
 import { nodeStyleSchema, type NodeStyle } from './style';
@@ -84,6 +85,8 @@ export interface BuilderDocument extends NodeTree {
   root: NodeId;
   nodes: Record<NodeId, BuilderNode>;
   meta: DocumentMeta;
+  /** The words in other languages, when the writer switched multi-language on. */
+  i18n?: DocumentI18n | undefined;
 }
 
 /**
@@ -110,6 +113,7 @@ export const documentShapeSchema = z.object({
   root: z.literal(ROOT_ID),
   nodes: z.record(z.string(), nodeShapeSchema),
   meta: documentMetaSchema,
+  i18n: i18nSchema.optional(),
 });
 
 /** A fresh, empty document. */

@@ -73,7 +73,8 @@ export interface BuilderHost {
   loadRevisions?(): Promise<RevisionSummary[]>;
   loadRevision?(id: string): Promise<BuilderDocument>;
   saveRevision?(document: BuilderDocument, label: string): Promise<boolean>;
-  previewUrl?(document: BuilderDocument): Promise<string>;
+  /** `locale`: the language being written, when it is not the base one. */
+  previewUrl?(document: BuilderDocument, locale?: string): Promise<string>;
   oembed?(url: string): Promise<OEmbedInfo | null>;
   /** Copy a picture from another server into our storage (an imported email's images). */
   importImage?(url: string): Promise<UploadResult>;

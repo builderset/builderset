@@ -338,7 +338,8 @@ function Workspace({
         // Opened before the await so the browser treats it as a user action.
         const tab = window.open('about:blank', '_blank');
         await save('autosave');
-        const url = await host.previewUrl?.(store.getState().doc);
+        const state = store.getState();
+        const url = await host.previewUrl?.(state.doc, state.lang ?? undefined);
         if (tab && url) tab.location.href = url;
         else tab?.close();
       }

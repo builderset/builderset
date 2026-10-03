@@ -62,6 +62,19 @@ describe('<NumberStepper>', () => {
     expect(shown()).toBe('36');
   });
 
+  it('keeps what was typed before the select-on-focus frame lands', async () => {
+    const user = userEvent.setup();
+    render(<Harness initial={3} min={0} integer />);
+    const input = screen.getByRole('spinbutton');
+    await user.clear(input);
+    await user.keyboard('4');
+    // The frame the focus handler waits for, arriving mid-typing — what a slow
+    // CI runner (or a fast typist) gets. Selecting then would type over the 4.
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await user.keyboard('5');
+    expect(input).toHaveValue('45');
+  });
+
   it('clears to null when nullable', async () => {
     const user = userEvent.setup();
     render(<Harness initial={7} min={1} nullable />);

@@ -3,8 +3,21 @@ import type { ElementRegistry } from '@motors/builder-core';
 import type { EmailDocument } from '../document';
 import { pad } from '../fields';
 import { v } from '../rich-text';
-import { block, buildEmail, row, section } from '../sample';
-import { bold, eyebrow, INK, LINE, MUTED, ORANGE_DEEP, PAPER, t, TEXT, when } from './palette';
+import { block, buildEmail, row, section, tr } from '../sample';
+import {
+  bold,
+  eyebrow,
+  inEvery,
+  INK,
+  LINE,
+  MUTED,
+  ORANGE_DEEP,
+  PAPER,
+  say,
+  TEXT,
+  tt,
+  when,
+} from './palette';
 import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFooter } from './parts';
 
 /**
@@ -19,6 +32,9 @@ import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFoot
  * would be empty — no articles yet, no valuations this month — hide on a
  * condition rather than showing a hollow box, and the welcome note shows only
  * on the email sent right after signing up.
+ *
+ * Written in Albanian, English and German: one design, sent in the language
+ * the subscriber signed up in.
  */
 
 export function newsletterEmail(
@@ -31,9 +47,16 @@ export function newsletterEmail(
       stable: options.stable ?? false,
       meta: {
         name: 'Newsletter — tregu i makinave',
-        subject: 'Tregu i makinave · {{ edition.label }}',
-        preheader:
+        subject: tr(
+          'Tregu i makinave · {{ edition.label }}',
+          'The car market · {{ edition.label }}',
+          'Der Automarkt · {{ edition.label }}',
+        ),
+        preheader: tr(
           'Çmimet, ndryshimet ligjore dhe këshilla praktike — përmbledhja e muajit nga blejmauto.com.',
+          'Prices, changes in the law and practical advice — the month in brief from blejmauto.com.',
+          'Preise, Gesetzesänderungen und praktische Tipps — der Monat im Überblick von blejmauto.com.',
+        ),
       },
       settings: {
         width: 640,
@@ -54,60 +77,134 @@ export function newsletterEmail(
 
       hero({
         eyebrows: [
-          heroEyebrow('Mirë se erdhe në listë', when('is_welcome', 'exists')),
-          heroEyebrow('Përmbledhja e muajit', when('is_welcome', 'missing')),
+          heroEyebrow(
+            tr('Mirë se erdhe në listë', 'Welcome to the list', 'Willkommen auf der Liste'),
+            when('is_welcome', 'exists'),
+          ),
+          heroEyebrow(
+            tr('Përmbledhja e muajit', 'The month in brief', 'Der Monat im Überblick'),
+            when('is_welcome', 'missing'),
+          ),
         ],
-        title: 'Çmimet e tregut, një herë në muaj',
-        body: t(
-          'Si lëvizën çmimet e makinave, çfarë ndryshoi në ligj dhe disa këshilla praktike për ta shitur makinën tuaj me kokë të ftohtë. Shkurt, një herë në muaj — pa reklama.',
+        title: tr(
+          'Çmimet e tregut, një herë në muaj',
+          'Market prices, once a month',
+          'Marktpreise, einmal im Monat',
         ),
-        button: { label: 'Merr një ofertë për makinën →', href: '{{ site.valuation_url }}' },
+        body: tt(
+          tr(
+            'Si lëvizën çmimet e makinave, çfarë ndryshoi në ligj dhe disa këshilla praktike për ta shitur makinën tuaj me kokë të ftohtë. Shkurt, një herë në muaj — pa reklama.',
+            'How car prices moved, what changed in the law, and practical advice for selling your car with a cool head. Short, once a month — no adverts.',
+            'Wie sich die Autopreise bewegt haben, was sich im Gesetz geändert hat, und praktische Tipps, um Ihr Auto mit kühlem Kopf zu verkaufen. Kurz, einmal im Monat — ohne Werbung.',
+          ),
+        ),
+        button: {
+          label: tr(
+            'Merr një ofertë për makinën →',
+            'Get an offer for your car →',
+            'Angebot für Ihr Auto erhalten →',
+          ),
+          href: '{{ site.valuation_url }}',
+        },
       }),
 
       // The welcome note — only on the email sent right after signing up.
       note(
-        [
-          bold('Faleminderit që u abonuat! '),
-          { text: 'Adresa ' },
+        inEvery((l) => [
+          bold(
+            say(
+              l,
+              'Faleminderit që u abonuat! ',
+              'Thank you for subscribing! ',
+              'Danke für Ihre Anmeldung! ',
+            ),
+          ),
+          { text: say(l, 'Adresa ', 'The address ', 'Die Adresse ') },
           {
             text: '{{subscriber.email}}',
             marks: [{ type: 'bold' }, { type: 'variable', path: 'subscriber.email' }],
           },
           {
-            text: ' është në listë. Newsletter-i vjen në fillim të çdo muaji — asgjë tjetër, dhe adresën nuk ia japim askujt.',
+            text: say(
+              l,
+              ' është në listë. Newsletter-i vjen në fillim të çdo muaji — asgjë tjetër, dhe adresën nuk ia japim askujt.',
+              ' is on the list. The newsletter arrives at the start of every month — nothing else, and we never share your address.',
+              ' steht auf der Liste. Der Newsletter kommt am Anfang jedes Monats — sonst nichts, und Ihre Adresse geben wir an niemanden weiter.',
+            ),
           },
-        ],
+        ]),
         when('is_welcome', 'exists'),
       ),
 
-      cards('Çfarë gjeni në çdo numër', 'Tre gjëra, të shpjeguara qartë', [
-        {
-          icon: '📈',
-          title: 'Lëvizjet e çmimeve',
-          body: 'Si ndryshuan çmimet sipas markës dhe vitit gjatë muajit të fundit.',
-        },
-        {
-          icon: '⚖️',
-          title: 'Ndryshimet ligjore',
-          body: 'Taksa, kontroll teknik dhe rregulla që prekin shitjen e një automjeti.',
-        },
-        {
-          icon: '💡',
-          title: 'Këshilla praktike',
-          body: 'Si ta përgatisni makinën dhe dokumentet për një shitje të shpejtë.',
-        },
-      ]),
+      cards(
+        tr('Çfarë gjeni në çdo numër', 'In every issue', 'In jeder Ausgabe'),
+        tr(
+          'Tre gjëra, të shpjeguara qartë',
+          'Three things, clearly explained',
+          'Drei Dinge, klar erklärt',
+        ),
+        [
+          {
+            icon: '📈',
+            title: tr('Lëvizjet e çmimeve', 'Price movements', 'Preisentwicklung'),
+            body: tr(
+              'Si ndryshuan çmimet sipas markës dhe vitit gjatë muajit të fundit.',
+              'How prices changed by make and year over the last month.',
+              'Wie sich die Preise nach Marke und Baujahr im letzten Monat verändert haben.',
+            ),
+          },
+          {
+            icon: '⚖️',
+            title: tr('Ndryshimet ligjore', 'Changes in the law', 'Gesetzesänderungen'),
+            body: tr(
+              'Taksa, kontroll teknik dhe rregulla që prekin shitjen e një automjeti.',
+              'Taxes, roadworthiness tests and rules that affect selling a vehicle.',
+              'Steuern, technische Prüfung und Regeln, die den Verkauf eines Fahrzeugs betreffen.',
+            ),
+          },
+          {
+            icon: '💡',
+            title: tr('Këshilla praktike', 'Practical advice', 'Praktische Tipps'),
+            body: tr(
+              'Si ta përgatisni makinën dhe dokumentet për një shitje të shpejtë.',
+              'How to get your car and documents ready for a quick sale.',
+              'Wie Sie Auto und Unterlagen für einen schnellen Verkauf vorbereiten.',
+            ),
+          },
+        ],
+      ),
 
       // The market in numbers — only when there were valuations.
       facts({
-        label: 'Tregu në shifra · 30 ditët e fundit',
+        label: tr(
+          'Tregu në shifra · 30 ditët e fundit',
+          'The market in numbers · last 30 days',
+          'Der Markt in Zahlen · letzte 30 Tage',
+        ),
         rows: [
-          { label: 'Makina të vlerësuara', value: '{{ market.valuations | number }}' },
-          { label: 'Oferta mesatare (cash)', value: '{{ market.average_offer | money }}' },
-          { label: 'Marka më e kërkuar', value: '{{ market.top_brand }}' },
+          {
+            label: tr('Makina të vlerësuara', 'Cars valued', 'Bewertete Autos'),
+            value: '{{ market.valuations | number }}',
+          },
+          {
+            label: tr(
+              'Oferta mesatare (cash)',
+              'Average offer (cash)',
+              'Durchschnittsangebot (bar)',
+            ),
+            value: '{{ market.average_offer | money }}',
+          },
+          {
+            label: tr('Marka më e kërkuar', 'Most requested make', 'Gefragteste Marke'),
+            value: '{{ market.top_brand }}',
+          },
         ],
-        note: t(
-          'Shifrat vijnë nga vlerësimet që ekipi ynë ka bërë këtë muaj — jo nga shpallje me çmime të fryra.',
+        note: tt(
+          tr(
+            'Shifrat vijnë nga vlerësimet që ekipi ynë ka bërë këtë muaj — jo nga shpallje me çmime të fryra.',
+            'These figures come from the valuations our team made this month — not from listings with inflated prices.',
+            'Die Zahlen stammen aus den Bewertungen unseres Teams in diesem Monat — nicht aus Anzeigen mit überhöhten Preisen.',
+          ),
         ),
         display: when('market.valuations', 'gt', '0'),
       }),
@@ -123,9 +220,9 @@ export function newsletterEmail(
           row('100', [
             [
               block('divider', { color: LINE, padding: pad(0, 0, 24, 0) }),
-              eyebrow('Nga blogu', ORANGE_DEEP),
+              eyebrow(tr('Nga blogu', 'From the blog', 'Aus dem Blog'), ORANGE_DEEP),
               block('heading', {
-                text: t('Lexo këtë muaj'),
+                text: tt(tr('Lexo këtë muaj', 'Read this month', 'Diesen Monat lesen')),
                 level: 2,
                 size: 24,
                 font: 'sora',
@@ -134,12 +231,12 @@ export function newsletterEmail(
               }),
               block('repeat', { list: 'articles', max: 3 }, [
                 block('text', {
-                  text: [
+                  text: inEvery((l) => [
                     v('item.category'),
                     { text: ' · ' },
                     v('item.reading_minutes'),
-                    { text: ' min lexim' },
-                  ],
+                    { text: say(l, ' min lexim', ' min read', ' Min. Lesezeit') },
+                  ]),
                   size: 12,
                   weight: '600',
                   letterSpacing: 1,
@@ -163,7 +260,7 @@ export function newsletterEmail(
                   padding: pad(0, 0, 12, 0),
                 }),
                 block('button', {
-                  label: 'Lexo artikullin →',
+                  label: tr('Lexo artikullin →', 'Read the article →', 'Artikel lesen →'),
                   href: '{{ item.url }}',
                   background: PAPER,
                   textColor: ORANGE_DEEP,
@@ -180,7 +277,7 @@ export function newsletterEmail(
                 block('divider', { color: LINE, padding: pad(0) }),
               ]),
               block('button', {
-                label: 'Të gjithë artikujt',
+                label: tr('Të gjithë artikujt', 'All articles', 'Alle Artikel'),
                 href: '{{ site.blog_url }}',
                 background: INK,
                 textColor: PAPER,
@@ -198,31 +295,52 @@ export function newsletterEmail(
       ),
 
       callToAction({
-        title: 'Po mendoni ta shisni makinën?',
-        body: t(
-          'Plotësoni formularin në dy minuta dhe merrni një ofertë reale, me pagesë të menjëhershme pas kontrollit.',
+        title: tr(
+          'Po mendoni ta shisni makinën?',
+          'Thinking of selling your car?',
+          'Denken Sie über den Verkauf Ihres Autos nach?',
         ),
-        button: { label: 'Vlerëso makinën falas', href: '{{ site.valuation_url }}' },
+        body: tt(
+          tr(
+            'Plotësoni formularin në dy minuta dhe merrni një ofertë reale, me pagesë të menjëhershme pas kontrollit.',
+            'Fill in the form in two minutes and get a real offer, with immediate payment after the inspection.',
+            'Füllen Sie das Formular in zwei Minuten aus und erhalten Sie ein echtes Angebot, mit sofortiger Zahlung nach der Prüfung.',
+          ),
+        ),
+        button: {
+          label: tr('Vlerëso makinën falas', 'Value your car for free', 'Auto kostenlos bewerten'),
+          href: '{{ site.valuation_url }}',
+        },
       }),
 
       siteFooter({
         links: [
-          { label: 'Blogu', href: '{{ site.blog_url }}' },
-          { label: 'Vlerëso makinën', href: '{{ site.valuation_url }}' },
-          { label: 'Kontakt', href: '{{ site.contact_url }}' },
+          { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
+          {
+            label: tr('Vlerëso makinën', 'Value your car', 'Auto bewerten'),
+            href: '{{ site.valuation_url }}',
+          },
+          { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
-        text: [
-          { text: 'Ju e merrni këtë email sepse u abonuat në ' },
+        text: inEvery((l) => [
+          {
+            text: say(
+              l,
+              'Ju e merrni këtë email sepse u abonuat në ',
+              'You are receiving this email because you subscribed at ',
+              'Sie erhalten diese E-Mail, weil Sie sich bei ',
+            ),
+          },
           v('brand.name'),
-          { text: ' më ' },
+          { text: say(l, ' më ', ' on ', ' am ') },
           {
             text: '{{subscriber.since}}',
             marks: [{ type: 'variable', path: 'subscriber.since', format: 'date' }],
           },
-          { text: ' me adresën ' },
+          { text: say(l, ' me adresën ', ' with the address ', ' mit der Adresse ') },
           v('subscriber.email'),
-          { text: '.' },
-        ],
+          { text: say(l, '.', '.', ' angemeldet haben.') },
+        ]),
         unsubscribe: true,
       }),
     ],

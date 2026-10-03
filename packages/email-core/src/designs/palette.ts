@@ -1,6 +1,6 @@
 import { pad } from '../fields';
 import type { EmailRichText } from '../rich-text';
-import { block } from '../sample';
+import { block, mapWords, tr, type Tr, type Words } from '../sample';
 
 /**
  * The site's look, for the ready-made designs: the near-black hero and the
@@ -21,6 +21,19 @@ export const MIST = '#f6f7f9';
 export const ON_INK = '#c6ccd4';
 
 export const t = (text: string): EmailRichText => [{ text }];
+
+/** `t` in every language a value has. */
+export const tt = (text: Words): Words<EmailRichText> => mapWords(text, t);
+
+export type Lang = 'sq' | 'en' | 'de';
+
+/** A value built once per language: `inEvery((l) => [{ text: say(l, 'Po', 'Yes', 'Ja') }])`. */
+export const inEvery = <T>(build: (lang: Lang) => T): Tr<T> =>
+  tr(build('sq'), build('en'), build('de'));
+
+/** The words for `lang`, inside an `inEvery`. */
+export const say = (lang: Lang, sq: string, en: string, de: string): string =>
+  lang === 'sq' ? sq : lang === 'en' ? en : de;
 export const bold = (text: string) => ({ text, marks: [{ type: 'bold' as const }] });
 
 /** Show a block or a section only when a variable holds. */
@@ -30,9 +43,9 @@ export const when = (variable: string, op: 'exists' | 'missing' | 'gt', value?: 
 });
 
 /** The small spaced capitals above a heading. */
-export const eyebrow = (text: string, color: string, extra: Record<string, unknown> = {}) =>
+export const eyebrow = (text: Words, color: string, extra: Record<string, unknown> = {}) =>
   block('text', {
-    text: t(text),
+    text: tt(text),
     size: 12,
     weight: '600',
     letterSpacing: 2,

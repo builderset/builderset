@@ -4,18 +4,20 @@ import type { EmailDocument } from '../document';
 import { pad } from '../fields';
 import type { EmailRichText } from '../rich-text';
 import { v } from '../rich-text';
-import { block, buildEmail, row, section, type SectionSpec } from '../sample';
+import { block, buildEmail, row, section, tr, type SectionSpec, type Words } from '../sample';
 import {
   bold,
   eyebrow,
+  inEvery,
   LINE,
   MIST,
   MUTED,
   ORANGE_DEEP,
   ORANGE_SOFT,
   PAPER,
-  t,
+  say,
   TEXT,
+  tt,
 } from './palette';
 import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFooter } from './parts';
 
@@ -29,6 +31,9 @@ import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFoot
  * link is the one thing the reader has to do. Then where the inspection is,
  * the car the offer is for (so a wrong plate is caught before the visit),
  * and how the day goes.
+ *
+ * Written in Albanian, English and German: one design, sent in the language
+ * the customer applied in.
  *
  * The variables are the `application_approved` type's: the application, the
  * valuation (`cash_price`, `bank_price`, the checkpoint), the car, and the
@@ -49,9 +54,16 @@ export function valuationOfferEmail(
       stable: options.stable ?? false,
       meta: {
         name: 'Oferta dhe rezervimi',
-        subject: 'Oferta për {{ car.brand }} {{ car.model }} është gati — rezervoni takimin',
-        preheader:
+        subject: tr(
+          'Oferta për {{ car.brand }} {{ car.model }} është gati — rezervoni takimin',
+          'Your offer for the {{ car.brand }} {{ car.model }} is ready — book your appointment',
+          'Ihr Angebot für den {{ car.brand }} {{ car.model }} ist da — buchen Sie Ihren Termin',
+        ),
+        preheader: tr(
           'Cash {{ cash_price | money }} · me bankë {{ bank_price | money }}. Zgjidhni datën e kontrollit nga lidhja në email.',
+          'Cash {{ cash_price | money }} · by bank {{ bank_price | money }}. Pick the inspection date from the link in this email.',
+          'Bar {{ cash_price | money }} · per Überweisung {{ bank_price | money }}. Wählen Sie den Prüftermin über den Link in dieser E-Mail.',
+        ),
       },
       settings: {
         width: 640,
@@ -67,116 +79,215 @@ export function valuationOfferEmail(
       },
     },
     [
-      masthead([{ text: 'Oferta · ' }, v('code')]),
+      masthead(
+        inEvery((l) => [{ text: say(l, 'Oferta · ', 'Offer · ', 'Angebot · ') }, v('code')]),
+      ),
 
       hero({
-        eyebrows: [heroEyebrow('✓  Vlerësimi përfundoi')],
-        title: 'Oferta për makinën tuaj është gati',
-        body: [
-          { text: 'Ekipi ynë vlerësoi ' },
+        eyebrows: [
+          heroEyebrow(
+            tr('✓  Vlerësimi përfundoi', '✓  Valuation complete', '✓  Bewertung abgeschlossen'),
+          ),
+        ],
+        title: tr(
+          'Oferta për makinën tuaj është gati',
+          'The offer for your car is ready',
+          'Das Angebot für Ihr Auto ist da',
+        ),
+        body: inEvery((l) => [
+          {
+            text: say(
+              l,
+              'Ekipi ynë vlerësoi ',
+              'Our team has valued your ',
+              'Unser Team hat Ihren ',
+            ),
+          },
           strong('car.brand'),
           { text: ' ' },
           strong('car.model'),
-          { text: ' me targë ' },
+          { text: say(l, ' me targë ', ' with plate ', ' mit dem Kennzeichen ') },
           strong('plate'),
           {
-            text: '. Më poshtë gjeni dy çmimet që ju ofrojmë — zgjidhni ditën dhe orën e kontrollit dhe pjesën tjetër e kryejmë ne.',
+            text: say(
+              l,
+              '. Më poshtë gjeni dy çmimet që ju ofrojmë — zgjidhni ditën dhe orën e kontrollit dhe pjesën tjetër e kryejmë ne.',
+              '. Below are the two prices we offer — choose the day and time of the inspection and we take care of the rest.',
+              ' bewertet. Unten finden Sie unsere zwei Preise — wählen Sie Tag und Uhrzeit der Prüfung, um den Rest kümmern wir uns.',
+            ),
           },
-        ],
-        button: { label: 'Rezervo takimin →', href: '{{ schedule_url }}' },
+        ]),
+        button: {
+          label: tr('Rezervo takimin →', 'Book the appointment →', 'Termin buchen →'),
+          href: '{{ schedule_url }}',
+        },
       }),
 
       prices(),
 
-      note([
-        bold('Kodi i aplikimit: '),
-        strong('code'),
-        { text: ' — lidhja e rezervimit vlen ' },
-        strong('link_days'),
-        { text: ' ditë, deri më ' },
-        {
-          text: '{{link_expires_at}}',
-          marks: [{ type: 'bold' }, { type: 'variable', path: 'link_expires_at', format: 'date' }],
-        },
-        { text: '.' },
-      ]),
+      note(
+        inEvery((l) => [
+          bold(say(l, 'Kodi i aplikimit: ', 'Application code: ', 'Antragsnummer: ')),
+          strong('code'),
+          {
+            text: say(
+              l,
+              ' — lidhja e rezervimit vlen ',
+              ' — the booking link is valid for ',
+              ' — der Buchungslink gilt ',
+            ),
+          },
+          strong('link_days'),
+          { text: say(l, ' ditë, deri më ', ' days, until ', ' Tage, bis zum ') },
+          {
+            text: '{{link_expires_at}}',
+            marks: [
+              { type: 'bold' },
+              { type: 'variable', path: 'link_expires_at', format: 'date' },
+            ],
+          },
+          { text: '.' },
+        ]),
+      ),
 
       facts({
-        label: 'Pika e kontrollit',
+        label: tr('Pika e kontrollit', 'Inspection point', 'Prüfstandort'),
         rows: [
-          { label: 'Pika', value: '{{ checkpoint_name }}' },
-          { label: 'Adresa', value: '{{ checkpoint_address }}' },
-          { label: 'Telefoni', value: '{{ checkpoint_phone }}' },
+          { label: tr('Pika', 'Location', 'Standort'), value: '{{ checkpoint_name }}' },
+          { label: tr('Adresa', 'Address', 'Adresse'), value: '{{ checkpoint_address }}' },
+          { label: tr('Telefoni', 'Phone', 'Telefon'), value: '{{ checkpoint_phone }}' },
         ],
-        note: t(
-          'Aty bëhet kontrolli i mjetit dhe i dokumenteve. Datën dhe orën i zgjidhni vetë nga lidhja e rezervimit.',
+        note: tt(
+          tr(
+            'Aty bëhet kontrolli i mjetit dhe i dokumenteve. Datën dhe orën i zgjidhni vetë nga lidhja e rezervimit.',
+            'This is where the car and its documents are checked. You choose the date and time yourself from the booking link.',
+            'Hier werden das Fahrzeug und die Unterlagen geprüft. Datum und Uhrzeit wählen Sie selbst über den Buchungslink.',
+          ),
         ),
       }),
 
-      cards('Si vazhdon', 'Tre hapa deri te pagesa', [
-        {
-          icon: '📅',
-          title: 'Rezervoni',
-          body: 'Zgjidhni ditën dhe orën që ju përshtaten, nga lidhja në këtë email.',
-        },
-        {
-          icon: '🔧',
-          title: 'Kontrolli',
-          body: 'Në pikën e kontrollit verifikojmë mjetin dhe dokumentet — rreth 30 minuta.',
-        },
-        {
-          icon: '💶',
-          title: 'Pagesa',
-          body: 'Nëse gjithçka përputhet me të dhënat, nënshkruani dhe paguheni po atë ditë.',
-        },
-      ]),
+      cards(
+        tr('Si vazhdon', 'How it continues', 'Wie es weitergeht'),
+        tr('Tre hapa deri te pagesa', 'Three steps to payment', 'Drei Schritte bis zur Zahlung'),
+        [
+          {
+            icon: '📅',
+            title: tr('Rezervoni', 'Book', 'Buchen'),
+            body: tr(
+              'Zgjidhni ditën dhe orën që ju përshtaten, nga lidhja në këtë email.',
+              'Choose the day and time that suit you, from the link in this email.',
+              'Wählen Sie Tag und Uhrzeit, die Ihnen passen, über den Link in dieser E-Mail.',
+            ),
+          },
+          {
+            icon: '🔧',
+            title: tr('Kontrolli', 'Inspection', 'Prüfung'),
+            body: tr(
+              'Në pikën e kontrollit verifikojmë mjetin dhe dokumentet — rreth 30 minuta.',
+              'At the inspection point we check the car and the documents — about 30 minutes.',
+              'Am Prüfstandort prüfen wir Fahrzeug und Unterlagen — etwa 30 Minuten.',
+            ),
+          },
+          {
+            icon: '💶',
+            title: tr('Pagesa', 'Payment', 'Zahlung'),
+            body: tr(
+              'Nëse gjithçka përputhet me të dhënat, nënshkruani dhe paguheni po atë ditë.',
+              'If everything matches your details, you sign and are paid the same day.',
+              'Stimmt alles mit Ihren Angaben überein, unterschreiben Sie und werden am selben Tag bezahlt.',
+            ),
+          },
+        ],
+      ),
 
       facts({
-        label: 'Mjeti i vlerësuar',
+        label: tr('Mjeti i vlerësuar', 'The car valued', 'Das bewertete Fahrzeug'),
         rows: [
-          { label: 'Mjeti', value: '{{ car.brand }} {{ car.model }} {{ car.variant }}' },
-          { label: 'Viti', value: '{{ year }}' },
-          { label: 'Kilometrazhi', value: '{{ car.odometer | number }} km' },
-          { label: 'Karburanti · Kambio', value: '{{ car.fuel }} · {{ car.transmission }}' },
-          { label: 'Targa', value: '{{ plate }}' },
+          {
+            label: tr('Mjeti', 'Car', 'Fahrzeug'),
+            value: '{{ car.brand }} {{ car.model }} {{ car.variant }}',
+          },
+          { label: tr('Viti', 'Year', 'Baujahr'), value: '{{ year }}' },
+          {
+            label: tr('Kilometrazhi', 'Mileage', 'Kilometerstand'),
+            value: '{{ car.odometer | number }} km',
+          },
+          {
+            label: tr('Karburanti · Kambio', 'Fuel · Gearbox', 'Kraftstoff · Getriebe'),
+            value: '{{ car.fuel }} · {{ car.transmission }}',
+          },
+          { label: tr('Targa', 'Plate', 'Kennzeichen'), value: '{{ plate }}' },
         ],
-        note: [
-          { text: 'Vlerësuar më ' },
+        note: inEvery((l) => [
+          { text: say(l, 'Vlerësuar më ', 'Valued on ', 'Bewertet am ') },
           {
             text: '{{valuated_at}}',
             marks: [{ type: 'variable', path: 'valuated_at', format: 'date' }],
           },
           {
-            text: ' · Çmimi përfundimtar konfirmohet pas kontrollit të mjetit në pikë.',
+            text: say(
+              l,
+              ' · Çmimi përfundimtar konfirmohet pas kontrollit të mjetit në pikë.',
+              ' · The final price is confirmed after the car is inspected at the point.',
+              ' · Der endgültige Preis wird nach der Prüfung des Fahrzeugs vor Ort bestätigt.',
+            ),
           },
-        ],
+        ]),
       }),
 
       callToAction({
-        title: 'Rezervoni takimin tuaj',
-        body: [
-          {
-            text: 'Shihni ofertën dhe zgjidhni datën e kontrollit në faqen tonë. Ditën e takimit sillni lejen e qarkullimit, kolaudimin dhe siguracionin.',
-          },
-        ],
-        button: { label: 'Zgjidh datën dhe orën', href: '{{ schedule_url }}' },
+        title: tr('Rezervoni takimin tuaj', 'Book your appointment', 'Buchen Sie Ihren Termin'),
+        body: tt(
+          tr(
+            'Shihni ofertën dhe zgjidhni datën e kontrollit në faqen tonë. Ditën e takimit sillni lejen e qarkullimit, kolaudimin dhe siguracionin.',
+            'See the offer and choose the inspection date on our site. On the day, bring the registration certificate, the roadworthiness test and the insurance.',
+            'Sehen Sie das Angebot und wählen Sie den Prüftermin auf unserer Website. Bringen Sie am Termin Zulassungsbescheinigung, technische Prüfung und Versicherung mit.',
+          ),
+        ),
+        button: {
+          label: tr(
+            'Zgjidh datën dhe orën',
+            'Choose the date and time',
+            'Datum und Uhrzeit wählen',
+          ),
+          href: '{{ schedule_url }}',
+        },
       }),
 
       siteFooter({
         links: [
           { label: 'blejmauto.com', href: '{{ brand.website }}' },
-          { label: 'Blogu', href: '{{ site.blog_url }}' },
-          { label: 'Kontakt', href: '{{ site.contact_url }}' },
+          { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
+          { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
-        text: [
-          { text: 'Ky email u dërgua te ' },
+        text: inEvery((l) => [
+          {
+            text: say(
+              l,
+              'Ky email u dërgua te ',
+              'This email was sent to ',
+              'Diese E-Mail wurde an ',
+            ),
+          },
           v('recipient.email'),
-          { text: ' sepse aplikuat për vlerësim në ' },
+          {
+            text: say(
+              l,
+              ' sepse aplikuat për vlerësim në ',
+              ' because you applied for a valuation at ',
+              ' gesendet, weil Sie bei ',
+            ),
+          },
           v('brand.name'),
           {
-            text: '. Lidhja e rezervimit është personale — mos ia përcillni askujt.',
+            text: say(
+              l,
+              '. Lidhja e rezervimit është personale — mos ia përcillni askujt.',
+              '. The booking link is personal — please do not forward it.',
+              ' eine Bewertung angefragt haben. Der Buchungslink ist persönlich — bitte nicht weiterleiten.',
+            ),
           },
-        ],
+        ]),
         unsubscribe: false,
       }),
     ],
@@ -184,7 +295,7 @@ export function valuationOfferEmail(
 }
 
 /** One price on its card: what it is, the amount large, how it is paid. */
-function price(label: string, path: string, help: string, accent: boolean) {
+function price(label: Words, path: string, help: Words, accent: boolean) {
   const amount: EmailRichText = [
     { text: `{{${path}}}`, marks: [{ type: 'variable', path, format: 'money' }] },
   ];
@@ -208,7 +319,7 @@ function price(label: string, path: string, help: string, accent: boolean) {
         color: TEXT,
         padding: pad(0, 0, 6, 0),
       }),
-      block('text', { text: t(help), size: 13, lineHeight: 1.5, color: MUTED, padding: pad(0) }),
+      block('text', { text: tt(help), size: 13, lineHeight: 1.5, color: MUTED, padding: pad(0) }),
     ],
   };
 }
@@ -218,9 +329,15 @@ function prices(): SectionSpec {
   return section({ background: PAPER, padding: pad(36, 32, 28, 32) }, [
     row('100', [
       [
-        eyebrow('Oferta jonë', ORANGE_DEEP),
+        eyebrow(tr('Oferta jonë', 'Our offer', 'Unser Angebot'), ORANGE_DEEP),
         block('heading', {
-          text: t('Dy mënyra pagese — ju zgjidhni'),
+          text: tt(
+            tr(
+              'Dy mënyra pagese — ju zgjidhni',
+              'Two ways to be paid — you choose',
+              'Zwei Zahlungswege — Sie wählen',
+            ),
+          ),
           level: 2,
           size: 24,
           font: 'sora',
@@ -232,8 +349,26 @@ function prices(): SectionSpec {
     row(
       '50-50',
       [
-        price('Me para në dorë', 'cash_price', 'Paguhet në vend, ditën e kontrollit.', false),
-        price('Me transfertë bankare', 'bank_price', 'Kalon në llogarinë tuaj bankare.', true),
+        price(
+          tr('Me para në dorë', 'Cash in hand', 'In bar'),
+          'cash_price',
+          tr(
+            'Paguhet në vend, ditën e kontrollit.',
+            'Paid on the spot, on the day of the inspection.',
+            'Bar vor Ort, am Tag der Prüfung.',
+          ),
+          false,
+        ),
+        price(
+          tr('Me transfertë bankare', 'By bank transfer', 'Per Überweisung'),
+          'bank_price',
+          tr(
+            'Kalon në llogarinë tuaj bankare.',
+            'Paid into your bank account.',
+            'Auf Ihr Bankkonto überwiesen.',
+          ),
+          true,
+        ),
       ],
       { gap: 12 },
     ),

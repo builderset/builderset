@@ -121,6 +121,16 @@ export function NumberStepper({
     };
   }, []);
 
+  // The select-all on focus waits a frame (a click's own mouseup would undo it
+  // sooner). Typing that lands before the frame cancels it: selecting then
+  // would put the next keystroke over the characters already typed.
+  const selectFrame = useRef<number | undefined>(undefined);
+  const cancelSelect = () => {
+    if (selectFrame.current !== undefined) cancelAnimationFrame(selectFrame.current);
+    selectFrame.current = undefined;
+  };
+  useEffect(() => cancelSelect, []);
+
   const stepBy = (direction: 1 | -1) => {
     const base = latest.current ?? (direction > 0 ? (min ?? 0) - step : (max ?? 0) + step);
     const next = stepped(base, direction * step);
@@ -221,12 +231,15 @@ export function NumberStepper({
             setDraft(format(current));
             setEditing(true);
             const input = event.currentTarget;
-            requestAnimationFrame(() => {
+            cancelSelect();
+            selectFrame.current = requestAnimationFrame(() => {
+              selectFrame.current = undefined;
               input.select();
             });
           }}
           onBlur={commit}
           onChange={(event) => {
+            cancelSelect();
             const text = event.target.value;
             if (!pattern.test(text)) return;
             setDraft(text);

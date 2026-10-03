@@ -136,7 +136,7 @@ export function emailProfile({
   const layouts: RowLayout[] = ['100', '50-50', '33-67', '67-33', '33-33-33', '25-25-25-25'];
 
   return {
-    renderCanvas: ({ doc, editText, viewport }) => (
+    renderCanvas: ({ doc, editText, viewport, locale: writing }) => (
       <EmailCanvas
         document={doc as unknown as EmailDocument}
         editing
@@ -144,7 +144,7 @@ export function emailProfile({
         editText={editText as unknown as (field: EditableField) => React.ReactNode}
         assetUrl={assetUrl}
         brand={brand}
-        locale={locale}
+        locale={writing ?? locale}
         mode="preview-raw"
         socialIcon={socialIcon}
       />

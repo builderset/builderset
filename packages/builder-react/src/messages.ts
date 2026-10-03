@@ -63,6 +63,13 @@ export interface EditorMessages {
   publishing: string;
   nothingSelected: string;
   multipleSelected: (count: number) => string;
+  /** The document-settings switch: one document, every language. */
+  multilingual: string;
+  multilingualHelp: string;
+  language: string;
+  languages: Record<'sq' | 'en' | 'de', string>;
+  /** The notice while writing in a language other than the base. */
+  writingIn: (language: string) => string;
   moveUp: string;
   moveDown: string;
   duplicate: string;
@@ -387,6 +394,13 @@ const EN: EditorMessages = {
   publishing: 'Publishing',
   nothingSelected: 'Select a block to edit it.',
   multipleSelected: (n) => `${String(n)} blocks selected`,
+  multilingual: 'Multi-language',
+  multilingualHelp:
+    'Write this in every language the site speaks — one document, not one per language. Layout, images and links are shared; only the words change.',
+  language: 'Language',
+  languages: { sq: 'Shqip', en: 'English', de: 'Deutsch' },
+  writingIn: (language) =>
+    `Writing in ${language}: the words you type are saved for ${language} only. Anything not translated shows in the base language.`,
   moveUp: 'Move up',
   moveDown: 'Move down',
   duplicate: 'Duplicate',
@@ -556,6 +570,8 @@ const EN: EditorMessages = {
     'image.altMissing': 'Image without a description',
     'heading.skippedLevel': 'A heading skips a level',
     'heading.empty': 'Empty heading',
+    'i18n.structureInBase':
+      'Add or remove items in the base language — a translation changes the words only.',
     'paragraph.empty': 'Empty paragraph',
     'paragraph.long': 'Very long paragraph',
     'url.unsafe': 'Unsafe link',
@@ -637,6 +653,12 @@ const SQ: EditorMessages = {
   publishing: 'Publikimi',
   nothingSelected: 'Zgjidhni një bllok për ta ndryshuar.',
   multipleSelected: (n) => `${String(n)} blloqe të zgjedhura`,
+  multilingual: 'Shumëgjuhëshe',
+  multilingualHelp:
+    'Shkruajeni në të gjitha gjuhët e faqes — një dokument, jo një për çdo gjuhë. Struktura, imazhet dhe lidhjet janë të përbashkëta; ndryshojnë vetëm fjalët.',
+  language: 'Gjuha',
+  writingIn: (language) =>
+    `Po shkruani në ${language}: fjalët ruhen vetëm për këtë gjuhë. Çfarë nuk është përkthyer shfaqet në gjuhën bazë.`,
   moveUp: 'Lëviz lart',
   moveDown: 'Lëviz poshtë',
   duplicate: 'Dyfisho',
@@ -808,6 +830,8 @@ const SQ: EditorMessages = {
     'image.altMissing': 'Imazh pa përshkrim',
     'heading.skippedLevel': 'Një titull kapërcen një nivel',
     'heading.empty': 'Titull bosh',
+    'i18n.structureInBase':
+      'Shtoni ose hiqni elemente në gjuhën bazë — përkthimi ndryshon vetëm fjalët.',
     'paragraph.empty': 'Paragraf bosh',
     'paragraph.long': 'Paragraf shumë i gjatë',
     'url.unsafe': 'Lidhje e pasigurt',
@@ -875,6 +899,12 @@ const DE: EditorMessages = {
   publishing: 'Veröffentlichung',
   nothingSelected: 'Einen Block auswählen, um ihn zu bearbeiten.',
   multipleSelected: (n) => `${String(n)} Blöcke ausgewählt`,
+  multilingual: 'Mehrsprachig',
+  multilingualHelp:
+    'In allen Sprachen der Website schreiben — ein Dokument, nicht eines pro Sprache. Layout, Bilder und Links sind gemeinsam; nur die Wörter ändern sich.',
+  language: 'Sprache',
+  writingIn: (language) =>
+    `Sie schreiben auf ${language}: Die Wörter werden nur für diese Sprache gespeichert. Nicht Übersetztes erscheint in der Grundsprache.`,
   moveUp: 'Nach oben',
   moveDown: 'Nach unten',
   duplicate: 'Duplizieren',
@@ -979,6 +1009,11 @@ const DE: EditorMessages = {
   },
   searchVariables: 'Variablen suchen…',
   elements: DE_ELEMENTS,
+  issueText: {
+    ...EN.issueText,
+    'i18n.structureInBase':
+      'Elemente in der Grundsprache hinzufügen oder entfernen — eine Übersetzung ändert nur die Wörter.',
+  },
 };
 
 const CATALOGUE: Record<string, EditorMessages> = { en: EN, sq: SQ, de: DE };

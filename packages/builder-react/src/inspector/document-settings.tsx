@@ -18,6 +18,7 @@ import { useId, useState, type ReactNode } from 'react';
 
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
+import { MultilingualToggle } from '../chrome/language-switch';
 import { MediaField } from './media-field';
 import { NumberStepper } from './number-stepper';
 
@@ -106,12 +107,13 @@ export function DocumentSettings() {
 
 function General() {
   const { store, messages, article, setArticle } = useEditorContext();
-  const meta = useEditor((state) => state.doc.meta);
+  const meta = useEditor((state) => state.view.meta);
   const excerpt = meta.excerpt ?? '';
   const listId = useId();
 
   return (
     <>
+      <MultilingualToggle />
       <FieldRow label={messages.title}>
         {(id) => (
           <Input
@@ -232,7 +234,7 @@ function Check2({ ok, children }: { ok: boolean; children: ReactNode }) {
 
 function Seo() {
   const { store, messages, article, registry } = useEditorContext();
-  const doc = useEditor((state) => state.doc);
+  const doc = useEditor((state) => state.view);
   const seo: SeoMeta = doc.meta.seo ?? {};
   const setSeo = (patch: Partial<SeoMeta>, label: string, key: string) => {
     store.getState().updateMeta({ seo: { ...seo, ...patch } }, label, `meta:seo:${key}`);

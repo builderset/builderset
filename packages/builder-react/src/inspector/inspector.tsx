@@ -102,7 +102,8 @@ function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
 
 function NodeInspector({ id }: { id: NodeId }) {
   const { registry, messages, store, profile } = useEditorContext();
-  const node = useEditor((state) => state.doc.nodes[id]);
+  // As it reads in the language being written: its words are that language's.
+  const node = useEditor((state) => state.view.nodes[id]);
   const storedTab = useEditor((state) => state.rightTab);
   const showStyle = profile.styleTab !== false;
   const tab = !showStyle && storedTab === 'style' ? 'content' : storedTab;

@@ -1,7 +1,11 @@
 import {
+  documentLocales,
   error,
+  i18nSchema,
+  localize,
   nodeShapeSchema,
   structuralIssues,
+  translationIssues,
   warning,
   type BuilderDocument,
   type BuilderNode,
@@ -56,10 +60,18 @@ export function emailSchema(registry: ElementRegistry) {
       nodes: z.record(z.string(), nodeSchema),
       meta: emailMetaSchema,
       settings: emailSettingsSchema,
+      i18n: i18nSchema.optional(),
     })
     .superRefine((doc, ctx) => {
       for (const issue of structuralIssues(doc as unknown as EmailDocument, registry)) {
         ctx.addIssue({ code: 'custom', message: issue.code, path: ['nodes', issue.nodeId ?? ''] });
+      }
+      for (const issue of translationIssues(doc as unknown as EmailDocument, registry)) {
+        ctx.addIssue({
+          code: 'custom',
+          message: issue.code,
+          path: ['i18n', issue.nodeId ?? '', issue.path ?? ''],
+        });
       }
     });
 }
@@ -153,6 +165,13 @@ export function checkEmail(
     const issues = parsed.error.issues.map((issue) => {
       const [first, nodeId, , ...rest] = issue.path.map(String);
       const unknownType = !!nodeId && !registry.has(doc.nodes[nodeId]?.type ?? '');
+      if (first === 'i18n' && issue.code === 'custom') {
+        // A translation that would not be a valid email in its language.
+        return error('props.invalid', {
+          ...(nodeId ? { nodeId } : {}),
+          path: issue.path.slice(2).map(String).join('.'),
+        });
+      }
       return first === 'nodes' && nodeId
         ? error(
             unknownType
@@ -195,6 +214,33 @@ export function checkEmail(
   }
 
   if (type) issues.push(...typeIssues(doc, type));
+  issues.push(...languageIssues(doc, type));
+  return issues;
+}
+
+/**
+ * Each language must still be a whole email: a subject, and — for its type —
+ * only the variables it has and every one it must use. Reported once per
+ * language, and only where the language differs from the base.
+ */
+function languageIssues(doc: EmailDocument, type?: EmailType | null): Issue[] {
+  const issues: Issue[] = [];
+  const base = new Set(
+    (type ? typeIssues(doc, type) : []).map(
+      (issue) => `${issue.code}:${JSON.stringify(issue.params)}`,
+    ),
+  );
+  for (const locale of documentLocales(doc).slice(1)) {
+    const view = localize(doc, locale);
+    if (view === doc) continue;
+    if (!view.meta.subject.trim()) {
+      issues.push(error('meta.subjectMissing', { path: 'meta.subject', params: { locale } }));
+    }
+    for (const issue of type ? typeIssues(view, type) : []) {
+      if (base.has(`${issue.code}:${JSON.stringify(issue.params)}`)) continue;
+      issues.push({ ...issue, params: { ...issue.params, locale } });
+    }
+  }
   return issues;
 }
 

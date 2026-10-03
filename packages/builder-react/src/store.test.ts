@@ -112,3 +112,79 @@ describe('the editor store', () => {
     expect(state().doc.meta.title).toBe('Test');
   });
 });
+
+describe('writing in another language', () => {
+  function translating() {
+    const context = setup();
+    const { state } = context;
+    const heading = state().insertElement('heading', undefined, { level: 2, text: rt('Hapi') });
+    const list = state().insertElement('list', undefined, {
+      style: 'bullet',
+      items: [{ text: rt('Një') }, { text: rt('Dy') }],
+    });
+    if (!heading || !list) throw new Error('not inserted');
+    state().setMultilingual(true, 'sq');
+    state().setLang('en');
+    return { ...context, heading, list };
+  }
+
+  it('saves the words for that language and keeps the base', () => {
+    const { state, heading } = translating();
+    expect(state().lang).toBe('en');
+    const props = state().view.nodes[heading]?.props ?? {};
+    state().updateNode(heading, { props: { ...props, text: rt('Step') } }, 'Type');
+
+    expect(state().doc.nodes[heading]?.props.text).toEqual(rt('Hapi'));
+    expect(state().doc.i18n?.translations.en?.nodes?.[heading]?.text).toEqual(rt('Step'));
+    expect(state().view.nodes[heading]?.props.text).toEqual(rt('Step'));
+
+    state().setLang(null);
+    expect(state().view.nodes[heading]?.props.text).toEqual(rt('Hapi'));
+  });
+
+  it('changes what is not words for every language', () => {
+    const { state, heading } = translating();
+    state().updateNode(heading, { props: { level: 3 } }, 'Level');
+    expect(state().doc.nodes[heading]?.props.level).toBe(3);
+    expect(state().doc.i18n?.translations.en?.nodes?.[heading]).toBeUndefined();
+  });
+
+  it('translates one list item by its place, and refuses adding one', () => {
+    const { state, list, refused } = translating();
+    const items = state().view.nodes[list]?.props.items as { text: unknown }[];
+    state().updateNode(list, { props: { items: [items[0], { text: rt('Two') }] } }, 'Type');
+    expect(state().doc.i18n?.translations.en?.nodes?.[list]).toEqual({ 'items.1.text': rt('Two') });
+
+    const added = state().updateNode(
+      list,
+      { props: { items: [...items, { text: rt('Three') }] } },
+      'Add',
+    );
+    expect(added).toBe(false);
+    expect(refused).toHaveBeenCalledWith('i18n.structureInBase');
+  });
+
+  it('never writes the base text over a translation', () => {
+    const { state, heading } = translating();
+    const props = state().view.nodes[heading]?.props ?? {};
+    state().updateNode(heading, { props: { ...props, text: rt('Step') } }, 'Type');
+    // A caller that built its props from the base document.
+    const base = state().doc.nodes[heading]?.props ?? {};
+    state().updateNode(heading, { props: { ...base, level: 4 } }, 'Level');
+    expect(state().doc.i18n?.translations.en?.nodes?.[heading]?.text).toEqual(rt('Step'));
+    expect(state().doc.nodes[heading]?.props.level).toBe(4);
+  });
+
+  it('translates the title, undoes, and switches off', () => {
+    const { state } = translating();
+    state().updateMeta({ title: 'Test in English' }, 'Edit title');
+    expect(state().doc.meta.title).toBe('Test');
+    expect(state().view.meta.title).toBe('Test in English');
+    state().undo();
+    expect(state().view.meta.title).toBe('Test');
+
+    state().setMultilingual(false, 'sq');
+    expect(state().lang).toBeNull();
+    expect(state().doc.i18n?.enabled).toBe(false);
+  });
+});

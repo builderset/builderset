@@ -1,4 +1,10 @@
-import { type BuilderNode, type NodeTree, nodeShapeSchema } from '@motors/builder-core';
+import {
+  i18nSchema,
+  nodeShapeSchema,
+  type BuilderNode,
+  type DocumentI18n,
+  type NodeTree,
+} from '@motors/builder-core';
 import { z } from 'zod';
 
 import { color, fontSchema, px } from './fields';
@@ -69,6 +75,8 @@ export interface EmailDocument extends NodeTree {
   nodes: Record<string, BuilderNode>;
   meta: EmailMeta;
   settings: EmailSettings;
+  /** The subject, preheader and words in other languages, when switched on. */
+  i18n?: DocumentI18n | undefined;
 }
 
 export const defaultSettings = (): EmailSettings => ({
@@ -110,4 +118,5 @@ export const emailShapeSchema = z.object({
   nodes: z.record(z.string(), nodeShapeSchema),
   meta: emailMetaSchema,
   settings: emailSettingsSchema,
+  i18n: i18nSchema.optional(),
 });

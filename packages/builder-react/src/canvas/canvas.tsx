@@ -75,6 +75,9 @@ export function Canvas() {
   const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
   const bare = profile.canvasFrame === 'bare';
   const doc = useEditor((state) => state.doc);
+  // What is drawn: the document in the language being written.
+  const view = useEditor((state) => state.view);
+  const lang = useEditor((state) => state.lang);
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -99,14 +102,14 @@ export function Canvas() {
   const body = useMemo(
     () =>
       profile.renderCanvas
-        ? profile.renderCanvas({ doc, editText, viewport })
-        : renderDocument(doc, registry, {
+        ? profile.renderCanvas({ doc: view, editText, viewport, locale: lang ?? undefined })
+        : renderDocument(view, registry, {
             editing: true,
             resolveMedia: (key: string) => host.resolveMedia(key),
-            locale: host.contentLocale,
+            locale: lang ?? host.contentLocale,
             editText,
           }),
-    [doc, registry, host, editText, profile, viewport],
+    [view, lang, registry, host, editText, profile, viewport],
   );
 
   const empty = (doc.nodes[doc.root]?.children?.length ?? 0) === 0;
@@ -199,6 +202,14 @@ export function Canvas() {
       }}
     >
       <style>{CANVAS_CSS}</style>
+      {lang ? (
+        <p
+          role="status"
+          className="border-primary/30 bg-primary/10 text-primary sticky top-3 z-20 mx-auto mt-3 w-fit max-w-[90%] rounded-full border px-4 py-1.5 text-center text-xs font-medium shadow-xs backdrop-blur"
+        >
+          {messages.writingIn(messages.languages[lang])}
+        </p>
+      ) : null}
       <motion.div
         className="mx-auto py-6"
         initial={false}

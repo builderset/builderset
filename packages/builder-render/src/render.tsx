@@ -1,4 +1,5 @@
 import {
+  localize,
   outline as buildOutline,
   walk,
   type BuilderDocument,
@@ -260,8 +261,10 @@ export function renderDocument(
   registry: ElementRegistry,
   options: RenderOptions,
 ): ReactNode {
-  const context = createRenderContext(document, registry, options);
-  const root = document.nodes[document.root];
+  // A multi-language article reads in the visitor's language; the rest falls back.
+  const doc = localize(document, options.locale);
+  const context = createRenderContext(doc, registry, options);
+  const root = doc.nodes[doc.root];
   return (
     <>
       {root?.children?.map((id) => (

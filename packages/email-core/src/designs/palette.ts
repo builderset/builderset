@@ -37,7 +37,7 @@ export const say = (lang: Lang, sq: string, en: string, de: string): string =>
 export const bold = (text: string) => ({ text, marks: [{ type: 'bold' as const }] });
 
 /** Show a block or a section only when a variable holds. */
-export const when = (variable: string, op: 'exists' | 'missing' | 'gt', value?: string) => ({
+export const when = (variable: string, op: 'exists' | 'missing' | 'eq' | 'gt', value?: string) => ({
   hideOn: 'none' as const,
   when: [{ var: variable, op, ...(value === undefined ? {} : { value }) }],
 });

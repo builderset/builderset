@@ -22,6 +22,7 @@ export * from './designs/newsletter';
 export * from './designs/verification-code';
 export * from './designs/application-received';
 export * from './designs/valuation-offer';
+export * from './designs/application-refused';
 export * from './designs/job-application-received';
 export * from './designs/partner-application-received';
 export * from './designs/contact-received';

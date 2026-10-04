@@ -9,6 +9,9 @@ import {
   kitchenSinkEmail,
   APPLICATION_RECEIVED_SAMPLE,
   applicationReceivedEmail,
+  APPLICATION_REFUSED_AFTER_BOOKING_SAMPLE,
+  APPLICATION_REFUSED_SAMPLE,
+  applicationRefusedEmail,
   CONTACT_RECEIVED_SAMPLE,
   contactReceivedEmail,
   JOB_APPLICATION_RECEIVED_SAMPLE,
@@ -418,6 +421,21 @@ const CASES: GoldenCase[] = [
     brand: SITE_BRAND,
   },
   {
+    name: 'application-refused',
+    document: applicationRefusedEmail(registry, { stable: true }),
+    data: { ...NOW, ...APPLICATION_REFUSED_SAMPLE },
+    locale: 'sq',
+    brand: SITE_BRAND,
+  },
+  // The other refusal moment: the stage switches the eyebrow and the note.
+  {
+    name: 'application-refused-after-booking',
+    document: applicationRefusedEmail(registry, { stable: true }),
+    data: { ...NOW, ...APPLICATION_REFUSED_AFTER_BOOKING_SAMPLE },
+    locale: 'sq',
+    brand: SITE_BRAND,
+  },
+  {
     name: 'job-application-received',
     document: jobApplicationReceivedEmail(registry, { stable: true }),
     data: { ...NOW, ...JOB_APPLICATION_RECEIVED_SAMPLE },
@@ -476,6 +494,7 @@ const CASES: GoldenCase[] = [
       [
         ['application-received', applicationReceivedEmail, APPLICATION_RECEIVED_SAMPLE],
         ['valuation-offer', valuationOfferEmail, VALUATION_OFFER_SAMPLE],
+        ['application-refused', applicationRefusedEmail, APPLICATION_REFUSED_SAMPLE],
         ['job-application-received', jobApplicationReceivedEmail, JOB_APPLICATION_RECEIVED_SAMPLE],
         [
           'partner-application-received',

@@ -297,9 +297,9 @@ export function siteFooter({ links, text, unsubscribe }: FooterOptions): Section
         }),
         block('social', {
           items: [
-            { network: 'instagram', href: 'https://www.instagram.com/blejmauto' },
-            { network: 'facebook', href: 'https://www.facebook.com/blejmauto' },
-            { network: 'tiktok', href: 'https://www.tiktok.com/@blejmauto' },
+            { network: 'instagram', href: 'https://www.instagram.com/marrimauto' },
+            { network: 'facebook', href: 'https://www.facebook.com/marrimauto' },
+            { network: 'tiktok', href: 'https://www.tiktok.com/@marrimauto' },
           ],
           appearance: 'icons',
           style: 'dark',

@@ -22,7 +22,7 @@ import { callToAction, cards, facts, hero, heroEyebrow, masthead, note, siteFoot
 
 /**
  * The monthly newsletter, in the site's own look: the near-black hero and the
- * orange of blejmauto.com, Sora for display type and Poppins for reading, as
+ * orange of marrimauto.com, Sora for display type and Poppins for reading, as
  * on the web.
  *
  * Everything that changes is a variable of the `newsletter` email type (see
@@ -53,9 +53,9 @@ export function newsletterEmail(
           'Der Automarkt · {{ edition.label }}',
         ),
         preheader: tr(
-          'Çmimet, ndryshimet ligjore dhe këshilla praktike — përmbledhja e muajit nga blejmauto.com.',
-          'Prices, changes in the law and practical advice — the month in brief from blejmauto.com.',
-          'Preise, Gesetzesänderungen und praktische Tipps — der Monat im Überblick von blejmauto.com.',
+          'Çmimet, ndryshimet ligjore dhe këshilla praktike — përmbledhja e muajit nga marrimauto.com.',
+          'Prices, changes in the law and practical advice — the month in brief from marrimauto.com.',
+          'Preise, Gesetzesänderungen und praktische Tipps — der Monat im Überblick von marrimauto.com.',
         ),
       },
       settings: {
@@ -358,9 +358,9 @@ export const NEWSLETTER_SAMPLE: Record<string, unknown> = {
   is_welcome: true,
   edition: { label: 'Tetor 2026' },
   site: {
-    blog_url: 'https://blejmauto.com/blog',
-    valuation_url: 'https://blejmauto.com/valuation',
-    contact_url: 'https://blejmauto.com/contact',
+    blog_url: 'https://marrimauto.com/blog',
+    valuation_url: 'https://marrimauto.com/valuation',
+    contact_url: 'https://marrimauto.com/contact',
   },
   market: { valuations: 184, average_offer: 8650, top_brand: 'Volkswagen' },
   articles_count: 2,
@@ -371,7 +371,7 @@ export const NEWSLETTER_SAMPLE: Record<string, unknown> = {
         "Pesë gjërat që e ngrenë ose e ulin çmimin më shumë sesa kilometrat — dhe si t'i kontrolloni vetë para se të kërkoni një ofertë.",
       category: 'Çmimet',
       reading_minutes: 6,
-      url: 'https://blejmauto.com/blog/sa-vlen-makina-ime',
+      url: 'https://marrimauto.com/blog/sa-vlen-makina-ime',
     },
     {
       title: 'Dokumentet që ju duhen për ta shitur makinën',
@@ -379,8 +379,8 @@ export const NEWSLETTER_SAMPLE: Record<string, unknown> = {
         'Leja e qarkullimit, siguracioni, kolaudimi: çfarë duhet të keni gati dhe çfarë mund të zgjidhet ditën e shitjes.',
       category: 'Këshilla',
       reading_minutes: 4,
-      url: 'https://blejmauto.com/blog/dokumentet-per-shitje',
+      url: 'https://marrimauto.com/blog/dokumentet-per-shitje',
     },
   ],
-  links: { unsubscribe: 'https://blejmauto.com/newsletter/unsubscribe/sample-token' },
+  links: { unsubscribe: 'https://marrimauto.com/newsletter/unsubscribe/sample-token' },
 };

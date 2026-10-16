@@ -260,7 +260,7 @@ function Seo() {
       {/* The result as a search engine would list it. */}
       <div className="border-border bg-card space-y-0.5 rounded-[var(--radius-control)] border p-3">
         <p className="text-muted-foreground truncate text-xs">
-          blejmauto.com › blog › {article.slug}
+          marrimauto.com › blog › {article.slug}
         </p>
         <p className="line-clamp-1 text-[15px] font-medium text-[#1a0dab] dark:text-[#8ab4f8]">
           {title || messages.untitled}

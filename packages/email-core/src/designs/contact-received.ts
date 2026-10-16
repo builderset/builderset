@@ -173,7 +173,7 @@ export function contactReceivedEmail(
 
       siteFooter({
         links: [
-          { label: 'blejmauto.com', href: '{{ brand.website }}' },
+          { label: 'marrimauto.com', href: '{{ brand.website }}' },
           { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
           { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
@@ -274,8 +274,8 @@ export const CONTACT_RECEIVED_SAMPLE: Record<string, unknown> = {
     'Përshëndetje, a mund ta shes makinën nëse ende kam këste për të paguar te banka?\nFaleminderit!',
   submitted_at: '2026-10-02T19:35:00Z',
   site: {
-    contact_url: 'https://blejmauto.com/contact',
-    valuation_url: 'https://blejmauto.com/valuation',
-    blog_url: 'https://blejmauto.com/blog',
+    contact_url: 'https://marrimauto.com/contact',
+    valuation_url: 'https://marrimauto.com/valuation',
+    blog_url: 'https://marrimauto.com/blog',
   },
 };

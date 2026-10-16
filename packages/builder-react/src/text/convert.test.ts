@@ -8,7 +8,7 @@ describe('rich text ⇄ TipTap', () => {
     { text: 'Plain ' },
     { text: 'bold', marks: [{ type: 'bold' }] },
     { text: ' and a ' },
-    { text: 'link', marks: [{ type: 'link', href: 'https://blejmauto.com', newTab: true }] },
+    { text: 'link', marks: [{ type: 'link', href: 'https://marrimauto.com', newTab: true }] },
     { text: '\nnext line' },
     { text: 'x', marks: [{ type: 'sup' }] },
   ];

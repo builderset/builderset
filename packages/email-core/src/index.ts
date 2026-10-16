@@ -20,6 +20,7 @@ export * from './validate';
 export * from './variables';
 export * from './designs/newsletter';
 export * from './designs/verification-code';
+export * from './designs/member-invitation';
 export * from './designs/application-received';
 export * from './designs/valuation-offer';
 export * from './designs/application-refused';

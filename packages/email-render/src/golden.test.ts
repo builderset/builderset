@@ -26,6 +26,8 @@ import {
   newsletterEmail,
   VERIFICATION_CODE_SAMPLE,
   verificationCodeEmail,
+  MEMBER_INVITATION_SAMPLE,
+  memberInvitationEmail,
   pad,
   row,
   ROW_LAYOUTS,
@@ -488,6 +490,13 @@ const CASES: GoldenCase[] = [
     locale: 'sq',
     brand: SITE_BRAND,
   },
+  {
+    name: 'member-invitation',
+    document: memberInvitationEmail(registry, { stable: true }),
+    data: { ...NOW, ...MEMBER_INVITATION_SAMPLE },
+    locale: 'sq',
+    brand: SITE_BRAND,
+  },
   // Every ready-made design in its other two languages.
   ...(['en', 'de'] as const).flatMap((locale) =>
     (
@@ -503,6 +512,7 @@ const CASES: GoldenCase[] = [
         ],
         ['contact-received', contactReceivedEmail, CONTACT_RECEIVED_SAMPLE],
         ['verification-code', verificationCodeEmail, VERIFICATION_CODE_SAMPLE],
+        ['member-invitation', memberInvitationEmail, MEMBER_INVITATION_SAMPLE],
         ['newsletter-welcome', newsletterEmail, NEWSLETTER_SAMPLE],
         ['staff-notification', staffNotificationEmail, STAFF_NOTIFICATION_SAMPLE],
       ] as const

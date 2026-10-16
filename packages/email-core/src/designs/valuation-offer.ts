@@ -256,7 +256,7 @@ export function valuationOfferEmail(
 
       siteFooter({
         links: [
-          { label: 'blejmauto.com', href: '{{ brand.website }}' },
+          { label: 'marrimauto.com', href: '{{ brand.website }}' },
           { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
           { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
@@ -386,7 +386,7 @@ export const VALUATION_OFFER_SAMPLE: Record<string, unknown> = {
   checkpoint_name: 'Tirana Center',
   checkpoint_address: 'Rruga e Durrësit 12, Tiranë',
   checkpoint_phone: '+355 69 000 0000',
-  schedule_url: 'https://blejmauto.com/offer/sample-token',
+  schedule_url: 'https://marrimauto.com/offer/sample-token',
   link_days: 14,
   link_expires_at: '2026-10-16T19:35:00Z',
   valuated_at: '2026-10-02T19:35:00Z',
@@ -400,7 +400,7 @@ export const VALUATION_OFFER_SAMPLE: Record<string, unknown> = {
   },
   district: 'Tiranë',
   site: {
-    contact_url: 'https://blejmauto.com/contact',
-    blog_url: 'https://blejmauto.com/blog',
+    contact_url: 'https://marrimauto.com/contact',
+    blog_url: 'https://marrimauto.com/blog',
   },
 };

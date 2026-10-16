@@ -4,7 +4,7 @@ import { block, mapWords, tr, type Tr, type Words } from '../sample';
 
 /**
  * The site's look, for the ready-made designs: the near-black hero and the
- * orange of blejmauto.com (`--hero` and `--color-brand-500/600` in the tokens,
+ * orange of marrimauto.com (`--hero` and `--color-brand-500/600` in the tokens,
  * as hex — email has no `oklch`), Sora for display type and Poppins to read.
  */
 
@@ -55,10 +55,10 @@ export const eyebrow = (text: Words, color: string, extra: Record<string, unknow
     ...extra,
   });
 
-/** "blejmauto.com" as type, as the site's header sets it. */
+/** "marrimauto.com" as type, as the site's header sets it. */
 export const wordmark = () =>
   block('text', {
-    text: [{ text: 'blejmauto', marks: [{ type: 'bold' }] }, { text: '.com' }],
+    text: [{ text: 'marrimauto', marks: [{ type: 'bold' }] }, { text: '.com' }],
     font: 'sora',
     size: 22,
     lineHeight: 1.2,

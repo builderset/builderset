@@ -278,7 +278,7 @@ export function applicationRefusedEmail(
 
       siteFooter({
         links: [
-          { label: 'blejmauto.com', href: '{{ brand.website }}' },
+          { label: 'marrimauto.com', href: '{{ brand.website }}' },
           { label: tr('Blogu', 'Blog', 'Blog'), href: '{{ site.blog_url }}' },
           { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
@@ -375,9 +375,9 @@ export const APPLICATION_REFUSED_SAMPLE: Record<string, unknown> = {
   },
   district: 'Tiranë',
   site: {
-    contact_url: 'https://blejmauto.com/contact',
-    blog_url: 'https://blejmauto.com/blog',
-    valuation_url: 'https://blejmauto.com/valuation',
+    contact_url: 'https://marrimauto.com/contact',
+    blog_url: 'https://marrimauto.com/blog',
+    valuation_url: 'https://marrimauto.com/valuation',
   },
 };
 

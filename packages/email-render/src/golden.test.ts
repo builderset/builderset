@@ -62,8 +62,8 @@ const NOW = { now: '2026-10-02T19:35:00.000Z', current_year: 2026 };
 /** The kit the API falls back to — what a real send uses until one is saved. */
 const SITE_BRAND: BrandKit = {
   ...DEFAULT_BRAND,
-  name: 'blejmauto.com',
-  website: 'https://blejmauto.com',
+  name: 'marrimauto.com',
+  website: 'https://marrimauto.com',
   address: 'Tiranë, Albania',
 };
 
@@ -457,7 +457,7 @@ const CASES: GoldenCase[] = [
       ...PARTNER_APPLICATION_RECEIVED_SAMPLE,
       role: 'Vlerësues i pavarur',
       is_checkpoint: false,
-      role_url: 'https://blejmauto.com/work-with-us/partner/vleresues-i-pavarur',
+      role_url: 'https://marrimauto.com/work-with-us/partner/vleresues-i-pavarur',
       business_name: '',
       identification_number: '',
       address: '',

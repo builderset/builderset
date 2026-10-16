@@ -212,7 +212,7 @@ export function jobApplicationReceivedEmail(
 
       siteFooter({
         links: [
-          { label: 'blejmauto.com', href: '{{ brand.website }}' },
+          { label: 'marrimauto.com', href: '{{ brand.website }}' },
           { label: tr('Karriera', 'Careers', 'Karriere'), href: '{{ site.careers_url }}' },
           { label: tr('Kontakt', 'Contact', 'Kontakt'), href: '{{ site.contact_url }}' },
         ],
@@ -262,13 +262,13 @@ export const JOB_APPLICATION_RECEIVED_SAMPLE: Record<string, unknown> = {
     department: 'Operacionet',
     location: 'Tiranë',
     employment_type: 'Kohë e plotë',
-    url: 'https://blejmauto.com/work-with-us/vleresues-automjetesh',
+    url: 'https://marrimauto.com/work-with-us/vleresues-automjetesh',
   },
   cv: 'Po, u bashkëngjit',
   submitted_at: '2026-10-02T19:35:00Z',
   site: {
-    careers_url: 'https://blejmauto.com/work-with-us',
-    about_url: 'https://blejmauto.com/about',
-    contact_url: 'https://blejmauto.com/contact',
+    careers_url: 'https://marrimauto.com/work-with-us',
+    about_url: 'https://marrimauto.com/about',
+    contact_url: 'https://marrimauto.com/contact',
   },
 };

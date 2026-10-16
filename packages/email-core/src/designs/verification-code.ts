@@ -259,9 +259,9 @@ export function verificationCodeEmail(
                   {
                     text: say(
                       l,
-                      'Injorojeni këtë email — pa kodin askush nuk hyn dot. Mos ia jepni kodin askujt: ekipi i blejmauto.com nuk do t’jua kërkojë kurrë, as në telefon.',
-                      'Ignore this email — without the code nobody can get in. Do not give the code to anyone: the blejmauto.com team will never ask you for it, not even on the phone.',
-                      'Ignorieren Sie diese E-Mail — ohne den Code kommt niemand hinein. Geben Sie den Code niemandem: Das Team von blejmauto.com wird Sie nie danach fragen, auch nicht am Telefon.',
+                      'Injorojeni këtë email — pa kodin askush nuk hyn dot. Mos ia jepni kodin askujt: ekipi i marrimauto.com nuk do t’jua kërkojë kurrë, as në telefon.',
+                      'Ignore this email — without the code nobody can get in. Do not give the code to anyone: the marrimauto.com team will never ask you for it, not even on the phone.',
+                      'Ignorieren Sie diese E-Mail — ohne den Code kommt niemand hinein. Geben Sie den Code niemandem: Das Team von marrimauto.com wird Sie nie danach fragen, auch nicht am Telefon.',
                     ),
                   },
                 ]),
@@ -281,7 +281,7 @@ export function verificationCodeEmail(
           [
             block('menu', {
               items: [
-                { label: 'blejmauto.com', href: '{{ brand.website }}' },
+                { label: 'marrimauto.com', href: '{{ brand.website }}' },
                 { label: tr('Ndihmë', 'Help', 'Hilfe'), href: '{{ support_url }}' },
               ],
               color: TEXT,
@@ -337,5 +337,5 @@ export const VERIFICATION_CODE_SAMPLE: Record<string, unknown> = {
     device: 'Chrome në Windows',
     location: 'Tiranë, Shqipëri',
   },
-  support_url: 'https://blejmauto.com/contact',
+  support_url: 'https://marrimauto.com/contact',
 };

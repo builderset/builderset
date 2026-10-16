@@ -112,9 +112,9 @@ export function partnerApplicationReceivedEmail(
           {
             text: say(
               l,
-              ' në rrjetin e blejmauto.com arriti te ekipi ynë. E shqyrtojmë me kujdes dhe ju kontaktojmë brenda pak ditësh pune.',
-              ' in the blejmauto.com network has reached our team. We review it carefully and contact you within a few working days.',
-              ' im Netzwerk von blejmauto.com ist bei unserem Team angekommen. Wir prüfen sie sorgfältig und melden uns innerhalb weniger Werktage.',
+              ' në rrjetin e marrimauto.com arriti te ekipi ynë. E shqyrtojmë me kujdes dhe ju kontaktojmë brenda pak ditësh pune.',
+              ' in the marrimauto.com network has reached our team. We review it carefully and contact you within a few working days.',
+              ' im Netzwerk von marrimauto.com ist bei unserem Team angekommen. Wir prüfen sie sorgfältig und melden uns innerhalb weniger Werktage.',
             ),
           },
         ]),
@@ -230,7 +230,7 @@ export function partnerApplicationReceivedEmail(
 
       siteFooter({
         links: [
-          { label: 'blejmauto.com', href: '{{ brand.website }}' },
+          { label: 'marrimauto.com', href: '{{ brand.website }}' },
           {
             label: tr('Puno me ne', 'Work with us', 'Mitarbeiten'),
             href: '{{ site.partners_url }}',
@@ -280,7 +280,7 @@ export const PARTNER_APPLICATION_RECEIVED_SAMPLE: Record<string, unknown> = {
   phone: '+355 68 222 3344',
   role: 'Pikë kontrolli',
   is_checkpoint: true,
-  role_url: 'https://blejmauto.com/work-with-us/partner/pike-kontrolli',
+  role_url: 'https://marrimauto.com/work-with-us/partner/pike-kontrolli',
   business_name: 'Auto Servis Leka',
   identification_number: 'L12345678A',
   district: 'Durrës',
@@ -289,7 +289,7 @@ export const PARTNER_APPLICATION_RECEIVED_SAMPLE: Record<string, unknown> = {
   has_vehicle: '—',
   submitted_at: '2026-10-02T19:35:00Z',
   site: {
-    partners_url: 'https://blejmauto.com/work-with-us',
-    contact_url: 'https://blejmauto.com/contact',
+    partners_url: 'https://marrimauto.com/work-with-us',
+    contact_url: 'https://marrimauto.com/contact',
   },
 };

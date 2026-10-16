@@ -45,9 +45,9 @@ export function staffNotificationEmail(
         name: 'Njoftim për stafin',
         subject: '{{ notification.title }}',
         preheader: tr(
-          '{{ notification.type }} · blejmauto.com — hapeni në panel.',
-          '{{ notification.type }} · blejmauto.com — open it in the panel.',
-          '{{ notification.type }} · blejmauto.com — im Panel öffnen.',
+          '{{ notification.type }} · marrimauto.com — hapeni në panel.',
+          '{{ notification.type }} · marrimauto.com — open it in the panel.',
+          '{{ notification.type }} · marrimauto.com — im Panel öffnen.',
         ),
       },
       settings: {
@@ -179,17 +179,17 @@ export function staffNotificationEmail(
 
 /** Realistic data for the preview and the parity fixture. */
 export const STAFF_NOTIFICATION_SAMPLE: Record<string, unknown> = {
-  recipient: { name: 'Arta Hoxha', email: 'arta@blejmauto.com' },
+  recipient: { name: 'Arta Hoxha', email: 'arta@marrimauto.com' },
   notification: {
     title: 'Aplikim i ri: APP-2026-00123',
     description: 'AA123BB · web',
     type: 'Aplikim',
     importance: 'info',
-    url: 'https://cc.blejmauto.com/applications?view=sample',
+    url: 'https://cc.marrimauto.com/applications?view=sample',
     at: '2026-10-03T09:15:00Z',
   },
   site: {
-    admin_url: 'https://cc.blejmauto.com',
-    preferences_url: 'https://cc.blejmauto.com/preferences',
+    admin_url: 'https://cc.marrimauto.com',
+    preferences_url: 'https://cc.marrimauto.com/preferences',
   },
 };

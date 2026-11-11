@@ -3,8 +3,8 @@
 import type { Fragment } from '@motors/engine';
 import { useEditorContext } from '@motors/engine/editor';
 import { importEmailHtml, type EmailDocument } from '../core';
+import { Button, SegmentedControl, Textarea } from '@motors/engine/ui';
 import {
-  Button,
   DrawerPanel,
   Overlay,
   OverlayBody,
@@ -13,8 +13,6 @@ import {
   barButtonClass,
   OverlayHeader,
   OverlayTitle,
-  SegmentedControl,
-  Textarea,
 } from '@motors/ui';
 import { FileCode2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';

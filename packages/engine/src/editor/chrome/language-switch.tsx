@@ -1,7 +1,7 @@
 'use client';
 
 import { documentLocales, isContentLocale, type ContentLocale } from '../../core';
-import { SegmentedControl, ToggleFlag } from '@motors/ui';
+import { SegmentedControl, ToggleFlag } from '../ui';
 
 import { useEditor, useEditorContext } from '../context';
 

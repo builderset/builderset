@@ -1,7 +1,7 @@
 'use client';
 
 import { countWords, plainText, readingMinutes, type Issue } from '../../core';
-import { Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui';
 import {
   AlertCircle,
   AlertTriangle,

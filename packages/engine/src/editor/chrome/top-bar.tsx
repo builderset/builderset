@@ -1,15 +1,17 @@
 'use client';
 
 import type { Breakpoint } from '../../core';
-import { Badge, Button, SegmentedControl } from '../ui';
 import {
+  Badge,
+  Button,
+  SegmentedControl,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Tooltip,
-} from '@motors/ui';
+} from '../ui';
 import {
   AlertTriangle,
   ArrowLeft,

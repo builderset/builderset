@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@motors/ui';
+} from '../ui';
 import {
   ArrowDown,
   ArrowUp,

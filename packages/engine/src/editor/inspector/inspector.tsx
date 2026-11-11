@@ -11,8 +11,18 @@ import {
   type NodeId,
   type StyleValues,
 } from '../../core';
-import { Button, Input, Label, SegmentedControl, ToggleFlag } from '../ui';
-import { Select, Tabs, TabsContent, TabsList, TabsTrigger } from '@motors/ui';
+import {
+  Button,
+  Input,
+  Label,
+  SegmentedControl,
+  ToggleFlag,
+  Select,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../ui';
 import { Copy, Monitor, RotateCcw, Smartphone, Tablet, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useId, useMemo, useState, type ReactNode } from 'react';

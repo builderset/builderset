@@ -1,6 +1,6 @@
 'use client';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui';
 import { Search } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 

@@ -56,12 +56,12 @@ function Row({
  * mode and link tracking.
  */
 export function EmailSettingsPanel() {
-  const { store, messages } = useEditorContext();
+  const { store, messages } = useEditorContext<EmailDocument>();
   const { words, type, locale, sample, brand } = useEmail();
   const w = words.email;
   // As it reads in the language being written: the subject and preheader
   // typed here are that language's.
-  const doc = useEditor((state) => state.view) as unknown as EmailDocument;
+  const doc = useEditor<EmailDocument, EmailDocument>((state) => state.view);
   const lang = useEditor((state) => state.lang);
   const [tab, setTab] = useState('general');
   const settings = doc.settings;
@@ -73,8 +73,7 @@ export function EmailSettingsPanel() {
     store.getState().updateDocument(
       label,
       (draft) => {
-        const email = draft as unknown as EmailDocument;
-        email.settings = { ...email.settings, ...patch };
+        draft.settings = { ...draft.settings, ...patch };
       },
       `email:settings:${key}`,
     );

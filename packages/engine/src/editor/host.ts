@@ -1,4 +1,4 @@
-import type { BuilderDocument, Fragment, MediaKind } from '../core';
+import type { EngineDocument, Fragment, MediaKind } from '../core';
 
 /**
  * Everything the editor needs from the application it runs in.
@@ -43,10 +43,10 @@ export interface SavedSection {
   fragment: Fragment;
 }
 
-export interface BuilderHost {
+export interface BuilderHost<TDoc extends EngineDocument = EngineDocument> {
   /** The editor's own UI language. */
   locale: string;
-  /** The language the article is written in. */
+  /** The language the document is written in. */
   contentLocale: string;
   upload(
     file: File,
@@ -62,19 +62,19 @@ export interface BuilderHost {
    * `publish` below and never reaches here.
    */
   save(
-    document: BuilderDocument,
+    document: TDoc,
     reason: SaveReason,
     options?: { force?: boolean | undefined },
   ): Promise<SaveResult>;
   /** The server's current copy — "Load theirs" after a conflict. */
-  reload?(): Promise<BuilderDocument>;
-  publish?(document: BuilderDocument, scheduledAt?: string | null): Promise<SaveResult>;
+  reload?(): Promise<TDoc>;
+  publish?(document: TDoc, scheduledAt?: string | null): Promise<SaveResult>;
   unpublish?(): Promise<SaveResult>;
   loadRevisions?(): Promise<RevisionSummary[]>;
-  loadRevision?(id: string): Promise<BuilderDocument>;
-  saveRevision?(document: BuilderDocument, label: string): Promise<boolean>;
+  loadRevision?(id: string): Promise<TDoc>;
+  saveRevision?(document: TDoc, label: string): Promise<boolean>;
   /** `locale`: the language being written, when it is not the base one. */
-  previewUrl?(document: BuilderDocument, locale?: string): Promise<string>;
+  previewUrl?(document: TDoc, locale?: string): Promise<string>;
   oembed?(url: string): Promise<OEmbedInfo | null>;
   /** Copy a picture from another server into our storage (an imported email's images). */
   importImage?(url: string): Promise<UploadResult>;

@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  checkDocument,
-  parseDocument,
-  type BuilderDocument,
-  type ElementRegistry,
-  type Issue,
-} from '../core';
+import type { ElementRegistry, EngineDocument, Issue } from '../core';
 import {
   Button,
   ConfirmDialog,
@@ -40,8 +34,8 @@ import {
   EditorProvider,
   useEditor,
   useProfile,
-  type ArticleFacts,
   type EditorContextValue,
+  type RecordFacts,
 } from './context';
 import type { BuilderHost } from './host';
 import type { EditorProfile } from './profile';
@@ -52,12 +46,18 @@ import { LayersPanel } from './panels/layers-panel';
 import { TemplatesPanel } from './panels/templates-panel';
 import { createEditorStore, type EditorStore, type LeftTab } from './store';
 
-export interface BuilderEditorProps {
-  document: BuilderDocument;
+export interface BuilderEditorProps<
+  TDoc extends EngineDocument = EngineDocument,
+  TRecord extends RecordFacts = RecordFacts,
+> {
+  document: TDoc;
   registry: ElementRegistry;
-  host: BuilderHost;
-  article: ArticleFacts;
-  onArticleChange: (patch: Partial<ArticleFacts>) => void;
+  host: BuilderHost<TDoc>;
+  /** What kind of document this is: the kit's canvas, checks and panels. */
+  profile: EditorProfile<TDoc>;
+  /** The stored record's facts (status, schedule), when it has any. Default: a draft. */
+  record?: TRecord | undefined;
+  onRecordChange?: ((patch: Partial<TRecord>) => void) | undefined;
   onBack: () => void;
   onDuplicate?: (() => void) | undefined;
   onDelete?: (() => Promise<boolean>) | undefined;
@@ -66,13 +66,11 @@ export interface BuilderEditorProps {
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
-  /** What kind of document this is. Omitted: an article. */
-  profile?: EditorProfile | undefined;
 }
 
 const AUTOSAVE_MS = 2000;
-const EMPTY_PROFILE: EditorProfile = {};
 const RETRY_MS = 8000;
+const DRAFT: RecordFacts = { status: 'draft', scheduledAt: null, publishedAt: null };
 
 function readLocal(key: string | undefined): { doc: unknown; at: number } | null {
   if (!key) return null;
@@ -84,7 +82,7 @@ function readLocal(key: string | undefined): { doc: unknown; at: number } | null
   }
 }
 
-function writeLocal(key: string | undefined, doc: BuilderDocument | null) {
+function writeLocal(key: string | undefined, doc: EngineDocument | null) {
   if (!key) return;
   try {
     if (doc) window.localStorage.setItem(key, JSON.stringify({ doc, at: Date.now() }));
@@ -111,18 +109,21 @@ function isTyping(target: EventTarget | null): boolean {
  * that leaves the browser; this component owns the editing session — undo,
  * selection, autosave, the crash-safety copy, shortcuts and the dialogs.
  */
-export function BuilderEditor(props: BuilderEditorProps) {
+export function BuilderEditor<
+  TDoc extends EngineDocument = EngineDocument,
+  TRecord extends RecordFacts = RecordFacts,
+>(props: BuilderEditorProps<TDoc, TRecord>) {
   const messages = useMemo(
     () => editorMessages(props.host.locale, props.messages),
     [props.host.locale, props.messages],
   );
   const hostRef = useRef(props.host);
   hostRef.current = props.host;
-  const [store] = useState<EditorStore>(() =>
-    createEditorStore({
+  const [store] = useState<EditorStore<TDoc>>(() =>
+    createEditorStore<TDoc>({
       document: props.document,
       registry: props.registry,
-      onNodeUpdated: props.profile?.onNodeUpdated,
+      onNodeUpdated: props.profile.onNodeUpdated,
       onRefused: (code) => {
         hostRef.current.toast(
           'error',
@@ -134,26 +135,28 @@ export function BuilderEditor(props: BuilderEditorProps) {
     }),
   );
 
-  const { onArticleChange } = props;
-  const setArticle = useCallback(
-    (patch: Partial<ArticleFacts>) => {
-      onArticleChange(patch);
+  const { onRecordChange } = props;
+  const setRecord = useCallback(
+    (patch: Partial<RecordFacts>) => {
+      // The context is typed with the engine's facts; the kit's own fields
+      // (an article's slug) arrive here through `useRecord<ArticleFacts>()`.
+      onRecordChange?.(patch as Partial<TRecord>);
       store.getState().touch();
     },
-    [onArticleChange, store],
+    [onRecordChange, store],
   );
 
-  const value = useMemo<EditorContextValue>(
+  const value = useMemo<EditorContextValue<TDoc>>(
     () => ({
       store,
       registry: props.registry,
       host: props.host,
       messages,
-      article: props.article,
-      setArticle,
-      profile: props.profile ?? EMPTY_PROFILE,
+      record: props.record ?? DRAFT,
+      setRecord,
+      profile: props.profile,
     }),
-    [store, props.registry, props.host, messages, props.article, setArticle, props.profile],
+    [store, props.registry, props.host, messages, props.record, setRecord, props.profile],
   );
 
   return (
@@ -166,24 +169,20 @@ export function BuilderEditor(props: BuilderEditorProps) {
   );
 }
 
-function Workspace({
+function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   store,
   messages,
-  registry,
   host,
-  article,
+  record = DRAFT as TRecord,
   onBack,
   onDuplicate,
   onDelete,
   storageKey,
   savedAt,
-  profile = EMPTY_PROFILE,
-}: BuilderEditorProps & { store: EditorStore; messages: EditorMessages }) {
-  const check = useCallback(
-    (doc: BuilderDocument) => (profile.check ? profile.check(doc) : checkDocument(doc, registry)),
-    [profile, registry],
-  );
-  const doc = useEditor((state) => state.doc);
+  profile,
+}: BuilderEditorProps<TDoc, TRecord> & { store: EditorStore<TDoc>; messages: EditorMessages }) {
+  const check = profile.check;
+  const doc = useEditor<TDoc, TDoc>((state) => state.doc);
   const deferred = useDeferredValue(doc);
   const issues: Issue[] = useMemo(() => check(deferred), [check, deferred]);
   const leftOpen = useEditor((state) => state.leftOpen);
@@ -199,7 +198,7 @@ function Workspace({
   const [shortcuts, setShortcuts] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [restoreOffer, setRestoreOffer] = useState<BuilderDocument | null>(null);
+  const [restoreOffer, setRestoreOffer] = useState<TDoc | null>(null);
   const [mobilePanel, setMobilePanel] = useState<'left' | 'right' | null>(null);
   const saving = useRef(false);
 
@@ -281,12 +280,7 @@ function Workspace({
       writeLocal(storageKey, null);
       return;
     }
-    const restored = profile.parse
-      ? profile.parse(local.doc)
-      : (() => {
-          const parsed = parseDocument(local.doc, registry);
-          return parsed.ok ? parsed.doc : null;
-        })();
+    const restored = profile.parse(local.doc);
     if (restored && JSON.stringify(restored) !== JSON.stringify(store.getState().doc)) {
       setRestoreOffer(restored);
     }
@@ -604,7 +598,7 @@ function Workspace({
         onClose={() => {
           setScheduling(false);
         }}
-        initial={article.scheduledAt}
+        initial={record.scheduledAt}
         messages={messages}
         onConfirm={(iso) => {
           setScheduling(false);
@@ -698,7 +692,7 @@ function Workspace({
   );
 }
 
-/** The left rail's third tab: the profile's, or the article templates. */
+/** The left rail's third tab: the profile's, or the templates and saved sections. */
 function ThirdTab() {
   const Panel = useProfile().templatesPanel ?? TemplatesPanel;
   return <Panel />;
@@ -928,15 +922,15 @@ function ScheduleDialog({
   );
 }
 
-function ConflictDialog({
+function ConflictDialog<TDoc extends EngineDocument>({
   store,
   messages,
   host,
   save,
 }: {
-  store: EditorStore;
+  store: EditorStore<TDoc>;
   messages: EditorMessages;
-  host: BuilderHost;
+  host: BuilderHost<TDoc>;
   save: (reason: 'autosave' | 'manual', force?: boolean) => Promise<boolean>;
 }) {
   const conflict = useEditor((state) => state.saveState === 'conflict');

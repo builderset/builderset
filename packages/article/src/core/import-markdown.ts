@@ -1,9 +1,13 @@
-import type { Fragment } from './document';
+import {
+  type Fragment,
+  type ElementRegistry,
+  normalizeRichText,
+  type Mark,
+  type RichText,
+  isSafeUrl,
+} from '@motors/engine';
+import { ARTICLE_LIMITS } from './limits';
 import { fragmentFromBlocks, type ImportedBlock } from './import-html';
-import { LIMITS } from './limits';
-import type { ElementRegistry } from './registry';
-import { normalizeRichText, type Mark, type RichText } from './rich-text';
-import { isSafeUrl } from './url';
 
 /**
  * Pasted Markdown → nodes, for the writer who drafts in a notes app.
@@ -148,7 +152,7 @@ export function importMarkdown(markdown: string, registry: ElementRegistry): Fra
       blocks.push({
         type: 'code',
         props: {
-          code: code.join('\n').slice(0, LIMITS.longText),
+          code: code.join('\n').slice(0, ARTICLE_LIMITS.longText),
           language: codeLanguage(fence[1] ?? ''),
         },
       });
@@ -209,7 +213,7 @@ export function importMarkdown(markdown: string, registry: ElementRegistry): Fra
     if (TABLE_ROW.test(current) && /^\s*\|?\s*:?-{3,}/.test(line(i + 1))) {
       flush();
       const header = tableCells(current);
-      const width = Math.min(LIMITS.tableColumns, header.length);
+      const width = Math.min(ARTICLE_LIMITS.tableColumns, header.length);
       const align = tableCells(line(i + 1)).map((spec) => {
         const s = spec.trim();
         if (s.startsWith(':') && s.endsWith(':')) return 'center';
@@ -225,7 +229,7 @@ export function importMarkdown(markdown: string, registry: ElementRegistry): Fra
         type: 'table',
         props: {
           rows: rows
-            .slice(0, LIMITS.tableRows)
+            .slice(0, ARTICLE_LIMITS.tableRows)
             .map((row) =>
               Array.from({ length: width }, (_, c) => inlineMarkdown((row[c] ?? '').trim())),
             ),
@@ -258,7 +262,7 @@ export function importMarkdown(markdown: string, registry: ElementRegistry): Fra
         type: 'list',
         props: {
           style: checklist ? 'check' : numbered ? 'number' : 'bullet',
-          items: items.slice(0, LIMITS.listItems),
+          items: items.slice(0, ARTICLE_LIMITS.listItems),
         },
       });
       continue;

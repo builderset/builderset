@@ -1,6 +1,22 @@
-import type { Breakpoint, BuilderDocument, ElementRegistry, Fragment, Issue } from '../core';
-import type { EditableTextField } from '../render';
+import type {
+  Breakpoint,
+  EditableTextField,
+  ElementRegistry,
+  EngineDocument,
+  Fragment,
+  Issue,
+} from '../core';
 import type { ComponentType, ReactNode } from 'react';
+
+/**
+ * A starting layout the left rail's third tab offers: blocks inserted as one
+ * fragment, so one undo takes it back out. `name` is per editor language.
+ */
+export interface TemplateSpec {
+  id: string;
+  name: Record<string, string>;
+  blocks: { type: string; props?: Record<string, unknown> }[];
+}
 
 /**
  * What makes an editor an ARTICLE editor or an EMAIL editor.
@@ -9,51 +25,53 @@ import type { ComponentType, ReactNode } from 'react';
  * autosave, the inspector's schema-driven fields — is the same for any
  * document built from nodes. A profile supplies the parts that are not: how
  * the canvas draws the document, what "document settings" are, which checks
- * block publishing, which block a new line of text is. Everything is optional;
- * an empty profile is the article builder.
+ * block publishing, which block a new line of text is. The engine has no
+ * default kit, so those parts are required.
  */
-export interface EditorProfile {
-  /** Draws the document on the canvas. Default: the article renderer. */
-  renderCanvas?:
-    | ((args: {
-        doc: BuilderDocument;
-        editText: (field: EditableTextField) => ReactNode;
-        viewport: Breakpoint;
-        /** The language being written, when it is not the base one. */
-        locale?: string | undefined;
-      }) => ReactNode)
-    | undefined;
+export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
+  /** Draws the document on the canvas. */
+  renderCanvas: (args: {
+    doc: TDoc;
+    editText: (field: EditableTextField) => ReactNode;
+    viewport: Breakpoint;
+    /** The language being written, when it is not the base one. */
+    locale?: string | undefined;
+  }) => ReactNode;
   /**
-   * `article`: a white page with a reading measure and the title field.
-   * `bare`: the renderer draws the whole page itself (an email's backdrop).
+   * `page`: a page with a reading measure, the profile's `canvasHeader` above
+   * the blocks. `bare`: the renderer draws the whole page itself (an email's
+   * backdrop). Default: `page`.
    */
-  canvasFrame?: 'article' | 'bare' | undefined;
+  canvasFrame?: 'page' | 'bare' | undefined;
+  /** Drawn above the blocks on a `page` canvas, even while it is empty: an article's title. */
+  canvasHeader?: ComponentType | undefined;
   /** The widest the page gets per device. */
   canvasWidths?: Record<Breakpoint, number> | undefined;
-  /** Replaces the inspector's "document settings" (shown with nothing selected). */
+  /** The inspector with nothing selected. Without one, it shows nothing then. */
   settingsPanel?: ComponentType | undefined;
   /** Replaces the left rail's third tab. */
   templatesPanel?: ComponentType | undefined;
-  /** What blocks publishing. Default: `checkDocument`. */
-  check?: ((doc: BuilderDocument) => Issue[]) | undefined;
-  /** Reads a stored document (the crash-safety copy). Default: `parseDocument`. */
-  parse?: ((raw: unknown) => BuilderDocument | null) | undefined;
+  /** The starting layouts the default third tab offers, above the saved sections. */
+  templates?: readonly TemplateSpec[] | undefined;
+  /** What blocks publishing. */
+  check: (doc: TDoc) => Issue[];
+  /** Reads a stored document (the crash-safety copy); null when it is not one. */
+  parse: (raw: unknown) => TDoc | null;
   /** Element categories, in library order. */
-  categories?: readonly string[] | undefined;
-  /** The block Enter and "Start writing" create. Default: `paragraph`. */
-  paragraphType?: string | undefined;
+  categories: readonly string[];
+  /** The block Enter and "Start writing" create. */
+  paragraphType: string;
   /** Variables the text toolbar can insert (as chips). */
   variables?: readonly { path: string; label: string; group?: string | undefined }[] | undefined;
-  /** The name the top bar shows. Default: `meta.title`. */
-  titleOf?: ((doc: BuilderDocument) => string) | undefined;
+  /** The name the top bar shows. */
+  titleOf: (doc: TDoc) => string;
   /** Show the Style tab (the shared per-breakpoint style model). Default: true. */
   styleTab?: boolean | undefined;
   /**
    * Called inside the same undo step after a node's props change — for rules
    * that span nodes (an email row keeping as many columns as its layout).
    */
-  onNodeUpdated?:
-    ((draft: BuilderDocument, nodeId: string, registry: ElementRegistry) => void) | undefined;
+  onNodeUpdated?: ((draft: TDoc, nodeId: string, registry: ElementRegistry) => void) | undefined;
   /**
    * Named colours offered first in colour fields — a brand palette. A value is
    * whatever the document stores (`brand.primary`); `hex` is how to show it.

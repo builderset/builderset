@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useEditor, useEditorContext } from '../context';
+import { useEditorContext } from '@motors/engine/editor';
+
+import { useArticle } from './hooks';
 
 /**
  * The article's H1, typed in place.
@@ -13,7 +15,7 @@ import { useEditor, useEditorContext } from '../context';
  */
 export function TitleField() {
   const { store, messages } = useEditorContext();
-  const title = useEditor((state) => state.view.meta.title);
+  const title = useArticle((state) => state.view.meta.title);
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {

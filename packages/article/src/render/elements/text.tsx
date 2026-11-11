@@ -1,3 +1,4 @@
+import type { PropsOf, RichText } from '@motors/engine';
 import type {
   calloutElement,
   codeElement,
@@ -6,13 +7,11 @@ import type {
   headingElement,
   listElement,
   paragraphElement,
-  PropsOf,
   pullQuoteElement,
   quoteElement,
-  RichText,
   tableElement,
   takeawaysElement,
-} from '../../core';
+} from '../../core/elements/text';
 import {
   CircleCheck,
   Info,

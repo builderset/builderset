@@ -1,10 +1,6 @@
-import type {
-  BuilderDocument,
-  BuilderNode,
-  ElementRegistry,
-  OutlineEntry,
-  RichText,
-} from '../core';
+import type { BuilderNode, EditableTextField, ElementRegistry } from '@motors/engine';
+import type { ArticleDocument } from '../core/document';
+import type { OutlineEntry } from '../core/outline';
 import type { ComponentType, ReactNode } from 'react';
 
 import type { RenderMessages } from './messages';
@@ -69,20 +65,8 @@ export interface RenderOptions {
   editText?: ((field: EditableTextField) => ReactNode) | undefined;
 }
 
-/** A rich-text value the editor may edit in place. */
-export interface EditableTextField {
-  nodeId: string;
-  /** Dot path of the prop: `text`, `items.2.text`. */
-  path: string;
-  value: RichText;
-  /** What an empty field shows while editing. */
-  placeholder?: string | undefined;
-  /** The element the text sits in — a heading's `h2`, a list's `li`. */
-  multiline?: boolean | undefined;
-}
-
 export interface RenderContext {
-  document: BuilderDocument;
+  document: ArticleDocument;
   registry: ElementRegistry;
   options: RenderOptions;
   messages: RenderMessages;

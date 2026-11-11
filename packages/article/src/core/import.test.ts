@@ -1,16 +1,24 @@
+import {
+  copyNodes,
+  CLIPBOARD_MIME,
+  type Fragment,
+  applyChange,
+  createFragment,
+  insert,
+  update,
+  rt,
+} from '@motors/engine';
+import { readClipboard } from './paste';
+import { checkArticle } from './check';
+import { createArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';
 
-import { copyNodes, readClipboard, CLIPBOARD_MIME } from './clipboard';
-import { createDocument, type Fragment } from './document';
-import { createStandardRegistry } from './elements';
+import { createArticleRegistry } from './elements';
 import { importHTML } from './import-html';
 import { importMarkdown, inlineMarkdown, looksLikeMarkdown } from './import-markdown';
 import { fromLegacyBody } from './legacy';
-import { applyChange, createFragment, insert, update } from './operations';
-import { rt } from './rich-text';
-import { checkDocument } from './validate';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 
 /** The roots of a fragment as `type` → props, for compact assertions. */
 function shapes(fragment: Fragment) {
@@ -182,7 +190,7 @@ describe('importMarkdown', () => {
 
 describe('clipboard', () => {
   it('round-trips nodes between builders with fresh ids', () => {
-    let doc = createDocument({ title: 'T' });
+    let doc = createArticleDocument({ title: 'T' });
     const change = applyChange(doc, (draft) =>
       insert(draft, registry, draft.root, 0, createFragment(registry, 'section')),
     );
@@ -212,7 +220,7 @@ describe('clipboard', () => {
   });
 
   it('escapes text in the HTML it offers other programs', () => {
-    let doc = createDocument({ title: 'T' });
+    let doc = createArticleDocument({ title: 'T' });
     const change = applyChange(doc, (draft) =>
       insert(draft, registry, draft.root, 0, createFragment(registry, 'paragraph')),
     );
@@ -246,7 +254,7 @@ describe('fromLegacyBody', () => {
     );
     const types = (doc.nodes.root?.children ?? []).map((id) => doc.nodes[id]?.type);
     expect(types).toEqual(['heading', 'paragraph', 'list', 'quote', 'image']);
-    const errors = checkDocument(doc, registry).filter((issue) => issue.severity === 'error');
+    const errors = checkArticle(doc, registry).filter((issue) => issue.severity === 'error');
     expect(errors).toEqual([]);
   });
 });

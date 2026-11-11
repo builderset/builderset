@@ -1,11 +1,6 @@
-import {
-  localize,
-  outline as buildOutline,
-  walk,
-  type BuilderDocument,
-  type ElementRegistry,
-  type RichText,
-} from '../core';
+import { localize, walk, type ElementRegistry, type RichText } from '@motors/engine';
+import type { ArticleDocument } from '../core/document';
+import { outline as buildOutline } from '../core/outline';
 import { Fragment, type ReactNode } from 'react';
 
 import type {
@@ -160,7 +155,7 @@ function DefaultImage({ src, alt, width, height, className, style, loading, size
 }
 
 /** Footnote node ids numbered in reading order, hidden ones skipped. */
-function numberFootnotes(document: BuilderDocument): Map<string, number> {
+function numberFootnotes(document: ArticleDocument): Map<string, number> {
   const numbers = new Map<string, number>();
   walk(document, (node) => {
     if (node.hidden) return false;
@@ -171,7 +166,7 @@ function numberFootnotes(document: BuilderDocument): Map<string, number> {
 }
 
 export function createRenderContext(
-  document: BuilderDocument,
+  document: ArticleDocument,
   registry: ElementRegistry,
   options: RenderOptions,
 ): RenderContext {
@@ -257,7 +252,7 @@ function Footnotes({ context }: { context: RenderContext }) {
 
 /** The whole body of a document. */
 export function renderDocument(
-  document: BuilderDocument,
+  document: ArticleDocument,
   registry: ElementRegistry,
   options: RenderOptions,
 ): ReactNode {
@@ -276,7 +271,7 @@ export function renderDocument(
 }
 
 export interface ArticleRendererProps extends RenderOptions {
-  document: BuilderDocument;
+  document: ArticleDocument;
   registry: ElementRegistry;
   className?: string | undefined;
 }

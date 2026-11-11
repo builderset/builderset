@@ -1,8 +1,8 @@
-import { ElementRegistry, type ElementDefinition } from '../registry';
+import { ElementRegistry, type ElementDefinition } from '@motors/engine';
+import { mediaElements } from './media';
 import { articleElements } from './article';
 import { engagementElements } from './engagement';
 import { layoutElements } from './layout';
-import { mediaElements } from './media';
 import { textElements } from './text';
 
 export * from './article';
@@ -26,7 +26,7 @@ export const standardElements = [
  * elements. Plugins go last so the insert menu lists them after the standard
  * set, in their own category.
  */
-export function createStandardRegistry(
+export function createArticleRegistry(
   plugins: readonly ElementDefinition<never>[] = [],
 ): ElementRegistry {
   return new ElementRegistry([...standardElements, ...plugins]);

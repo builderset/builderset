@@ -1,4 +1,4 @@
-import { isRichTextEmpty } from '../../core';
+import { isRichTextEmpty, type PropsOf } from '@motors/engine';
 import type {
   audioElement,
   beforeAfterElement,
@@ -7,9 +7,8 @@ import type {
   galleryElement,
   imageElement,
   mediaTextElement,
-  PropsOf,
   videoElement,
-} from '../../core';
+} from '../../core/elements/media';
 import {
   Download,
   FileArchive,

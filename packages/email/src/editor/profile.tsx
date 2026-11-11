@@ -3,7 +3,6 @@
 import {
   createFragment,
   createId,
-  type BuilderDocument,
   type BuilderNode,
   type ElementRegistry,
   type Fragment,
@@ -15,8 +14,7 @@ import {
   EMAIL_CATEGORIES,
   EMAIL_FONTS,
   googleFontsUrl,
-  EMAIL_SCHEMA,
-  emailSchema,
+  parseEmail,
   ROW_LAYOUTS,
   variablesOf,
   type EmailDocument,
@@ -91,7 +89,7 @@ function structure(registry: ElementRegistry, layout: RowLayout): Fragment {
  * adds an empty column; switching down moves the dropped columns' blocks into
  * the last one kept, so no content is ever lost to a layout change.
  */
-function syncColumns(draft: BuilderDocument, id: string, registry: ElementRegistry) {
+function syncColumns(draft: EmailDocument, id: string, registry: ElementRegistry) {
   const node = draft.nodes[id];
   if (node?.type !== 'row') return;
   const want = (ROW_LAYOUTS[node.props.layout as RowLayout] as readonly number[] | undefined)
@@ -123,7 +121,7 @@ export function emailProfile({
   socialIconBase,
   locale,
   words,
-}: EmailProfileOptions): EditorProfile {
+}: EmailProfileOptions): EditorProfile<EmailDocument> {
   const socialIcon = socialIconBase ? socialIconUrl(socialIconBase) : undefined;
   const variables = variablesOf(type).map((variable) => ({
     path: variable.path,
@@ -134,7 +132,7 @@ export function emailProfile({
   return {
     renderCanvas: ({ doc, editText, viewport, locale: writing }) => (
       <EmailCanvas
-        document={doc as unknown as EmailDocument}
+        document={doc}
         editing
         mobile={viewport === 'mobile'}
         editText={editText as unknown as (field: EditableField) => React.ReactNode}
@@ -150,17 +148,12 @@ export function emailProfile({
     settingsPanel: EmailSettingsPanel,
     overlays: ImportHtmlHost,
     templatesPanel: ModulesPanel,
-    check: (doc) => checkEmail(doc as unknown as EmailDocument, registry, type),
-    parse: (raw) => {
-      const parsed = emailSchema(registry).safeParse(raw);
-      return parsed.success && (raw as { schema?: unknown }).schema === EMAIL_SCHEMA
-        ? (raw as BuilderDocument)
-        : null;
-    },
+    check: (doc) => checkEmail(doc, registry, type),
+    parse: (raw) => parseEmail(raw, registry),
     categories: EMAIL_CATEGORIES.filter((category) => category !== 'structure'),
     paragraphType: 'text',
     variables,
-    titleOf: (doc) => (doc as unknown as EmailDocument).meta.name,
+    titleOf: (doc) => doc.meta.name,
     styleTab: false,
     onNodeUpdated: syncColumns,
     fonts: Object.entries(EMAIL_FONTS).map(([key, font]) => ({

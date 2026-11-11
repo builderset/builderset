@@ -1,7 +1,5 @@
-import { createDocument, type BuilderDocument, type DocumentMeta } from './document';
-import { createFragment } from './operations';
-import type { ElementRegistry } from './registry';
-import { rt } from './rich-text';
+import { createFragment, type ElementRegistry, rt } from '@motors/engine';
+import { createArticleDocument, type ArticleDocument, type ArticleMeta } from './document';
 
 /**
  * The article body the product stored before the builder: a flat list of five
@@ -24,9 +22,9 @@ export type LegacyBlock =
 export function fromLegacyBody(
   blocks: readonly LegacyBlock[],
   registry: ElementRegistry,
-  meta: Partial<DocumentMeta> = {},
-): BuilderDocument {
-  const doc = createDocument(meta);
+  meta: Partial<ArticleMeta> = {},
+): ArticleDocument {
+  const doc = createArticleDocument(meta);
   const order: string[] = [];
 
   const add = (type: string, props: Record<string, unknown>) => {

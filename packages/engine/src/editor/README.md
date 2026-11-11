@@ -1,19 +1,21 @@
 # @motors/engine/editor
 
-The article builder's editor: a full-screen workspace that edits a
-`@motors/engine` document and renders it through `@motors/engine/render`,
-so the canvas looks exactly like the published page.
+The workspace every builder shares: a full-screen editor for any
+`EngineDocument`. A kit supplies an `EditorProfile` — how the canvas draws
+the document, its settings panel, what blocks publishing, its categories —
+and wraps the workspace in its own component: `ArticleEditor` in
+`@motors/article/editor`, `EmailEditor` in `@motors/email/editor`. The article
+kit draws its canvas with the public site's renderer, so the canvas looks
+exactly like the published page.
 
 ```tsx
-import { createStandardRegistry } from '@motors/engine';
-import { BuilderEditor } from '@motors/engine/editor';
+import { ArticleEditor } from '@motors/article/editor';
 
-<BuilderEditor
+<ArticleEditor
   document={doc}
-  registry={createStandardRegistry()}
   host={host} // BuilderHost — uploads, saving, publishing, revisions
-  article={facts} // the row's own columns: slug, status, category, featured…
-  onArticleChange={(patch) => setFacts((f) => ({ ...f, ...patch }))}
+  record={facts} // the row's own columns: slug, status, category, featured…
+  onRecordChange={(patch) => setFacts((f) => ({ ...f, ...patch }))}
   onBack={() => router.push('/content/articles')}
   storageKey={`article-builder:${uuid}`} // crash-safety copy in localStorage
 />;
@@ -50,8 +52,8 @@ also add the package to Tailwind's sources:
     element can be edited and nothing can be edited into an invalid state.
   - **Style**, per screen size with desktop → tablet → mobile inheritance.
   - **Advanced**: name, anchor, turn into, hidden, locked.
-  - With nothing selected: **Document settings** (General, SEO with a snippet
-    preview and length meters, Publishing).
+  - With nothing selected: the kit's settings panel (the article's General,
+    SEO with a snippet preview and length meters, Publishing).
 - **Status bar**: word count, reading time, and live issues with "Show"
   buttons. Errors block publishing.
 - **Saving**:

@@ -1,15 +1,14 @@
-import { COLUMN_LAYOUTS, parentOf } from '../../core';
-import type {
-  columnElement,
-  columnsElement,
-  containerElement,
-  dividerElement,
-  groupElement,
-  PropsOf,
-  sectionElement,
-  spacerElement,
-} from '../../core';
-
+import { parentOf, type PropsOf } from '@motors/engine';
+import {
+  COLUMN_LAYOUTS,
+  type columnElement,
+  type columnsElement,
+  type containerElement,
+  type dividerElement,
+  type groupElement,
+  type sectionElement,
+  type spacerElement,
+} from '../../core/elements/layout';
 import { cn } from '../cn';
 import type { ElementRenderProps } from '../context';
 import { frameProps } from '../parts';

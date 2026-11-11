@@ -1,10 +1,8 @@
+import { error, warning, type Issue, defineElement, type RichText } from '@motors/engine';
+import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
 
 import { EMBED_PROVIDERS, detectEmbedProvider } from '../embeds';
-import { error, warning, type Issue } from '../issues';
-import { LIMITS } from '../limits';
-import { defineElement } from '../registry';
-import type { RichText } from '../rich-text';
 import { joinLinks, joinPlain, linkSchema, media, present, richText, shortText } from './fields';
 
 /**
@@ -85,7 +83,7 @@ export const galleryElement = defineElement({
   icon: 'images',
   keywords: ['photos', 'grid', 'carousel', 'slider', 'album'],
   schema: z.object({
-    images: z.array(imageItem).max(LIMITS.galleryImages),
+    images: z.array(imageItem).max(ARTICLE_LIMITS.galleryImages),
     layout: z.enum(['grid', 'masonry', 'carousel']),
     columns: z.union([z.literal(2), z.literal(3), z.literal(4)]),
     lightbox: z.boolean(),

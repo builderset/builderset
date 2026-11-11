@@ -1,15 +1,13 @@
+import { History, BuilderError, createFragment, insert, remove, update, rt } from '@motors/engine';
+import { createArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';
 
-import { createDocument } from './document';
-import { createStandardRegistry } from './elements';
-import { History } from './history';
-import { BuilderError, createFragment, insert, remove, update } from './operations';
-import { rt } from './rich-text';
+import { createArticleRegistry } from './elements';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 
 function setup(now = () => 0) {
-  const history = new History(createDocument({ title: 'T' }), { ids: [] }, { now });
+  const history = new History(createArticleDocument({ title: 'T' }), { ids: [] }, { now });
   const add = (type: string) =>
     history.commit(
       (draft) => insert(draft, registry, draft.root, Infinity, createFragment(registry, type)),
@@ -121,7 +119,7 @@ describe('History', () => {
   });
 
   it('keeps at most `limit` steps', () => {
-    const history = new History(createDocument({ title: 'T' }), { ids: [] }, { limit: 3 });
+    const history = new History(createArticleDocument({ title: 'T' }), { ids: [] }, { limit: 3 });
     for (let i = 0; i < 5; i += 1) {
       history.commit(
         (draft) => insert(draft, registry, draft.root, 0, createFragment(registry, 'spacer')),

@@ -1,26 +1,21 @@
 /**
- * @motors/engine — the article builder's model.
+ * @motors/engine — what every builder shares.
  *
- * Pure TypeScript: the document format, the element registry and the standard
- * element definitions, every editing operation with undo, validation, parsing
- * with migrations, and import from HTML and Markdown. No React, no DOM except
- * the platform `DOMParser` that `importHTML` borrows — so the same code runs in
- * the editor, the renderer, a server and a test.
+ * Pure TypeScript: the node tree, the element registry, every editing
+ * operation with undo, the structural and translation checks, reading stored
+ * documents with element migrations, rich text, styles, media references and
+ * languages. No React and no elements of its own — each kit (`@motors/article`,
+ * `@motors/email`) brings its document type, its elements and its checks.
  */
 
 export * from './clipboard';
 export * from './document';
-export * from './elements';
-export * from './embeds';
+export * from './editable';
 export * from './history';
 export * from './i18n';
 export * from './ids';
-export * from './import-html';
-export * from './import-markdown';
 export * from './issues';
-export * from './kitchen-sink';
 export * from './json-schema';
-export * from './legacy';
 export * from './limits';
 export * from './media';
 export * from './operations';

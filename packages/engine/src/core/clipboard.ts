@@ -1,7 +1,5 @@
-import type { BuilderDocument, BuilderNode, Fragment } from './document';
+import type { BuilderNode, Fragment, NodeTree } from './document';
 import type { NodeId } from './ids';
-import { fragmentFromBlocks, importHTML } from './import-html';
-import { importMarkdown, looksLikeMarkdown } from './import-markdown';
 import { extractFragment, reidFragment } from './operations';
 import type { ElementRegistry } from './registry';
 import { richTextToPlain, type RichText } from './rich-text';
@@ -14,7 +12,9 @@ import { richTextToPlain, type RichText } from './rich-text';
  * plain text (a paste into a chat), and a small, escaped HTML version (a paste
  * into an email or a document keeps its headings and lists). A paste reads
  * them in the same order of fidelity: our JSON, then HTML, then Markdown, then
- * text.
+ * text. Reading HTML and text needs a kit's importers, so the whole paste is
+ * the kit's (`readClipboard` in the article kit); this file writes the copy
+ * and reads back its own JSON.
  */
 
 export const CLIPBOARD_MIME = 'application/x-builder-fragment+json';
@@ -32,7 +32,7 @@ export interface ClipboardPayload {
 }
 
 export function copyNodes(
-  doc: BuilderDocument,
+  doc: NodeTree,
   ids: readonly NodeId[],
   registry: ElementRegistry,
 ): ClipboardPayload {
@@ -46,39 +46,14 @@ export function copyNodes(
 }
 
 /**
- * A fragment from whatever the clipboard holds, or `null` when it holds
- * nothing the builder can use. Nodes of unknown types, or whose props fail
- * their schema, are dropped — a paste from a builder with more plugins must
- * not smuggle in elements this one cannot render.
+ * The fragment in the builder's own clipboard JSON (`CLIPBOARD_MIME`), or
+ * `null` when it is not one. Nodes of unknown types, or whose props fail their
+ * schema, are dropped — a paste from a builder with more plugins must not
+ * smuggle in elements this one cannot render. A kit reads HTML and text
+ * itself, with its own importers (the article's `readClipboard`).
  */
-export function readClipboard(
-  data: { json?: string | null; html?: string | null; text?: string | null },
-  registry: ElementRegistry,
-): Fragment | null {
-  if (data.json) {
-    const fragment = parseEnvelope(data.json, registry);
-    if (fragment?.roots.length) return fragment;
-  }
-  if (data.html?.trim()) {
-    const fragment = importHTML(data.html, registry);
-    if (fragment.roots.length) return fragment;
-  }
-  if (data.text?.trim()) {
-    // Plain text is paragraphs split on blank lines — unless it reads as
-    // Markdown, in which case its structure is worth keeping.
-    const fragment = looksLikeMarkdown(data.text)
-      ? importMarkdown(data.text, registry)
-      : fragmentFromBlocks(
-          data.text
-            .split(/\n\s*\n/)
-            .map((part) => part.replace(/\s+/g, ' ').trim())
-            .filter(Boolean)
-            .map((text) => ({ type: 'paragraph', props: { text: [{ text }] } })),
-          registry,
-        );
-    if (fragment.roots.length) return fragment;
-  }
-  return null;
+export function readFragmentJson(json: string, registry: ElementRegistry): Fragment | null {
+  return parseEnvelope(json, registry);
 }
 
 function parseEnvelope(json: string, registry: ElementRegistry): Fragment | null {

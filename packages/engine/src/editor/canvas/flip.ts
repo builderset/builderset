@@ -1,6 +1,6 @@
 'use client';
 
-import { inOrder, type BuilderDocument } from '../../core';
+import { inOrder, type NodeTree } from '../../core';
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
 /**
@@ -31,7 +31,7 @@ function reducedMotion(): boolean {
 
 export function useFlip(
   pageRef: RefObject<HTMLElement | null>,
-  doc: BuilderDocument,
+  doc: NodeTree,
   scale: number,
 ): void {
   const places = useRef<Map<string, Place>>(new Map());

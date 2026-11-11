@@ -1,6 +1,6 @@
 'use client';
 
-import type { BuilderDocument, Fragment } from '@motors/engine';
+import type { Fragment } from '@motors/engine';
 import { useEditorContext } from '@motors/engine/editor';
 import { importEmailHtml, type EmailDocument } from '../core';
 import {
@@ -38,7 +38,7 @@ export function ImportHtmlDialog({
   onClose: () => void;
   initialHtml?: string | undefined;
 }) {
-  const { store, registry, host } = useEditorContext();
+  const { store, registry, host } = useEditorContext<EmailDocument>();
   const { words } = useEmail();
   const w = words.importHtml;
   const [html, setHtml] = useState(initialHtml);
@@ -56,7 +56,7 @@ export function ImportHtmlDialog({
     if (!source) return;
     setBusy(true);
     try {
-      const current = store.getState().doc as unknown as EmailDocument;
+      const current = store.getState().doc;
       const result = importEmailHtml(source, registry, { meta: current.meta });
       if (result.blocks === 0) {
         host.toast('error', w.nothingFound);
@@ -70,7 +70,7 @@ export function ImportHtmlDialog({
             ...imported,
             meta: current.meta,
             settings: { ...current.settings, backdrop: imported.settings.backdrop },
-          } as unknown as BuilderDocument,
+          },
           { keepHistory: true, label: w.title },
         );
       } else {

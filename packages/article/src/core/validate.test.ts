@@ -1,24 +1,32 @@
+import {
+  applyChange,
+  createFragment,
+  insert,
+  update,
+  defineElement,
+  rt,
+  readingMinutes,
+  hasErrors,
+  structuralIssues,
+} from '@motors/engine';
+import { checkArticle, articleSchema } from './check';
+import { createArticleDocument, type ArticleDocument } from './document';
+import { outline } from './outline';
+import { parseArticle, serializeArticle } from './parse';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 
-import { createDocument, type BuilderDocument } from './document';
-import { createStandardRegistry } from './elements';
+import { createArticleRegistry } from './elements';
 import { kitchenSinkDocument } from './kitchen-sink';
-import { applyChange, createFragment, insert, update } from './operations';
-import { defineElement } from './registry';
-import { rt } from './rich-text';
-import { parseDocument, serializeDocument } from './serialize';
-import { outline, readingMinutes } from './text-stats';
-import { checkDocument, documentSchema, hasErrors, structuralIssues } from './validate';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 
-function codes(doc: BuilderDocument) {
-  return checkDocument(doc, registry).map((issue) => `${issue.severity}:${issue.code}`);
+function codes(doc: ArticleDocument) {
+  return checkArticle(doc, registry).map((issue) => `${issue.severity}:${issue.code}`);
 }
 
-function withBlocks(...types: string[]): { doc: BuilderDocument; ids: string[] } {
-  let doc = createDocument({
+function withBlocks(...types: string[]): { doc: ArticleDocument; ids: string[] } {
+  let doc = createArticleDocument({
     title: 'T',
     excerpt: 'An excerpt long enough to be a description here.',
   });
@@ -42,13 +50,13 @@ describe('the kitchen sink', () => {
   });
 
   it('passes the full schema and has no errors', () => {
-    expect(documentSchema(registry).safeParse(doc).success).toBe(true);
-    const errors = checkDocument(doc, registry).filter((issue) => issue.severity === 'error');
+    expect(articleSchema(registry).safeParse(doc).success).toBe(true);
+    const errors = checkArticle(doc, registry).filter((issue) => issue.severity === 'error');
     expect(errors).toEqual([]);
   });
 
   it('survives a serialize → parse round trip unchanged', () => {
-    const parsed = parseDocument(serializeDocument(doc), registry);
+    const parsed = parseArticle(serializeArticle(doc), registry);
     expect(parsed.ok).toBe(true);
     expect(parsed.doc).toEqual(doc);
     expect(parsed.migrated).toBe(false);
@@ -117,7 +125,7 @@ describe('editorial checks', () => {
       });
     }).doc;
     expect(codes(next)).toContain('error:media.external');
-    expect(hasErrors(checkDocument(next, registry))).toBe(true);
+    expect(hasErrors(checkArticle(next, registry))).toBe(true);
   });
 
   it('errors on an embed from a provider that is not allowed', () => {
@@ -169,15 +177,15 @@ describe('reading', () => {
   });
 });
 
-describe('parseDocument', () => {
+describe('parseArticle', () => {
   it('refuses a document from a newer version', () => {
-    const doc = { ...createDocument({ title: 'T' }), version: 99 };
-    expect(parseDocument(doc, registry).issues[0]?.code).toBe('document.fromTheFuture');
+    const doc = { ...createArticleDocument({ title: 'T' }), version: 99 };
+    expect(parseArticle(doc, registry).issues[0]?.code).toBe('document.fromTheFuture');
   });
 
   it('refuses something that is not a document', () => {
-    expect(parseDocument('not json', registry).ok).toBe(false);
-    expect(parseDocument({ schema: 'other' }, registry).issues[0]?.code).toBe('document.malformed');
+    expect(parseArticle('not json', registry).ok).toBe(false);
+    expect(parseArticle({ schema: 'other' }, registry).issues[0]?.code).toBe('document.malformed');
   });
 
   it('walks an old element forward through its own migrations', () => {
@@ -192,12 +200,12 @@ describe('parseDocument', () => {
       migrate: (from, props) =>
         from === 1 ? { body: (props as { text?: string }).text ?? '' } : props,
     });
-    const local = createStandardRegistry([note as never]);
-    const doc = createDocument({ title: 'T' });
+    const local = createArticleRegistry([note as never]);
+    const doc = createArticleDocument({ title: 'T' });
     doc.nodes.root?.children?.push('old');
     doc.nodes.old = { id: 'old', type: 'note', v: 1, props: { text: 'kept' } };
 
-    const parsed = parseDocument(doc, local);
+    const parsed = parseArticle(doc, local);
     expect(parsed.migrated).toBe(true);
     expect(parsed.doc?.nodes.old).toMatchObject({ v: 2, props: { body: 'kept' } });
   });

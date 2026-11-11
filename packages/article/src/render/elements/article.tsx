@@ -1,14 +1,14 @@
+import type { PropsOf } from '@motors/engine';
 import type {
   authorElement,
   faqElement,
   howToElement,
-  PropsOf,
   prosConsElement,
   ratingElement,
   statsElement,
   timelineElement,
   tocElement,
-} from '../../core';
+} from '../../core/elements/article';
 import {
   ChevronDown,
   Clock,

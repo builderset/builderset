@@ -1,8 +1,6 @@
+import { warning, defineElement, isRichTextEmpty, type RichText } from '@motors/engine';
 import { z } from 'zod';
 
-import { warning } from '../issues';
-import { defineElement } from '../registry';
-import { isRichTextEmpty, type RichText } from '../rich-text';
 import {
   buttonIssues,
   buttonSchema,

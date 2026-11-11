@@ -1,10 +1,4 @@
-import {
-  i18nSchema,
-  nodeShapeSchema,
-  type BuilderNode,
-  type DocumentI18n,
-  type NodeTree,
-} from '@motors/engine';
+import { i18nSchema, nodeShapeSchema, type EngineDocument } from '@motors/engine';
 import { z } from 'zod';
 
 import { color, fontSchema, px } from './fields';
@@ -68,15 +62,10 @@ export const emailMetaSchema = z.object({
 });
 export type EmailMeta = z.infer<typeof emailMetaSchema>;
 
-export interface EmailDocument extends NodeTree {
+/** The engine's node tree with an email's meta and settings. `i18n` holds the subject, preheader and words in other languages. */
+export interface EmailDocument extends EngineDocument<EmailMeta> {
   schema: typeof EMAIL_SCHEMA;
-  version: number;
-  root: string;
-  nodes: Record<string, BuilderNode>;
-  meta: EmailMeta;
   settings: EmailSettings;
-  /** The subject, preheader and words in other languages, when switched on. */
-  i18n?: DocumentI18n | undefined;
 }
 
 export const defaultSettings = (): EmailSettings => ({

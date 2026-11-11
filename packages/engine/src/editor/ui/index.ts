@@ -16,6 +16,7 @@
 export { Badge, type BadgeProps, type BadgeTone } from './badge';
 export { Button, buttonVariants, ICON_MOTION, type ButtonProps } from './button';
 export { ConfirmDialog, type ConfirmDialogProps, type ConfirmTone } from './confirm-dialog';
+export { DateTimeField, fromLocalInput, toLocalInput, type DateTimeFieldProps } from './date-time';
 export {
   controlClass,
   Input,

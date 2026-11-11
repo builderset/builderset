@@ -4,7 +4,7 @@ import type { ElementRegistry, EngineDocument } from '../core';
 import { createContext, useContext, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 
-import type { BuilderHost } from './host';
+import type { BuilderHost } from '../host';
 import type { EditorProfile } from './profile';
 import type { EditorMessages } from './messages';
 import type { EditorActions, EditorState, EditorStore } from './store';

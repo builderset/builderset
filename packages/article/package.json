@@ -8,7 +8,9 @@
     ".": "./src/core/index.ts",
     "./render": "./src/render/index.ts",
     "./editor": "./src/editor/index.ts",
-    "./schema/document.schema.json": "./schema/document.schema.json",
+    "./host": "./src/host.ts",
+    "./schema.json": "./schema/article.schema.json",
+    "./fixtures/*": "./fixtures/*",
     "./locales/*": "./src/locales/*.ts"
   },
   "scripts": {

@@ -1,5 +1,5 @@
 import { rt } from '@motors/engine';
-import type { BuilderHost } from '@motors/engine/editor';
+import { createMemoryHost, type BuilderHost } from '../host';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -11,15 +11,9 @@ import type { ArticleFacts } from './hooks';
 
 const registry = createArticleRegistry();
 
+/** The memory host, with a few methods to watch. */
 function host(overrides: Partial<BuilderHost<ArticleDocument>> = {}): BuilderHost<ArticleDocument> {
-  return {
-    upload: vi.fn(),
-    resolveMedia: (key) => `https://cdn.test/${key}`,
-    save: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),
-    publish: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),
-    toast: vi.fn(),
-    ...overrides,
-  };
+  return { ...createMemoryHost<ArticleDocument>({ toast: vi.fn() }), ...overrides };
 }
 
 const facts: ArticleFacts = {

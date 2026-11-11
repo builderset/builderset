@@ -6,7 +6,7 @@ import { BookmarkPlus, LayoutTemplate, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useEditor, useEditorContext } from '../context';
-import type { SavedSection } from '../host';
+import type { SavedSection } from '../../host';
 import type { TemplateSpec } from '../profile';
 
 /** A template's blocks as one fragment, skipping types this registry does not have. */

@@ -1,4 +1,5 @@
-import type { BuilderHost, RecordFacts } from '@motors/engine/editor';
+import type { RecordFacts } from '@motors/engine/editor';
+import { createMemoryHost, type BuilderHost } from '../host';
 import {
   createEmailDocument,
   createEmailRegistry,
@@ -28,13 +29,7 @@ const type: EmailType = {
 const record: RecordFacts = { status: 'draft', scheduledAt: null, publishedAt: null };
 
 function host(): BuilderHost<EmailDocument> {
-  return {
-    upload: vi.fn(),
-    resolveMedia: (key) => `https://cdn.test/${key}`,
-    save: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),
-    publish: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),
-    toast: vi.fn(),
-  };
+  return createMemoryHost<EmailDocument>({ toast: vi.fn() });
 }
 
 function mount(document = starterEmail(registry, { name: 'Reset design', subject: 'Reset' })) {

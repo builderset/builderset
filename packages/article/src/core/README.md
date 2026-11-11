@@ -123,7 +123,7 @@ step, and keeps 200 steps.
 ## Checking and reading
 
 - `documentSchema(registry)` — the full zod schema (also exported as JSON
-  Schema by `toJSONSchema`, committed to `schema/document.schema.json`).
+  Schema by `toJSONSchema`, committed to `schema/article.schema.json`).
 - `checkArticle(doc, registry)` — errors (block saving/publishing) and
   warnings (missing alt text, skipped heading levels, empty blocks, SEO lengths).
 - `parseArticle(raw, registry)` — parse, migrate, check.

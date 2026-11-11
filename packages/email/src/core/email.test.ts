@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createEmailRegistry } from './blocks';
 import { createEmailDocument, type EmailDocument } from './document';
+import { EMAIL_DRAFT_TOLERATES, isDraftBlocking, isPublishBlocking } from './draft';
 import { toEmailJSONSchema } from './json-schema';
 import { v } from './rich-text';
 import { block, buildEmail, kitchenSinkEmail, row, section, starterEmail } from './sample';
@@ -126,10 +127,9 @@ function expectFile(relative: string, content: string) {
   expect(committed, `${relative} is stale — run with UPDATE_FIXTURES=1`).toBe(content);
 }
 
-/** Written here and mirrored under the API, whose containers mount only `api/`. */
+/** This package's alone: a backend copies them (MotorsAL's API by `scripts/sync-builder-contract.mjs`). */
 function expectFixture(relative: string, content: string) {
   expectFile(`fixtures/${relative}`, content);
-  expectFile(`../../api/tests/fixtures/email/${relative}`, content);
 }
 
 function base(): EmailDocument {
@@ -190,7 +190,17 @@ describe('the server contract', () => {
   it('commits the JSON Schema', () => {
     const schema = stable(toEmailJSONSchema(registry));
     expectFile('schema/email.schema.json', schema);
-    expectFile('../../api/app/domains/email_builder/email_schema.json', schema);
+  });
+
+  it('commits the codes a draft may still carry', () => {
+    // An unfinished design saves; an unsafe one never does.
+    const draft = base();
+    const unfinished = checkEmail({ ...draft, meta: { ...draft.meta, subject: '' } }, registry);
+    expect(unfinished.some(isDraftBlocking)).toBe(false);
+    expect(unfinished.some(isPublishBlocking)).toBe(true);
+    const unsafe = checkEmail(INVALID['unsafe-link']?.build() ?? base(), registry);
+    expect(unsafe.some(isDraftBlocking)).toBe(true);
+    expectFixture('draft.json', stable({ tolerates: EMAIL_DRAFT_TOLERATES }));
   });
 
   it('commits valid fixtures', () => {

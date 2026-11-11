@@ -1,0 +1,303 @@
+{
+  "document": {
+    "schema": "email/document",
+    "version": 1,
+    "root": "root",
+    "nodes": {
+      "root": {
+        "id": "root",
+        "type": "root",
+        "v": 1,
+        "props": {},
+        "children": [
+          "n5"
+        ]
+      },
+      "n1": {
+        "id": "n1",
+        "type": "key-value",
+        "v": 1,
+        "props": {
+          "font": null,
+          "rows": [
+            {
+              "label": "date",
+              "value": "{{ when | date }}"
+            },
+            {
+              "label": "date_long",
+              "value": "{{ when | date_long }}"
+            },
+            {
+              "label": "time",
+              "value": "{{ when | time }}"
+            },
+            {
+              "label": "datetime",
+              "value": "{{ when | datetime }}"
+            },
+            {
+              "label": "morning",
+              "value": "{{ morning | datetime }}"
+            },
+            {
+              "label": "day only",
+              "value": "{{ day | date_long }}"
+            },
+            {
+              "label": "money",
+              "value": "{{ amount | money }}"
+            },
+            {
+              "label": "money negative",
+              "value": "{{ refund | money }}"
+            },
+            {
+              "label": "money small",
+              "value": "{{ small | money }}"
+            },
+            {
+              "label": "number",
+              "value": "{{ big | number }}"
+            },
+            {
+              "label": "number 4",
+              "value": "{{ four | number }}"
+            },
+            {
+              "label": "number half",
+              "value": "{{ half | number }}"
+            },
+            {
+              "label": "number string",
+              "value": "{{ numeric_text | number }}"
+            },
+            {
+              "label": "upper",
+              "value": "{{ word | upper }}"
+            },
+            {
+              "label": "lower",
+              "value": "{{ word | lower }}"
+            },
+            {
+              "label": "capitalize",
+              "value": "{{ word | capitalize }}"
+            },
+            {
+              "label": "bool",
+              "value": "{{ flag }}"
+            },
+            {
+              "label": "float",
+              "value": "{{ ratio }}"
+            },
+            {
+              "label": "length",
+              "value": "{{ things.length }}"
+            },
+            {
+              "label": "bad date",
+              "value": "{{ word | date }}"
+            }
+          ],
+          "labelColor": null,
+          "valueColor": null,
+          "background": null,
+          "borderColor": "brand.border",
+          "size": 15,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n2": {
+        "id": "n2",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "{{when}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "when",
+                  "format": "date_long"
+                }
+              ]
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n3": {
+        "id": "n3",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n1",
+          "n2"
+        ]
+      },
+      "n4": {
+        "id": "n4",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "100",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n3"
+        ]
+      },
+      "n5": {
+        "id": "n5",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": null,
+          "background": null,
+          "backgroundImage": null,
+          "fullWidth": false,
+          "padding": {
+            "top": 24,
+            "right": 24,
+            "bottom": 24,
+            "left": 24
+          },
+          "radius": 0
+        },
+        "children": [
+          "n4"
+        ]
+      }
+    },
+    "meta": {
+      "name": "Formats",
+      "subject": "Formats {{ when | date }}",
+      "preheader": "{{ amount | money }}"
+    },
+    "settings": {
+      "width": 600,
+      "backdrop": "#f4f4f5",
+      "background": "#ffffff",
+      "font": "system",
+      "fontSize": 16,
+      "lineHeight": 1.6,
+      "textColor": "brand.text",
+      "headingColor": "brand.text",
+      "linkColor": "brand.primary",
+      "darkMode": "auto",
+      "dark": {
+        "backdrop": "#0b0b0c",
+        "background": "#18181b",
+        "text": "#e4e4e7",
+        "heading": "#fafafa",
+        "link": "#93c5fd"
+      },
+      "utm": {
+        "enabled": false,
+        "source": "email",
+        "medium": "email",
+        "campaign": ""
+      }
+    }
+  },
+  "data": {
+    "now": "2026-10-02T19:35:00.000Z",
+    "current_year": 2026,
+    "when": "2026-10-02T19:35:00Z",
+    "morning": "2026-01-15T07:05:00Z",
+    "day": "2026-09-15",
+    "amount": 12500.5,
+    "refund": -950,
+    "small": 0.4,
+    "big": 1234567.891,
+    "four": 1234.5,
+    "half": 1.0005,
+    "numeric_text": "  42.5 ",
+    "word": "élan vital",
+    "flag": true,
+    "ratio": 0.30000000000000004,
+    "things": [
+      1,
+      2,
+      3
+    ]
+  },
+  "locale": "de",
+  "brand": {
+    "name": "Your company",
+    "website": "https://example.com",
+    "address": "Street 1, City",
+    "logo": null,
+    "logoDark": null,
+    "colors": {
+      "primary": "#111827",
+      "secondary": "#374151",
+      "accent": "#2563eb",
+      "text": "#1f2937",
+      "muted": "#6b7280",
+      "background": "#f4f4f5",
+      "surface": "#ffffff",
+      "border": "#e5e7eb"
+    },
+    "font": "system",
+    "social": []
+  },
+  "currency": "EUR",
+  "assetBase": "https://cdn.test/",
+  "iconBase": "https://site.test/",
+  "expected": {
+    "subject": "Formats 02.10.2026",
+    "preheader": "12.501 €"
+  }
+}

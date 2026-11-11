@@ -1,0 +1,9 @@
+{
+  "tolerates": [
+    "meta.subjectMissing",
+    "variable.unknown",
+    "variable.mustUse",
+    "compliance.unsubscribeMissing",
+    "i18n.locale.unknown"
+  ]
+}

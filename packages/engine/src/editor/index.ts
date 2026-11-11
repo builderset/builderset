@@ -34,7 +34,7 @@ export type {
   SaveReason,
   SaveResult,
   UploadResult,
-} from './host';
+} from '../host';
 export {
   languageName,
   pickLocale,

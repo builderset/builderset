@@ -1,4 +1,10 @@
-import { createId, isSafeUrl, type BuilderNode, type ElementRegistry } from '@motors/engine';
+import {
+  createId,
+  domParser,
+  isSafeUrl,
+  type BuilderNode,
+  type ElementRegistry,
+} from '@motors/engine';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';
 import { createEmailDocument, type EmailDocument, type EmailMeta } from './document';
@@ -675,7 +681,7 @@ export function importEmailHtml(
   registry: ElementRegistry,
   options: { meta?: Partial<EmailMeta> | undefined; parser?: DOMParser | undefined } = {},
 ): HtmlImport {
-  const parser = options.parser ?? new DOMParser();
+  const parser = domParser(options.parser, 'importEmailHtml');
   const parsed = parser.parseFromString(html, 'text/html');
   const doc = createEmailDocument({
     name: options.meta?.name ?? '',

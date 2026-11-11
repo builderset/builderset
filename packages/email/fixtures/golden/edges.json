@@ -1,0 +1,1292 @@
+{
+  "document": {
+    "schema": "email/document",
+    "version": 1,
+    "root": "root",
+    "nodes": {
+      "root": {
+        "id": "root",
+        "type": "root",
+        "v": 1,
+        "props": {},
+        "children": [
+          "n12",
+          "n22",
+          "n38"
+        ]
+      },
+      "n1": {
+        "id": "n1",
+        "type": "logo",
+        "v": 1,
+        "props": {
+          "media": {
+            "key": "email-image/2026/01/sample0000000000.jpg",
+            "width": 1200,
+            "height": 600
+          },
+          "width": 120,
+          "align": "center",
+          "href": "{{ brand.website }}",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n2": {
+        "id": "n2",
+        "type": "heading",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "800",
+          "letterSpacing": 1.5,
+          "transform": "uppercase",
+          "text": [
+            {
+              "text": "Fonts ",
+              "marks": [
+                {
+                  "type": "font",
+                  "family": "inter"
+                }
+              ]
+            },
+            {
+              "text": "and ",
+              "marks": [
+                {
+                  "type": "italic"
+                },
+                {
+                  "type": "underline"
+                }
+              ]
+            },
+            {
+              "text": "marks",
+              "marks": [
+                {
+                  "type": "link",
+                  "href": "https://example.com/a?b=1"
+                }
+              ]
+            }
+          ],
+          "level": 2,
+          "align": "left",
+          "color": null,
+          "size": 30,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n3": {
+        "id": "n3",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Line one\nline two ",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ]
+            },
+            {
+              "text": "strike ",
+              "marks": [
+                {
+                  "type": "strike"
+                }
+              ]
+            },
+            {
+              "text": "code ",
+              "marks": [
+                {
+                  "type": "code"
+                }
+              ]
+            },
+            {
+              "text": "mark ",
+              "marks": [
+                {
+                  "type": "highlight"
+                }
+              ]
+            },
+            {
+              "text": "sub",
+              "marks": [
+                {
+                  "type": "sub"
+                }
+              ]
+            },
+            {
+              "text": "sup",
+              "marks": [
+                {
+                  "type": "sup"
+                }
+              ]
+            },
+            {
+              "text": "{{recipient.name}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "recipient.name",
+                  "fallback": "friend"
+                }
+              ]
+            },
+            {
+              "text": " / "
+            },
+            {
+              "text": "{{missing.value}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "missing.value"
+                }
+              ]
+            }
+          ],
+          "align": "justify",
+          "color": null,
+          "size": 16,
+          "lineHeight": 1.75,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n4": {
+        "id": "n4",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": "#fafafa",
+          "padding": {
+            "top": 5,
+            "right": 5,
+            "bottom": 5,
+            "left": 5
+          },
+          "radius": 8,
+          "borderWidth": 2,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n1",
+          "n2",
+          "n3"
+        ]
+      },
+      "n5": {
+        "id": "n5",
+        "type": "image",
+        "v": 1,
+        "props": {
+          "media": {
+            "key": "email-image/2026/01/sample0000000000.jpg",
+            "width": 1200,
+            "height": 600
+          },
+          "alt": "Wide {{ recipient.name }}",
+          "href": "{{ unsafe }}",
+          "width": 300,
+          "align": "center",
+          "radius": 6,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n6": {
+        "id": "n6",
+        "type": "spacer",
+        "v": 1,
+        "props": {
+          "height": 24,
+          "mobileHeight": 8,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          }
+        }
+      },
+      "n7": {
+        "id": "n7",
+        "type": "spacer",
+        "v": 1,
+        "props": {
+          "height": 12,
+          "mobileHeight": 8,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          }
+        }
+      },
+      "n8": {
+        "id": "n8",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Mobile only"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "desktop",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n9": {
+        "id": "n9",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Desktop only"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "mobile",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n10": {
+        "id": "n10",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n5",
+          "n6",
+          "n7",
+          "n8",
+          "n9"
+        ]
+      },
+      "n11": {
+        "id": "n11",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "67-33",
+          "gap": 20,
+          "stackOnMobile": true,
+          "reverseOnMobile": true,
+          "verticalAlign": "middle",
+          "background": "#eeeeee",
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n4",
+          "n10"
+        ]
+      },
+      "n12": {
+        "id": "n12",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": "#101010",
+          "background": null,
+          "backgroundImage": {
+            "key": "email-image/2026/01/sample0000000000.jpg",
+            "width": 1200,
+            "height": 600
+          },
+          "fullWidth": true,
+          "padding": {
+            "top": 10,
+            "right": 20,
+            "bottom": 30,
+            "left": 40
+          },
+          "radius": 12
+        },
+        "children": [
+          "n11"
+        ]
+      },
+      "n13": {
+        "id": "n13",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "gt"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": [
+              {
+                "var": "count",
+                "op": "gt",
+                "value": "2"
+              }
+            ]
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n14": {
+        "id": "n14",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n13"
+        ]
+      },
+      "n15": {
+        "id": "n15",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "lt"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": [
+              {
+                "var": "count",
+                "op": "lt",
+                "value": "2"
+              }
+            ]
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n16": {
+        "id": "n16",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n15"
+        ]
+      },
+      "n17": {
+        "id": "n17",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "contains"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": [
+              {
+                "var": "tag",
+                "op": "contains",
+                "value": "VIP"
+              }
+            ]
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n18": {
+        "id": "n18",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n17"
+        ]
+      },
+      "n19": {
+        "id": "n19",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "neq"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": [
+              {
+                "var": "tag",
+                "op": "neq",
+                "value": "x"
+              },
+              {
+                "var": "nothing",
+                "op": "missing"
+              }
+            ]
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n20": {
+        "id": "n20",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n19"
+        ]
+      },
+      "n21": {
+        "id": "n21",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "25-25-25-25",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n14",
+          "n16",
+          "n18",
+          "n20"
+        ]
+      },
+      "n22": {
+        "id": "n22",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": null,
+          "background": null,
+          "backgroundImage": null,
+          "fullWidth": false,
+          "padding": {
+            "top": 24,
+            "right": 24,
+            "bottom": 24,
+            "left": 24
+          },
+          "radius": 0,
+          "display": {
+            "hideOn": "none",
+            "when": [
+              {
+                "var": "show_more",
+                "op": "eq",
+                "value": "yes"
+              }
+            ]
+          }
+        },
+        "children": [
+          "n21"
+        ]
+      },
+      "n23": {
+        "id": "n23",
+        "type": "list",
+        "v": 1,
+        "props": {
+          "font": null,
+          "align": "center",
+          "style": "number",
+          "items": [
+            {
+              "text": [
+                {
+                  "text": "First point"
+                }
+              ]
+            },
+            {
+              "text": [
+                {
+                  "text": "Second point"
+                }
+              ]
+            }
+          ],
+          "color": null,
+          "markerColor": "brand.primary",
+          "size": 16,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n24": {
+        "id": "n24",
+        "type": "list",
+        "v": 1,
+        "props": {
+          "font": null,
+          "align": "left",
+          "style": "check",
+          "items": [
+            {
+              "text": [
+                {
+                  "text": "First point"
+                }
+              ]
+            },
+            {
+              "text": [
+                {
+                  "text": "Second point"
+                }
+              ]
+            }
+          ],
+          "color": null,
+          "markerColor": "brand.primary",
+          "size": 16,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n25": {
+        "id": "n25",
+        "type": "menu",
+        "v": 1,
+        "props": {
+          "font": null,
+          "items": [
+            {
+              "label": "Home",
+              "href": "{{ brand.website }}"
+            },
+            {
+              "label": "Bad",
+              "href": "{{ unsafe }}"
+            },
+            {
+              "label": "Plain",
+              "href": ""
+            }
+          ],
+          "align": "center",
+          "color": null,
+          "size": 14,
+          "separator": "bar",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n26": {
+        "id": "n26",
+        "type": "button",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "600",
+          "letterSpacing": 0.5,
+          "transform": "none",
+          "label": "Go 🚗 {{ recipient.name }}",
+          "href": "https://example.com/go?x=1",
+          "align": "right",
+          "background": "brand.primary",
+          "textColor": "#ffffff",
+          "borderColor": "#ff0000",
+          "borderWidth": 2,
+          "radius": 20,
+          "paddingX": 30,
+          "paddingY": 10,
+          "size": 17,
+          "fullWidthMobile": false,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n27": {
+        "id": "n27",
+        "type": "product",
+        "v": 1,
+        "props": {
+          "font": null,
+          "align": "left",
+          "image": {
+            "key": "email-image/2026/01/sample0000000000.jpg",
+            "width": 1200,
+            "height": 600
+          },
+          "alt": "Side",
+          "title": "Product name",
+          "description": [
+            {
+              "text": "One or two lines about why it is worth a look."
+            }
+          ],
+          "price": "€0",
+          "oldPrice": "€99",
+          "buttonLabel": "Buy",
+          "href": "https://example.com/p",
+          "layout": "side",
+          "accent": "brand.primary",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n28": {
+        "id": "n28",
+        "type": "line-items",
+        "v": 1,
+        "props": {
+          "font": null,
+          "list": "order.items",
+          "columns": [
+            {
+              "header": "Item",
+              "field": "name",
+              "align": "left"
+            },
+            {
+              "header": "Qty",
+              "field": "quantity",
+              "align": "center"
+            },
+            {
+              "header": "Price",
+              "field": "price",
+              "align": "right"
+            }
+          ],
+          "totalLabel": "Total",
+          "totalValue": "{{ order.total | money }}",
+          "max": 50,
+          "headerBackground": null,
+          "borderColor": "brand.border",
+          "size": 14,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n29": {
+        "id": "n29",
+        "type": "divider",
+        "v": 1,
+        "props": {
+          "align": "left",
+          "color": "brand.border",
+          "thickness": 2,
+          "width": 60,
+          "style": "dashed",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 16,
+            "right": 0,
+            "bottom": 16,
+            "left": 0
+          }
+        }
+      },
+      "n30": {
+        "id": "n30",
+        "type": "divider",
+        "v": 1,
+        "props": {
+          "align": "right",
+          "color": "brand.border",
+          "thickness": 1,
+          "width": 100,
+          "style": "solid",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 16,
+            "right": 0,
+            "bottom": 16,
+            "left": 0
+          }
+        }
+      },
+      "n31": {
+        "id": "n31",
+        "type": "quote",
+        "v": 1,
+        "props": {
+          "font": null,
+          "align": "left",
+          "text": [
+            {
+              "text": "“The best decision we made this year.”"
+            }
+          ],
+          "cite": "",
+          "accent": "brand.primary",
+          "background": "#f0f0f0",
+          "size": 18,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n32": {
+        "id": "n32",
+        "type": "social",
+        "v": 1,
+        "props": {
+          "items": [
+            {
+              "network": "facebook",
+              "href": "https://facebook.com/"
+            },
+            {
+              "network": "instagram",
+              "href": "https://instagram.com/"
+            },
+            {
+              "network": "linkedin",
+              "href": "https://linkedin.com/"
+            }
+          ],
+          "appearance": "text",
+          "style": "light",
+          "size": 28,
+          "gap": 7,
+          "align": "center",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n33": {
+        "id": "n33",
+        "type": "social",
+        "v": 1,
+        "props": {
+          "items": [
+            {
+              "network": "facebook",
+              "href": "https://facebook.com/"
+            },
+            {
+              "network": "instagram",
+              "href": "https://instagram.com/"
+            },
+            {
+              "network": "linkedin",
+              "href": "https://linkedin.com/"
+            }
+          ],
+          "appearance": "icons",
+          "style": "color",
+          "size": 36,
+          "gap": 12,
+          "align": "center",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n34": {
+        "id": "n34",
+        "type": "survey",
+        "v": 1,
+        "props": {
+          "font": null,
+          "question": "How likely are you to recommend us to a friend?",
+          "scale": 10,
+          "href": "",
+          "lowLabel": "Not likely",
+          "highLabel": "Very likely",
+          "color": "brand.primary",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n35": {
+        "id": "n35",
+        "type": "footer",
+        "v": 1,
+        "props": {
+          "font": null,
+          "text": [
+            {
+              "text": "You are receiving this email from "
+            },
+            {
+              "text": "{{brand.name}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "brand.name"
+                }
+              ]
+            },
+            {
+              "text": "."
+            }
+          ],
+          "showAddress": true,
+          "showUnsubscribe": true,
+          "showPreferences": true,
+          "showViewInBrowser": true,
+          "align": "left",
+          "color": "brand.muted",
+          "size": 12,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 16,
+            "right": 0,
+            "bottom": 16,
+            "left": 0
+          }
+        }
+      },
+      "n36": {
+        "id": "n36",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n23",
+          "n24",
+          "n25",
+          "n26",
+          "n27",
+          "n28",
+          "n29",
+          "n30",
+          "n31",
+          "n32",
+          "n33",
+          "n34",
+          "n35"
+        ]
+      },
+      "n37": {
+        "id": "n37",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "100",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n36"
+        ]
+      },
+      "n38": {
+        "id": "n38",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": null,
+          "background": null,
+          "backgroundImage": null,
+          "fullWidth": false,
+          "padding": {
+            "top": 24,
+            "right": 24,
+            "bottom": 24,
+            "left": 24
+          },
+          "radius": 0
+        },
+        "children": [
+          "n37"
+        ]
+      }
+    },
+    "meta": {
+      "name": "Edges",
+      "subject": "Hi {{ recipient.name }} <&>",
+      "preheader": ""
+    },
+    "settings": {
+      "width": 600,
+      "backdrop": "#f4f4f5",
+      "background": "#ffffff",
+      "font": "playfair-display",
+      "fontSize": 16,
+      "lineHeight": 1.6,
+      "textColor": "brand.text",
+      "headingColor": "brand.text",
+      "linkColor": "brand.primary",
+      "darkMode": "custom",
+      "dark": {
+        "backdrop": "#0b0b0c",
+        "background": "#18181b",
+        "text": "#e4e4e7",
+        "heading": "#fafafa",
+        "link": "#93c5fd"
+      },
+      "utm": {
+        "enabled": true,
+        "source": "news letter",
+        "medium": "email",
+        "campaign": "oct & nov"
+      }
+    }
+  },
+  "data": {
+    "now": "2026-10-02T19:35:00.000Z",
+    "current_year": 2026,
+    "recipient": {
+      "name": "Arta <b>"
+    },
+    "order": {
+      "total": 120,
+      "items": [
+        {
+          "name": "Filter",
+          "quantity": 1,
+          "price": "€20"
+        },
+        {
+          "name": "Oil & co",
+          "quantity": 2.5,
+          "price": 50
+        }
+      ]
+    },
+    "unsafe": "javascript:alert(1)",
+    "show_more": "yes",
+    "count": "3",
+    "tag": "a vip customer",
+    "links": {
+      "unsubscribe": "https://x.test/u?id=1",
+      "preferences": "https://x.test/p",
+      "view_in_browser": ""
+    }
+  },
+  "locale": "de",
+  "brand": {
+    "name": "example.com",
+    "website": "https://example.com",
+    "address": "Tiranë, Albania",
+    "logo": {
+      "key": "email-image/2026/01/sample0000000000.jpg",
+      "width": 1200,
+      "height": 600
+    },
+    "logoDark": null,
+    "colors": {
+      "primary": "#ba5702",
+      "secondary": "#374151",
+      "accent": "#2563eb",
+      "text": "#1f2937",
+      "muted": "#6b7280",
+      "background": "#f4f4f5",
+      "surface": "#ffffff",
+      "border": "#e5e7eb"
+    },
+    "font": "system",
+    "social": []
+  },
+  "currency": "EUR",
+  "assetBase": "https://cdn.test/",
+  "iconBase": "https://site.test/",
+  "expected": {
+    "subject": "Hi Arta <b> <&>",
+    "preheader": ""
+  }
+}

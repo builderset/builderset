@@ -1,14 +1,22 @@
 'use client';
 
 import type { ElementRegistry, EngineDocument, Issue } from '../core';
-import { Button, Label, useMediaQuery, TooltipProvider, ConfirmDialog, Sheet } from './ui';
-import { DatePicker, TimePicker } from '@motors/ui';
+import {
+  Button,
+  ConfirmDialog,
+  DateTimeField,
+  Label,
+  Sheet,
+  TooltipProvider,
+  useMediaQuery,
+} from './ui';
 import { Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   useCallback,
   useDeferredValue,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -870,11 +878,11 @@ function ScheduleDialog({
   messages: EditorMessages;
   onConfirm: (iso: string) => void;
 }) {
-  const start = initial ? new Date(initial) : new Date(Date.now() + 24 * 3600_000);
-  const [date, setDate] = useState(start.toISOString().slice(0, 10));
-  const [time, setTime] = useState(start.toTimeString().slice(0, 5));
-  const when = new Date(`${date}T${time || '09:00'}`);
-  const valid = !Number.isNaN(when.getTime()) && when.getTime() > Date.now();
+  const [when, setWhen] = useState<string | null>(
+    () => initial ?? new Date(Date.now() + 24 * 3600_000).toISOString(),
+  );
+  const valid = when !== null && Date.parse(when) > Date.now();
+  const id = useId();
 
   return (
     <SideDrawer
@@ -884,19 +892,11 @@ function ScheduleDialog({
       description={messages.scheduleHint}
     >
       <div className="space-y-4">
-        <div className="grid grid-cols-[1fr_8rem] gap-3">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">{messages.publishAt}</Label>
-            <DatePicker
-              value={date}
-              min={new Date().toISOString().slice(0, 10)}
-              onChange={setDate}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium">&nbsp;</Label>
-            <TimePicker value={time} onChange={setTime} />
-          </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={id} className="text-xs font-medium">
+            {messages.publishAt}
+          </Label>
+          <DateTimeField id={id} value={when} min={new Date().toISOString()} onChange={setWhen} />
         </div>
         <div className="grid grid-cols-2 gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
@@ -906,7 +906,7 @@ function ScheduleDialog({
             type="button"
             disabled={!valid}
             onClick={() => {
-              onConfirm(when.toISOString());
+              if (when) onConfirm(when);
             }}
           >
             {messages.schedule.replace('…', '')}

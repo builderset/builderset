@@ -2,6 +2,7 @@
 
 import { plainText } from '@motors/engine';
 import {
+  DateTimeField,
   Input,
   Label,
   Textarea,
@@ -11,7 +12,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@motors/engine/ui';
-import { DatePicker, TimePicker } from '@motors/ui';
 import { Check, X } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
 
@@ -375,17 +375,6 @@ function Publishing() {
   const { store, messages } = useEditorContext();
   const [article, setArticle] = useArticleFacts();
   const readingMinutes = useArticle((state) => state.doc.meta.readingMinutes);
-  const date = article.scheduledAt ? article.scheduledAt.slice(0, 10) : '';
-  const time = article.scheduledAt ? new Date(article.scheduledAt).toTimeString().slice(0, 5) : '';
-
-  const schedule = (nextDate: string, nextTime: string) => {
-    if (!nextDate) {
-      setArticle({ scheduledAt: null });
-      return;
-    }
-    const when = new Date(`${nextDate}T${nextTime || '09:00'}`);
-    setArticle({ scheduledAt: Number.isNaN(when.getTime()) ? null : when.toISOString() });
-  };
 
   return (
     <>
@@ -420,22 +409,14 @@ function Publishing() {
       {article.status !== 'published' ? (
         <FieldRow label={messages.publishAt} hint={messages.scheduleHint}>
           {(id) => (
-            <div className="grid grid-cols-[1fr_7rem] gap-2">
-              <DatePicker
-                id={id}
-                value={date}
-                min={new Date().toISOString().slice(0, 10)}
-                onChange={(value) => {
-                  schedule(value, time);
-                }}
-              />
-              <TimePicker
-                value={time}
-                onChange={(value) => {
-                  schedule(date, value);
-                }}
-              />
-            </div>
+            <DateTimeField
+              id={id}
+              value={article.scheduledAt}
+              min={new Date().toISOString()}
+              onChange={(scheduledAt) => {
+                setArticle({ scheduledAt });
+              }}
+            />
           )}
         </FieldRow>
       ) : null}

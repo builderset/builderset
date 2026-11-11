@@ -43,11 +43,12 @@ export interface SavedSection {
   fragment: Fragment;
 }
 
+/**
+ * Language is not the host's business: the editor's own language and the
+ * languages a document is written in are props of the editor (`locale`,
+ * `contentLocales`).
+ */
 export interface BuilderHost<TDoc extends EngineDocument = EngineDocument> {
-  /** The editor's own UI language. */
-  locale: string;
-  /** The language the document is written in. */
-  contentLocale: string;
   upload(
     file: File,
     kind: MediaKind,

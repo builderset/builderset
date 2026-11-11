@@ -29,8 +29,6 @@ const record: RecordFacts = { status: 'draft', scheduledAt: null, publishedAt: n
 
 function host(): BuilderHost<EmailDocument> {
   return {
-    locale: 'en',
-    contentLocale: 'en',
     upload: vi.fn(),
     resolveMedia: (key) => `https://cdn.test/${key}`,
     save: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),

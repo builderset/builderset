@@ -23,7 +23,7 @@ function templateFragment(registry: ElementRegistry, template: TemplateSpec): Fr
 }
 
 export function TemplatesPanel() {
-  const { registry, messages, store, host, profile } = useEditorContext();
+  const { registry, messages, store, host, profile, locale } = useEditorContext();
   const templates = profile.templates ?? [];
   const selection = useEditor((state) => state.selection);
   const [sections, setSections] = useState<SavedSection[] | null>(null);
@@ -90,7 +90,9 @@ export function TemplatesPanel() {
                 aria-hidden="true"
               />
               <span className="min-w-0 flex-1 truncate text-sm font-medium">
-                {template.name[host.locale] ?? template.name.en}
+                {template.name[locale] ??
+                  template.name[locale.split('-')[0] ?? ''] ??
+                  template.name.en}
               </span>
               <Plus className="text-muted-foreground size-4" aria-hidden="true" />
             </button>

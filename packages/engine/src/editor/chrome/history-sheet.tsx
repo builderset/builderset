@@ -14,7 +14,7 @@ import { SideDrawer } from './side-drawer';
  * the site until the writer publishes it.
  */
 export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { host, messages, store } = useEditorContext();
+  const { host, messages, store, locale } = useEditorContext();
   const [revisions, setRevisions] = useState<RevisionSummary[] | null>(null);
   const [label, setLabel] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
                   {revision.label ?? messages.revisionKinds[revision.kind] ?? revision.kind}
                 </p>
                 <p className="text-muted-foreground truncate text-xs">
-                  {new Date(revision.createdAt).toLocaleString(host.locale)}
+                  {new Date(revision.createdAt).toLocaleString(locale)}
                   {revision.author ? ` · ${revision.author}` : ''}
                 </p>
               </div>

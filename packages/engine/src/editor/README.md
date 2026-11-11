@@ -26,6 +26,29 @@ The editor needs no provider around it: its words come from `EditorMessages`
 host app must add the package to Tailwind's sources:
 `@source '…/packages/engine/src/editor';`
 
+## Languages
+
+The editor speaks English unless it is told otherwise. Another language is a
+file a project imports and passes; nothing else ships:
+
+```tsx
+import { sq } from '@motors/article/locales/sq'; // or @motors/email/locales/sq
+
+<ArticleEditor
+  locale="sq" // the editor's own language; 'auto' follows <html lang>
+  locales={{ sq }} // the languages it may use; English is built in
+  messages={{ engine: { undo: 'Zhbëj' } }} // single words, in any language
+  contentLocales={['sq', 'en', 'de']} // the languages a document is written in
+  defaultContentLocale="sq" // a new document's own language
+/>;
+```
+
+A word a language leaves out stays English, and `sq-AL` falls back to `sq`.
+Dates and relative times ("5 min. ago") come from `Intl` for the active
+language. With one content language there is no language switch and no
+multi-language setting. Any language code works, but right-to-left languages
+are not mirrored yet.
+
 ## What is in it
 
 - **Top bar**: back (guards unsaved work), title and status, undo and redo

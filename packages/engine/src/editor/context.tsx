@@ -24,6 +24,12 @@ export interface EditorContextValue<TDoc extends EngineDocument = EngineDocument
   registry: ElementRegistry;
   host: BuilderHost<TDoc>;
   messages: EditorMessages;
+  /** The editor's own language, resolved (`'auto'` has become `<html lang>`). */
+  locale: string;
+  /** The languages a document can be written in; one means no language switch. */
+  contentLocales: readonly string[];
+  /** The language a new document's tree is written in. */
+  defaultContentLocale: string;
   /** The stored record's own facts the top bar shows; the document does not hold them. */
   record: RecordFacts;
   /** Changes to the record's facts, kept by the host (they are row columns, not document). */

@@ -1,12 +1,21 @@
 'use client';
 
 import type { ElementRegistry } from '@motors/engine';
-import { BuilderEditor, type BuilderHost, type EditorMessages } from '@motors/engine/editor';
+import {
+  BuilderEditor,
+  resolveMessages,
+  useHtmlLang,
+  type BuilderHost,
+  type EditorMessages,
+} from '@motors/engine/editor';
 import { useMemo } from 'react';
 
 import { createArticleRegistry, type ArticleDocument } from '../core';
+import type { RenderMessages } from '../render';
+import { en } from '../locales/en';
 import type { ArticleFacts } from './hooks';
 import { articleProfile } from './profile';
+import { ArticleWordsProvider, type ArticleLocale, type ArticleMessages } from './words';
 
 export interface ArticleEditorProps {
   document: ArticleDocument;
@@ -18,7 +27,16 @@ export interface ArticleEditorProps {
   onBack: () => void;
   onDuplicate?: (() => void) | undefined;
   onDelete?: (() => Promise<boolean>) | undefined;
-  messages?: Partial<EditorMessages> | undefined;
+  /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
+  locale?: string | undefined;
+  /** Other languages, by code: `{ sq }` from `@motors/article/locales/sq`. English is built in. */
+  locales?: Readonly<Record<string, ArticleLocale | undefined>> | undefined;
+  /** Replace single words, in whatever language is active. */
+  messages?: ArticleMessages | undefined;
+  /** The languages an article can be written in. One: no language switch. */
+  contentLocales?: readonly string[] | undefined;
+  /** The language a new article is written in. Default: the first of `contentLocales`. */
+  defaultContentLocale?: string | undefined;
   /** Where the crash-safety copy is kept in localStorage; omit to disable. */
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
@@ -26,16 +44,59 @@ export interface ArticleEditorProps {
 }
 
 /** The article builder: the shared editor with the article profile. */
-export function ArticleEditor({ registry: given, host, ...props }: ArticleEditorProps) {
+export function ArticleEditor({
+  registry: given,
+  host,
+  locale: requested,
+  locales,
+  messages,
+  ...props
+}: ArticleEditorProps) {
+  const htmlLang = useHtmlLang();
+  const locale = requested === 'auto' ? htmlLang : (requested ?? 'en');
+  const words = useMemo(
+    () => resolveMessages<ArticleLocale>(en, locale, locales, messages),
+    [locale, locales, messages],
+  );
+  const editorMessages = useMemo<EditorMessages>(
+    () => ({
+      ...words.engine,
+      ...words.workspace,
+      elements: words.elements,
+      categories: words.categories,
+    }),
+    [words],
+  );
+  // The canvas writes its few words (placeholders, "Contents") in the language
+  // being written, as the site does — not in the editor's own.
+  const renderWords = useMemo(() => {
+    const byCode: Record<string, RenderMessages | undefined> = { en: en.render };
+    for (const [code, entry] of Object.entries(locales ?? {})) byCode[code] = entry?.render;
+    return byCode;
+  }, [locales]);
+  const defaultContentLocale = props.defaultContentLocale ?? props.contentLocales?.[0] ?? locale;
   const registry = useMemo(() => given ?? createArticleRegistry(), [given]);
   const profile = useMemo(
     () =>
       articleProfile({
         registry,
         resolveMedia: (key) => host.resolveMedia(key),
-        contentLocale: host.contentLocale,
+        contentLocale: defaultContentLocale,
+        renderWords,
       }),
-    [registry, host],
+    [registry, host, defaultContentLocale, renderWords],
   );
-  return <BuilderEditor {...props} registry={registry} host={host} profile={profile} />;
+  return (
+    <ArticleWordsProvider value={words.article}>
+      <BuilderEditor
+        {...props}
+        defaultContentLocale={defaultContentLocale}
+        locale={locale}
+        messages={editorMessages}
+        registry={registry}
+        host={host}
+        profile={profile}
+      />
+    </ArticleWordsProvider>
+  );
 }

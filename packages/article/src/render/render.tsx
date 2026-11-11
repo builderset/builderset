@@ -174,7 +174,7 @@ export function createRenderContext(
     document,
     registry,
     options,
-    messages: messagesFor(options.locale ?? 'en', options.messages),
+    messages: messagesFor(options.messages),
     Link: options.linkComponent ?? DefaultLink,
     Image: options.imageComponent ?? DefaultImage,
     outline: buildOutline(document),

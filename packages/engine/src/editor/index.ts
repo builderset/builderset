@@ -35,6 +35,14 @@ export type {
   SaveResult,
   UploadResult,
 } from './host';
-export { editorMessages, type EditorMessages, type ElementText } from './messages';
+export {
+  languageName,
+  pickLocale,
+  resolveMessages,
+  type DeepPartial,
+  type EditorMessages,
+  type ElementText,
+} from './messages';
+export { useHtmlLang } from './locale';
 export { createEditorStore, type EditorActions, type EditorState, type EditorStore } from './store';
 export { fromTiptap, toTiptap } from './text/convert';

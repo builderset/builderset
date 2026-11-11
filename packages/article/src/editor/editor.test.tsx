@@ -1,6 +1,5 @@
 import { rt } from '@motors/engine';
 import type { BuilderHost } from '@motors/engine/editor';
-import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -37,16 +36,14 @@ const facts: ArticleFacts = {
 
 function mount(adapter = host(), document = createArticleDocument({ title: 'An article' })) {
   return render(
-    <I18nProvider locale="en">
-      <ArticleEditor
-        document={document}
-        registry={registry}
-        host={adapter}
-        record={facts}
-        onRecordChange={() => undefined}
-        onBack={() => undefined}
-      />
-    </I18nProvider>,
+    <ArticleEditor
+      document={document}
+      registry={registry}
+      host={adapter}
+      record={facts}
+      onRecordChange={() => undefined}
+      onBack={() => undefined}
+    />,
   );
 }
 

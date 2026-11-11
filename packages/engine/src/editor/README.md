@@ -21,9 +21,9 @@ import { ArticleEditor } from '@motors/article/editor';
 />;
 ```
 
-The host app must render it inside `<I18nProvider>` (from `@motors/i18n/react`),
-because the shared `@motors/ui` controls read their words from there. It must
-also add the package to Tailwind's sources:
+The editor needs no provider around it: its words come from `EditorMessages`
+(the `locale` of the host adapter), and its controls from its own UI kit. The
+host app must add the package to Tailwind's sources:
 `@source '…/packages/engine/src/editor';`
 
 ## What is in it
@@ -71,6 +71,11 @@ also add the package to Tailwind's sources:
   (`RichText` runs); `text/convert.ts` is the only place TipTap JSON exists.
 - **motion**: panel, toolbar and indicator animations.
 - **zod**: `z.toJSONSchema` turns an element's schema into its inspector.
+- **Radix UI** under the editor's own kit, `src/editor/ui` (`@motors/engine/ui`):
+  buttons, fields, toggles, tabs, menus, popovers, tooltips, dialogs and
+  sheets, copied from MotorsAL's `@motors/ui` and now separate from it. The
+  kits use it too. Everything that floats is portalled into an element the
+  editor renders (`data-builderset-portal`), not into `<body>`.
 
 Drag and drop uses native HTML drag events rather than a DnD library. The
 canvas already knows where every block is (the overlay measures them), and

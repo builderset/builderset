@@ -7,7 +7,6 @@ import {
   type EmailType,
 } from '../core';
 import { DEFAULT_BRAND } from '../render';
-import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -42,18 +41,16 @@ function host(): BuilderHost<EmailDocument> {
 
 function mount(document = starterEmail(registry, { name: 'Reset design', subject: 'Reset' })) {
   return render(
-    <I18nProvider locale="en">
-      <EmailEditor
-        document={document}
-        registry={registry}
-        host={host()}
-        type={type}
-        brand={DEFAULT_BRAND}
-        record={record}
-        onRecordChange={() => undefined}
-        onBack={() => undefined}
-      />
-    </I18nProvider>,
+    <EmailEditor
+      document={document}
+      registry={registry}
+      host={host()}
+      type={type}
+      brand={DEFAULT_BRAND}
+      record={record}
+      onRecordChange={() => undefined}
+      onBack={() => undefined}
+    />,
   );
 }
 

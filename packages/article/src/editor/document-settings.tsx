@@ -1,18 +1,8 @@
 'use client';
 
 import { plainText } from '@motors/engine';
-import {
-  DatePicker,
-  Input,
-  Label,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Textarea,
-  TimePicker,
-  ToggleFlag,
-} from '@motors/ui';
+import { Input, Label, Textarea, ToggleFlag } from '@motors/engine/ui';
+import { DatePicker, Tabs, TabsContent, TabsList, TabsTrigger, TimePicker } from '@motors/ui';
 import { Check, X } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
 

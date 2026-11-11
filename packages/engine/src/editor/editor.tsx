@@ -1,16 +1,8 @@
 'use client';
 
 import type { ElementRegistry, EngineDocument, Issue } from '../core';
-import {
-  Button,
-  ConfirmDialog,
-  DatePicker,
-  Label,
-  Sheet,
-  TimePicker,
-  TooltipProvider,
-  useMediaQuery,
-} from '@motors/ui';
+import { Button, Label, useMediaQuery } from './ui';
+import { ConfirmDialog, DatePicker, Sheet, TimePicker, TooltipProvider } from '@motors/ui';
 import { Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {

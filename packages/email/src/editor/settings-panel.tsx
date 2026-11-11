@@ -10,19 +10,16 @@ import {
 } from '@motors/engine/editor';
 import { variablesOf, type EmailDocument, type EmailMeta, type EmailSettings } from '../core';
 import { createContext as createRenderContext, fill } from '../render';
+import { Input, Label, SegmentedControl, ToggleFlag } from '@motors/engine/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  Input,
-  Label,
-  SegmentedControl,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  ToggleFlag,
 } from '@motors/ui';
 import { Braces } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';

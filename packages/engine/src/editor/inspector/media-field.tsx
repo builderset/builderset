@@ -1,7 +1,7 @@
 'use client';
 
 import type { MediaKind, MediaRef } from '../../core';
-import { Button, Progress } from '@motors/ui';
+import { Button, Progress } from '../ui';
 import { FileText, ImageUp, Music, RefreshCw, Trash2, Video, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 

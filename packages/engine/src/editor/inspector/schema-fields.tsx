@@ -1,7 +1,8 @@
 'use client';
 
 import type { MediaKind, MediaRef, RichText } from '../../core';
-import { Button, Input, Label, SegmentedControl, Select, Switch, Textarea } from '@motors/ui';
+import { Button, Input, Label, SegmentedControl, Switch, Textarea } from '../ui';
+import { Select } from '@motors/ui';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useId, useState } from 'react';

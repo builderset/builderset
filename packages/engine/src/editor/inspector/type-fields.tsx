@@ -1,6 +1,7 @@
 'use client';
 
-import { Label, Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
+import { Label } from '../ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@motors/ui';
 import {
   AlignCenter,
   AlignHorizontalJustifyCenter,

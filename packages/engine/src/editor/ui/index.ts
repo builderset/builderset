@@ -1,0 +1,35 @@
+/**
+ * @motors/engine/ui — the editor's own UI kit.
+ *
+ * Copied from MotorsAL's `@motors/ui` on 2026-11-11 (Builderset plan, step 04)
+ * with only their imports changed, so the editors look and behave as before
+ * without depending on the admin's design system. From here on the two are
+ * separate code and drift apart on purpose: a fix in `@motors/ui` does not
+ * reach this kit.
+ *
+ * The class names still use MotorsAL's token names (`bg-card`,
+ * `rounded-[var(--radius-control)]`); step 10 maps them to the product's own
+ * variables. Every `data-slot` is kept: the side panels' dense layout targets
+ * them (`chrome/panel-css.ts`).
+ */
+
+export { Badge, type BadgeProps, type BadgeTone } from './badge';
+export { Button, buttonVariants, ICON_MOTION, type ButtonProps } from './button';
+export {
+  controlClass,
+  Input,
+  Textarea,
+  TEXTAREA_MIN_ROWS,
+  type InputProps,
+  type TextareaProps,
+} from './input';
+export { Label } from './label';
+export { useMediaQuery } from './media';
+export { Progress, Skeleton, Spinner, type ProgressProps, type SpinnerProps } from './misc';
+export { ToggleFlag, type ToggleFlagProps } from './toggle-flag';
+export {
+  SegmentedControl,
+  Switch,
+  type SegmentedControlProps,
+  type SegmentedOption,
+} from './toggles';

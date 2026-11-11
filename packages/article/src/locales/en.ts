@@ -90,8 +90,6 @@ export const en: ArticleLocale = {
     noindex: 'Hide from search engines',
     noindexHint: 'Adds noindex — the page stays reachable by its link.',
     focusKeyword: 'Focus keyword',
-    featured: 'Featured',
-    featuredHint: 'Shown first on the blog.',
     readingMinutes: 'Reading time (minutes)',
     readingMinutesHint: 'Leave empty to work it out from the text.',
   },

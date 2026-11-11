@@ -19,8 +19,6 @@ export interface ArticleWords {
   noindex: string;
   noindexHint: string;
   focusKeyword: string;
-  featured: string;
-  featuredHint: string;
   readingMinutes: string;
   readingMinutesHint: string;
 }

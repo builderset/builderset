@@ -25,9 +25,6 @@ function host(overrides: Partial<BuilderHost<ArticleDocument>> = {}): BuilderHos
 const facts: ArticleFacts = {
   slug: 'test',
   status: 'draft',
-  category: 'News',
-  categories: ['News'],
-  featured: false,
   scheduledAt: null,
   publishedAt: null,
   locale: 'en',
@@ -47,6 +44,36 @@ function mount(adapter = host(), document = createArticleDocument({ title: 'An a
 }
 
 describe('<ArticleEditor>', () => {
+  it("puts a project's own fields where it asks, and its address in the slug and the preview", async () => {
+    const user = userEvent.setup();
+    render(
+      <ArticleEditor
+        document={createArticleDocument({ title: 'An article' })}
+        registry={registry}
+        host={host()}
+        record={facts}
+        onRecordChange={() => undefined}
+        onBack={() => undefined}
+        siteUrl="https://example.com/blog"
+        settingsSections={[
+          { id: 'mine', tab: 'general', before: 'cover', render: () => <p>My own field</p> },
+          { id: 'last', tab: 'seo', render: () => <p>Last of SEO</p> },
+        ]}
+      />,
+    );
+    const mine = screen.getByText('My own field');
+    const cover = screen.getAllByText('Cover image')[0];
+    expect(cover).toBeDefined();
+    // eslint-disable-next-line no-bitwise
+    expect(
+      mine.compareDocumentPosition(cover as Node) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.getByText('/blog/test')).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'SEO' }));
+    expect(screen.getByText('example.com › blog › test')).toBeInTheDocument();
+    expect(screen.getByText('Last of SEO')).toBeInTheDocument();
+  });
+
   it('opens on an empty article with its title and the element library', () => {
     mount();
     expect(screen.getByLabelText('Title', { selector: 'textarea' })).toHaveValue('An article');

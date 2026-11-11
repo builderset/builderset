@@ -136,7 +136,6 @@ export const sq: EditorMessages = {
     ['?', 'Kjo listë'],
   ],
   title: 'Titulli',
-  category: 'Kategoria',
   cover: 'Imazhi kryesor',
   publishAt: 'Publiko më',
   scheduleHint: 'Publikohet vetë në këtë kohë.',

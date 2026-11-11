@@ -64,12 +64,24 @@ export interface RenderOptions {
 }
 
 /**
- * Where the social icons live: `<site>/email/social/<network>-<style>.png`,
- * 96px PNGs shipped in the web app's `public/` (Gmail and Outlook show no SVG).
+ * The social icons in a folder at a public address:
+ * `<folder>/<network>-<style>.png`. The files are this package's
+ * `icons/social/` — 96px PNGs, since Gmail and Outlook show no SVG. Copy the
+ * folder anywhere public and pass its address; or, at the cost of a third
+ * party's server in every email,
+ * `https://cdn.jsdelivr.net/npm/<this package>@<version>/icons/social`.
+ */
+export function socialIconsAt(folder: string): (network: string, style: string) => string {
+  const root = folder.replace(/\/+$/, '');
+  return (network, style) => `${root}/${network}-${style}.png`;
+}
+
+/**
+ * The icons served by a site under `/email/social/`: `socialIconsAt` with the
+ * site's address. What `socialIconBase` means in the email editor.
  */
 export function socialIconUrl(base: string): (network: string, style: string) => string {
-  const root = base.replace(/\/+$/, '');
-  return (network, style) => `${root}/email/social/${network}-${style}.png`;
+  return socialIconsAt(`${base.replace(/\/+$/, '')}/email/social`);
 }
 
 export interface RenderContext {

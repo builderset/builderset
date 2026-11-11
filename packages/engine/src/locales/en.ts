@@ -135,7 +135,6 @@ export const en: EditorMessages = {
     ['?', 'This list'],
   ],
   title: 'Title',
-  category: 'Category',
   cover: 'Cover image',
   publishAt: 'Publish at',
   scheduleHint: 'It goes live on its own at this time.',

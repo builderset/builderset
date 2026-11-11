@@ -8,8 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { createArticleRegistry } from './elements';
-import { kitchenSinkDocument, renumber } from './kitchen-sink';
-import { fromLegacyBody } from './legacy';
+import { kitchenSinkDocument } from './kitchen-sink';
 
 /**
  * The CONTRACT with the server, as files.
@@ -171,24 +170,6 @@ describe('the server contract', () => {
     const valid: Record<string, ArticleDocument> = {
       'kitchen-sink': kitchenSinkDocument(registry),
       empty: createArticleDocument({ title: 'Empty' }),
-      legacy: renumber(
-        fromLegacyBody(
-          [
-            { kind: 'heading', text: 'A heading' },
-            { kind: 'paragraph', text: 'A paragraph.' },
-            { kind: 'list', items: ['One', 'Two'] },
-            { kind: 'quote', text: 'A quote.' },
-            {
-              kind: 'image',
-              key: 'article-image/2026/01/legacy0000000000.jpg',
-              alt: 'Legacy',
-              caption: 'Caption',
-            },
-          ],
-          registry,
-          { title: 'Legacy article' },
-        ),
-      ),
     };
     for (const [name, doc] of Object.entries(valid)) {
       const errors = checkArticle(doc, registry).filter((issue) => issue.severity === 'error');

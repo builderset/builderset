@@ -91,8 +91,6 @@ export const sq: ArticleLocale = {
     noindex: 'Fshihe nga motorët e kërkimit',
     noindexHint: 'Shton noindex — faqja mbetet e arritshme me lidhjen e saj.',
     focusKeyword: 'Fjala kyçe',
-    featured: 'I veçuar',
-    featuredHint: 'Shfaqet i pari në blog.',
     readingMinutes: 'Koha e leximit (minuta)',
     readingMinutesHint: 'Lëreni bosh që të llogaritet nga teksti.',
   },

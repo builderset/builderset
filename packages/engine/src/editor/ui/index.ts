@@ -1,13 +1,13 @@
 /**
  * @motors/engine/ui — the editor's own UI kit.
  *
- * Copied from MotorsAL's `@motors/ui` on 2026-11-11 (Builderset plan, step 04)
+ * Copied from the first host app's UI kit on 2026-11-11 (Builderset plan, step 04)
  * with only their imports changed, so the editors look and behave as before
- * without depending on the admin's design system. From here on the two are
- * separate code and drift apart on purpose: a fix in `@motors/ui` does not
+ * without depending on that app's design system. From here on the two are
+ * separate code and drift apart on purpose: a fix in the app's kit does not
  * reach this kit.
  *
- * The class names still use MotorsAL's token names (`bg-card`,
+ * The class names still use the shadcn-style token names (`bg-card`,
  * `rounded-[var(--radius-control)]`); step 10 maps them to the product's own
  * variables. Every `data-slot` is kept: the side panels' dense layout targets
  * them (`chrome/panel-css.ts`).

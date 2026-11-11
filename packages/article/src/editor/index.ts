@@ -13,5 +13,12 @@ export {
   type ArticleWords,
 } from './words';
 export { ARTICLE_TEMPLATES } from './templates';
-export { DocumentSettings } from './document-settings';
+export { DocumentSettings, SettingsFieldRow } from './document-settings';
 export { TitleField } from './title-field';
+export {
+  SETTINGS_FIELDS,
+  type ArticleSettingsOptions,
+  type SettingsField,
+  type SettingsSection,
+  type SettingsTab,
+} from './settings';

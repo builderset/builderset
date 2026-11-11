@@ -13,7 +13,7 @@ import {
   TabsTrigger,
 } from '@motors/engine/ui';
 import { Check, X } from 'lucide-react';
-import { useId, useState, type ReactNode } from 'react';
+import { Fragment, useId, useState, type ReactNode } from 'react';
 
 import {
   MediaField,
@@ -25,6 +25,13 @@ import {
 import type { SeoMeta } from '../core';
 import { cn } from '../render/cn';
 import { useArticle, useArticleFacts } from './hooks';
+import {
+  breadcrumbOf,
+  pathOf,
+  useArticleSettings,
+  type SettingsField,
+  type SettingsTab,
+} from './settings';
 import { useArticleWords } from './words';
 
 /** Recommended lengths — Google truncates around these. */
@@ -52,7 +59,8 @@ function Meter({ length, min, max }: { length: number; min: number; max: number 
   );
 }
 
-function FieldRow({
+/** A labelled field as Document settings draws them — for a host's own sections too. */
+export function SettingsFieldRow({
   label,
   hint,
   children,
@@ -71,6 +79,18 @@ function FieldRow({
       {hint ? <div className="text-muted-foreground text-xs">{hint}</div> : null}
     </div>
   );
+}
+
+/**
+ * The host's sections for one tab: `at('cover')` those shown above the cover
+ * field, `at()` those at the end.
+ */
+function useSections(tab: SettingsTab) {
+  const { settingsSections } = useArticleSettings();
+  return (before?: SettingsField): ReactNode =>
+    settingsSections
+      ?.filter((section) => section.tab === tab && section.before === before)
+      .map((section) => <Fragment key={section.id}>{section.render()}</Fragment>);
 }
 
 export function DocumentSettings() {
@@ -114,15 +134,18 @@ export function DocumentSettings() {
 function General() {
   const { store, messages } = useEditorContext();
   const words = useArticleWords();
-  const [article, setArticle] = useArticleFacts();
+  const [article] = useArticleFacts();
+  const { siteUrl } = useArticleSettings();
+  const at = useSections('general');
   const meta = useArticle((state) => state.view.meta);
   const excerpt = meta.excerpt ?? '';
-  const listId = useId();
 
   return (
     <>
+      {at('languages')}
       <MultilingualToggle />
-      <FieldRow label={messages.title}>
+      {at('title')}
+      <SettingsFieldRow label={messages.title}>
         {(id) => (
           <Input
             id={id}
@@ -135,18 +158,23 @@ function General() {
             }}
           />
         )}
-      </FieldRow>
-      <FieldRow label={words.slug} hint={words.slugFrozen}>
+      </SettingsFieldRow>
+      {at('slug')}
+      <SettingsFieldRow label={words.slug} hint={words.slugFrozen}>
         {(id) => (
           <div
             id={id}
             className="border-border bg-muted/40 text-muted-foreground truncate rounded-[var(--radius-control)] border px-3 py-2 font-mono text-xs"
           >
-            /blog/{article.slug}
+            {pathOf(siteUrl)}/{article.slug}
           </div>
         )}
-      </FieldRow>
-      <FieldRow label={words.excerpt} hint={<Meter length={excerpt.length} min={60} max={300} />}>
+      </SettingsFieldRow>
+      {at('excerpt')}
+      <SettingsFieldRow
+        label={words.excerpt}
+        hint={<Meter length={excerpt.length} min={60} max={300} />}
+      >
         {(id) => (
           <Textarea
             id={id}
@@ -160,28 +188,9 @@ function General() {
             }}
           />
         )}
-      </FieldRow>
-      <FieldRow label={messages.category}>
-        {(id) => (
-          <>
-            <Input
-              id={id}
-              list={listId}
-              value={article.category}
-              maxLength={80}
-              onChange={(event) => {
-                setArticle({ category: event.target.value });
-              }}
-            />
-            <datalist id={listId}>
-              {article.categories.map((category) => (
-                <option key={category} value={category} />
-              ))}
-            </datalist>
-          </>
-        )}
-      </FieldRow>
-      <FieldRow label={messages.cover}>
+      </SettingsFieldRow>
+      {at('cover')}
+      <SettingsFieldRow label={messages.cover}>
         {(id) => (
           <MediaField
             id={id}
@@ -197,9 +206,10 @@ function General() {
             }}
           />
         )}
-      </FieldRow>
+      </SettingsFieldRow>
+      {meta.cover ? at('coverAlt') : null}
       {meta.cover ? (
-        <FieldRow label={words.coverAlt}>
+        <SettingsFieldRow label={words.coverAlt}>
           {(id) => (
             <Input
               id={id}
@@ -218,8 +228,9 @@ function General() {
               }}
             />
           )}
-        </FieldRow>
+        </SettingsFieldRow>
       ) : null}
+      {at()}
     </>
   );
 }
@@ -241,6 +252,8 @@ function Seo() {
   const { store, messages, registry } = useEditorContext();
   const words = useArticleWords();
   const [article] = useArticleFacts();
+  const { siteUrl } = useArticleSettings();
+  const at = useSections('seo');
   const doc = useArticle((state) => state.view);
   const seo: SeoMeta = doc.meta.seo ?? {};
   const setSeo = (patch: Partial<SeoMeta>, label: string, key: string) => {
@@ -264,17 +277,19 @@ function Seo() {
 
   return (
     <>
+      {at('preview')}
       {/* The result as a search engine would list it. */}
       <div className="border-border bg-card space-y-0.5 rounded-[var(--radius-control)] border p-3">
         <p className="text-muted-foreground truncate text-xs">
-          marrimauto.com › blog › {article.slug}
+          {[...breadcrumbOf(siteUrl), article.slug].join(' › ')}
         </p>
         <p className="line-clamp-1 text-[15px] font-medium text-[#1a0dab] dark:text-[#8ab4f8]">
           {title || messages.untitled}
         </p>
         <p className="text-muted-foreground line-clamp-2 text-xs">{description}</p>
       </div>
-      <FieldRow
+      {at('seoTitle')}
+      <SettingsFieldRow
         label={words.seoTitle}
         hint={<Meter length={title.length} min={SEO_TITLE.min} max={SEO_TITLE.max} />}
       >
@@ -289,8 +304,9 @@ function Seo() {
             }}
           />
         )}
-      </FieldRow>
-      <FieldRow
+      </SettingsFieldRow>
+      {at('seoDescription')}
+      <SettingsFieldRow
         label={words.seoDescription}
         hint={
           <Meter length={description.length} min={SEO_DESCRIPTION.min} max={SEO_DESCRIPTION.max} />
@@ -308,8 +324,9 @@ function Seo() {
             }}
           />
         )}
-      </FieldRow>
-      <FieldRow label={words.focusKeyword}>
+      </SettingsFieldRow>
+      {at('focusKeyword')}
+      <SettingsFieldRow label={words.focusKeyword}>
         {(id) => (
           <Input
             id={id}
@@ -320,7 +337,7 @@ function Seo() {
             }}
           />
         )}
-      </FieldRow>
+      </SettingsFieldRow>
       {keyword ? (
         <ul className="space-y-1">
           <Check2 ok={title.toLowerCase().includes(keyword)}>{words.seoTitle}</Check2>
@@ -333,7 +350,8 @@ function Seo() {
           </Check2>
         </ul>
       ) : null}
-      <FieldRow label={words.canonical}>
+      {at('canonical')}
+      <SettingsFieldRow label={words.canonical}>
         {(id) => (
           <Input
             id={id}
@@ -345,8 +363,9 @@ function Seo() {
             }}
           />
         )}
-      </FieldRow>
-      <FieldRow label={messages.cover}>
+      </SettingsFieldRow>
+      {at('socialImage')}
+      <SettingsFieldRow label={messages.cover}>
         {(id) => (
           <MediaField
             id={id}
@@ -357,7 +376,8 @@ function Seo() {
             }}
           />
         )}
-      </FieldRow>
+      </SettingsFieldRow>
+      {at('noindex')}
       <ToggleFlag
         title={words.noindex}
         description={words.noindexHint}
@@ -366,6 +386,7 @@ function Seo() {
           setSeo({ noindex: checked }, 'Noindex', 'noindex');
         }}
       />
+      {at()}
     </>
   );
 }
@@ -374,19 +395,13 @@ function Publishing() {
   const { store, messages } = useEditorContext();
   const words = useArticleWords();
   const [article, setArticle] = useArticleFacts();
+  const at = useSections('publishing');
   const readingMinutes = useArticle((state) => state.doc.meta.readingMinutes);
 
   return (
     <>
-      <ToggleFlag
-        title={words.featured}
-        description={words.featuredHint}
-        checked={article.featured}
-        onCheckedChange={(checked) => {
-          setArticle({ featured: checked });
-        }}
-      />
-      <FieldRow label={words.readingMinutes} hint={words.readingMinutesHint}>
+      {at('readingMinutes')}
+      <SettingsFieldRow label={words.readingMinutes} hint={words.readingMinutesHint}>
         {(id) => (
           <NumberStepper
             id={id}
@@ -405,9 +420,10 @@ function Publishing() {
             }}
           />
         )}
-      </FieldRow>
+      </SettingsFieldRow>
+      {article.status !== 'published' ? at('publishAt') : null}
       {article.status !== 'published' ? (
-        <FieldRow label={messages.publishAt} hint={messages.scheduleHint}>
+        <SettingsFieldRow label={messages.publishAt} hint={messages.scheduleHint}>
           {(id) => (
             <DateTimeField
               id={id}
@@ -418,8 +434,9 @@ function Publishing() {
               }}
             />
           )}
-        </FieldRow>
+        </SettingsFieldRow>
       ) : null}
+      {at()}
     </>
   );
 }

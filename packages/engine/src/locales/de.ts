@@ -98,7 +98,6 @@ export const de: EditorMessages = {
   publishBlocked: 'Vor dem Veröffentlichen beheben:',
   shortcuts: 'Tastenkürzel',
   title: 'Titel',
-  category: 'Kategorie',
   cover: 'Titelbild',
   publishAt: 'Veröffentlichen am',
   cancel: 'Abbrechen',

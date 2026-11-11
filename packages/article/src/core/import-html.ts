@@ -1,4 +1,5 @@
 import {
+  domParser,
   type BuilderNode,
   type Fragment,
   type NodeId,
@@ -353,8 +354,16 @@ export function fragmentFromBlocks(blocks: readonly Block[], registry: ElementRe
   return { roots, nodes };
 }
 
-export function importHTML(html: string, registry: ElementRegistry): Fragment {
-  const parsed = new DOMParser().parseFromString(html, 'text/html');
+/**
+ * Pasted or uploaded HTML as article blocks. In a browser it parses with the
+ * page's `DOMParser`; on a server, pass one (`options.parser`).
+ */
+export function importHTML(
+  html: string,
+  registry: ElementRegistry,
+  options: { parser?: DOMParser | undefined } = {},
+): Fragment {
+  const parsed = domParser(options.parser, 'importHTML').parseFromString(html, 'text/html');
   return fragmentFromBlocks(blocksOf(parsed.body), registry);
 }
 

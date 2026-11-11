@@ -6,6 +6,7 @@
   "sideEffects": false,
   "exports": {
     ".": "./src/core/index.ts",
+    "./host": "./src/host/index.ts",
     "./editor": "./src/editor/index.ts",
     "./ui": "./src/editor/ui/index.ts",
     "./locales/*": "./src/locales/*.ts"

@@ -1,5 +1,6 @@
 import { checkArticle } from './check';
 import { createArticleDocument, type ArticleDocument } from './document';
+import { ARTICLE_DRAFT_TOLERATES, isDraftBlocking, isPublishBlocking } from './draft';
 import { toArticleJSONSchema } from './schema';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -13,9 +14,11 @@ import { kitchenSinkDocument } from './kitchen-sink';
 /**
  * The CONTRACT with the server, as files.
  *
- * `schema/document.schema.json` and `fixtures/` are committed. The API's
- * contract test reads the same files: every valid fixture must be accepted,
- * and every invalid one refused with the code the manifest names. This test
+ * `schema/article.schema.json` and `fixtures/` are committed, and this
+ * package's alone: a backend copies them (MotorsAL's API by `scripts/sync-builder-contract.mjs`).
+ * Its contract test reads them: every valid fixture must be accepted, every
+ * invalid one refused with the code the manifest names, and a draft lenient
+ * on exactly the codes in `draft.json`. This test
  * keeps the files honest — it regenerates them in memory and fails when the
  * committed copy differs. Run with `UPDATE_FIXTURES=1` to rewrite them after
  * an intentional change, and commit the result alongside the change.
@@ -45,14 +48,8 @@ function expectFile(relative: string, content: string) {
   expect(committed, `${relative} is stale — run with UPDATE_FIXTURES=1`).toBe(content);
 }
 
-/**
- * A fixture, committed here AND mirrored under the API's tests — its containers
- * mount only `api/`, so the contract test there reads its own copy, kept
- * identical by this test.
- */
 function expectFixture(relative: string, content: string) {
   expectFile(`fixtures/${relative}`, content);
-  expectFile(`../../api/tests/fixtures/builder/${relative}`, content);
 }
 
 /** A small valid document to break in one specific way per invalid fixture. */
@@ -160,10 +157,17 @@ const INVALID: Record<string, { code: string; build: () => ArticleDocument }> = 
 describe('the server contract', () => {
   it('commits the JSON Schema of the standard document', () => {
     const schema = stable(toArticleJSONSchema(registry));
-    expectFile('schema/document.schema.json', schema);
-    // The API's copy: its containers mount only `api/`, so it cannot read this
-    // package at runtime. Kept identical here, where both are in reach.
-    expectFile('../../api/app/domains/content/builder_schema.json', schema);
+    expectFile('schema/article.schema.json', schema);
+  });
+
+  it('commits the codes a draft may still carry', () => {
+    // An unfinished article saves; an unsafe one never does.
+    const missingTitle = checkArticle(INVALID['missing-title']?.build() ?? base(), registry);
+    expect(missingTitle.some(isDraftBlocking)).toBe(false);
+    expect(missingTitle.some(isPublishBlocking)).toBe(true);
+    const unsafe = checkArticle(INVALID['unsafe-link']?.build() ?? base(), registry);
+    expect(unsafe.some(isDraftBlocking)).toBe(true);
+    expectFixture('draft.json', stable({ tolerates: ARTICLE_DRAFT_TOLERATES }));
   });
 
   it('commits valid fixtures the checker accepts', () => {

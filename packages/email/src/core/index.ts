@@ -9,6 +9,7 @@
 
 export * from './blocks';
 export * from './document';
+export * from './draft';
 export * from './fields';
 export * from './fonts';
 export * from './import-html';

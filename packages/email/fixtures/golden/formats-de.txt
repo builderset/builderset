@@ -1,0 +1,22 @@
+date: 02.10.2026
+date_long: Freitag, 2. Oktober 2026
+time: 21:35
+datetime: 02.10.2026, 21:35
+morning: 15.01.2026, 08:05
+day only: Dienstag, 15. September 2026
+money: 12.501 €
+money negative: -950 €
+money small: 0 €
+number: 1.234.567,891
+number 4: 1.234,5
+number half: 1,001
+number string: 42,5
+upper: ÉLAN VITAL
+lower: élan vital
+capitalize: Élan vital
+bool: true
+float: 0.30000000000000004
+length: 3
+bad date: élan vital
+
+Freitag, 2. Oktober 2026

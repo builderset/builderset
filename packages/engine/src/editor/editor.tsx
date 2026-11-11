@@ -38,7 +38,7 @@ import {
   type EditorContextValue,
   type RecordFacts,
 } from './context';
-import type { BuilderHost } from './host';
+import type { BuilderHost } from '../host';
 import type { EditorProfile } from './profile';
 import { Inspector } from './inspector/inspector';
 import { en } from '../locales/en';

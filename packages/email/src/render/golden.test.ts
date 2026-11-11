@@ -27,9 +27,10 @@ import { renderEmail } from './html';
  * Neutral documents only — every block, every row layout, every edge — so
  * they are the whole contract between the two renderers.
  *
- * Each case is written under `api/tests/fixtures/email/golden/kit/` as its input
- * (`<name>.json`) and its output (`<name>.html`, `<name>.txt`); the font stacks
- * and row layouts the Python side needs are written beside its renderer. Run
+ * Each case is written to this package's `fixtures/golden/` as its input
+ * (`<name>.json`) and its output (`<name>.html`, `<name>.txt`), and the font
+ * stacks and row layouts the Python side needs to `fixtures/render_data.json`.
+ * MotorsAL's API gets copies (`scripts/sync-builder-contract.mjs`). Run
  * with `UPDATE_FIXTURES=1` after changing the renderer, and commit the files —
  * a stale fixture fails here first, and the Python test then says exactly where
  * the port diverged.
@@ -487,7 +488,7 @@ describe('golden fixtures for the Python port', () => {
       ]),
     );
     expectFile(
-      '../../api/app/domains/email_builder/render/render_data.json',
+      'fixtures/render_data.json',
       `${JSON.stringify({ fonts, rowLayouts: ROW_LAYOUTS }, null, 2)}\n`,
     );
   });
@@ -512,7 +513,7 @@ describe('golden fixtures for the Python port', () => {
         iconBase: ICON_BASE,
         expected: { subject: rendered.subject, preheader: rendered.preheader },
       };
-      const base = `../../api/tests/fixtures/email/golden/kit/${golden.name}`;
+      const base = `fixtures/golden/${golden.name}`;
       expectFile(`${base}.json`, `${JSON.stringify(input, null, 2)}\n`);
       expectFile(`${base}.html`, rendered.html);
       expectFile(`${base}.txt`, rendered.text);

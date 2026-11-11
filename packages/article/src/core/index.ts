@@ -10,6 +10,7 @@
 export * from './categories';
 export * from './check';
 export * from './document';
+export * from './draft';
 export * from './elements';
 export * from './embeds';
 export * from './import-html';

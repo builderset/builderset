@@ -1,0 +1,10 @@
+{
+  "tolerates": [
+    "media.external",
+    "meta.titleMissing",
+    "embed.notAllowed",
+    "embed.providerMismatch",
+    "footnote.missing",
+    "i18n.locale.unknown"
+  ]
+}

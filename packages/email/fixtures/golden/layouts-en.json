@@ -1,0 +1,771 @@
+{
+  "document": {
+    "schema": "email/document",
+    "version": 1,
+    "root": "root",
+    "nodes": {
+      "root": {
+        "id": "root",
+        "type": "root",
+        "v": 1,
+        "props": {},
+        "children": [
+          "n18",
+          "n24"
+        ]
+      },
+      "n1": {
+        "id": "n1",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Quarter"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n2": {
+        "id": "n2",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n1"
+        ]
+      },
+      "n3": {
+        "id": "n3",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Three quarters"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n4": {
+        "id": "n4",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n3"
+        ]
+      },
+      "n5": {
+        "id": "n5",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "25-75",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n2",
+          "n4"
+        ]
+      },
+      "n6": {
+        "id": "n6",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Three quarters"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n7": {
+        "id": "n7",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n6"
+        ]
+      },
+      "n8": {
+        "id": "n8",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Quarter"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n9": {
+        "id": "n9",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n8"
+        ]
+      },
+      "n10": {
+        "id": "n10",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "75-25",
+          "gap": 0,
+          "stackOnMobile": false,
+          "reverseOnMobile": false,
+          "verticalAlign": "bottom",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n7",
+          "n9"
+        ]
+      },
+      "n11": {
+        "id": "n11",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "One"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n12": {
+        "id": "n12",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": "#f4f4f5",
+          "padding": {
+            "top": 8,
+            "right": 8,
+            "bottom": 8,
+            "left": 8
+          },
+          "radius": 4,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n11"
+        ]
+      },
+      "n13": {
+        "id": "n13",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Two"
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n14": {
+        "id": "n14",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 8,
+            "right": 12,
+            "bottom": 8,
+            "left": 12
+          },
+          "radius": 0,
+          "borderWidth": 1,
+          "borderColor": "#d4d4d8"
+        },
+        "children": [
+          "n13"
+        ]
+      },
+      "n15": {
+        "id": "n15",
+        "type": "button",
+        "v": 1,
+        "props": {
+          "font": null,
+          "weight": "600",
+          "letterSpacing": 0,
+          "transform": "none",
+          "label": "Open",
+          "href": "https://example.com/open",
+          "align": "left",
+          "background": "brand.primary",
+          "textColor": "#ffffff",
+          "borderColor": null,
+          "borderWidth": 0,
+          "radius": 8,
+          "paddingX": 24,
+          "paddingY": 12,
+          "size": 16,
+          "fullWidthMobile": true,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        }
+      },
+      "n16": {
+        "id": "n16",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n15"
+        ]
+      },
+      "n17": {
+        "id": "n17",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "33-33-33",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": "#fafafa",
+          "padding": {
+            "top": 12,
+            "right": 0,
+            "bottom": 12,
+            "left": 0
+          }
+        },
+        "children": [
+          "n12",
+          "n14",
+          "n16"
+        ]
+      },
+      "n18": {
+        "id": "n18",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": null,
+          "background": "#ffffff",
+          "backgroundImage": null,
+          "fullWidth": false,
+          "padding": {
+            "top": 16,
+            "right": 16,
+            "bottom": 16,
+            "left": 16
+          },
+          "radius": 0
+        },
+        "children": [
+          "n5",
+          "n10",
+          "n17"
+        ]
+      },
+      "n19": {
+        "id": "n19",
+        "type": "text",
+        "v": 1,
+        "props": {
+          "font": "sora",
+          "weight": "400",
+          "letterSpacing": 0,
+          "transform": "none",
+          "text": [
+            {
+              "text": "Display type, "
+            },
+            {
+              "text": "{{recipient.nickname}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "recipient.nickname",
+                  "fallback": "friend"
+                }
+              ]
+            }
+          ],
+          "align": "left",
+          "color": null,
+          "size": 16,
+          "lineHeight": null,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n20": {
+        "id": "n20",
+        "type": "menu",
+        "v": 1,
+        "props": {
+          "font": null,
+          "items": [
+            {
+              "label": "Home",
+              "href": "https://example.com"
+            },
+            {
+              "label": "Help",
+              "href": "https://example.com/help"
+            }
+          ],
+          "align": "center",
+          "color": null,
+          "size": 14,
+          "separator": "dot",
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 8,
+            "right": 0,
+            "bottom": 8,
+            "left": 0
+          }
+        }
+      },
+      "n21": {
+        "id": "n21",
+        "type": "footer",
+        "v": 1,
+        "props": {
+          "font": null,
+          "text": [
+            {
+              "text": "You are receiving this email from "
+            },
+            {
+              "text": "{{brand.name}}",
+              "marks": [
+                {
+                  "type": "variable",
+                  "path": "brand.name"
+                }
+              ]
+            },
+            {
+              "text": "."
+            }
+          ],
+          "showAddress": false,
+          "showUnsubscribe": false,
+          "showPreferences": false,
+          "showViewInBrowser": false,
+          "align": "center",
+          "color": "brand.muted",
+          "size": 12,
+          "display": {
+            "hideOn": "none",
+            "when": []
+          },
+          "padding": {
+            "top": 16,
+            "right": 0,
+            "bottom": 16,
+            "left": 0
+          }
+        }
+      },
+      "n22": {
+        "id": "n22",
+        "type": "column",
+        "v": 1,
+        "props": {
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "radius": 0,
+          "borderWidth": 0,
+          "borderColor": "brand.border"
+        },
+        "children": [
+          "n19",
+          "n20",
+          "n21"
+        ]
+      },
+      "n23": {
+        "id": "n23",
+        "type": "row",
+        "v": 1,
+        "props": {
+          "layout": "100",
+          "gap": 16,
+          "stackOnMobile": true,
+          "reverseOnMobile": false,
+          "verticalAlign": "top",
+          "background": null,
+          "padding": {
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "children": [
+          "n22"
+        ]
+      },
+      "n24": {
+        "id": "n24",
+        "type": "section",
+        "v": 1,
+        "props": {
+          "backdrop": null,
+          "background": null,
+          "backgroundImage": null,
+          "fullWidth": false,
+          "padding": {
+            "top": 24,
+            "right": 24,
+            "bottom": 24,
+            "left": 24
+          },
+          "radius": 0
+        },
+        "children": [
+          "n23"
+        ]
+      }
+    },
+    "meta": {
+      "name": "Layouts",
+      "subject": "Layouts for {{ recipient.name }}",
+      "preheader": "Every row"
+    },
+    "settings": {
+      "width": 600,
+      "backdrop": "#f4f4f5",
+      "background": "#ffffff",
+      "font": "system",
+      "fontSize": 16,
+      "lineHeight": 1.6,
+      "textColor": "brand.text",
+      "headingColor": "brand.text",
+      "linkColor": "brand.primary",
+      "darkMode": "auto",
+      "dark": {
+        "backdrop": "#0b0b0c",
+        "background": "#18181b",
+        "text": "#e4e4e7",
+        "heading": "#fafafa",
+        "link": "#93c5fd"
+      },
+      "utm": {
+        "enabled": false,
+        "source": "email",
+        "medium": "email",
+        "campaign": ""
+      }
+    },
+    "i18n": {
+      "enabled": true,
+      "base": "en",
+      "translations": {
+        "de": {
+          "meta": {
+            "subject": "Layouts für {{ recipient.name }}",
+            "preheader": "Jede Reihe"
+          },
+          "nodes": {
+            "n1": {
+              "text": [
+                {
+                  "text": "Quarter (de)"
+                }
+              ]
+            },
+            "n3": {
+              "text": [
+                {
+                  "text": "Three quarters (de)"
+                }
+              ]
+            },
+            "n6": {
+              "text": [
+                {
+                  "text": "Three quarters (de)"
+                }
+              ]
+            },
+            "n8": {
+              "text": [
+                {
+                  "text": "Quarter (de)"
+                }
+              ]
+            },
+            "n11": {
+              "text": [
+                {
+                  "text": "One (de)"
+                }
+              ]
+            },
+            "n13": {
+              "text": [
+                {
+                  "text": "Two (de)"
+                }
+              ]
+            },
+            "n15": {
+              "label": "Öffnen"
+            },
+            "n20": {
+              "items.0.label": "Start",
+              "items.1.label": "Hilfe"
+            }
+          }
+        }
+      }
+    }
+  },
+  "data": {
+    "now": "2026-10-02T19:35:00.000Z",
+    "current_year": 2026,
+    "recipient": {
+      "name": "Arta"
+    }
+  },
+  "locale": "en",
+  "brand": {
+    "name": "Your company",
+    "website": "https://example.com",
+    "address": "Street 1, City",
+    "logo": null,
+    "logoDark": null,
+    "colors": {
+      "primary": "#111827",
+      "secondary": "#374151",
+      "accent": "#2563eb",
+      "text": "#1f2937",
+      "muted": "#6b7280",
+      "background": "#f4f4f5",
+      "surface": "#ffffff",
+      "border": "#e5e7eb"
+    },
+    "font": "system",
+    "social": []
+  },
+  "currency": "EUR",
+  "assetBase": "https://cdn.test/",
+  "iconBase": "https://site.test/",
+  "expected": {
+    "subject": "Layouts for Arta",
+    "preheader": "Every row"
+  }
+}

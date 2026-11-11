@@ -5,7 +5,7 @@ import { Clock, RotateCcw, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useEditorContext } from '../context';
-import type { RevisionSummary } from '../host';
+import type { RevisionSummary } from '../../host';
 import { SideDrawer } from './side-drawer';
 
 /**

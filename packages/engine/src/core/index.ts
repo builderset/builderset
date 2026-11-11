@@ -10,6 +10,7 @@
 
 export * from './clipboard';
 export * from './document';
+export * from './dom-parser';
 export * from './editable';
 export * from './history';
 export * from './i18n';

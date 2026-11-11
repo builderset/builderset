@@ -4,8 +4,10 @@ import type { EngineDocument, Fragment, MediaKind } from '../core';
  * Everything the editor needs from the application it runs in.
  *
  * The editor knows nothing about URLs, tokens, buckets or the API: it asks the
- * host. That is the line that keeps the package usable by any back office — the
- * admin's adapter turns each of these into its own server actions.
+ * host. That is the line that keeps the package usable by any back office: a
+ * project writes an adapter that turns each method into a call to its own API,
+ * or starts from `createRestHost` (an API of the shape in `BACKEND.md`) or
+ * `createMemoryHost` (tests, demos).
  */
 
 export interface UploadResult {

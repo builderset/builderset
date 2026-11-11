@@ -1,0 +1,22 @@
+date: 2 tet 2026
+date_long: e premte, 2 tetor 2026
+time: 9:35 m.d.
+datetime: 2 tet 2026, 9:35 m.d.
+morning: 15 jan 2026, 8:05 p.d.
+day only: e martë, 15 shtator 2026
+money: 12 501 €
+money negative: -950 €
+money small: 0 €
+number: 1 234 567,891
+number 4: 1234,5
+number half: 1,001
+number string: 42,5
+upper: ÉLAN VITAL
+lower: élan vital
+capitalize: Élan vital
+bool: true
+float: 0.30000000000000004
+length: 3
+bad date: élan vital
+
+e premte, 2 tetor 2026

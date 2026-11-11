@@ -1,0 +1,244 @@
+{
+  "fonts": {
+    "system": {
+      "stack": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+      "google": null
+    },
+    "helvetica": {
+      "stack": "Helvetica, Arial, sans-serif",
+      "google": null
+    },
+    "verdana": {
+      "stack": "Verdana, Geneva, sans-serif",
+      "google": null
+    },
+    "tahoma": {
+      "stack": "Tahoma, Verdana, Segoe, sans-serif",
+      "google": null
+    },
+    "trebuchet": {
+      "stack": "'Trebuchet MS', Helvetica, sans-serif",
+      "google": null
+    },
+    "georgia": {
+      "stack": "Georgia, 'Times New Roman', Times, serif",
+      "google": null
+    },
+    "times": {
+      "stack": "'Times New Roman', Times, serif",
+      "google": null
+    },
+    "courier": {
+      "stack": "'Courier New', Courier, monospace",
+      "google": null
+    },
+    "inter": {
+      "stack": "'Inter', Helvetica, Arial, sans-serif",
+      "google": "Inter:wght@400;500;600;700"
+    },
+    "poppins": {
+      "stack": "'Poppins', Helvetica, Arial, sans-serif",
+      "google": "Poppins:wght@400;500;600;700"
+    },
+    "montserrat": {
+      "stack": "'Montserrat', Helvetica, Arial, sans-serif",
+      "google": "Montserrat:wght@400;500;600;700"
+    },
+    "roboto": {
+      "stack": "'Roboto', Helvetica, Arial, sans-serif",
+      "google": "Roboto:wght@400;500;700"
+    },
+    "open-sans": {
+      "stack": "'Open Sans', Helvetica, Arial, sans-serif",
+      "google": "Open+Sans:wght@400;500;600;700"
+    },
+    "lato": {
+      "stack": "'Lato', Helvetica, Arial, sans-serif",
+      "google": "Lato:wght@400;700"
+    },
+    "raleway": {
+      "stack": "'Raleway', Helvetica, Arial, sans-serif",
+      "google": "Raleway:wght@400;500;600;700"
+    },
+    "nunito": {
+      "stack": "'Nunito', Helvetica, Arial, sans-serif",
+      "google": "Nunito:wght@400;500;600;700"
+    },
+    "dm-sans": {
+      "stack": "'DM Sans', Helvetica, Arial, sans-serif",
+      "google": "DM+Sans:wght@400;500;600;700"
+    },
+    "manrope": {
+      "stack": "'Manrope', Helvetica, Arial, sans-serif",
+      "google": "Manrope:wght@400;500;600;700"
+    },
+    "plus-jakarta-sans": {
+      "stack": "'Plus Jakarta Sans', Helvetica, Arial, sans-serif",
+      "google": "Plus+Jakarta+Sans:wght@400;500;600;700"
+    },
+    "space-grotesk": {
+      "stack": "'Space Grotesk', Helvetica, Arial, sans-serif",
+      "google": "Space+Grotesk:wght@400;500;600;700"
+    },
+    "work-sans": {
+      "stack": "'Work Sans', Helvetica, Arial, sans-serif",
+      "google": "Work+Sans:wght@400;500;600;700"
+    },
+    "rubik": {
+      "stack": "'Rubik', Helvetica, Arial, sans-serif",
+      "google": "Rubik:wght@400;500;600;700"
+    },
+    "outfit": {
+      "stack": "'Outfit', Helvetica, Arial, sans-serif",
+      "google": "Outfit:wght@400;500;600;700"
+    },
+    "sora": {
+      "stack": "'Sora', Helvetica, Arial, sans-serif",
+      "google": "Sora:wght@400;500;600;700"
+    },
+    "urbanist": {
+      "stack": "'Urbanist', Helvetica, Arial, sans-serif",
+      "google": "Urbanist:wght@400;500;600;700"
+    },
+    "ibm-plex-sans": {
+      "stack": "'IBM Plex Sans', Helvetica, Arial, sans-serif",
+      "google": "IBM+Plex+Sans:wght@400;500;600;700"
+    },
+    "source-sans-3": {
+      "stack": "'Source Sans 3', Helvetica, Arial, sans-serif",
+      "google": "Source+Sans+3:wght@400;500;600;700"
+    },
+    "figtree": {
+      "stack": "'Figtree', Helvetica, Arial, sans-serif",
+      "google": "Figtree:wght@400;500;600;700"
+    },
+    "lexend": {
+      "stack": "'Lexend', Helvetica, Arial, sans-serif",
+      "google": "Lexend:wght@400;500;600;700"
+    },
+    "red-hat-display": {
+      "stack": "'Red Hat Display', Helvetica, Arial, sans-serif",
+      "google": "Red+Hat+Display:wght@400;500;600;700"
+    },
+    "albert-sans": {
+      "stack": "'Albert Sans', Helvetica, Arial, sans-serif",
+      "google": "Albert+Sans:wght@400;500;600;700"
+    },
+    "onest": {
+      "stack": "'Onest', Helvetica, Arial, sans-serif",
+      "google": "Onest:wght@400;500;600;700"
+    },
+    "playfair-display": {
+      "stack": "'Playfair Display', Georgia, 'Times New Roman', Times, serif",
+      "google": "Playfair+Display:wght@400;500;600;700"
+    },
+    "merriweather": {
+      "stack": "'Merriweather', Georgia, 'Times New Roman', Times, serif",
+      "google": "Merriweather:wght@400;700"
+    },
+    "lora": {
+      "stack": "'Lora', Georgia, 'Times New Roman', Times, serif",
+      "google": "Lora:wght@400;500;600;700"
+    },
+    "libre-baskerville": {
+      "stack": "'Libre Baskerville', Georgia, 'Times New Roman', Times, serif",
+      "google": "Libre+Baskerville:wght@400;700"
+    },
+    "cormorant-garamond": {
+      "stack": "'Cormorant Garamond', Georgia, 'Times New Roman', Times, serif",
+      "google": "Cormorant+Garamond:wght@400;500;600;700"
+    },
+    "dm-serif-display": {
+      "stack": "'DM Serif Display', Georgia, 'Times New Roman', Times, serif",
+      "google": "DM+Serif+Display:wght@400"
+    },
+    "fraunces": {
+      "stack": "'Fraunces', Georgia, 'Times New Roman', Times, serif",
+      "google": "Fraunces:wght@400;500;600;700"
+    },
+    "eb-garamond": {
+      "stack": "'EB Garamond', Georgia, 'Times New Roman', Times, serif",
+      "google": "EB+Garamond:wght@400;500;600;700"
+    },
+    "oswald": {
+      "stack": "'Oswald', Helvetica, Arial, sans-serif",
+      "google": "Oswald:wght@400;500;600;700"
+    },
+    "bebas-neue": {
+      "stack": "'Bebas Neue', Helvetica, Arial, sans-serif",
+      "google": "Bebas+Neue:wght@400"
+    },
+    "anton": {
+      "stack": "'Anton', Helvetica, Arial, sans-serif",
+      "google": "Anton:wght@400"
+    },
+    "archivo-black": {
+      "stack": "'Archivo Black', Helvetica, Arial, sans-serif",
+      "google": "Archivo+Black:wght@400"
+    },
+    "syne": {
+      "stack": "'Syne', Helvetica, Arial, sans-serif",
+      "google": "Syne:wght@400;500;600;700"
+    },
+    "unbounded": {
+      "stack": "'Unbounded', Helvetica, Arial, sans-serif",
+      "google": "Unbounded:wght@400;500;600;700"
+    },
+    "caveat": {
+      "stack": "'Caveat', Helvetica, Arial, sans-serif",
+      "google": "Caveat:wght@400;700"
+    },
+    "dancing-script": {
+      "stack": "'Dancing Script', Helvetica, Arial, sans-serif",
+      "google": "Dancing+Script:wght@400;700"
+    },
+    "pacifico": {
+      "stack": "'Pacifico', Helvetica, Arial, sans-serif",
+      "google": "Pacifico:wght@400"
+    },
+    "jetbrains-mono": {
+      "stack": "'JetBrains Mono', 'Courier New', monospace",
+      "google": "JetBrains+Mono:wght@400;700"
+    },
+    "space-mono": {
+      "stack": "'Space Mono', 'Courier New', monospace",
+      "google": "Space+Mono:wght@400;700"
+    }
+  },
+  "rowLayouts": {
+    "100": [
+      100
+    ],
+    "50-50": [
+      50,
+      50
+    ],
+    "33-67": [
+      33,
+      67
+    ],
+    "67-33": [
+      67,
+      33
+    ],
+    "25-75": [
+      25,
+      75
+    ],
+    "75-25": [
+      75,
+      25
+    ],
+    "33-33-33": [
+      33.33,
+      33.33,
+      33.34
+    ],
+    "25-25-25-25": [
+      25,
+      25,
+      25,
+      25
+    ]
+  }
+}

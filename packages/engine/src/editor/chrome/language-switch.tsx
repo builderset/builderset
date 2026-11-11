@@ -10,7 +10,7 @@ import { languageName } from '../messages';
 export function useBaseLocale(): ContentLocale {
   const { defaultContentLocale } = useEditorContext();
   const base = useEditor((state) => state.doc.i18n?.base);
-  return base ?? (defaultContentLocale as ContentLocale);
+  return base ?? (defaultContentLocale);
 }
 
 /**

@@ -83,8 +83,9 @@ export function ArticleEditor({
         resolveMedia: (key) => host.resolveMedia(key),
         contentLocale: defaultContentLocale,
         renderWords,
+        contentLocales: props.contentLocales,
       }),
-    [registry, host, defaultContentLocale, renderWords],
+    [registry, host, defaultContentLocale, renderWords, props.contentLocales],
   );
   return (
     <ArticleWordsProvider value={words.article}>

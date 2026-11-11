@@ -12,6 +12,7 @@ import {
   type Issue,
   type Localizable,
   type NodeTree,
+  unknownLocaleIssues,
 } from '@motors/engine';
 import { z } from 'zod';
 
@@ -158,10 +159,17 @@ function rowIssues(node: BuilderNode): Issue[] {
     : [];
 }
 
+/** What a project tells the check: the languages its designs may be written in. */
+export interface CheckEmailOptions {
+  /** Languages outside this list are `i18n.locale.unknown` errors. Omitted: any language. */
+  locales?: readonly string[] | undefined;
+}
+
 export function checkEmail(
   doc: EmailDocument,
   registry: ElementRegistry,
   type?: EmailType | null,
+  options: CheckEmailOptions = {},
 ): Issue[] {
   const parsed = emailSchema(registry).safeParse(doc);
   if (!parsed.success) {
@@ -215,6 +223,7 @@ export function checkEmail(
 
   if (type) issues.push(...typeIssues(doc, type));
   issues.push(...languageIssues(doc, type));
+  if (options.locales) issues.push(...unknownLocaleIssues(doc, options.locales));
   return issues;
 }
 

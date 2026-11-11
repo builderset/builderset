@@ -17,6 +17,8 @@ export interface ArticleProfileOptions {
   contentLocale: string;
   /** The renderer's words by language code, for the language being drawn. English when missing. */
   renderWords?: Readonly<Record<string, RenderMessages | undefined>> | undefined;
+  /** The languages an article may be written in; others block publishing. */
+  contentLocales?: readonly string[] | undefined;
 }
 
 /**
@@ -29,6 +31,7 @@ export function articleProfile({
   resolveMedia,
   contentLocale,
   renderWords,
+  contentLocales,
 }: ArticleProfileOptions): EditorProfile<ArticleDocument> {
   return {
     renderCanvas: ({ doc, editText, locale }) => {
@@ -45,7 +48,7 @@ export function articleProfile({
     canvasHeader: TitleField,
     settingsPanel: DocumentSettings,
     templates: ARTICLE_TEMPLATES,
-    check: (doc) => checkArticle(doc, registry),
+    check: (doc) => checkArticle(doc, registry, { locales: contentLocales }),
     parse: (raw) => {
       const parsed = parseArticle(raw, registry);
       return parsed.ok ? parsed.doc : null;

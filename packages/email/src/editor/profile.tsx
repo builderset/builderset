@@ -45,6 +45,8 @@ export interface EmailProfileOptions {
   socialIconBase?: string | undefined;
   locale: string;
   words: EmailWords;
+  /** The languages a design may be written in; others block activation. */
+  contentLocales?: readonly string[] | undefined;
 }
 
 /** A row's column diagram, for the Structures tiles. */
@@ -121,6 +123,7 @@ export function emailProfile({
   socialIconBase,
   locale,
   words,
+  contentLocales,
 }: EmailProfileOptions): EditorProfile<EmailDocument> {
   const socialIcon = socialIconBase ? socialIconUrl(socialIconBase) : undefined;
   const variables = variablesOf(type).map((variable) => ({
@@ -148,7 +151,7 @@ export function emailProfile({
     settingsPanel: EmailSettingsPanel,
     overlays: ImportHtmlHost,
     templatesPanel: ModulesPanel,
-    check: (doc) => checkEmail(doc, registry, type),
+    check: (doc) => checkEmail(doc, registry, type, { locales: contentLocales }),
     parse: (raw) => parseEmail(raw, registry),
     categories: EMAIL_CATEGORIES.filter((category) => category !== 'structure'),
     paragraphType: 'text',

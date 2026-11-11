@@ -1,9 +1,7 @@
+import { warning, type Issue, defineElement, isRichTextEmpty, type RichText } from '@motors/engine';
+import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
 
-import { warning, type Issue } from '../issues';
-import { LIMITS } from '../limits';
-import { defineElement } from '../registry';
-import { isRichTextEmpty, type RichText } from '../rich-text';
 import { joinLinks, joinPlain, media, present, richText, safeUrl, shortText } from './fields';
 
 /**
@@ -44,7 +42,9 @@ export const faqElement = defineElement({
   keywords: ['questions', 'answers', 'q&a', 'accordion'],
   schema: z.object({
     title: shortText(),
-    items: z.array(z.object({ question: shortText(), answer: richText() })).max(LIMITS.listItems),
+    items: z
+      .array(z.object({ question: shortText(), answer: richText() }))
+      .max(ARTICLE_LIMITS.listItems),
     firstOpen: z.boolean(),
   }),
   defaults: () => ({
@@ -79,7 +79,7 @@ export const howToElement = defineElement({
     totalMinutes: z.number().int().min(0).max(10_000),
     steps: z
       .array(z.object({ title: shortText(), text: richText(), media: media(), alt: shortText() }))
-      .max(LIMITS.listItems),
+      .max(ARTICLE_LIMITS.listItems),
   }),
   defaults: () => ({
     title: '',
@@ -118,7 +118,7 @@ export const timelineElement = defineElement({
   schema: z.object({
     items: z
       .array(z.object({ date: shortText(), title: shortText(), text: richText() }))
-      .max(LIMITS.listItems),
+      .max(ARTICLE_LIMITS.listItems),
   }),
   defaults: () => ({ items: [{ date: '', title: '', text: [] as RichText }] }),
   toPlainText: (props) =>
@@ -136,8 +136,8 @@ export const prosConsElement = defineElement({
   schema: z.object({
     prosTitle: shortText(),
     consTitle: shortText(),
-    pros: z.array(shortText()).max(LIMITS.listItems),
-    cons: z.array(shortText()).max(LIMITS.listItems),
+    pros: z.array(shortText()).max(ARTICLE_LIMITS.listItems),
+    cons: z.array(shortText()).max(ARTICLE_LIMITS.listItems),
   }),
   defaults: () => ({ prosTitle: '', consTitle: '', pros: [''], cons: [''] }),
   toPlainText: (props) =>

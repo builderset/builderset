@@ -1,7 +1,7 @@
 'use client';
 
 import { createFragment, indexInParent, isSafeUrl, parentOf, type RichText } from '../../core';
-import type { EditableTextField } from '../../render';
+import type { EditableTextField } from '../../core';
 import { Mark, mergeAttributes, type Editor } from '@tiptap/core';
 import Bold from '@tiptap/extension-bold';
 import Code from '@tiptap/extension-code';
@@ -69,7 +69,7 @@ const MARKDOWN: { pattern: RegExp; type: string; props?: Record<string, unknown>
 
 export function InlineText({ field }: { field: EditableTextField }) {
   const { store, registry, messages, profile } = useEditorContext();
-  const textType = profile.paragraphType ?? 'paragraph';
+  const textType = profile.paragraphType;
   const { nodeId, path, value, placeholder } = field;
   const editingThis = useEditor((state) => state.editingId === nodeId);
   const nodeType = useEditor((state) => state.doc.nodes[nodeId]?.type);
@@ -136,7 +136,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
       const offset = editor.state.selection.from - 1;
       const [before, after] = splitRichText(current, offset);
       write(before);
-      const fragment = createFragment(registry, profile.paragraphType ?? 'paragraph', {
+      const fragment = createFragment(registry, profile.paragraphType, {
         text: after,
       });
       const inserted = state.insertFragment(

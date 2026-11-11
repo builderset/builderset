@@ -2,10 +2,10 @@ import {
   plainText,
   richTextToPlain,
   walk,
-  type BuilderDocument,
   type ElementRegistry,
   type RichText,
-} from '../core';
+} from '@motors/engine';
+import type { ArticleDocument } from '../core/document';
 
 /**
  * Schema.org data for an article, as plain objects.
@@ -30,7 +30,7 @@ export interface StructuredDataOptions {
 type JsonLd = Record<string, unknown>;
 
 export function structuredData(
-  document: BuilderDocument,
+  document: ArticleDocument,
   registry: ElementRegistry,
   options: StructuredDataOptions,
 ): JsonLd[] {

@@ -1,93 +1,42 @@
-import {
-  DOCUMENT_SCHEMA,
-  DOCUMENT_VERSION,
-  documentShapeSchema,
-  type BuilderDocument,
-} from './document';
+import type { NodeTree } from './document';
 import { error, type Issue } from './issues';
 import type { ElementRegistry } from './registry';
-import { checkDocument, hasErrors } from './validate';
 
 /**
- * Reading a stored document back, however old it is.
+ * Reading a stored document back, however old it is — the parts every kit
+ * shares. A kit's own parser (`parseArticle`, `parseEmail`) checks its
+ * envelope, runs its document migrations, then calls `migrateElements` and its
+ * own checks.
  *
- * Two kinds of change are migrated, in this order:
- *  1. DOCUMENT migrations, keyed by `version`, for changes to the envelope
- *     itself (none yet — version 1 is the first).
- *  2. ELEMENT migrations: each node whose `v` is behind its element's
- *     `version` is walked forward one version at a time through the element's
- *     own `migrate`, so an element can change its props without the rest of
- *     the library knowing.
- * Then the whole thing is checked. A document from the future — a newer
- * version than this code knows — is refused rather than guessed at.
+ * ELEMENT migrations: each node whose `v` is behind its element's `version` is
+ * walked forward one version at a time through the element's own `migrate`, so
+ * an element can change its props without the rest of the library knowing.
  */
 
-type DocumentMigration = (raw: Record<string, unknown>) => Record<string, unknown>;
-
-/** `DOCUMENT_MIGRATIONS[n]` turns a version-n document into version n+1. */
-const DOCUMENT_MIGRATIONS: Record<number, DocumentMigration> = {};
-
-export interface ParseResult {
+export interface ParseResult<D> {
   ok: boolean;
-  doc: BuilderDocument | null;
+  doc: D | null;
   issues: Issue[];
   /** Whether anything was migrated — worth saving back once it is. */
   migrated: boolean;
 }
 
-export function parseDocument(raw: unknown, registry: ElementRegistry): ParseResult {
-  let value = (typeof raw === 'string' ? safeJson(raw) : raw) as Record<string, unknown> | null;
-  if (!value || typeof value !== 'object') {
-    return { ok: false, doc: null, issues: [error('document.notJson')], migrated: false };
-  }
+/** A stored value as an object: JSON text is parsed; anything else that is not an object is null. */
+export function readStored(raw: unknown): Record<string, unknown> | null {
+  const value = (typeof raw === 'string' ? safeJson(raw) : raw) as Record<string, unknown> | null;
+  if (!value || typeof value !== 'object') return null;
+  return value;
+}
 
-  if (value.schema !== DOCUMENT_SCHEMA) {
-    return {
-      ok: false,
-      doc: null,
-      issues: [error('document.malformed', { path: 'schema' })],
-      migrated: false,
-    };
-  }
-
+/**
+ * Bring every node up to its element's version, in place. Refuses — and
+ * leaves the rest unmigrated — when an element is behind and has no `migrate`.
+ */
+export function migrateElements(
+  doc: NodeTree,
+  registry: ElementRegistry,
+): { ok: true; migrated: boolean } | { ok: false; issues: Issue[]; migrated: boolean } {
   let migrated = false;
-  let version = typeof value.version === 'number' ? value.version : 0;
-  if (version > DOCUMENT_VERSION) {
-    return {
-      ok: false,
-      doc: null,
-      issues: [error('document.fromTheFuture', { params: { version } })],
-      migrated,
-    };
-  }
-  while (version < DOCUMENT_VERSION) {
-    const step = DOCUMENT_MIGRATIONS[version];
-    if (!step) {
-      return {
-        ok: false,
-        doc: null,
-        issues: [error('document.cannotMigrate', { params: { version } })],
-        migrated,
-      };
-    }
-    value = { ...step(value), version: version + 1 };
-    version += 1;
-    migrated = true;
-  }
-
-  const shape = documentShapeSchema.safeParse(value);
-  if (!shape.success) {
-    return {
-      ok: false,
-      doc: null,
-      issues: shape.error.issues.map((issue) =>
-        error('document.malformed', { path: issue.path.join('.') }),
-      ),
-      migrated,
-    };
-  }
-
-  const doc: BuilderDocument = structuredClone(shape.data);
   for (const node of Object.values(doc.nodes)) {
     const definition = registry.get(node.type);
     if (!definition || node.v >= definition.version) continue;
@@ -96,7 +45,6 @@ export function parseDocument(raw: unknown, registry: ElementRegistry): ParseRes
       if (!definition.migrate) {
         return {
           ok: false,
-          doc: null,
           issues: [
             error('element.cannotMigrate', { nodeId: node.id, params: { type: node.type, from } }),
           ],
@@ -109,15 +57,7 @@ export function parseDocument(raw: unknown, registry: ElementRegistry): ParseRes
     node.v = definition.version;
     migrated = true;
   }
-
-  const issues = checkDocument(doc, registry);
-  return { ok: !hasErrors(issues), doc, issues, migrated };
-}
-
-/** The document as stored: plain JSON, stable key order for the envelope. */
-export function serializeDocument(doc: BuilderDocument): string {
-  const { schema, version, root, meta, nodes } = doc;
-  return JSON.stringify({ schema, version, root, meta, nodes });
+  return { ok: true, migrated };
 }
 
 function safeJson(text: string): unknown {

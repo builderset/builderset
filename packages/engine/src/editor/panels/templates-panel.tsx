@@ -1,87 +1,16 @@
 'use client';
 
-import { createFragment, reidFragment, rt, type ElementRegistry, type Fragment } from '../../core';
+import { createFragment, reidFragment, type ElementRegistry, type Fragment } from '../../core';
 import { Button, EmptyState, Input, Spinner } from '@motors/ui';
 import { BookmarkPlus, LayoutTemplate, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useEditor, useEditorContext } from '../context';
 import type { SavedSection } from '../host';
+import type { TemplateSpec } from '../profile';
 
-interface Template {
-  id: string;
-  name: Record<string, string>;
-  blocks: { type: string; props?: Record<string, unknown> }[];
-}
-
-/** Starting layouts. Inserted as one fragment, so one undo takes a template back out. */
-const TEMPLATES: Template[] = [
-  {
-    id: 'standard',
-    name: { en: 'Standard article', sq: 'Artikull standard', de: 'Standardartikel' },
-    blocks: [
-      { type: 'paragraph', props: { lead: true } },
-      { type: 'heading', props: { level: 2 } },
-      { type: 'paragraph' },
-      { type: 'image' },
-      { type: 'heading', props: { level: 2 } },
-      { type: 'paragraph' },
-      { type: 'takeaways' },
-    ],
-  },
-  {
-    id: 'howto',
-    name: { en: 'How-to guide', sq: 'Udhëzues', de: 'Anleitung' },
-    blocks: [
-      { type: 'paragraph', props: { lead: true } },
-      { type: 'toc' },
-      { type: 'howto' },
-      { type: 'callout', props: { tone: 'tip' } },
-      { type: 'faq' },
-    ],
-  },
-  {
-    id: 'listicle',
-    name: { en: 'Listicle', sq: 'Listë', de: 'Liste' },
-    blocks: [
-      { type: 'paragraph', props: { lead: true } },
-      { type: 'heading', props: { level: 2, text: rt('1.') } },
-      { type: 'paragraph' },
-      { type: 'heading', props: { level: 2, text: rt('2.') } },
-      { type: 'paragraph' },
-      { type: 'heading', props: { level: 2, text: rt('3.') } },
-      { type: 'paragraph' },
-      { type: 'cta' },
-    ],
-  },
-  {
-    id: 'review',
-    name: { en: 'Review', sq: 'Recension', de: 'Test' },
-    blocks: [
-      { type: 'paragraph', props: { lead: true } },
-      { type: 'gallery' },
-      { type: 'rating' },
-      { type: 'pros-cons' },
-      { type: 'stats' },
-      { type: 'heading', props: { level: 2 } },
-      { type: 'paragraph' },
-    ],
-  },
-  {
-    id: 'news',
-    name: { en: 'News', sq: 'Lajm', de: 'Nachricht' },
-    blocks: [
-      { type: 'paragraph', props: { lead: true } },
-      { type: 'image' },
-      { type: 'paragraph' },
-      { type: 'quote' },
-      { type: 'paragraph' },
-      { type: 'related' },
-    ],
-  },
-];
-
-function templateFragment(registry: ElementRegistry, template: Template): Fragment {
+/** A template's blocks as one fragment, skipping types this registry does not have. */
+function templateFragment(registry: ElementRegistry, template: TemplateSpec): Fragment {
   const nodes: Fragment['nodes'] = {};
   const roots: string[] = [];
   for (const block of template.blocks) {
@@ -94,7 +23,8 @@ function templateFragment(registry: ElementRegistry, template: Template): Fragme
 }
 
 export function TemplatesPanel() {
-  const { registry, messages, store, host } = useEditorContext();
+  const { registry, messages, store, host, profile } = useEditorContext();
+  const templates = profile.templates ?? [];
   const selection = useEditor((state) => state.selection);
   const [sections, setSections] = useState<SavedSection[] | null>(null);
   const [name, setName] = useState('');
@@ -141,27 +71,32 @@ export function TemplatesPanel() {
 
   return (
     <div className="h-full space-y-6 overflow-y-auto p-3">
-      <section className="space-y-2">
-        <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
-          {messages.templates}
-        </h3>
-        {TEMPLATES.map((template) => (
-          <button
-            key={template.id}
-            type="button"
-            onClick={() => {
-              insert(templateFragment(registry, template), template.name.en ?? template.id);
-            }}
-            className="border-border bg-card hover:border-primary/50 flex w-full items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
-          >
-            <LayoutTemplate className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-            <span className="min-w-0 flex-1 truncate text-sm font-medium">
-              {template.name[host.locale] ?? template.name.en}
-            </span>
-            <Plus className="text-muted-foreground size-4" aria-hidden="true" />
-          </button>
-        ))}
-      </section>
+      {templates.length ? (
+        <section className="space-y-2">
+          <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
+            {messages.templates}
+          </h3>
+          {templates.map((template) => (
+            <button
+              key={template.id}
+              type="button"
+              onClick={() => {
+                insert(templateFragment(registry, template), template.name.en ?? template.id);
+              }}
+              className="border-border bg-card hover:border-primary/50 flex w-full items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
+            >
+              <LayoutTemplate
+                className="text-muted-foreground size-4 shrink-0"
+                aria-hidden="true"
+              />
+              <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                {template.name[host.locale] ?? template.name.en}
+              </span>
+              <Plus className="text-muted-foreground size-4" aria-hidden="true" />
+            </button>
+          ))}
+        </section>
+      ) : null}
 
       {host.loadSections ? (
         <section className="space-y-2">

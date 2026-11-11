@@ -4,7 +4,7 @@ import {
   type Breakpoint,
   type NodeStyle,
   type StyleValues,
-} from '../core';
+} from '@motors/engine';
 import type { CSSProperties } from 'react';
 
 import { STYLE_CLASSES } from './style-classes';

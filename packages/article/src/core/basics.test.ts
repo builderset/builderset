@@ -1,10 +1,15 @@
+import {
+  normalizeRichText,
+  resolveStyle,
+  setStyleValue,
+  isAnchor,
+  isSafeUrl,
+  slugifyAnchor,
+} from '@motors/engine';
 import { describe, expect, it } from 'vitest';
 
 import { detectEmbedProvider } from './embeds';
-import { createStandardRegistry, standardElements } from './elements';
-import { normalizeRichText } from './rich-text';
-import { resolveStyle, setStyleValue } from './style';
-import { isAnchor, isSafeUrl, slugifyAnchor } from './url';
+import { createArticleRegistry, standardElements } from './elements';
 
 describe('isSafeUrl', () => {
   it.each([
@@ -80,7 +85,7 @@ describe('embeds', () => {
 });
 
 describe('the standard registry', () => {
-  const registry = createStandardRegistry();
+  const registry = createArticleRegistry();
 
   it('registers every element with defaults its own schema accepts', () => {
     expect(registry.all()).toHaveLength(standardElements.length);

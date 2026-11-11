@@ -1,9 +1,15 @@
+import {
+  error,
+  warning,
+  type Issue,
+  defineElement,
+  isRichTextEmpty,
+  richTextToPlain,
+  type RichText,
+} from '@motors/engine';
+import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
 
-import { error, warning, type Issue } from '../issues';
-import { LIMITS } from '../limits';
-import { defineElement } from '../registry';
-import { isRichTextEmpty, richTextToPlain, type RichText } from '../rich-text';
 import { richText, joinLinks, joinPlain, longText, safeUrl, shortText } from './fields';
 
 /**
@@ -69,9 +75,11 @@ export const listElement = defineElement({
     style: z.enum(['bullet', 'number', 'check']),
     items: z
       .array(
-        listItemBase.extend({ children: z.array(listItemBase).max(LIMITS.listItems).optional() }),
+        listItemBase.extend({
+          children: z.array(listItemBase).max(ARTICLE_LIMITS.listItems).optional(),
+        }),
       )
-      .max(LIMITS.listItems),
+      .max(ARTICLE_LIMITS.listItems),
   }),
   defaults: () => ({ style: 'bullet' as const, items: [{ text: [] as RichText }] }),
   toPlainText: (props) =>
@@ -189,13 +197,13 @@ export const tableElement = defineElement({
   schema: z
     .object({
       rows: z
-        .array(z.array(richText()).min(1).max(LIMITS.tableColumns))
+        .array(z.array(richText()).min(1).max(ARTICLE_LIMITS.tableColumns))
         .min(1)
-        .max(LIMITS.tableRows),
+        .max(ARTICLE_LIMITS.tableRows),
       headerRow: z.boolean(),
       headerColumn: z.boolean(),
       striped: z.boolean(),
-      align: z.array(alignSchema).max(LIMITS.tableColumns),
+      align: z.array(alignSchema).max(ARTICLE_LIMITS.tableColumns),
       caption: shortText(),
     })
     .refine((table) => table.rows.every((row) => row.length === table.rows[0]?.length), {
@@ -245,7 +253,10 @@ export const takeawaysElement = defineElement({
   category: 'text',
   icon: 'list-checks',
   keywords: ['summary', 'key points', 'tldr', 'highlights'],
-  schema: z.object({ title: shortText(), items: z.array(richText()).max(LIMITS.listItems) }),
+  schema: z.object({
+    title: shortText(),
+    items: z.array(richText()).max(ARTICLE_LIMITS.listItems),
+  }),
   defaults: () => ({ title: '', items: [[], [], []] as RichText[] }),
   toPlainText: (props) => joinPlain([props.title, ...props.items]),
   links: (props) => joinLinks(props.items),
@@ -260,7 +271,9 @@ export const definitionListElement = defineElement({
   icon: 'book-open',
   keywords: ['glossary', 'terms', 'dl', 'dictionary'],
   schema: z.object({
-    items: z.array(z.object({ term: shortText(), description: richText() })).max(LIMITS.listItems),
+    items: z
+      .array(z.object({ term: shortText(), description: richText() }))
+      .max(ARTICLE_LIMITS.listItems),
   }),
   defaults: () => ({ items: [{ term: '', description: [] as RichText }] }),
   toPlainText: (props) => joinPlain(props.items.flatMap((item) => [item.term, item.description])),

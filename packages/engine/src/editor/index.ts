@@ -1,15 +1,25 @@
 /**
- * @motors/engine/editor — the article builder's editor.
+ * @motors/engine/editor — the workspace every builder shares.
  *
- * `<BuilderEditor>` is the whole workspace; a host passes the document, the
- * element registry and a `BuilderHost` adapter for everything that leaves the
- * browser (uploads, saving, publishing, revisions).
+ * `<BuilderEditor>` is the whole workspace; a kit passes its profile (canvas,
+ * checks, panels), and a host passes the document, the element registry and a
+ * `BuilderHost` adapter for everything that leaves the browser (uploads,
+ * saving, publishing, revisions). Each kit wraps it: `ArticleEditor`,
+ * `EmailEditor`.
  */
 
 export { BuilderEditor, type BuilderEditorProps } from './editor';
-export type { ArticleFacts } from './context';
-export { useEditor, useEditorContext, useMessages, useProfile } from './context';
-export type { EditorProfile } from './profile';
+export {
+  useEditor,
+  useEditorContext,
+  useMessages,
+  useProfile,
+  useRecord,
+  type EditorContextValue,
+  type RecordFacts,
+} from './context';
+export type { EditorProfile, TemplateSpec } from './profile';
+export type { EditableTextField } from '../core';
 export { LanguageSwitch, MultilingualToggle, useBaseLocale } from './chrome/language-switch';
 export { MediaField } from './inspector/media-field';
 export { ColorField, SpacingField } from './inspector/special-fields';
@@ -26,5 +36,5 @@ export type {
   UploadResult,
 } from './host';
 export { editorMessages, type EditorMessages, type ElementText } from './messages';
-export { createEditorStore, type EditorStore } from './store';
+export { createEditorStore, type EditorActions, type EditorState, type EditorStore } from './store';
 export { fromTiptap, toTiptap } from './text/convert';

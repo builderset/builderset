@@ -7,10 +7,11 @@ import {
   structuralIssues,
   translationIssues,
   warning,
-  type BuilderDocument,
   type BuilderNode,
   type ElementRegistry,
   type Issue,
+  type Localizable,
+  type NodeTree,
 } from '@motors/engine';
 import { z } from 'zod';
 
@@ -63,10 +64,12 @@ export function emailSchema(registry: ElementRegistry) {
       i18n: i18nSchema.optional(),
     })
     .superRefine((doc, ctx) => {
-      for (const issue of structuralIssues(doc as unknown as EmailDocument, registry)) {
+      // zod infers the nodes as `{ type }` only — the union above is cast to
+      // satisfy `discriminatedUnion` — so the tree is named for what it is.
+      for (const issue of structuralIssues(doc as unknown as NodeTree, registry)) {
         ctx.addIssue({ code: 'custom', message: issue.code, path: ['nodes', issue.nodeId ?? ''] });
       }
-      for (const issue of translationIssues(doc as unknown as EmailDocument, registry)) {
+      for (const issue of translationIssues(doc as unknown as Localizable, registry)) {
         ctx.addIssue({
           code: 'custom',
           message: issue.code,
@@ -197,10 +200,7 @@ export function checkEmail(
     const definition = registry.get(node.type);
     if (!definition) continue;
     issues.push(...rowIssues(node));
-    issues.push(
-      ...(definition.check?.(node.props, { node, document: doc as unknown as BuilderDocument }) ??
-        []),
-    );
+    issues.push(...(definition.check?.(node.props, { node, document: doc }) ?? []));
     for (const link of definition.links?.(node.props) ?? []) {
       if (link && link !== 'https://' && !isSafeTemplateUrl(link)) {
         issues.push(error('url.unsafe', { nodeId: node.id }));
@@ -278,4 +278,16 @@ export function typeIssues(doc: EmailDocument, type: EmailType): Issue[] {
     if (!unsubscribes) issues.push(error('compliance.unsubscribeMissing'));
   }
   return issues;
+}
+
+/**
+ * A stored email read back: the document when it is a valid email of these
+ * elements, otherwise null. What the editor's crash-safety copy and a host
+ * loading a template both use.
+ */
+export function parseEmail(raw: unknown, registry: ElementRegistry): EmailDocument | null {
+  if (!emailSchema(registry).safeParse(raw).success) return null;
+  // The schema accepted it, so it has the email's shape; the stored object is
+  // kept as it is rather than the schema's copy of it.
+  return raw as EmailDocument;
 }

@@ -1,10 +1,16 @@
-import type { BuilderNode, Fragment } from './document';
-import type { NodeId } from './ids';
-import { LIMITS } from './limits';
-import { createFragment } from './operations';
-import type { ElementRegistry } from './registry';
-import { normalizeRichText, type Mark, type RichText } from './rich-text';
-import { isSafeUrl } from './url';
+import {
+  type BuilderNode,
+  type Fragment,
+  type NodeId,
+  createFragment,
+  type ElementRegistry,
+  normalizeRichText,
+  type Mark,
+  type RichText,
+  isSafeUrl,
+  LIMITS,
+} from '@motors/engine';
+import { ARTICLE_LIMITS } from './limits';
 
 /**
  * Pasted HTML → nodes. The HTML itself is thrown away.
@@ -191,9 +197,11 @@ function imageBlock(image: HTMLImageElement, caption: RichText = []): Block | nu
 
 function tableBlock(table: HTMLTableElement): Block | null {
   const rows = [...table.querySelectorAll('tr')]
-    .slice(0, LIMITS.tableRows)
+    .slice(0, ARTICLE_LIMITS.tableRows)
     .map((row) =>
-      [...row.children].slice(0, LIMITS.tableColumns).map((cell) => trimRichText(inlineOf(cell))),
+      [...row.children]
+        .slice(0, ARTICLE_LIMITS.tableColumns)
+        .map((cell) => trimRichText(inlineOf(cell))),
     );
   if (rows.length === 0) return null;
   const width = Math.max(...rows.map((row) => row.length));
@@ -285,7 +293,7 @@ function blocksOf(container: HTMLElement): Block[] {
     if (tag === 'PRE') {
       const code = child.textContent.replace(/\n$/, '');
       if (code.trim())
-        blocks.push({ type: 'code', props: { code: code.slice(0, LIMITS.longText) } });
+        blocks.push({ type: 'code', props: { code: code.slice(0, ARTICLE_LIMITS.longText) } });
       return;
     }
     if (tag === 'TABLE') {

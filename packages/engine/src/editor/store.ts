@@ -17,7 +17,7 @@ import {
   wrap,
   wrapChain,
   type Breakpoint,
-  type BuilderDocument,
+  type EngineDocument,
   type ContentLocale,
   type ElementRegistry,
   type Fragment,
@@ -43,15 +43,15 @@ export type LeftTab = 'add' | 'layers' | 'templates';
 export type RightTab = 'content' | 'style' | 'advanced';
 export type SaveState = 'idle' | 'saving' | 'error' | 'conflict';
 
-export interface EditorState {
-  doc: BuilderDocument;
+export interface EditorState<TDoc extends EngineDocument = EngineDocument> {
+  doc: TDoc;
   /**
    * The language being written, when the document is multi-language and it is
    * not the base one; `null` otherwise. Text typed now goes to its translation.
    */
   lang: ContentLocale | null;
   /** The document as it reads in `lang` — what the canvas and inspector show. */
-  view: BuilderDocument;
+  view: TDoc;
   selection: NodeId[];
   hoverId: NodeId | null;
   viewport: Breakpoint;
@@ -80,7 +80,7 @@ export interface InsertTarget {
   index: number;
 }
 
-export interface EditorActions {
+export interface EditorActions<TDoc extends EngineDocument = EngineDocument> {
   select(ids: NodeId[]): void;
   hover(id: NodeId | null): void;
   setEditing(id: NodeId | null): void;
@@ -107,11 +107,7 @@ export interface EditorActions {
   /** Turn multi-language on or off; its translations are kept either way. */
   setMultilingual(enabled: boolean, base: ContentLocale): void;
   /** Any other change to the document itself (an email's settings). */
-  updateDocument(
-    label: string,
-    recipe: (draft: BuilderDocument) => void,
-    coalesceKey?: string,
-  ): void;
+  updateDocument(label: string, recipe: (draft: TDoc) => void, coalesceKey?: string): void;
   moveNodes(ids: NodeId[], parentId: NodeId, index: number): boolean;
   moveBy(id: NodeId, delta: -1 | 1): boolean;
   removeNodes(ids: NodeId[]): boolean;
@@ -119,7 +115,7 @@ export interface EditorActions {
   wrapNodes(ids: NodeId[], type: string): NodeId | null;
   turnInto(id: NodeId, type: string): boolean;
   /** Replace the document — a restored revision, the server's copy. */
-  replaceDocument(doc: BuilderDocument, options?: { keepHistory?: boolean; label?: string }): void;
+  replaceDocument(doc: TDoc, options?: { keepHistory?: boolean; label?: string }): void;
   /** Something outside the document changed (a row column): there is work to save. */
   touch(): void;
   markSaving(): void;
@@ -127,34 +123,35 @@ export interface EditorActions {
   markSaveFailed(conflict?: boolean): void;
 }
 
-export type EditorStore = StoreApi<EditorState & EditorActions>;
+export type EditorStore<TDoc extends EngineDocument = EngineDocument> = StoreApi<
+  EditorState<TDoc> & EditorActions<TDoc>
+>;
 
-export interface CreateEditorOptions {
-  document: BuilderDocument;
+export interface CreateEditorOptions<TDoc extends EngineDocument> {
+  document: TDoc;
   registry: ElementRegistry;
   /** Called with a core error code when an operation is refused. */
   onRefused?: ((code: string) => void) | undefined;
   /** See `EditorProfile.onNodeUpdated`. */
-  onNodeUpdated?:
-    ((draft: BuilderDocument, nodeId: NodeId, registry: ElementRegistry) => void) | undefined;
+  onNodeUpdated?: ((draft: TDoc, nodeId: NodeId, registry: ElementRegistry) => void) | undefined;
 }
 
 /** What the canvas and the inspector show: the document in the language being written. */
-function viewOf(doc: BuilderDocument, lang: ContentLocale | null): BuilderDocument {
+function viewOf<TDoc extends EngineDocument>(doc: TDoc, lang: ContentLocale | null): TDoc {
   return lang ? localize(doc, lang, { keepEmpty: true }) : doc;
 }
 
-export function createEditorStore({
+export function createEditorStore<TDoc extends EngineDocument>({
   document,
   registry,
   onRefused,
   onNodeUpdated,
-}: CreateEditorOptions): EditorStore {
-  const history = new History(document);
+}: CreateEditorOptions<TDoc>): EditorStore<TDoc> {
+  const history = new History<TDoc>(document);
 
-  return createStore<EditorState & EditorActions>()((set, get) => {
+  return createStore<EditorState<TDoc> & EditorActions<TDoc>>()((set, get) => {
     /** Mirror the history into the state after it changed. */
-    const sync = (extra: Partial<EditorState> = {}) => {
+    const sync = (extra: Partial<EditorState<TDoc>> = {}) => {
       const changed = history.doc !== get().doc;
       const lang = isTranslating(history.doc, get().lang) ? get().lang : null;
       set({
@@ -174,14 +171,15 @@ export function createEditorStore({
     /** Run one change as one undo step. Refusals are reported, not thrown. */
     const commit = <T>(
       label: string,
-      change: (draft: BuilderDocument) => T,
+      change: (draft: TDoc) => T,
       options: { coalesceKey?: string | undefined; select?: (result: T) => NodeId[] } = {},
     ): { ok: true; value: T } | { ok: false } => {
       try {
         let selectAfter: NodeId[] | undefined;
         const value = history.commit(
           (draft) => {
-            const result = change(draft);
+            // An immer draft of a document type with no readonly parts is that type.
+            const result = change(draft as TDoc);
             if (options.select) selectAfter = options.select(result);
             return result;
           },
@@ -207,7 +205,7 @@ export function createEditorStore({
 
     /** Write `words` into `lang`'s translation of node `id` (or of the meta when `id` is null). */
     const writeWords = (
-      draft: BuilderDocument,
+      draft: TDoc,
       lang: ContentLocale,
       id: NodeId | null,
       words: [string, unknown][],

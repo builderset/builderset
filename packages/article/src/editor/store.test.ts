@@ -1,14 +1,15 @@
-import { createDocument, createStandardRegistry, rt } from '../core';
+import { rt } from '@motors/engine';
+import { createEditorStore } from '@motors/engine/editor';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createEditorStore } from './store';
+import { createArticleDocument, createArticleRegistry } from '../core';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 
 function setup() {
   const refused = vi.fn();
   const store = createEditorStore({
-    document: createDocument({ title: 'Test' }),
+    document: createArticleDocument({ title: 'Test' }),
     registry,
     onRefused: refused,
   });

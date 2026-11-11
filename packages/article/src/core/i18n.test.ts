@@ -1,13 +1,19 @@
+import {
+  documentLocales,
+  hasWords,
+  isTranslating,
+  localize,
+  type Translation,
+} from '@motors/engine';
+import { checkArticle } from './check';
+import { createArticleDocument, type ArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';
 
-import { createDocument, type BuilderDocument } from './document';
-import { createStandardRegistry } from './elements';
-import { documentLocales, hasWords, isTranslating, localize, type Translation } from './i18n';
-import { checkDocument } from './validate';
+import { createArticleRegistry } from './elements';
 
 /** An Albanian article with an English translation of its heading and title. */
-function article(): { doc: BuilderDocument; en: Translation; root: string[] } {
-  const doc = createDocument({ title: 'Si ta shisni makinën', excerpt: 'Pesë hapa' });
+function article(): { doc: ArticleDocument; en: Translation; root: string[] } {
+  const doc = createArticleDocument({ title: 'Si ta shisni makinën', excerpt: 'Pesë hapa' });
   const root = ['h1', 'p1'];
   doc.nodes.root = { id: 'root', type: 'root', v: 1, props: {}, children: root };
   doc.nodes.h1 = {
@@ -95,10 +101,10 @@ describe('localize', () => {
   });
 
   it('checks each language as a document of its own', () => {
-    const registry = createStandardRegistry();
+    const registry = createArticleRegistry();
     const { doc, en } = article();
     en.nodes = { h1: { text: [{ text: 'x'.repeat(20_000) }] } };
-    const issues = checkDocument(doc, registry).filter((issue) => issue.path?.startsWith('en.'));
+    const issues = checkArticle(doc, registry).filter((issue) => issue.path?.startsWith('en.'));
     expect(issues.length).toBeGreaterThan(0);
   });
 });

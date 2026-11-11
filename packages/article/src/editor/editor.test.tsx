@@ -1,16 +1,17 @@
-import { createDocument, createStandardRegistry, rt } from '../core';
+import { rt } from '@motors/engine';
+import type { BuilderHost } from '@motors/engine/editor';
 import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { ArticleFacts } from './context';
-import { BuilderEditor } from './editor';
-import type { BuilderHost } from './host';
+import { createArticleDocument, createArticleRegistry, type ArticleDocument } from '../core';
+import { ArticleEditor } from './editor';
+import type { ArticleFacts } from './hooks';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 
-function host(overrides: Partial<BuilderHost> = {}): BuilderHost {
+function host(overrides: Partial<BuilderHost<ArticleDocument>> = {}): BuilderHost<ArticleDocument> {
   return {
     locale: 'en',
     contentLocale: 'en',
@@ -34,22 +35,22 @@ const facts: ArticleFacts = {
   locale: 'en',
 };
 
-function mount(adapter = host(), document = createDocument({ title: 'An article' })) {
+function mount(adapter = host(), document = createArticleDocument({ title: 'An article' })) {
   return render(
     <I18nProvider locale="en">
-      <BuilderEditor
+      <ArticleEditor
         document={document}
         registry={registry}
         host={adapter}
-        article={facts}
-        onArticleChange={() => undefined}
+        record={facts}
+        onRecordChange={() => undefined}
         onBack={() => undefined}
       />
     </I18nProvider>,
   );
 }
 
-describe('<BuilderEditor>', () => {
+describe('<ArticleEditor>', () => {
   it('opens on an empty article with its title and the element library', () => {
     mount();
     expect(screen.getByLabelText('Title', { selector: 'textarea' })).toHaveValue('An article');
@@ -76,7 +77,7 @@ describe('<BuilderEditor>', () => {
       Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() }),
     );
     const adapter = host({ publish });
-    const doc = createDocument({ title: '' });
+    const doc = createArticleDocument({ title: '' });
     doc.nodes.p1 = {
       id: 'p1',
       type: 'paragraph',

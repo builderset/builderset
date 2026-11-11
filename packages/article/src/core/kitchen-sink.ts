@@ -1,8 +1,12 @@
-import { createDocument, type BuilderDocument, type BuilderNode } from './document';
-import type { NodeId } from './ids';
-import { createFragment } from './operations';
-import type { ElementRegistry } from './registry';
-import { rt, type RichText } from './rich-text';
+import {
+  type BuilderNode,
+  type NodeId,
+  createFragment,
+  type ElementRegistry,
+  rt,
+  type RichText,
+} from '@motors/engine';
+import { createArticleDocument, type ArticleDocument } from './document';
 
 /**
  * A document holding one of every standard element, filled in the way a
@@ -305,8 +309,8 @@ const SPECS: Spec[] = [
   { type: 'disclaimer', props: { text: para('Prices are indicative.') } },
 ];
 
-export function kitchenSinkDocument(registry: ElementRegistry): BuilderDocument {
-  const doc = createDocument({
+export function kitchenSinkDocument(registry: ElementRegistry): ArticleDocument {
+  const doc = createArticleDocument({
     title: 'Buying a used car in 2026',
     excerpt: 'Everything to check before you buy, from the service book to the test drive.',
     cover: { media: SAMPLE_MEDIA('cover'), alt: 'A row of used cars' },
@@ -335,7 +339,7 @@ export function kitchenSinkDocument(registry: ElementRegistry): BuilderDocument 
 }
 
 /** Ids `n1…nN` in document order, for byte-stable fixtures. */
-export function renumber(doc: BuilderDocument): BuilderDocument {
+export function renumber(doc: ArticleDocument): ArticleDocument {
   const map = new Map<NodeId, NodeId>([[doc.root, doc.root]]);
   const visit = (id: NodeId) => {
     for (const child of doc.nodes[id]?.children ?? []) {

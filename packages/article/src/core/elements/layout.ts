@@ -1,8 +1,6 @@
+import { warning, defineElement, SPACE } from '@motors/engine';
 import { z } from 'zod';
 
-import { warning } from '../issues';
-import { defineElement } from '../registry';
-import { SPACE } from '../style';
 import { media, present } from './fields';
 
 /**

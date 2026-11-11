@@ -139,7 +139,7 @@ function SaveIndicator() {
 }
 
 export function TopBar(actions: TopBarActions) {
-  const { store, messages, article } = useEditorContext();
+  const { store, messages, record } = useEditorContext();
   const canUndo = useEditor((state) => state.canUndo);
   const canRedo = useEditor((state) => state.canRedo);
   const undoLabel = useEditor((state) => state.undoLabel);
@@ -147,15 +147,13 @@ export function TopBar(actions: TopBarActions) {
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
   const { profile } = useEditorContext();
-  const title = useEditor((state) =>
-    profile.titleOf ? profile.titleOf(state.view) : state.view.meta.title,
-  );
+  const title = useEditor((state) => profile.titleOf(state.view));
   const multilingual = useEditor((state) => state.doc.i18n?.enabled === true);
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
-  const published = article.status === 'published';
-  const scheduled = !published && !!article.scheduledAt;
-  const statusKey = scheduled ? 'status_scheduled' : (`status_${article.status}` as 'status_draft');
+  const published = record.status === 'published';
+  const scheduled = !published && !!record.scheduledAt;
+  const statusKey = scheduled ? 'status_scheduled' : (`status_${record.status}` as 'status_draft');
 
   return (
     // Three zones: where you are (left), how you are looking at it (center),

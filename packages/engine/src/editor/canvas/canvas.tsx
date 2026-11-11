@@ -1,6 +1,6 @@
 'use client';
 
-import { renderDocument, type EditableTextField } from '../../render';
+import type { EditableTextField } from '../../core';
 import { EmptyState } from '@motors/ui';
 import { FilePlus2, PenLine } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -27,7 +27,6 @@ import {
 } from './drop';
 import { useFlip } from './flip';
 import { Overlay } from './overlay';
-import { TitleField } from './title-field';
 
 /**
  * The widest the page gets per device, in CSS pixels, before zoom. Desktop is a
@@ -62,16 +61,17 @@ function nodeElement(target: EventTarget | null): HTMLElement | null {
 }
 
 /**
- * The article as it will look, editable.
+ * The document as it will look, editable.
  *
- * It renders through the SAME renderer as the public site (in `editing` mode),
- * so what the writer sees is what the reader gets. Selection outlines, the
+ * The kit's `renderCanvas` draws it — for an article, the SAME renderer as the
+ * public site in `editing` mode — so what the writer sees is what the reader
+ * gets. Selection outlines, the
  * toolbar and the drop indicator live on an overlay above it, measured from
  * each element's `data-node`, rather than wrapping every block in extra
  * markup that would change the layout it is showing.
  */
 export function Canvas() {
-  const { registry, host, messages, store, profile } = useEditorContext();
+  const { registry, messages, store, profile } = useEditorContext();
   const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
   const bare = profile.canvasFrame === 'bare';
   const doc = useEditor((state) => state.doc);
@@ -100,17 +100,10 @@ export function Canvas() {
   );
 
   const body = useMemo(
-    () =>
-      profile.renderCanvas
-        ? profile.renderCanvas({ doc: view, editText, viewport, locale: lang ?? undefined })
-        : renderDocument(view, registry, {
-            editing: true,
-            resolveMedia: (key: string) => host.resolveMedia(key),
-            locale: lang ?? host.contentLocale,
-            editText,
-          }),
-    [view, lang, registry, host, editText, profile, viewport],
+    () => profile.renderCanvas({ doc: view, editText, viewport, locale: lang ?? undefined }),
+    [view, lang, editText, profile, viewport],
   );
+  const Header = bare ? undefined : profile.canvasHeader;
 
   const empty = (doc.nodes[doc.root]?.children?.length ?? 0) === 0;
 
@@ -243,7 +236,7 @@ export function Canvas() {
             onDrop={onDrop}
           >
             <article className={bare ? 'min-h-[70vh]' : 'mx-auto max-w-[var(--maxw-prose,68ch)]'}>
-              {bare ? null : <TitleField />}
+              {Header ? <Header /> : null}
               {empty ? (
                 <EmptyState
                   size="compact"
@@ -258,7 +251,7 @@ export function Canvas() {
                         const state = store.getState();
                         // Through `insertElement`, so a host whose text must sit
                         // in containers (an email) gets them built around it.
-                        const id = state.insertElement(profile.paragraphType ?? 'paragraph', {
+                        const id = state.insertElement(profile.paragraphType, {
                           parentId: doc.root,
                           index: 0,
                         });

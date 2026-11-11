@@ -1,7 +1,7 @@
 'use client';
 
-import type { BuilderDocument, ElementRegistry } from '@motors/engine';
-import { BuilderEditor, type ArticleFacts, type BuilderHost } from '@motors/engine/editor';
+import type { ElementRegistry } from '@motors/engine';
+import { BuilderEditor, type BuilderHost, type RecordFacts } from '@motors/engine/editor';
 import type { EmailDocument, EmailType } from '../core';
 import type { BrandKit } from '../render';
 import { useMemo } from 'react';
@@ -13,15 +13,15 @@ import { emailProfile } from './profile';
 export interface EmailEditorProps {
   document: EmailDocument;
   registry: ElementRegistry;
-  host: BuilderHost;
+  host: BuilderHost<EmailDocument>;
   /** The email type this template is for: its variables and samples. */
   type: EmailType | null;
   brand: BrandKit;
   /** The public site, where the social block's icons are served from. */
   socialIconBase?: string | undefined;
   /** `status: 'published'` means the design is the ACTIVE one. */
-  facts: ArticleFacts;
-  onFactsChange: (patch: Partial<ArticleFacts>) => void;
+  record: RecordFacts;
+  onRecordChange?: ((patch: Partial<RecordFacts>) => void) | undefined;
   onBack: () => void;
   onDuplicate?: (() => void) | undefined;
   onDelete?: (() => Promise<boolean>) | undefined;
@@ -40,8 +40,8 @@ export function EmailEditor({
   type,
   brand,
   socialIconBase,
-  facts,
-  onFactsChange,
+  record,
+  onRecordChange,
   onBack,
   onDuplicate,
   onDelete,
@@ -69,11 +69,11 @@ export function EmailEditor({
   return (
     <EmailProvider value={{ type, brand, words, locale: host.contentLocale, sample }}>
       <BuilderEditor
-        document={document as unknown as BuilderDocument}
+        document={document}
         registry={registry}
         host={host}
-        article={facts}
-        onArticleChange={onFactsChange}
+        record={record}
+        onRecordChange={onRecordChange}
         onBack={onBack}
         onDuplicate={onDuplicate}
         onDelete={onDelete}

@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 
-import type { BuilderDocument, BuilderNode } from './document';
+import type { BuilderNode, EngineDocument } from './document';
 import type { Issue } from './issues';
 import type { MediaRef } from './media';
 
@@ -19,12 +19,11 @@ import type { MediaRef } from './media';
  * sufficient: the MotorsAL elements are written against nothing else.
  */
 
-export const CATEGORIES = ['layout', 'text', 'media', 'article', 'engagement', 'plugin'] as const;
 /**
- * The article categories are the known ones; another builder (email) brings
- * its own, so the type stays open while keeping these as suggestions.
+ * The group an element is listed under in the insert panel. Each kit names its
+ * own (`ARTICLE_CATEGORIES`) and passes them, in order, in its editor profile.
  */
-export type ElementCategory = (typeof CATEGORIES)[number] | (string & {});
+export type ElementCategory = string;
 
 export interface ContainerRule {
   /** Only these child types. Wins over `except`. */
@@ -39,7 +38,7 @@ export interface ContainerRule {
 
 export interface CheckContext {
   node: BuilderNode;
-  document: BuilderDocument;
+  document: EngineDocument;
 }
 
 export interface ElementDefinition<P extends Record<string, unknown> = Record<string, unknown>> {

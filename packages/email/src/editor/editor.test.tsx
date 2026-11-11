@@ -1,5 +1,11 @@
-import type { ArticleFacts, BuilderHost } from '@motors/engine/editor';
-import { createEmailDocument, createEmailRegistry, starterEmail, type EmailType } from '../core';
+import type { BuilderHost, RecordFacts } from '@motors/engine/editor';
+import {
+  createEmailDocument,
+  createEmailRegistry,
+  starterEmail,
+  type EmailDocument,
+  type EmailType,
+} from '../core';
 import { DEFAULT_BRAND } from '../render';
 import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -20,18 +26,9 @@ const type: EmailType = {
   samples: { default: { reset_url: 'https://example.com/reset' } },
 };
 
-const facts: ArticleFacts = {
-  slug: '',
-  status: 'draft',
-  category: '',
-  categories: [],
-  featured: false,
-  scheduledAt: null,
-  publishedAt: null,
-  locale: 'en',
-};
+const record: RecordFacts = { status: 'draft', scheduledAt: null, publishedAt: null };
 
-function host(): BuilderHost {
+function host(): BuilderHost<EmailDocument> {
   return {
     locale: 'en',
     contentLocale: 'en',
@@ -52,8 +49,8 @@ function mount(document = starterEmail(registry, { name: 'Reset design', subject
         host={host()}
         type={type}
         brand={DEFAULT_BRAND}
-        facts={facts}
-        onFactsChange={() => undefined}
+        record={record}
+        onRecordChange={() => undefined}
         onBack={() => undefined}
       />
     </I18nProvider>,

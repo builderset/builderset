@@ -1,6 +1,6 @@
 'use client';
 
-import { CATEGORIES, parentOf, type Fragment } from '../../core';
+import { parentOf, type Fragment } from '../../core';
 import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -124,7 +124,7 @@ export function AddPanel() {
                 />
               </Group>
             ) : null}
-            {(profile.categories ?? CATEGORIES).map((category) => {
+            {profile.categories.map((category) => {
               const inCategory = all.filter((choice) => choice.category === category);
               if (inCategory.length === 0) return null;
               return (

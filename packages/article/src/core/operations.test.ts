@@ -1,9 +1,5 @@
-import { describe, expect, it } from 'vitest';
-
-import { createDocument, type BuilderDocument, type Fragment } from './document';
-import { createStandardRegistry } from './elements';
-import { LIMITS } from './limits';
 import {
+  type Fragment,
   BuilderError,
   applyChange,
   createFragment,
@@ -16,15 +12,20 @@ import {
   unwrap,
   update,
   wrap,
-} from './operations';
-import { rt } from './rich-text';
-import { parentOf } from './tree';
+  rt,
+  parentOf,
+  LIMITS,
+} from '@motors/engine';
+import { createArticleDocument, type ArticleDocument } from './document';
+import { describe, expect, it } from 'vitest';
 
-const registry = createStandardRegistry();
+import { createArticleRegistry } from './elements';
+
+const registry = createArticleRegistry();
 
 /** A document built by the operations themselves, returning the ids. */
-function build(types: string[]): { doc: BuilderDocument; ids: string[] } {
-  let doc = createDocument({ title: 'Test' });
+function build(types: string[]): { doc: ArticleDocument; ids: string[] } {
+  let doc = createArticleDocument({ title: 'Test' });
   const ids: string[] = [];
   for (const type of types) {
     const change = applyChange(doc, (draft) =>
@@ -36,7 +37,7 @@ function build(types: string[]): { doc: BuilderDocument; ids: string[] } {
   return { doc, ids };
 }
 
-const childrenOfRoot = (doc: BuilderDocument) => doc.nodes[doc.root]?.children ?? [];
+const childrenOfRoot = (doc: ArticleDocument) => doc.nodes[doc.root]?.children ?? [];
 
 function refused(run: () => unknown): string {
   try {

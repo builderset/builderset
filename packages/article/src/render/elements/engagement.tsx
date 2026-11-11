@@ -1,4 +1,4 @@
-import { parentOf } from '../../core';
+import { parentOf, type PropsOf } from '@motors/engine';
 import type {
   accordionElement,
   accordionItemElement,
@@ -6,11 +6,10 @@ import type {
   ctaElement,
   disclaimerElement,
   newsletterElement,
-  PropsOf,
   relatedElement,
   tabItemElement,
   tabsElement,
-} from '../../core';
+} from '../../core/elements/engagement';
 import { ArrowUpRight, ChevronDown } from 'lucide-react';
 
 import { NewsletterForm } from '../client/newsletter-form';

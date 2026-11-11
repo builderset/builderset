@@ -1,5 +1,5 @@
 /**
- * @motors/engine/render — a builder document, rendered.
+ * @motors/article/render — an article, rendered.
  *
  * Framework-agnostic React (Server Component safe); hosts inject their link
  * and image components, media resolver, locale and messages. See the README
@@ -7,6 +7,7 @@
  */
 
 export * from './context';
+export type { EditableTextField } from '@motors/engine';
 export { embedSource, PROVIDER_NAMES, type EmbedSource } from './embed-source';
 export { fill, messagesFor, RENDER_MESSAGES, type RenderMessages } from './messages';
 export { styleClasses, styleInline } from './node-style';

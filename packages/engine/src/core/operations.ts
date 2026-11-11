@@ -27,7 +27,7 @@ enablePatches();
  * document. A refused operation throws a `BuilderError` with a message key and
  * leaves the document exactly as it was.
  *
- * The functions take the draft typed as a plain `BuilderDocument` — the
+ * The functions take the draft typed as a plain `NodeTree` — the
  * document type has no readonly parts, so an immer draft of it IS one.
  */
 

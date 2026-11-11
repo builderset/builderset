@@ -1,15 +1,15 @@
+import { checkArticle } from './check';
+import { createArticleDocument, type ArticleDocument } from './document';
+import { toArticleJSONSchema } from './schema';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { createDocument, type BuilderDocument } from './document';
-import { createStandardRegistry } from './elements';
-import { toJSONSchema } from './json-schema';
+import { createArticleRegistry } from './elements';
 import { kitchenSinkDocument, renumber } from './kitchen-sink';
 import { fromLegacyBody } from './legacy';
-import { checkDocument } from './validate';
 
 /**
  * The CONTRACT with the server, as files.
@@ -22,7 +22,7 @@ import { checkDocument } from './validate';
  * an intentional change, and commit the result alongside the change.
  */
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const update = process.env.UPDATE_FIXTURES === '1';
 
@@ -57,8 +57,8 @@ function expectFixture(relative: string, content: string) {
 }
 
 /** A small valid document to break in one specific way per invalid fixture. */
-function base(): BuilderDocument {
-  const doc = createDocument({ title: 'Broken on purpose' });
+function base(): ArticleDocument {
+  const doc = createArticleDocument({ title: 'Broken on purpose' });
   doc.nodes.root = { id: 'root', type: 'root', v: 1, props: {}, children: ['n1'] };
   doc.nodes.n1 = {
     id: 'n1',
@@ -69,7 +69,7 @@ function base(): BuilderDocument {
   return doc;
 }
 
-const INVALID: Record<string, { code: string; build: () => BuilderDocument }> = {
+const INVALID: Record<string, { code: string; build: () => ArticleDocument }> = {
   'unsafe-link': {
     code: 'url.unsafe',
     build: () => {
@@ -160,7 +160,7 @@ const INVALID: Record<string, { code: string; build: () => BuilderDocument }> = 
 
 describe('the server contract', () => {
   it('commits the JSON Schema of the standard document', () => {
-    const schema = stable(toJSONSchema(registry));
+    const schema = stable(toArticleJSONSchema(registry));
     expectFile('schema/document.schema.json', schema);
     // The API's copy: its containers mount only `api/`, so it cannot read this
     // package at runtime. Kept identical here, where both are in reach.
@@ -168,9 +168,9 @@ describe('the server contract', () => {
   });
 
   it('commits valid fixtures the checker accepts', () => {
-    const valid: Record<string, BuilderDocument> = {
+    const valid: Record<string, ArticleDocument> = {
       'kitchen-sink': kitchenSinkDocument(registry),
-      empty: createDocument({ title: 'Empty' }),
+      empty: createArticleDocument({ title: 'Empty' }),
       legacy: renumber(
         fromLegacyBody(
           [
@@ -191,7 +191,7 @@ describe('the server contract', () => {
       ),
     };
     for (const [name, doc] of Object.entries(valid)) {
-      const errors = checkDocument(doc, registry).filter((issue) => issue.severity === 'error');
+      const errors = checkArticle(doc, registry).filter((issue) => issue.severity === 'error');
       expect(errors, name).toEqual([]);
       expectFixture(`valid/${name}.json`, stable(doc));
     }
@@ -201,7 +201,7 @@ describe('the server contract', () => {
     const manifest: Record<string, string> = {};
     for (const [name, { code, build }] of Object.entries(INVALID)) {
       const doc = build();
-      const found = checkDocument(doc, registry)
+      const found = checkArticle(doc, registry)
         .filter((issue) => issue.severity === 'error')
         .map((issue) => issue.code);
       expect(found, name).toContain(code);

@@ -1,17 +1,10 @@
+import { applyChange, createFragment, insert, rt, update } from '@motors/engine';
+import { createArticleDocument, type ArticleDocument } from '../core/document';
+import { createArticleRegistry } from '../core/elements';
+import { kitchenSinkDocument } from '../core/kitchen-sink';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-import {
-  applyChange,
-  createDocument,
-  createFragment,
-  createStandardRegistry,
-  insert,
-  kitchenSinkDocument,
-  rt,
-  update,
-  type BuilderDocument,
-} from '../core';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
@@ -21,10 +14,10 @@ import { styleClasses } from './node-style';
 import { ArticleRenderer } from './render';
 import { jsonLdString, structuredData } from './structured-data';
 
-const registry = createStandardRegistry();
+const registry = createArticleRegistry();
 const resolveMedia = (key: string) => `https://cdn.test/${key}`;
 
-function show(document: BuilderDocument, extra: Record<string, unknown> = {}) {
+function show(document: ArticleDocument, extra: Record<string, unknown> = {}) {
   return render(
     <ArticleRenderer
       document={document}
@@ -36,11 +29,11 @@ function show(document: BuilderDocument, extra: Record<string, unknown> = {}) {
   );
 }
 
-function withNodes(build: (doc: BuilderDocument) => BuilderDocument): BuilderDocument {
-  return build(createDocument({ title: 'T' }));
+function withNodes(build: (doc: ArticleDocument) => ArticleDocument): ArticleDocument {
+  return build(createArticleDocument({ title: 'T' }));
 }
 
-function add(doc: BuilderDocument, type: string, props: Record<string, unknown> = {}) {
+function add(doc: ArticleDocument, type: string, props: Record<string, unknown> = {}) {
   const change = applyChange(doc, (draft) =>
     insert(draft, registry, draft.root, Infinity, createFragment(registry, type, props)),
   );
@@ -95,7 +88,7 @@ describe('the kitchen sink', () => {
 
 describe('safety', () => {
   it('never puts an unsafe URL in an href, even from an unchecked document', () => {
-    const added = add(createDocument({ title: 'T' }), 'paragraph');
+    const added = add(createArticleDocument({ title: 'T' }), 'paragraph');
     const id = added.id;
     // Written straight into the node, the way a stale row could arrive.
     const doc = structuredClone(added.doc);
@@ -170,7 +163,7 @@ describe('safety', () => {
 
 describe('visibility', () => {
   it('leaves hidden nodes out of the page', () => {
-    const added = add(createDocument({ title: 'T' }), 'paragraph', { text: rt('secret') });
+    const added = add(createArticleDocument({ title: 'T' }), 'paragraph', { text: rt('secret') });
     const doc = applyChange(added.doc, (draft) => {
       update(draft, registry, added.id, { hidden: true });
     }).doc;

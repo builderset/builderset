@@ -1,10 +1,16 @@
+import {
+  warning,
+  type Issue,
+  mediaRefSchema,
+  type MediaRef,
+  linksOf,
+  richTextSchema,
+  richTextToPlain,
+  type RichText,
+  isSafeUrl,
+} from '@motors/engine';
+import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
-
-import { warning, type Issue } from '../issues';
-import { LIMITS } from '../limits';
-import { mediaRefSchema, type MediaRef } from '../media';
-import { linksOf, richTextSchema, richTextToPlain, type RichText } from '../rich-text';
-import { isSafeUrl } from '../url';
 
 /**
  * The field vocabulary the standard elements are written in. Kept in one
@@ -12,8 +18,8 @@ import { isSafeUrl } from '../url';
  * the server's mirror has one list to follow.
  */
 
-export const shortText = () => z.string().max(LIMITS.shortText);
-export const longText = () => z.string().max(LIMITS.longText);
+export const shortText = () => z.string().max(ARTICLE_LIMITS.shortText);
+export const longText = () => z.string().max(ARTICLE_LIMITS.longText);
 export const richText = () => richTextSchema;
 export const media = () => mediaRefSchema.nullable();
 export const safeUrl = () => z.string().refine(isSafeUrl, { message: 'url.unsafe' });
@@ -58,7 +64,7 @@ export function buttonIssues(buttons: readonly ButtonSpec[], nodeId: string): Is
   );
 }
 
-export const listOf = <T extends z.ZodType>(item: T, max: number = LIMITS.listItems) =>
+export const listOf = <T extends z.ZodType>(item: T, max: number = ARTICLE_LIMITS.listItems) =>
   z.array(item).max(max);
 
 /** Plain text of several rich-text values, one per line. */

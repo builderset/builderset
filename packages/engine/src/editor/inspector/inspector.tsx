@@ -32,7 +32,6 @@ import { cn } from '../cn';
 import { useEditor, useEditorContext, useProfile } from '../context';
 import { ElementIcon } from '../icons';
 import { humanize } from '../messages';
-import { DocumentSettings } from './document-settings';
 import { MediaField } from './media-field';
 import { propsSchema, type JsonSchema } from './schema';
 import { ObjectFields } from './schema-fields';
@@ -66,9 +65,10 @@ export function Inspector() {
   );
 }
 
+/** With nothing selected: the kit's document settings, or nothing when it has none. */
 function Settings() {
-  const Panel = useProfile().settingsPanel ?? DocumentSettings;
-  return <Panel />;
+  const Panel = useProfile().settingsPanel;
+  return Panel ? <Panel /> : null;
 }
 
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {

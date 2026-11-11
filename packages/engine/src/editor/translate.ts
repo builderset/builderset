@@ -121,10 +121,13 @@ export function splitEdit(
  * the slug, the cover picture, the reading time are shared.
  */
 export function splitMeta(
-  shown: Record<string, unknown>,
-  base: Record<string, unknown>,
+  shownMeta: object,
+  baseMeta: object,
   next: Record<string, unknown>,
 ): { words: [string, unknown][]; shared: Record<string, unknown> } {
+  // A meta is a plain JSON object whatever kit it belongs to; read it by key.
+  const shown = shownMeta as Record<string, unknown>;
+  const base = baseMeta as Record<string, unknown>;
   const words: [string, unknown][] = [];
   const shared: Record<string, unknown> = {};
   const isWords = (path: string) => (TRANSLATABLE_META as readonly string[]).includes(path);

@@ -6,7 +6,7 @@ import {
   indexInParent,
   parentOf,
   richTextToPlain,
-  type BuilderDocument,
+  type NodeTree,
   type BuilderNode,
   type NodeId,
   type RichText,
@@ -88,7 +88,7 @@ function Row({
 }: {
   id: NodeId;
   depth: number;
-  doc: BuilderDocument;
+  doc: NodeTree;
   collapsed: Set<NodeId>;
   setCollapsed: (update: (current: Set<NodeId>) => Set<NodeId>) => void;
   drop: Drop | null;

@@ -1,6 +1,6 @@
 import { applyPatches, type Draft, type Patch } from 'immer';
 
-import type { BuilderDocument, NodeTree } from './document';
+import type { NodeTree } from './document';
 import type { NodeId } from './ids';
 import { LIMITS } from './limits';
 import { applyChange } from './operations';
@@ -51,7 +51,7 @@ export interface HistoryOptions {
   now?: () => number;
 }
 
-export class History<D extends NodeTree = BuilderDocument> {
+export class History<D extends NodeTree = NodeTree> {
   private undoStack: HistoryEntry[] = [];
   private redoStack: HistoryEntry[] = [];
   private pending: HistoryEntry | null = null;

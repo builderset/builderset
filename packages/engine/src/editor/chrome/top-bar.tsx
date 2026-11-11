@@ -1,6 +1,6 @@
 'use client';
 
-import type { Breakpoint } from '@motors/builder-core';
+import type { Breakpoint } from '../../core';
 import {
   Badge,
   Button,

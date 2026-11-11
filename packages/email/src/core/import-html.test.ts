@@ -1,4 +1,4 @@
-import type { Issue } from '@motors/builder-core';
+import type { Issue } from '@motors/engine';
 import { describe, expect, it } from 'vitest';
 
 import { createEmailRegistry } from './blocks';

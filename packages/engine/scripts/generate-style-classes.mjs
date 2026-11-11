@@ -1,4 +1,4 @@
-// Writes src/style-classes.ts: every style token × breakpoint range as a
+// Writes src/render/style-classes.ts: every style token × breakpoint range as a
 // literal Tailwind class, because Tailwind only emits classes it finds written
 // out in source. Run: node scripts/generate-style-classes.mjs
 import { writeFileSync } from 'node:fs';
@@ -90,4 +90,7 @@ for (const [name, values] of Object.entries(PROPS)) {
   lines.push('  },');
 }
 lines.push('} as const;', '');
-writeFileSync(fileURLToPath(new URL('../src/style-classes.ts', import.meta.url)), lines.join('\n'));
+writeFileSync(
+  fileURLToPath(new URL('../src/render/style-classes.ts', import.meta.url)),
+  lines.join('\n'),
+);

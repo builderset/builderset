@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementRegistry } from '@motors/builder-core';
+import type { ElementRegistry } from '../../core';
 import type { Editor } from '@tiptap/core';
 import { motion } from 'motion/react';
 import { useEffect, useRef } from 'react';

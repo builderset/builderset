@@ -4,7 +4,7 @@ import {
   type ContentLocale,
   type ElementRegistry,
   type Translation,
-} from '@motors/builder-core';
+} from '@motors/engine';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';
 import {

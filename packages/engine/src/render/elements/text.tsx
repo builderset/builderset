@@ -12,7 +12,7 @@ import type {
   RichText,
   tableElement,
   takeawaysElement,
-} from '@motors/builder-core';
+} from '../../core';
 import {
   CircleCheck,
   Info,

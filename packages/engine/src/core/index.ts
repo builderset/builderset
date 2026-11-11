@@ -1,5 +1,5 @@
 /**
- * @motors/builder-core — the article builder's model.
+ * @motors/engine — the article builder's model.
  *
  * Pure TypeScript: the document format, the element registry and the standard
  * element definitions, every editing operation with undo, validation, parsing

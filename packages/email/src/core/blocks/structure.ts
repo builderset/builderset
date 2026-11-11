@@ -1,4 +1,4 @@
-import { defineElement } from '@motors/builder-core';
+import { defineElement } from '@motors/engine';
 import { z } from 'zod';
 
 import { color, displaySchema, media, optionalColor, pad, paddingSchema, px } from '../fields';

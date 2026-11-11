@@ -1,4 +1,4 @@
-import type { EditorMessages, ElementText } from '@motors/builder-react';
+import type { EditorMessages, ElementText } from '@motors/engine/editor';
 
 /**
  * The email editor's words: its blocks and categories, and the article

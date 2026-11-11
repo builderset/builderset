@@ -1,7 +1,7 @@
 'use client';
 
-import { parentOf, reidFragment, type Fragment } from '@motors/builder-core';
-import { useEditor, useEditorContext, type SavedSection } from '@motors/builder-react';
+import { parentOf, reidFragment, type Fragment } from '@motors/engine';
+import { useEditor, useEditorContext, type SavedSection } from '@motors/engine/editor';
 import { Button, EmptyState, Input, Spinner } from '@motors/ui';
 import { BookmarkPlus, Boxes, FileCode2 } from 'lucide-react';
 import { useEffect, useState } from 'react';

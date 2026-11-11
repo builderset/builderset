@@ -1,6 +1,6 @@
 'use client';
 
-import { isSafeUrl, type RichText } from '@motors/builder-core';
+import { isSafeUrl, type RichText } from '../../core';
 import Bold from '@tiptap/extension-bold';
 import Code from '@tiptap/extension-code';
 import Document from '@tiptap/extension-document';

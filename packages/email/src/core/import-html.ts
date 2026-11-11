@@ -1,4 +1,4 @@
-import { createId, isSafeUrl, type BuilderNode, type ElementRegistry } from '@motors/builder-core';
+import { createId, isSafeUrl, type BuilderNode, type ElementRegistry } from '@motors/engine';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';
 import { createEmailDocument, type EmailDocument, type EmailMeta } from './document';

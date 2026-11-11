@@ -4,7 +4,7 @@ import type {
   ElementRegistry,
   OutlineEntry,
   RichText,
-} from '@motors/builder-core';
+} from '../core';
 import type { ComponentType, ReactNode } from 'react';
 
 import type { RenderMessages } from './messages';

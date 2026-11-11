@@ -35,7 +35,7 @@ import {
   starterEmail,
   v,
   type EmailDocument,
-} from '@motors/email-core';
+} from '../core';
 import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_BRAND, socialIconUrl, type BrandKit } from './context';
@@ -54,7 +54,11 @@ import { renderEmail } from './html';
  */
 
 const registry = createEmailRegistry();
-const root = join(dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..');
+const root = join(
+  dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')),
+  '..',
+  '..',
+);
 const update = process.env.UPDATE_FIXTURES === '1';
 const ASSET_BASE = 'https://cdn.test/';
 const ICON_BASE = 'https://site.test/';

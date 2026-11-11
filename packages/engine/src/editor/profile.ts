@@ -1,11 +1,5 @@
-import type {
-  Breakpoint,
-  BuilderDocument,
-  ElementRegistry,
-  Fragment,
-  Issue,
-} from '@motors/builder-core';
-import type { EditableTextField } from '@motors/builder-render';
+import type { Breakpoint, BuilderDocument, ElementRegistry, Fragment, Issue } from '../core';
+import type { EditableTextField } from '../render';
 import type { ComponentType, ReactNode } from 'react';
 
 /**

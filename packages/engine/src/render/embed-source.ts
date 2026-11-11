@@ -1,4 +1,4 @@
-import { detectEmbedProvider, EMBED_ASPECT, type EmbedProvider } from '@motors/builder-core';
+import { detectEmbedProvider, EMBED_ASPECT, type EmbedProvider } from '../core';
 
 /**
  * The iframe address for an embed, BUILT from the id it contains.

@@ -1,4 +1,4 @@
-import { isExternalUrl, isSafeUrl, type Mark, type RichText } from '@motors/builder-core';
+import { isExternalUrl, isSafeUrl, type Mark, type RichText } from '../core';
 import type { ReactNode } from 'react';
 
 import type { RenderContext } from './context';

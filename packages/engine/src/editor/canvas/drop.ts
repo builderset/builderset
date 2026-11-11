@@ -7,7 +7,7 @@ import {
   type Fragment,
   type NodeId,
   type NodeTree,
-} from '@motors/builder-core';
+} from '../../core';
 
 /**
  * Where a drag would land, worked out from the node under the pointer.

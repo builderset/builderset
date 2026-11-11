@@ -1,13 +1,13 @@
-# @motors/builder-render
+# @motors/engine/render
 
-Renders a `@motors/builder-core` document as React. Server Component safe:
+Renders a `@motors/engine` document as React. Server Component safe:
 static elements ship no JavaScript; only a few small islands hydrate (copy
 button, click-to-load embed, tabs, carousel, before/after slider, lightbox,
 newsletter form).
 
 ```tsx
-import { createStandardRegistry } from '@motors/builder-core';
-import { ArticleRenderer } from '@motors/builder-render';
+import { createStandardRegistry } from '@motors/engine';
+import { ArticleRenderer } from '@motors/engine/render';
 
 const registry = createStandardRegistry();
 
@@ -72,7 +72,7 @@ transitions and are ignored if absent.
 Tailwind scans the importing app, so add the package to its sources:
 
 ```css
-@source '../node_modules/@motors/builder-render/src';
+@source '../node_modules/@motors/engine/src/render';
 ```
 
 `src/style-classes.ts` (style tokens → literal classes per breakpoint range) is

@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementRegistry } from '@motors/builder-core';
+import type { ElementRegistry } from '../core';
 import { createContext, useContext, type ReactNode } from 'react';
 import { useStore } from 'zustand';
 

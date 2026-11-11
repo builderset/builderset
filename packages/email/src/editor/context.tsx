@@ -1,7 +1,7 @@
 'use client';
 
-import type { EmailType } from '@motors/email-core';
-import type { BrandKit } from '@motors/email-render';
+import type { EmailType } from '../core';
+import type { BrandKit } from '../render';
 import { createContext, useContext, type ReactNode } from 'react';
 
 import type { EmailWords } from './messages';

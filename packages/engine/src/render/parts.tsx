@@ -1,5 +1,5 @@
-import type { ButtonSpec, MediaRef } from '@motors/builder-core';
-import { isExternalUrl } from '@motors/builder-core';
+import type { ButtonSpec, MediaRef } from '../core';
+import { isExternalUrl } from '../core';
 import {
   ArrowRight,
   ArrowUpRight,

@@ -1,8 +1,8 @@
 'use client';
 
-import type { BuilderDocument, Fragment } from '@motors/builder-core';
-import { useEditorContext } from '@motors/builder-react';
-import { importEmailHtml, type EmailDocument } from '@motors/email-core';
+import type { BuilderDocument, Fragment } from '@motors/engine';
+import { useEditorContext } from '@motors/engine/editor';
+import { importEmailHtml, type EmailDocument } from '../core';
 import {
   Button,
   DrawerPanel,

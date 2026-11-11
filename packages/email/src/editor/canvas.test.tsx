@@ -7,12 +7,12 @@ import {
   section,
   starterEmail,
   v,
-} from '@motors/email-core';
+} from '../core';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { EmailCanvas } from './canvas';
-import { renderEmail } from './html';
+import { renderEmail } from '../render/html';
 
 const registry = createEmailRegistry();
 const assetUrl = (key: string) => `https://cdn.test/${key}`;

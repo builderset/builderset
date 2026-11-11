@@ -1,4 +1,4 @@
-import { parentOf } from '@motors/builder-core';
+import { parentOf } from '../../core';
 import type {
   accordionElement,
   accordionItemElement,
@@ -10,7 +10,7 @@ import type {
   relatedElement,
   tabItemElement,
   tabsElement,
-} from '@motors/builder-core';
+} from '../../core';
 import { ArrowUpRight, ChevronDown } from 'lucide-react';
 
 import { NewsletterForm } from '../client/newsletter-form';

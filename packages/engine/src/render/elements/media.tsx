@@ -1,4 +1,4 @@
-import { isRichTextEmpty } from '@motors/builder-core';
+import { isRichTextEmpty } from '../../core';
 import type {
   audioElement,
   beforeAfterElement,
@@ -9,7 +9,7 @@ import type {
   mediaTextElement,
   PropsOf,
   videoElement,
-} from '@motors/builder-core';
+} from '../../core';
 import {
   Download,
   FileArchive,

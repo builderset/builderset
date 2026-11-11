@@ -1,7 +1,7 @@
 /**
- * @motors/email-core — the email builder's model.
+ * @motors/email — the email builder's model.
  *
- * Pure TypeScript on top of `@motors/builder-core`'s tree, operations and
+ * Pure TypeScript on top of `@motors/engine`'s tree, operations and
  * history: the email document (subject, preheader, settings), its blocks and
  * layout rules, variables with conditions and loops, and validation — for the
  * editor, the renderer and the server alike.

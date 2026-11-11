@@ -23,7 +23,7 @@ import {
   type Fragment,
   type NodeId,
   type NodePatch,
-} from '@motors/builder-core';
+} from '../core';
 import { createStore, type StoreApi } from 'zustand/vanilla';
 
 import { propsSchema } from './inspector/schema';

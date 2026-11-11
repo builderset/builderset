@@ -1,7 +1,6 @@
 'use client';
 
-import { Button, Input, Spinner } from '../ui';
-import { EmptyState } from '@motors/ui';
+import { Button, Input, Spinner, EmptyState } from '../ui';
 import { Clock, RotateCcw, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

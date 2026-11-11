@@ -165,6 +165,10 @@ export interface EditorMessages {
   dragToMove: string;
   moreOptions: string;
   close: string;
+  /** The UI kit's fallbacks: a confirm that failed, an empty list with no words of its own. */
+  somethingWentWrong: string;
+  noResults: string;
+  noResultsHint: string;
   insertVariable: string;
   structures: string;
   inheritFont: string;
@@ -523,6 +527,9 @@ const EN: EditorMessages = {
   dragToMove: 'Drag to move',
   moreOptions: 'More options',
   close: 'Close',
+  somethingWentWrong: 'Something went wrong. Please try again.',
+  noResults: 'No results found.',
+  noResultsHint: 'Try changing the filters, or add a new record.',
   insertVariable: 'Insert a variable',
   structures: 'Structures',
   inheritFont: 'Email default',
@@ -781,6 +788,9 @@ const SQ: EditorMessages = {
   dragToMove: 'Tërhiqeni për ta lëvizur',
   moreOptions: 'Më shumë opsione',
   close: 'Mbyll',
+  somethingWentWrong: 'Ndodhi një gabim. Provoni përsëri.',
+  noResults: 'Nuk u gjet asnjë rezultat.',
+  noResultsHint: 'Provoni të ndryshoni filtrat ose shtoni një rekord të ri.',
   insertVariable: 'Fut një variabël',
   structures: 'Strukturat',
   inheritFont: 'Si emaili',
@@ -973,6 +983,9 @@ const DE: EditorMessages = {
   deleteTitle: 'Diesen Artikel löschen?',
   moreOptions: 'Weitere Optionen',
   close: 'Schließen',
+  somethingWentWrong: 'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+  noResults: 'Keine Ergebnisse gefunden.',
+  noResultsHint: 'Ändern Sie die Filter oder legen Sie einen neuen Datensatz an.',
   insertVariable: 'Variable einfügen',
   structures: 'Strukturen',
   inheritFont: 'Wie die E-Mail',

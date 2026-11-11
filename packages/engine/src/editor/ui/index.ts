@@ -26,6 +26,25 @@ export {
 export { Label } from './label';
 export { useMediaQuery } from './media';
 export { Progress, Skeleton, Spinner, type ProgressProps, type SpinnerProps } from './misc';
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+  Tooltip,
+  TooltipProvider,
+  type TooltipProps,
+} from './popover';
+export { PortalProvider, usePortalContainer } from './portal';
+export { Select, type SelectOption, type SelectProps } from './select';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { ToggleFlag, type ToggleFlagProps } from './toggle-flag';
 export {
   SegmentedControl,

@@ -1,7 +1,6 @@
 'use client';
 
-import { Button, Input, Label, SegmentedControl } from '../ui';
-import { Select } from '@motors/ui';
+import { Button, Input, Label, SegmentedControl, Select } from '../ui';
 import { Link2, Link2Off, Plus, Trash2 } from 'lucide-react';
 import { useId, useState } from 'react';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import type { EditableTextField } from '../../core';
-import { EmptyState } from '@motors/ui';
+import { EmptyState } from '../ui';
 import { FilePlus2, PenLine } from 'lucide-react';
 import { motion } from 'motion/react';
 import {

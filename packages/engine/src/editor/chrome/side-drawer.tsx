@@ -7,7 +7,7 @@ import {
   OverlayDescription,
   OverlayHeader,
   OverlayTitle,
-} from '@motors/ui';
+} from '../ui';
 import type { ReactNode } from 'react';
 
 import { useEditorContext } from '../context';

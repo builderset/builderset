@@ -1,13 +1,21 @@
 'use client';
 
 import type { ElementRegistry } from '@motors/engine';
-import { BuilderEditor, type BuilderHost, type RecordFacts } from '@motors/engine/editor';
+import {
+  BuilderEditor,
+  resolveMessages,
+  useHtmlLang,
+  type BuilderHost,
+  type EditorMessages,
+  type RecordFacts,
+} from '@motors/engine/editor';
 import type { EmailDocument, EmailType } from '../core';
 import type { BrandKit } from '../render';
 import { useMemo } from 'react';
 
 import { EmailProvider } from './context';
-import { emailWords } from './messages';
+import { en } from '../locales/en';
+import type { EmailLocale, EmailMessages, EmailWords } from './messages';
 import { emailProfile } from './profile';
 
 export interface EmailEditorProps {
@@ -25,6 +33,16 @@ export interface EmailEditorProps {
   onBack: () => void;
   onDuplicate?: (() => void) | undefined;
   onDelete?: (() => Promise<boolean>) | undefined;
+  /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
+  locale?: string | undefined;
+  /** Other languages, by code: `{ sq }` from `@motors/email/locales/sq`. English is built in. */
+  locales?: Readonly<Record<string, EmailLocale | undefined>> | undefined;
+  /** Replace single words, in whatever language is active. */
+  messages?: EmailMessages | undefined;
+  /** The languages a design can be written in. One: no language switch. */
+  contentLocales?: readonly string[] | undefined;
+  /** The language a new design is written in. Default: the first of `contentLocales`. */
+  defaultContentLocale?: string | undefined;
   storageKey?: string | undefined;
   savedAt?: string | null | undefined;
 }
@@ -47,8 +65,32 @@ export function EmailEditor({
   onDelete,
   storageKey,
   savedAt,
+  locale: requested,
+  locales,
+  messages,
+  contentLocales,
+  defaultContentLocale: requestedContentLocale,
 }: EmailEditorProps) {
-  const words = useMemo(() => emailWords(host.locale), [host.locale]);
+  const htmlLang = useHtmlLang();
+  const locale = requested === 'auto' ? htmlLang : (requested ?? 'en');
+  const resolved = useMemo(
+    () => resolveMessages<EmailLocale>(en, locale, locales, messages),
+    [locale, locales, messages],
+  );
+  const words = useMemo<EmailWords>(
+    () => ({ email: resolved.email, importHtml: resolved.importHtml }),
+    [resolved],
+  );
+  const editorMessages = useMemo<EditorMessages>(
+    () => ({
+      ...resolved.engine,
+      ...resolved.workspace,
+      elements: resolved.elements,
+      categories: resolved.categories,
+    }),
+    [resolved],
+  );
+  const contentLocale = requestedContentLocale ?? contentLocales?.[0] ?? locale;
   const profile = useMemo(
     () =>
       emailProfile({
@@ -57,17 +99,15 @@ export function EmailEditor({
         brand,
         assetUrl: (key) => host.resolveMedia(key),
         socialIconBase,
-        locale: host.contentLocale,
+        locale: contentLocale,
         words,
       }),
-    [registry, type, brand, host, words, socialIconBase],
+    [registry, type, brand, host, words, socialIconBase, contentLocale],
   );
   const sample = type?.samples.default ?? Object.values(type?.samples ?? {})[0] ?? {};
-  const { email, ...messages } = words;
-  void email;
 
   return (
-    <EmailProvider value={{ type, brand, words, locale: host.contentLocale, sample }}>
+    <EmailProvider value={{ type, brand, words, locale: contentLocale, sample }}>
       <BuilderEditor
         document={document}
         registry={registry}
@@ -79,7 +119,10 @@ export function EmailEditor({
         onDelete={onDelete}
         storageKey={storageKey}
         savedAt={savedAt}
-        messages={messages}
+        locale={locale}
+        messages={editorMessages}
+        contentLocales={contentLocales}
+        defaultContentLocale={contentLocale}
         profile={profile}
       />
     </EmailProvider>

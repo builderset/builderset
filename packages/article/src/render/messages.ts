@@ -1,8 +1,9 @@
 /**
  * The handful of words the renderer itself writes — button labels, the
  * privacy notice on an embed, the heading over footnotes. Everything else on
- * the page is the writer's. Three languages ship; a host passes `messages` to
- * override any of them or to add a language.
+ * the page is the writer's. English is built in; a host passes `messages` —
+ * a language's `render` words from `@motors/article/locales/sq`, or single
+ * words — to change them.
  */
 
 export interface RenderMessages {
@@ -39,7 +40,7 @@ export interface RenderMessages {
   audio: string;
 }
 
-const en: RenderMessages = {
+export const RENDER_EN: RenderMessages = {
   contents: 'Contents',
   notes: 'Notes',
   headingPlaceholder: 'Heading',
@@ -70,73 +71,9 @@ const en: RenderMessages = {
   audio: 'Audio',
 };
 
-const sq: RenderMessages = {
-  contents: 'Përmbajtja',
-  notes: 'Shënime',
-  headingPlaceholder: 'Titull',
-  paragraphPlaceholder: 'Shkruani diçka, ose shtypni / për blloqe',
-  copy: 'Kopjo',
-  copied: 'U kopjua',
-  loadEmbed: 'Ngarko përmbajtjen',
-  embedNotice: 'Kjo shfaq përmbajtje nga {provider}, e cila mund të vendosë cookies.',
-  previous: 'E mëparshmja',
-  next: 'Tjetra',
-  close: 'Mbyll',
-  enlarge: 'Zmadho foton',
-  before: 'Para',
-  after: 'Pas',
-  compareHandle: 'Tërhiqeni për të krahasuar',
-  pros: 'Pro',
-  cons: 'Kundër',
-  step: 'Hapi',
-  minutes: '{n} min',
-  ratingOutOf: '{score} nga {scale}',
-  download: 'Shkarko',
-  readNext: 'Lexoni më tej',
-  emailPlaceholder: 'ju@shembull.com',
-  subscribe: 'Abonohu',
-  subscribed: 'Faleminderit — kontrolloni email-in.',
-  subscribeFailed: 'Nuk funksionoi. Provoni përsëri.',
-  video: 'Video',
-  audio: 'Audio',
-};
-
-const de: RenderMessages = {
-  contents: 'Inhalt',
-  notes: 'Anmerkungen',
-  headingPlaceholder: 'Überschrift',
-  paragraphPlaceholder: 'Etwas schreiben oder / für Blöcke drücken',
-  copy: 'Kopieren',
-  copied: 'Kopiert',
-  loadEmbed: 'Inhalt laden',
-  embedNotice: 'Dies zeigt Inhalte von {provider}, die Cookies setzen können.',
-  previous: 'Zurück',
-  next: 'Weiter',
-  close: 'Schließen',
-  enlarge: 'Bild vergrößern',
-  before: 'Vorher',
-  after: 'Nachher',
-  compareHandle: 'Zum Vergleichen ziehen',
-  pros: 'Vorteile',
-  cons: 'Nachteile',
-  step: 'Schritt',
-  minutes: '{n} Min.',
-  ratingOutOf: '{score} von {scale}',
-  download: 'Herunterladen',
-  readNext: 'Weiterlesen',
-  emailPlaceholder: 'sie@beispiel.de',
-  subscribe: 'Abonnieren',
-  subscribed: 'Danke — bitte prüfen Sie Ihr Postfach.',
-  subscribeFailed: 'Das hat nicht geklappt. Bitte erneut versuchen.',
-  video: 'Video',
-  audio: 'Audio',
-};
-
-export const RENDER_MESSAGES: Record<string, RenderMessages> = { en, sq, de };
-
-export function messagesFor(locale: string, overrides?: Partial<RenderMessages>): RenderMessages {
-  const base = RENDER_MESSAGES[locale] ?? RENDER_MESSAGES[locale.split('-')[0] ?? ''] ?? en;
-  return { ...base, ...overrides };
+/** English, with `overrides` laid over it: a language from `@motors/article/locales/…` (its `render`), or single words. */
+export function messagesFor(overrides?: Partial<RenderMessages>): RenderMessages {
+  return { ...RENDER_EN, ...overrides };
 }
 
 /** `{name}` placeholders, filled. */

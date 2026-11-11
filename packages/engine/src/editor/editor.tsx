@@ -41,7 +41,9 @@ import {
 import type { BuilderHost } from './host';
 import type { EditorProfile } from './profile';
 import { Inspector } from './inspector/inspector';
-import { editorMessages, type EditorMessages } from './messages';
+import { en } from '../locales/en';
+import { useHtmlLang } from './locale';
+import { resolveMessages, type DeepPartial, type EditorMessages } from './messages';
 import { AddPanel } from './panels/add-panel';
 import { LayersPanel } from './panels/layers-panel';
 import { TemplatesPanel } from './panels/templates-panel';
@@ -62,7 +64,23 @@ export interface BuilderEditorProps<
   onBack: () => void;
   onDuplicate?: (() => void) | undefined;
   onDelete?: (() => Promise<boolean>) | undefined;
-  messages?: Partial<EditorMessages> | undefined;
+  /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
+  locale?: string | undefined;
+  /** Other languages for the editor's words, by code (`@motors/engine/locales/sq`). English is built in. */
+  locales?: Readonly<Record<string, DeepPartial<EditorMessages> | undefined>> | undefined;
+  /** Replace single words, in whatever language is active. */
+  messages?: DeepPartial<EditorMessages> | undefined;
+  /**
+   * The languages a document can be written in. One language: no language
+   * switch and no multi-language setting. Default: `[defaultContentLocale]`.
+   */
+  contentLocales?: readonly string[] | undefined;
+  /**
+   * The language a document's tree is written in when it does not say (a new
+   * document). Default: the first of `contentLocales`, else the editor's
+   * language.
+   */
+  defaultContentLocale?: string | undefined;
   /** Where the crash-safety copy is kept in localStorage; omit to disable. */
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
@@ -114,9 +132,16 @@ export function BuilderEditor<
   TDoc extends EngineDocument = EngineDocument,
   TRecord extends RecordFacts = RecordFacts,
 >(props: BuilderEditorProps<TDoc, TRecord>) {
+  const htmlLang = useHtmlLang();
+  const locale = props.locale === 'auto' ? htmlLang : (props.locale ?? 'en');
   const messages = useMemo(
-    () => editorMessages(props.host.locale, props.messages),
-    [props.host.locale, props.messages],
+    () => resolveMessages<EditorMessages>(en, locale, props.locales, props.messages),
+    [locale, props.locales, props.messages],
+  );
+  const defaultContentLocale = props.defaultContentLocale ?? props.contentLocales?.[0] ?? locale;
+  const contentLocales = useMemo(
+    () => props.contentLocales ?? [defaultContentLocale],
+    [props.contentLocales, defaultContentLocale],
   );
   const hostRef = useRef(props.host);
   hostRef.current = props.host;
@@ -153,11 +178,25 @@ export function BuilderEditor<
       registry: props.registry,
       host: props.host,
       messages,
+      locale,
+      contentLocales,
+      defaultContentLocale,
       record: props.record ?? DRAFT,
       setRecord,
       profile: props.profile,
     }),
-    [store, props.registry, props.host, messages, props.record, setRecord, props.profile],
+    [
+      store,
+      props.registry,
+      props.host,
+      messages,
+      locale,
+      contentLocales,
+      defaultContentLocale,
+      props.record,
+      setRecord,
+      props.profile,
+    ],
   );
 
   return (
@@ -183,7 +222,10 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   storageKey,
   savedAt,
   profile,
-}: BuilderEditorProps<TDoc, TRecord> & { store: EditorStore<TDoc>; messages: EditorMessages }) {
+}: Omit<BuilderEditorProps<TDoc, TRecord>, 'messages'> & {
+  store: EditorStore<TDoc>;
+  messages: EditorMessages;
+}) {
   const check = profile.check;
   const doc = useEditor<TDoc, TDoc>((state) => state.doc);
   const deferred = useDeferredValue(doc);

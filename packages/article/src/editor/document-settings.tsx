@@ -25,6 +25,7 @@ import {
 import type { SeoMeta } from '../core';
 import { cn } from '../render/cn';
 import { useArticle, useArticleFacts } from './hooks';
+import { useArticleWords } from './words';
 
 /** Recommended lengths — Google truncates around these. */
 const SEO_TITLE = { min: 30, max: 60 };
@@ -74,12 +75,13 @@ function FieldRow({
 
 export function DocumentSettings() {
   const { messages } = useEditorContext();
+  const words = useArticleWords();
   const [tab, setTab] = useState('general');
   return (
     <div className="flex h-full flex-col">
       <div className="border-border flex h-11 shrink-0 flex-col justify-center border-b px-3">
         <p className="text-sm font-semibold">{messages.document}</p>
-        <p className="text-muted-foreground text-xs">{messages.nothingSelected}</p>
+        <p className="text-muted-foreground text-xs">{words.nothingSelected}</p>
       </div>
       <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
         <TabsList className="mx-3 grid shrink-0 grid-cols-3 gap-0">
@@ -90,7 +92,7 @@ export function DocumentSettings() {
             {messages.seo}
           </TabsTrigger>
           <TabsTrigger value="publishing" className="px-2 py-1.5 text-xs">
-            {messages.publishing}
+            {words.publishing}
           </TabsTrigger>
         </TabsList>
         <div className="min-h-0 flex-1 overflow-y-auto">
@@ -111,6 +113,7 @@ export function DocumentSettings() {
 
 function General() {
   const { store, messages } = useEditorContext();
+  const words = useArticleWords();
   const [article, setArticle] = useArticleFacts();
   const meta = useArticle((state) => state.view.meta);
   const excerpt = meta.excerpt ?? '';
@@ -133,7 +136,7 @@ function General() {
           />
         )}
       </FieldRow>
-      <FieldRow label={messages.slug} hint={messages.slugFrozen}>
+      <FieldRow label={words.slug} hint={words.slugFrozen}>
         {(id) => (
           <div
             id={id}
@@ -143,10 +146,7 @@ function General() {
           </div>
         )}
       </FieldRow>
-      <FieldRow
-        label={messages.excerpt}
-        hint={<Meter length={excerpt.length} min={60} max={300} />}
-      >
+      <FieldRow label={words.excerpt} hint={<Meter length={excerpt.length} min={60} max={300} />}>
         {(id) => (
           <Textarea
             id={id}
@@ -199,7 +199,7 @@ function General() {
         )}
       </FieldRow>
       {meta.cover ? (
-        <FieldRow label={messages.coverAlt}>
+        <FieldRow label={words.coverAlt}>
           {(id) => (
             <Input
               id={id}
@@ -239,6 +239,7 @@ function Check2({ ok, children }: { ok: boolean; children: ReactNode }) {
 
 function Seo() {
   const { store, messages, registry } = useEditorContext();
+  const words = useArticleWords();
   const [article] = useArticleFacts();
   const doc = useArticle((state) => state.view);
   const seo: SeoMeta = doc.meta.seo ?? {};
@@ -274,7 +275,7 @@ function Seo() {
         <p className="text-muted-foreground line-clamp-2 text-xs">{description}</p>
       </div>
       <FieldRow
-        label={messages.seoTitle}
+        label={words.seoTitle}
         hint={<Meter length={title.length} min={SEO_TITLE.min} max={SEO_TITLE.max} />}
       >
         {(id) => (
@@ -290,7 +291,7 @@ function Seo() {
         )}
       </FieldRow>
       <FieldRow
-        label={messages.seoDescription}
+        label={words.seoDescription}
         hint={
           <Meter length={description.length} min={SEO_DESCRIPTION.min} max={SEO_DESCRIPTION.max} />
         }
@@ -308,7 +309,7 @@ function Seo() {
           />
         )}
       </FieldRow>
-      <FieldRow label={messages.focusKeyword}>
+      <FieldRow label={words.focusKeyword}>
         {(id) => (
           <Input
             id={id}
@@ -322,10 +323,8 @@ function Seo() {
       </FieldRow>
       {keyword ? (
         <ul className="space-y-1">
-          <Check2 ok={title.toLowerCase().includes(keyword)}>{messages.seoTitle}</Check2>
-          <Check2 ok={description.toLowerCase().includes(keyword)}>
-            {messages.seoDescription}
-          </Check2>
+          <Check2 ok={title.toLowerCase().includes(keyword)}>{words.seoTitle}</Check2>
+          <Check2 ok={description.toLowerCase().includes(keyword)}>{words.seoDescription}</Check2>
           <Check2 ok={firstParagraph.includes(keyword)}>
             {messages.elements.paragraph?.name ?? 'Paragraph'}
           </Check2>
@@ -334,7 +333,7 @@ function Seo() {
           </Check2>
         </ul>
       ) : null}
-      <FieldRow label={messages.canonical}>
+      <FieldRow label={words.canonical}>
         {(id) => (
           <Input
             id={id}
@@ -360,8 +359,8 @@ function Seo() {
         )}
       </FieldRow>
       <ToggleFlag
-        title={messages.noindex}
-        description={messages.noindexHint}
+        title={words.noindex}
+        description={words.noindexHint}
         checked={seo.noindex === true}
         onCheckedChange={(checked) => {
           setSeo({ noindex: checked }, 'Noindex', 'noindex');
@@ -373,20 +372,21 @@ function Seo() {
 
 function Publishing() {
   const { store, messages } = useEditorContext();
+  const words = useArticleWords();
   const [article, setArticle] = useArticleFacts();
   const readingMinutes = useArticle((state) => state.doc.meta.readingMinutes);
 
   return (
     <>
       <ToggleFlag
-        title={messages.featured}
-        description={messages.featuredHint}
+        title={words.featured}
+        description={words.featuredHint}
         checked={article.featured}
         onCheckedChange={(checked) => {
           setArticle({ featured: checked });
         }}
       />
-      <FieldRow label={messages.readingMinutes} hint={messages.readingMinutesHint}>
+      <FieldRow label={words.readingMinutes} hint={words.readingMinutesHint}>
         {(id) => (
           <NumberStepper
             id={id}

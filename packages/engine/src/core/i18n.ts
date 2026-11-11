@@ -86,11 +86,16 @@ export interface Localizable extends NodeTree {
   i18n?: DocumentI18n | undefined;
 }
 
-/** The languages a document is written in: the base, then the others when switched on. */
-export function documentLocales(doc: Localizable): ContentLocale[] {
+/**
+ * The languages a document is written in: the base, then the others when
+ * switched on. `locales` is the project's list (the editor's
+ * `contentLocales`); without one, the languages the document already holds.
+ */
+export function documentLocales(doc: Localizable, locales?: readonly string[]): ContentLocale[] {
   const i18n = doc.i18n;
   if (!i18n?.enabled) return i18n ? [i18n.base] : [];
-  return [i18n.base, ...CONTENT_LOCALES.filter((locale) => locale !== i18n.base)];
+  const others = locales ?? CONTENT_LOCALES;
+  return [i18n.base, ...others.filter((locale) => locale !== i18n.base)] as ContentLocale[];
 }
 
 /** Whether `locale` is a translation (not the base) of this multi-language document. */

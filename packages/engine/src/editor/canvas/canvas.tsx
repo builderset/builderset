@@ -15,6 +15,7 @@ import {
 } from 'react';
 
 import { useEditor, useEditorContext } from '../context';
+import { languageName } from '../messages';
 import { InlineText } from '../text/inline-text';
 import {
   activeDrag,
@@ -200,7 +201,7 @@ export function Canvas() {
           role="status"
           className="border-primary/30 bg-primary/10 text-primary sticky top-3 z-20 mx-auto mt-3 w-fit max-w-[90%] rounded-full border px-4 py-1.5 text-center text-xs font-medium shadow-xs backdrop-blur"
         >
-          {messages.writingIn(messages.languages[lang])}
+          {messages.writingIn(languageName(lang, messages.languages))}
         </p>
       ) : null}
       <motion.div

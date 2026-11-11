@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createArticleDocument, createArticleRegistry, type ArticleDocument } from '../core';
+import { sq } from '../locales/sq';
 import { ArticleEditor } from './editor';
 import type { ArticleFacts } from './hooks';
 
@@ -12,8 +13,6 @@ const registry = createArticleRegistry();
 
 function host(overrides: Partial<BuilderHost<ArticleDocument>> = {}): BuilderHost<ArticleDocument> {
   return {
-    locale: 'en',
-    contentLocale: 'en',
     upload: vi.fn(),
     resolveMedia: (key) => `https://cdn.test/${key}`,
     save: vi.fn(() => Promise.resolve({ ok: true as const, savedAt: new Date().toISOString() })),
@@ -90,5 +89,28 @@ describe('<ArticleEditor>', () => {
     await user.click(screen.getByRole('button', { name: /^Publish$/ }));
     expect(publish).not.toHaveBeenCalled();
     expect(await screen.findByText(/Fix these before publishing/)).toBeInTheDocument();
+  });
+
+  it('speaks English unless it is given another language', () => {
+    const { unmount } = mount();
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Heading/ })).toBeInTheDocument();
+    unmount();
+    render(
+      <ArticleEditor
+        document={createArticleDocument({ title: 'Një artikull' })}
+        registry={registry}
+        host={host()}
+        locale="sq-AL"
+        locales={{ sq }}
+        record={facts}
+        onRecordChange={() => undefined}
+        onBack={() => undefined}
+      />,
+    );
+    expect(screen.getByRole('button', { name: sq.engine.undo })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: new RegExp(`^${sq.elements.heading?.name ?? ''}`) }),
+    ).toBeInTheDocument();
   });
 });

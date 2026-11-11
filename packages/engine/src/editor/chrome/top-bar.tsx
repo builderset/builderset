@@ -77,7 +77,7 @@ function useNow(intervalMs: number): number {
 
 /** "Saved · 2 min ago", "Saving…", "Conflict" — with a small pop on each change. */
 function SaveIndicator() {
-  const { messages } = useEditorContext();
+  const { messages, locale } = useEditorContext();
   const saveState = useEditor((state) => state.saveState);
   const dirty = useEditor((state) => state.revision !== state.savedRevision);
   const lastSavedAt = useEditor((state) => state.lastSavedAt);
@@ -102,12 +102,14 @@ function SaveIndicator() {
     text = messages.saveDirty;
   } else if (lastSavedAt) {
     const minutes = Math.floor((now - lastSavedAt) / 60_000);
+    // The platform words relative time in every language: "now", "5 min. ago".
+    const relative = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'short' });
     const when =
       minutes < 1
-        ? messages.justNow
+        ? relative.format(0, 'second')
         : minutes < 60
-          ? messages.minutesAgo(minutes)
-          : messages.hoursAgo(Math.floor(minutes / 60));
+          ? relative.format(-minutes, 'minute')
+          : relative.format(-Math.floor(minutes / 60), 'hour');
     icon = <Check className="text-ok size-3.5" aria-hidden="true" />;
     text = messages.savedAgo(when);
   } else {
@@ -357,7 +359,7 @@ export function TopBar(actions: TopBarActions) {
               {actions.onDuplicate ? (
                 <DropdownMenuItem onSelect={actions.onDuplicate}>
                   <Copy className="size-4" aria-hidden="true" />
-                  {messages.duplicateArticle}
+                  {messages.duplicateDocument}
                 </DropdownMenuItem>
               ) : null}
               {actions.onDelete ? (
@@ -365,7 +367,7 @@ export function TopBar(actions: TopBarActions) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onSelect={actions.onDelete} className="text-destructive">
                     <Trash2 className="size-4" aria-hidden="true" />
-                    {messages.deleteArticle}
+                    {messages.deleteDocument}
                   </DropdownMenuItem>
                 </>
               ) : null}

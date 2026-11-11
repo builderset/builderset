@@ -17,8 +17,6 @@
   },
   "dependencies": {
     "@motors/engine": "workspace:*",
-    "@motors/i18n": "workspace:*",
-    "@motors/ui": "workspace:*",
     "lucide-react": "1.32.0",
     "motion": "13.1.0",
     "zod": "4.4.3"

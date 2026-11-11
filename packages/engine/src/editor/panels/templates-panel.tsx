@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  createFragment,
-  reidFragment,
-  rt,
-  type ElementRegistry,
-  type Fragment,
-} from '@motors/builder-core';
+import { createFragment, reidFragment, rt, type ElementRegistry, type Fragment } from '../../core';
 import { Button, EmptyState, Input, Spinner } from '@motors/ui';
 import { BookmarkPlus, LayoutTemplate, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';

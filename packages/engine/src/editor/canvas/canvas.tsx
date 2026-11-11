@@ -1,6 +1,6 @@
 'use client';
 
-import { renderDocument, type EditableTextField } from '@motors/builder-render';
+import { renderDocument, type EditableTextField } from '../../render';
 import { EmptyState } from '@motors/ui';
 import { FilePlus2, PenLine } from 'lucide-react';
 import { motion } from 'motion/react';

@@ -4,7 +4,7 @@ import {
   type Breakpoint,
   type NodeStyle,
   type StyleValues,
-} from '@motors/builder-core';
+} from '../core';
 import type { CSSProperties } from 'react';
 
 import { STYLE_CLASSES } from './style-classes';

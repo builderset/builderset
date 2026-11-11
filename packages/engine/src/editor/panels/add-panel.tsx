@@ -1,6 +1,6 @@
 'use client';
 
-import { CATEGORIES, parentOf, type Fragment } from '@motors/builder-core';
+import { CATEGORIES, parentOf, type Fragment } from '../../core';
 import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 

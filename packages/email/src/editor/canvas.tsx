@@ -1,4 +1,4 @@
-import type { BuilderNode } from '@motors/builder-core';
+import type { BuilderNode } from '@motors/engine';
 import {
   googleFontsUrl,
   ROW_LAYOUTS,
@@ -8,7 +8,7 @@ import {
   type EmailRichText,
   type Padding,
   type RowLayout,
-} from '@motors/email-core';
+} from '../core';
 import type { CSSProperties, ReactNode } from 'react';
 
 import {
@@ -23,7 +23,7 @@ import {
   variableText,
   type RenderContext,
   type RenderOptions,
-} from './context';
+} from '../render/context';
 import { useStylesheet } from './use-stylesheet';
 
 /**

@@ -1,4 +1,4 @@
-import { normalizeRichText, type Mark, type RichText, type TextRun } from '@motors/builder-core';
+import { normalizeRichText, type Mark, type RichText, type TextRun } from '../../core';
 import type { JSONContent } from '@tiptap/core';
 
 /**

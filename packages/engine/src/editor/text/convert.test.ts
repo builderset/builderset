@@ -1,4 +1,4 @@
-import type { RichText } from '@motors/builder-core';
+import type { RichText } from '../../core';
 import { describe, expect, it } from 'vitest';
 
 import { fromTiptap, getAtPath, setAtPath, splitRichText, toTiptap } from './convert';

@@ -1,4 +1,4 @@
-import { createDocument, createStandardRegistry, rt } from '@motors/builder-core';
+import { createDocument, createStandardRegistry, rt } from '../core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createEditorStore } from './store';

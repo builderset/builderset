@@ -1,4 +1,4 @@
-import { TRANSLATABLE_META, valueAt } from '@motors/builder-core';
+import { TRANSLATABLE_META, valueAt } from '../core';
 
 import { classify, type JsonSchema } from './inspector/schema';
 

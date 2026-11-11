@@ -1,13 +1,14 @@
 {
-  "name": "@motors/email-render",
+  "name": "@motors/email",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "sideEffects": false,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/core/index.ts",
+    "./render": "./src/render/index.ts",
+    "./editor": "./src/editor/index.ts",
+    "./schema/email.schema.json": "./schema/email.schema.json"
   },
   "scripts": {
     "lint": "eslint src",
@@ -15,11 +16,16 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@motors/builder-core": "workspace:*",
-    "@motors/email-core": "workspace:*"
+    "@motors/engine": "workspace:*",
+    "@motors/i18n": "workspace:*",
+    "@motors/ui": "workspace:*",
+    "lucide-react": "1.32.0",
+    "motion": "13.1.0",
+    "zod": "4.4.3"
   },
   "peerDependencies": {
-    "react": "^19"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
@@ -27,8 +33,10 @@
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "6.0.5",
     "eslint": "9.39.5",
     "jsdom": "30.0.1",

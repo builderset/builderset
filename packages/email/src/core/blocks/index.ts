@@ -1,4 +1,4 @@
-import { ElementRegistry, type ElementDefinition } from '@motors/builder-core';
+import { ElementRegistry, type ElementDefinition } from '@motors/engine';
 
 import { commerceElements } from './commerce';
 import { contentElements } from './content';

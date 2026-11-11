@@ -11,7 +11,7 @@ import {
   type BuilderNode,
   type ElementRegistry,
   type Issue,
-} from '@motors/builder-core';
+} from '@motors/engine';
 import { z } from 'zod';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';

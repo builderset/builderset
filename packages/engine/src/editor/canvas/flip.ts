@@ -1,6 +1,6 @@
 'use client';
 
-import { inOrder, type BuilderDocument } from '@motors/builder-core';
+import { inOrder, type BuilderDocument } from '../../core';
 import { useLayoutEffect, useRef, type RefObject } from 'react';
 
 /**

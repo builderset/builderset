@@ -11,7 +11,7 @@ import {
   rt,
   update,
   type BuilderDocument,
-} from '@motors/builder-core';
+} from '../core';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';

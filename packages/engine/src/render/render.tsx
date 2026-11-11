@@ -5,7 +5,7 @@ import {
   type BuilderDocument,
   type ElementRegistry,
   type RichText,
-} from '@motors/builder-core';
+} from '../core';
 import { Fragment, type ReactNode } from 'react';
 
 import type {

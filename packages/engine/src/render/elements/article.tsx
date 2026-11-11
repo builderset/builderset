@@ -8,7 +8,7 @@ import type {
   statsElement,
   timelineElement,
   tocElement,
-} from '@motors/builder-core';
+} from '../../core';
 import {
   ChevronDown,
   Clock,

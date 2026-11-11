@@ -1,4 +1,4 @@
-import { markSchema } from '@motors/builder-core';
+import { markSchema } from '@motors/engine';
 import { z } from 'zod';
 
 import { FONT_KEYS } from './fonts';

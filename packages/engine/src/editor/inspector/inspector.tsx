@@ -10,7 +10,7 @@ import {
   type MediaKind,
   type NodeId,
   type StyleValues,
-} from '@motors/builder-core';
+} from '../../core';
 import {
   Button,
   Input,

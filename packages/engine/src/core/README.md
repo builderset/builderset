@@ -1,11 +1,11 @@
-# @motors/builder-core
+# @motors/engine
 
 The model of the article builder: the document format, the element registry
 and the standard elements, every editing operation with undo/redo, validation,
 parsing with migrations, clipboard, and import from HTML and Markdown.
 
 Pure TypeScript — no React. The same code runs in the editor
-(`@motors/builder-react`), the renderer (`@motors/builder-render`), tests, and
+(`@motors/engine/editor`), the renderer (`@motors/engine/render`), tests, and
 anything else that needs to read or write a document.
 
 ## Concepts
@@ -67,7 +67,7 @@ An element is data. The editor and renderer register their own components
 against the same `type`.
 
 ```ts
-import { defineElement, warning } from '@motors/builder-core';
+import { defineElement, warning } from '@motors/engine';
 import { z } from 'zod';
 
 export const noteElement = defineElement({

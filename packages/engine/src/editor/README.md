@@ -1,12 +1,12 @@
-# @motors/builder-react
+# @motors/engine/editor
 
 The article builder's editor: a full-screen workspace that edits a
-`@motors/builder-core` document and renders it through `@motors/builder-render`,
+`@motors/engine` document and renders it through `@motors/engine/render`,
 so the canvas looks exactly like the published page.
 
 ```tsx
-import { createStandardRegistry } from '@motors/builder-core';
-import { BuilderEditor } from '@motors/builder-react';
+import { createStandardRegistry } from '@motors/engine';
+import { BuilderEditor } from '@motors/engine/editor';
 
 <BuilderEditor
   document={doc}
@@ -22,7 +22,7 @@ import { BuilderEditor } from '@motors/builder-react';
 The host app must render it inside `<I18nProvider>` (from `@motors/i18n/react`),
 because the shared `@motors/ui` controls read their words from there. It must
 also add the package to Tailwind's sources:
-`@source '…/packages/builder-react/src';`
+`@source '…/packages/engine/src/editor';`
 
 ## What is in it
 

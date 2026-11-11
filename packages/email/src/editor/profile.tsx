@@ -7,8 +7,8 @@ import {
   type BuilderNode,
   type ElementRegistry,
   type Fragment,
-} from '@motors/builder-core';
-import type { EditorProfile } from '@motors/builder-react';
+} from '@motors/engine';
+import type { EditorProfile } from '@motors/engine/editor';
 import {
   BRAND_COLORS,
   checkEmail,
@@ -22,13 +22,9 @@ import {
   type EmailDocument,
   type EmailType,
   type RowLayout,
-} from '@motors/email-core';
-import {
-  EmailCanvas,
-  socialIconUrl,
-  type BrandKit,
-  type EditableField,
-} from '@motors/email-render';
+} from '../core';
+import { socialIconUrl, type BrandKit } from '../render';
+import { EmailCanvas, type EditableField } from './canvas';
 
 import { EmailSettingsPanel } from './settings-panel';
 import { ImportHtmlHost } from './import-html-host';
@@ -38,7 +34,7 @@ import type { EmailWords } from './messages';
 /**
  * The email builder, as a profile of the shared editor: the canvas draws the
  * email (`EmailCanvas`), settings are the email's (subject, width, colours,
- * dark mode), checks are email-core's against the email TYPE, and new text is
+ * dark mode), checks are @motors/email's against the email TYPE, and new text is
  * a `text` block in a section › row › column the editor builds around it.
  */
 

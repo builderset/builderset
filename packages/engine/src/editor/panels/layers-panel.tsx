@@ -10,7 +10,7 @@ import {
   type BuilderNode,
   type NodeId,
   type RichText,
-} from '@motors/builder-core';
+} from '../../core';
 import { ChevronRight, Eye, EyeOff, Lock, LockOpen } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type DragEvent, type KeyboardEvent } from 'react';

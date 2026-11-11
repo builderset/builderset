@@ -6,7 +6,7 @@ import {
   type EmailRichText,
   type FontStack,
   type VariableFormat,
-} from '@motors/email-core';
+} from '../core';
 
 /**
  * What rendering needs besides the document: the brand kit its `brand.*`

@@ -7,14 +7,9 @@ import {
   NumberStepper,
   useEditor,
   useEditorContext,
-} from '@motors/builder-react';
-import {
-  variablesOf,
-  type EmailDocument,
-  type EmailMeta,
-  type EmailSettings,
-} from '@motors/email-core';
-import { createContext as createRenderContext, fill } from '@motors/email-render';
+} from '@motors/engine/editor';
+import { variablesOf, type EmailDocument, type EmailMeta, type EmailSettings } from '../core';
+import { createContext as createRenderContext, fill } from '../render';
 import {
   DropdownMenu,
   DropdownMenuContent,

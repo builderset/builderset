@@ -1,6 +1,6 @@
 'use client';
 
-import { indexInParent, parentOf, replaceableTypes, type NodeId } from '@motors/builder-core';
+import { indexInParent, parentOf, replaceableTypes, type NodeId } from '../../core';
 import {
   DropdownMenu,
   DropdownMenuContent,

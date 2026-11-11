@@ -1,5 +1,5 @@
 /**
- * @motors/builder-render — a builder document, rendered.
+ * @motors/engine/render — a builder document, rendered.
  *
  * Framework-agnostic React (Server Component safe); hosts inject their link
  * and image components, media resolver, locale and messages. See the README

@@ -1,4 +1,4 @@
-import { isSafeUrl, localize, type BuilderNode } from '@motors/builder-core';
+import { isSafeUrl, localize, type BuilderNode } from '@motors/engine';
 import {
   googleFontsUrl,
   isSafeTemplateUrl,
@@ -9,7 +9,7 @@ import {
   type EmailRichText,
   type Padding,
   type RowLayout,
-} from '@motors/email-core';
+} from '../core';
 
 import {
   color,

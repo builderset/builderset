@@ -1,6 +1,6 @@
 'use client';
 
-import { isSafeUrl } from '@motors/builder-core';
+import { isSafeUrl } from '../../core';
 import type { Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import {

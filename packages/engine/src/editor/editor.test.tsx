@@ -1,4 +1,4 @@
-import { createDocument, createStandardRegistry, rt } from '@motors/builder-core';
+import { createDocument, createStandardRegistry, rt } from '../core';
 import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

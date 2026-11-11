@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { wrapChain, type Issue } from '@motors/builder-core';
+import { wrapChain, type Issue } from '@motors/engine';
 import { describe, expect, it } from 'vitest';
 
 import { createEmailRegistry } from './blocks';
@@ -102,7 +102,11 @@ describe('the email model', () => {
 
 // ── The server contract, as files ─────────────────────────────────────────────
 
-const root = join(dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..');
+const root = join(
+  dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')),
+  '..',
+  '..',
+);
 const update = process.env.UPDATE_FIXTURES === '1';
 const stable = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 

@@ -5,7 +5,7 @@ import {
   type BuilderDocument,
   type ElementRegistry,
   type RichText,
-} from '@motors/builder-core';
+} from '../core';
 
 /**
  * Schema.org data for an article, as plain objects.

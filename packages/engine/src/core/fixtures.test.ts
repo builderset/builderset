@@ -23,7 +23,7 @@ import { checkDocument } from './validate';
  */
 
 const registry = createStandardRegistry();
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const update = process.env.UPDATE_FIXTURES === '1';
 
 function stable(value: unknown): string {

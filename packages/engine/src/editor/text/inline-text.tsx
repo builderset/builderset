@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  createFragment,
-  indexInParent,
-  isSafeUrl,
-  parentOf,
-  type RichText,
-} from '@motors/builder-core';
-import type { EditableTextField } from '@motors/builder-render';
+import { createFragment, indexInParent, isSafeUrl, parentOf, type RichText } from '../../core';
+import type { EditableTextField } from '../../render';
 import { Mark, mergeAttributes, type Editor } from '@tiptap/core';
 import Bold from '@tiptap/extension-bold';
 import Code from '@tiptap/extension-code';

@@ -1,4 +1,4 @@
-import { defineElement, error, warning } from '@motors/builder-core';
+import { defineElement, error, warning } from '@motors/engine';
 import { z } from 'zod';
 
 import {

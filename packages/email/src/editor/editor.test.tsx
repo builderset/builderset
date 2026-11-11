@@ -1,11 +1,6 @@
-import type { ArticleFacts, BuilderHost } from '@motors/builder-react';
-import {
-  createEmailDocument,
-  createEmailRegistry,
-  starterEmail,
-  type EmailType,
-} from '@motors/email-core';
-import { DEFAULT_BRAND } from '@motors/email-render';
+import type { ArticleFacts, BuilderHost } from '@motors/engine/editor';
+import { createEmailDocument, createEmailRegistry, starterEmail, type EmailType } from '../core';
+import { DEFAULT_BRAND } from '../render';
 import { I18nProvider } from '@motors/i18n/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

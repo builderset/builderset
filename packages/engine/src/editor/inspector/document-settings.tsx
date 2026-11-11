@@ -1,6 +1,6 @@
 'use client';
 
-import { plainText, type SeoMeta } from '@motors/builder-core';
+import { plainText, type SeoMeta } from '../../core';
 import {
   DatePicker,
   Input,

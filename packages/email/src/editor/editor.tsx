@@ -1,9 +1,9 @@
 'use client';
 
-import type { BuilderDocument, ElementRegistry } from '@motors/builder-core';
-import { BuilderEditor, type ArticleFacts, type BuilderHost } from '@motors/builder-react';
-import type { EmailDocument, EmailType } from '@motors/email-core';
-import type { BrandKit } from '@motors/email-render';
+import type { BuilderDocument, ElementRegistry } from '@motors/engine';
+import { BuilderEditor, type ArticleFacts, type BuilderHost } from '@motors/engine/editor';
+import type { EmailDocument, EmailType } from '../core';
+import type { BrandKit } from '../render';
 import { useMemo } from 'react';
 
 import { EmailProvider } from './context';

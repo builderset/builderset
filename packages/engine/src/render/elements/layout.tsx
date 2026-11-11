@@ -1,4 +1,4 @@
-import { COLUMN_LAYOUTS, parentOf } from '@motors/builder-core';
+import { COLUMN_LAYOUTS, parentOf } from '../../core';
 import type {
   columnElement,
   columnsElement,
@@ -8,7 +8,7 @@ import type {
   PropsOf,
   sectionElement,
   spacerElement,
-} from '@motors/builder-core';
+} from '../../core';
 
 import { cn } from '../cn';
 import type { ElementRenderProps } from '../context';

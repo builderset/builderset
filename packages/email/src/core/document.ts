@@ -4,7 +4,7 @@ import {
   type BuilderNode,
   type DocumentI18n,
   type NodeTree,
-} from '@motors/builder-core';
+} from '@motors/engine';
 import { z } from 'zod';
 
 import { color, fontSchema, px } from './fields';

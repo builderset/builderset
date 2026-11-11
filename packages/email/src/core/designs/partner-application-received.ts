@@ -1,4 +1,4 @@
-import type { ElementRegistry } from '@motors/builder-core';
+import type { ElementRegistry } from '@motors/engine';
 
 import type { EmailDocument } from '../document';
 import { v, type EmailRichText } from '../rich-text';

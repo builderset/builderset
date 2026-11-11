@@ -6,7 +6,7 @@ import {
   type BuilderDocument,
   type ElementRegistry,
   type Issue,
-} from '@motors/builder-core';
+} from '../core';
 import {
   Button,
   ConfirmDialog,

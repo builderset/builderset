@@ -1,9 +1,9 @@
 /**
- * @motors/email-render — email documents into HTML every mail client shows,
- * plain text, and a React view for the builder's canvas.
+ * @motors/email/render — email documents into HTML every mail client shows,
+ * and plain text. The React view for the builder's canvas is in
+ * `@motors/email/editor`.
  */
 
-export { EmailCanvas, type EditableField, type EmailCanvasProps } from './canvas';
 export {
   color,
   createContext,

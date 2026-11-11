@@ -1,4 +1,4 @@
-import type { ElementRegistry } from '@motors/builder-core';
+import type { ElementRegistry } from '../../core';
 import { z } from 'zod';
 
 /**

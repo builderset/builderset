@@ -1,4 +1,4 @@
-import type { BuilderDocument, Fragment, MediaKind } from '@motors/builder-core';
+import type { BuilderDocument, Fragment, MediaKind } from '../core';
 
 /**
  * Everything the editor needs from the application it runs in.

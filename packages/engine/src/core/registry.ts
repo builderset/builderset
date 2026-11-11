@@ -16,7 +16,7 @@ import type { MediaRef } from './media';
  *
  * A third party adds an element exactly the way the standard library does —
  * `defineElement` and `registry.register` — which is the test that the API is
- * sufficient: the MotorsAL elements are written against nothing else.
+ * sufficient: the built-in elements are written against nothing else.
  */
 
 /**

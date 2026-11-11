@@ -10,12 +10,13 @@ import {
 
 import type { ArticleDocument } from '../core';
 
-/** The row's own columns — what the document settings edit beside `meta`. */
+/**
+ * The row's own columns that every article has — what the document settings
+ * show beside `meta`. A project's other columns (a category, a "featured"
+ * flag) go in the same record and are edited in its `settingsSections`.
+ */
 export interface ArticleFacts extends RecordFacts {
   slug: string;
-  category: string;
-  categories: string[];
-  featured: boolean;
   locale: string;
 }
 

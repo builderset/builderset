@@ -17,7 +17,7 @@ import { et, v } from './rich-text';
 
 /**
  * Building emails from a compact outline — for the starter email, the test
- * fixtures and the ready-made template library, which would otherwise be
+ * fixtures and a project's own ready-made designs, which would otherwise be
  * hundreds of lines of node bookkeeping each.
  *
  *   buildEmail(registry, { meta }, [
@@ -62,56 +62,65 @@ export const section = (props: Record<string, unknown>, rows: RowSpec[]): Sectio
 });
 
 /**
- * Words in every language, for the ready-made designs: `tr('Po', 'Yes', 'Ja')`.
+ * Words in several languages: `inLanguages({ en: 'Yes', de: 'Ja' })`.
  *
- * A design writes each sentence once, in all three languages, wherever a prop
- * or the subject takes words; `buildEmail` keeps the Albanian in the tree and
- * puts the others in the document's translations — the same place the
- * builder's multi-language switch writes them. A design with any `tr` comes
- * out multi-language.
+ * Wherever a prop or the subject takes words, an outline may give them in
+ * every language at once; `buildEmail` keeps the words of its `locale` in the
+ * tree and puts the others in the document's translations — the same place the
+ * editor's multi-language switch writes them. An email with any such words
+ * comes out multi-language.
  */
-export interface Tr<T> {
-  readonly __tr: { readonly sq: T; readonly en: T; readonly de: T };
+export interface InLanguages<T> {
+  readonly __words: Readonly<Record<ContentLocale, T>>;
 }
 
-export const tr = <T>(sq: T, en: T, de: T): Tr<T> => ({ __tr: { sq, en, de } });
+export const inLanguages = <T>(words: Record<ContentLocale, T>): InLanguages<T> => ({
+  __words: words,
+});
 
-export const isTr = (value: unknown): value is Tr<unknown> =>
-  value !== null && typeof value === 'object' && '__tr' in value;
+export const isInLanguages = (value: unknown): value is InLanguages<unknown> =>
+  value !== null && typeof value === 'object' && '__words' in value;
 
-/** Words that may or may not be in every language. */
-export type Words<T = string> = T | Tr<T>;
+/** Words that may or may not be in several languages. */
+export type Words<T = string> = T | InLanguages<T>;
 
-/** `f` applied to every language of `value` — `t` over a `tr` of strings, say. */
+/** `f` applied to every language of `value`. */
 export function mapWords<T, U>(value: Words<T>, f: (value: T) => U): Words<U> {
-  return isTr(value) ? tr(f(value.__tr.sq), f(value.__tr.en), f(value.__tr.de)) : f(value);
+  return isInLanguages(value)
+    ? inLanguages(
+        Object.fromEntries(
+          Object.entries(value.__words).map(([locale, words]) => [locale, f(words)]),
+        ),
+      )
+    : f(value);
 }
 
-const OTHER_LOCALES = ['en', 'de'] as const satisfies readonly ContentLocale[];
+type Found = [path: string, words: Record<ContentLocale, unknown>][];
 
 /**
- * Props with every `tr` replaced by its Albanian, and the other languages'
- * words by path — `text`, `rows.2.label` — for the translations.
+ * Props with every `inLanguages` replaced by its words in `base`, and the
+ * other languages' words by path — `text`, `rows.2.label` — for the
+ * translations.
  */
-function splitWords(
-  value: unknown,
-  path: string,
-  found: [string, Record<'en' | 'de', unknown>][],
-): unknown {
-  if (isTr(value)) {
-    found.push([path, { en: value.__tr.en, de: value.__tr.de }]);
-    return value.__tr.sq;
+function splitWords(value: unknown, path: string, base: ContentLocale, found: Found): unknown {
+  if (isInLanguages(value)) {
+    if (!(base in value.__words)) {
+      throw new Error(`Words at "${path}" have no "${base}", the email's language.`);
+    }
+    const { [base]: own, ...others } = value.__words;
+    found.push([path, others]);
+    return own;
   }
   if (Array.isArray(value)) {
     return value.map((item, index) =>
-      splitWords(item, path ? `${path}.${String(index)}` : String(index), found),
+      splitWords(item, path ? `${path}.${String(index)}` : String(index), base, found),
     );
   }
   if (value !== null && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [
         key,
-        splitWords(item, path ? `${path}.${key}` : key, found),
+        splitWords(item, path ? `${path}.${key}` : key, base, found),
       ]),
     );
   }
@@ -134,22 +143,25 @@ export function buildEmail(
     meta?: { [K in keyof EmailMeta]?: Words<EmailMeta[K]> };
     settings?: Partial<EmailSettings>;
     stable?: boolean;
+    /** The language the tree is written in, when the outline has words in several. Default `en`. */
+    locale?: ContentLocale;
   },
   sections: SectionSpec[],
 ): EmailDocument {
-  const translations: Record<'en' | 'de', Translation> = { en: {}, de: {} };
-  const translate = (nodeId: string | null, found: [string, Record<'en' | 'de', unknown>][]) => {
+  const base = options.locale ?? 'en';
+  const translations: Record<ContentLocale, Translation> = {};
+  const translate = (nodeId: string | null, found: Found) => {
     for (const [path, words] of found) {
-      for (const locale of OTHER_LOCALES) {
-        const target = translations[locale];
+      for (const [locale, value] of Object.entries(words)) {
+        const target = (translations[locale] ??= {});
         const fields = nodeId ? ((target.nodes ??= {})[nodeId] ??= {}) : (target.meta ??= {});
-        fields[path] = words[locale];
+        fields[path] = value;
       }
     }
   };
 
-  const metaWords: [string, Record<'en' | 'de', unknown>][] = [];
-  const meta = splitWords(options.meta ?? {}, '', metaWords) as Partial<EmailMeta>;
+  const metaWords: Found = [];
+  const meta = splitWords(options.meta ?? {}, '', base, metaWords) as Partial<EmailMeta>;
   translate(null, metaWords);
   const doc = createEmailDocument(meta);
   doc.settings = { ...doc.settings, ...options.settings };
@@ -157,8 +169,8 @@ export function buildEmail(
 
   const make = (type: string, raw: Record<string, unknown>, children?: string[]): string => {
     const definition = registry.require(type);
-    const words: [string, Record<'en' | 'de', unknown>][] = [];
-    const props = splitWords(raw, '', words) as Record<string, unknown>;
+    const words: Found = [];
+    const props = splitWords(raw, '', base, words) as Record<string, unknown>;
     const parsed = definition.schema.safeParse({ ...definition.defaults(), ...props });
     if (!parsed.success) {
       throw new Error(`Invalid props for "${type}": ${parsed.error.message}`);
@@ -197,8 +209,8 @@ export function buildEmail(
       }),
     ),
   );
-  if (translations.en.nodes ?? translations.en.meta) {
-    doc.i18n = { enabled: true, base: 'sq', translations };
+  if (Object.keys(translations).length) {
+    doc.i18n = { enabled: true, base, translations };
   }
   return doc;
 }

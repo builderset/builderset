@@ -120,7 +120,6 @@ export interface EditorMessages {
   shortcuts: string;
   shortcutList: [string, string][];
   title: string;
-  category: string;
   cover: string;
   publishAt: string;
   scheduleHint: string;

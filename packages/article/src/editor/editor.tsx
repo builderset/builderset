@@ -15,6 +15,7 @@ import type { RenderMessages } from '../render';
 import { en } from '../locales/en';
 import type { ArticleFacts } from './hooks';
 import { articleProfile } from './profile';
+import { ArticleSettingsProvider, type SettingsSection } from './settings';
 import { ArticleWordsProvider, type ArticleLocale, type ArticleMessages } from './words';
 
 export interface ArticleEditorProps {
@@ -41,6 +42,10 @@ export interface ArticleEditorProps {
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
+  /** Where articles are published, for the slug and the search preview: `https://example.com/blog`. */
+  siteUrl?: string | undefined;
+  /** A project's own fields in Document settings, each in its tab and place. */
+  settingsSections?: readonly SettingsSection[] | undefined;
 }
 
 /** The article builder: the shared editor with the article profile. */
@@ -50,6 +55,8 @@ export function ArticleEditor({
   locale: requested,
   locales,
   messages,
+  siteUrl,
+  settingsSections,
   ...props
 }: ArticleEditorProps) {
   const htmlLang = useHtmlLang();
@@ -87,17 +94,20 @@ export function ArticleEditor({
       }),
     [registry, host, defaultContentLocale, renderWords, props.contentLocales],
   );
+  const settings = useMemo(() => ({ siteUrl, settingsSections }), [siteUrl, settingsSections]);
   return (
-    <ArticleWordsProvider value={words.article}>
-      <BuilderEditor
-        {...props}
-        defaultContentLocale={defaultContentLocale}
-        locale={locale}
-        messages={editorMessages}
-        registry={registry}
-        host={host}
-        profile={profile}
-      />
-    </ArticleWordsProvider>
+    <ArticleSettingsProvider value={settings}>
+      <ArticleWordsProvider value={words.article}>
+        <BuilderEditor
+          {...props}
+          defaultContentLocale={defaultContentLocale}
+          locale={locale}
+          messages={editorMessages}
+          registry={registry}
+          host={host}
+          profile={profile}
+        />
+      </ArticleWordsProvider>
+    </ArticleSettingsProvider>
   );
 }

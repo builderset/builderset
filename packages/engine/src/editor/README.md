@@ -96,7 +96,7 @@ are not mirrored yet.
 - **zod**: `z.toJSONSchema` turns an element's schema into its inspector.
 - **Radix UI** under the editor's own kit, `src/editor/ui` (`@motors/engine/ui`):
   buttons, fields, toggles, tabs, menus, popovers, tooltips, dialogs and
-  sheets, copied from MotorsAL's `@motors/ui` and now separate from it. The
+  sheets, copied from the host app's own UI kit and now separate from it. The
   kits use it too. Everything that floats is portalled into an element the
   editor renders (`data-builderset-portal`), not into `<body>`.
 

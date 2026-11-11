@@ -9,14 +9,12 @@ import {
   rt,
 } from '@motors/engine';
 import { readClipboard } from './paste';
-import { checkArticle } from './check';
 import { createArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';
 
 import { createArticleRegistry } from './elements';
 import { importHTML } from './import-html';
 import { importMarkdown, inlineMarkdown, looksLikeMarkdown } from './import-markdown';
-import { fromLegacyBody } from './legacy';
 
 const registry = createArticleRegistry();
 
@@ -236,25 +234,5 @@ describe('clipboard', () => {
   it('splits plain text into paragraphs', () => {
     const fragment = readClipboard({ text: 'One.\n\nTwo.' }, registry);
     expect(fragment?.roots).toHaveLength(2);
-  });
-});
-
-describe('fromLegacyBody', () => {
-  it('maps each of the five legacy blocks to its element', () => {
-    const doc = fromLegacyBody(
-      [
-        { kind: 'heading', text: 'H' },
-        { kind: 'paragraph', text: 'P' },
-        { kind: 'list', items: ['a', 'b'] },
-        { kind: 'quote', text: 'Q' },
-        { kind: 'image', key: 'articles/x.jpg', alt: 'X', caption: 'C' },
-      ],
-      registry,
-      { title: 'Legacy' },
-    );
-    const types = (doc.nodes.root?.children ?? []).map((id) => doc.nodes[id]?.type);
-    expect(types).toEqual(['heading', 'paragraph', 'list', 'quote', 'image']);
-    const errors = checkArticle(doc, registry).filter((issue) => issue.severity === 'error');
-    expect(errors).toEqual([]);
   });
 });

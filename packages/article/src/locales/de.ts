@@ -79,7 +79,6 @@ export const de: ArticleLocale = {
     slug: 'Adresse',
     excerpt: 'Kurzfassung',
     coverAlt: 'Bildbeschreibung',
-    featured: 'Hervorgehoben',
     readingMinutes: 'Lesezeit (Minuten)',
   },
   render: {

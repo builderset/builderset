@@ -6,28 +6,8 @@ import {
   buildEmail,
   createEmailRegistry,
   EMAIL_FONTS,
+  inLanguages,
   kitchenSinkEmail,
-  APPLICATION_RECEIVED_SAMPLE,
-  applicationReceivedEmail,
-  APPLICATION_REFUSED_AFTER_BOOKING_SAMPLE,
-  APPLICATION_REFUSED_SAMPLE,
-  applicationRefusedEmail,
-  CONTACT_RECEIVED_SAMPLE,
-  contactReceivedEmail,
-  JOB_APPLICATION_RECEIVED_SAMPLE,
-  jobApplicationReceivedEmail,
-  PARTNER_APPLICATION_RECEIVED_SAMPLE,
-  partnerApplicationReceivedEmail,
-  VALUATION_OFFER_SAMPLE,
-  valuationOfferEmail,
-  STAFF_NOTIFICATION_SAMPLE,
-  staffNotificationEmail,
-  NEWSLETTER_SAMPLE,
-  newsletterEmail,
-  VERIFICATION_CODE_SAMPLE,
-  verificationCodeEmail,
-  MEMBER_INVITATION_SAMPLE,
-  memberInvitationEmail,
   pad,
   row,
   ROW_LAYOUTS,
@@ -44,8 +24,10 @@ import { renderEmail } from './html';
 /**
  * The golden fixtures: what the API's Python port of this renderer must
  * reproduce byte for byte (`api/tests/unit/test_email_render_parity.py`).
+ * Neutral documents only — every block, every row layout, every edge — so
+ * they are the whole contract between the two renderers.
  *
- * Each case is written under `api/tests/fixtures/email/golden/` as its input
+ * Each case is written under `api/tests/fixtures/email/golden/kit/` as its input
  * (`<name>.json`) and its output (`<name>.html`, `<name>.txt`); the font stacks
  * and row layouts the Python side needs are written beside its renderer. Run
  * with `UPDATE_FIXTURES=1` after changing the renderer, and commit the files —
@@ -65,11 +47,11 @@ const ICON_BASE = 'https://site.test/';
 /** Fixed, so the output does not change with the day the test runs. */
 const NOW = { now: '2026-10-02T19:35:00.000Z', current_year: 2026 };
 
-/** The kit the API falls back to — what a real send uses until one is saved. */
+/** A project's own brand kit, in place of the default. */
 const SITE_BRAND: BrandKit = {
   ...DEFAULT_BRAND,
-  name: 'marrimauto.com',
-  website: 'https://marrimauto.com',
+  name: 'example.com',
+  website: 'https://example.com',
   address: 'Tiranë, Albania',
 };
 
@@ -332,6 +314,88 @@ function formatsEmail(): EmailDocument {
   );
 }
 
+/**
+ * The row layouts the other cases do not use, columns with their own boxes, a
+ * row that does not stack on a phone — and words in two languages, read in
+ * each and in a third that falls back to the base.
+ */
+function layoutsEmail(): EmailDocument {
+  const cell = (label: string) =>
+    block('text', {
+      text: inLanguages({ en: [{ text: label }], de: [{ text: `${label} (de)` }] }),
+    });
+  return buildEmail(
+    registry,
+    {
+      stable: true,
+      locale: 'en',
+      meta: {
+        name: 'Layouts',
+        subject: inLanguages({
+          en: 'Layouts for {{ recipient.name }}',
+          de: 'Layouts für {{ recipient.name }}',
+        }),
+        preheader: inLanguages({ en: 'Every row', de: 'Jede Reihe' }),
+      },
+    },
+    [
+      section({ background: '#ffffff', padding: pad(16) }, [
+        row('25-75', [[cell('Quarter')], [cell('Three quarters')]]),
+        row('75-25', [[cell('Three quarters')], [cell('Quarter')]], {
+          stackOnMobile: false,
+          verticalAlign: 'bottom',
+          gap: 0,
+        }),
+        row(
+          '33-33-33',
+          [
+            {
+              props: { background: '#f4f4f5', padding: pad(8), radius: 4 },
+              blocks: [cell('One')],
+            },
+            {
+              props: { borderWidth: 1, borderColor: '#d4d4d8', padding: pad(8, 12) },
+              blocks: [cell('Two')],
+            },
+            [
+              block('button', {
+                label: inLanguages({ en: 'Open', de: 'Öffnen' }),
+                href: 'https://example.com/open',
+              }),
+            ],
+          ],
+          { padding: pad(12, 0), background: '#fafafa' },
+        ),
+      ]),
+      section({}, [
+        row('100', [
+          [
+            block('text', {
+              text: [{ text: 'Display type, ' }, v('recipient.nickname', 'friend')],
+              font: 'sora',
+            }),
+            block('menu', {
+              items: [
+                { label: inLanguages({ en: 'Home', de: 'Start' }), href: 'https://example.com' },
+                {
+                  label: inLanguages({ en: 'Help', de: 'Hilfe' }),
+                  href: 'https://example.com/help',
+                },
+              ],
+            }),
+            block('footer', {
+              showViewInBrowser: false,
+              showPreferences: false,
+              showUnsubscribe: false,
+              showAddress: false,
+            }),
+          ],
+        ]),
+      ]),
+    ],
+  );
+}
+
 const FORMAT_DATA = {
   when: '2026-10-02T19:35:00Z',
   morning: '2026-01-15T07:05:00Z',
@@ -405,157 +469,13 @@ const CASES: GoldenCase[] = [
     locale,
     brand: DEFAULT_BRAND,
   })),
-  {
-    name: 'newsletter-welcome',
-    document: newsletterEmail(registry, { stable: true }),
-    data: { ...NOW, ...NEWSLETTER_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'application-received',
-    document: applicationReceivedEmail(registry, { stable: true }),
-    data: { ...NOW, ...APPLICATION_RECEIVED_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'valuation-offer',
-    document: valuationOfferEmail(registry, { stable: true }),
-    data: { ...NOW, ...VALUATION_OFFER_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'application-refused',
-    document: applicationRefusedEmail(registry, { stable: true }),
-    data: { ...NOW, ...APPLICATION_REFUSED_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  // The other refusal moment: the stage switches the eyebrow and the note.
-  {
-    name: 'application-refused-after-booking',
-    document: applicationRefusedEmail(registry, { stable: true }),
-    data: { ...NOW, ...APPLICATION_REFUSED_AFTER_BOOKING_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'job-application-received',
-    document: jobApplicationReceivedEmail(registry, { stable: true }),
-    data: { ...NOW, ...JOB_APPLICATION_RECEIVED_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'partner-application-received',
-    document: partnerApplicationReceivedEmail(registry, { stable: true }),
-    data: { ...NOW, ...PARTNER_APPLICATION_RECEIVED_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'partner-application-received-valuer',
-    document: partnerApplicationReceivedEmail(registry, { stable: true }),
-    data: {
-      ...NOW,
-      ...PARTNER_APPLICATION_RECEIVED_SAMPLE,
-      role: 'Vlerësues i pavarur',
-      is_checkpoint: false,
-      role_url: 'https://marrimauto.com/work-with-us/partner/vleresues-i-pavarur',
-      business_name: '',
-      identification_number: '',
-      address: '',
-      experience: '6 vite',
-      has_vehicle: 'Po',
-    },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'contact-received',
-    document: contactReceivedEmail(registry, { stable: true }),
-    data: { ...NOW, ...CONTACT_RECEIVED_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'contact-received-untitled',
-    document: contactReceivedEmail(registry, { stable: true }),
-    data: { ...NOW, ...CONTACT_RECEIVED_SAMPLE, title: '' },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'verification-code',
-    document: verificationCodeEmail(registry, { stable: true }),
-    data: { ...NOW, ...VERIFICATION_CODE_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'member-invitation',
-    document: memberInvitationEmail(registry, { stable: true }),
-    data: { ...NOW, ...MEMBER_INVITATION_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  // Every ready-made design in its other two languages.
-  ...(['en', 'de'] as const).flatMap((locale) =>
-    (
-      [
-        ['application-received', applicationReceivedEmail, APPLICATION_RECEIVED_SAMPLE],
-        ['valuation-offer', valuationOfferEmail, VALUATION_OFFER_SAMPLE],
-        ['application-refused', applicationRefusedEmail, APPLICATION_REFUSED_SAMPLE],
-        ['job-application-received', jobApplicationReceivedEmail, JOB_APPLICATION_RECEIVED_SAMPLE],
-        [
-          'partner-application-received',
-          partnerApplicationReceivedEmail,
-          PARTNER_APPLICATION_RECEIVED_SAMPLE,
-        ],
-        ['contact-received', contactReceivedEmail, CONTACT_RECEIVED_SAMPLE],
-        ['verification-code', verificationCodeEmail, VERIFICATION_CODE_SAMPLE],
-        ['member-invitation', memberInvitationEmail, MEMBER_INVITATION_SAMPLE],
-        ['newsletter-welcome', newsletterEmail, NEWSLETTER_SAMPLE],
-        ['staff-notification', staffNotificationEmail, STAFF_NOTIFICATION_SAMPLE],
-      ] as const
-    ).map(([name, design, sample]) => ({
-      name: `${name}-${locale}`,
-      document: design(registry, { stable: true }),
-      data: { ...NOW, ...sample },
-      locale,
-      brand: SITE_BRAND,
-    })),
-  ),
-  {
-    name: 'staff-notification',
-    document: staffNotificationEmail(registry, { stable: true }),
-    data: { ...NOW, ...STAFF_NOTIFICATION_SAMPLE },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'verification-code-bare',
-    document: verificationCodeEmail(registry, { stable: true }),
-    data: { ...NOW, recipient: { email: 'arta@example.com' }, code: '073150', expires_minutes: 5 },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
-  {
-    name: 'newsletter-monthly',
-    document: newsletterEmail(registry, { stable: true }),
-    data: {
-      ...NOW,
-      ...NEWSLETTER_SAMPLE,
-      is_welcome: false,
-      market: { valuations: 0, average_offer: null, top_brand: null },
-      articles_count: 0,
-      articles: [],
-    },
-    locale: 'sq',
-    brand: SITE_BRAND,
-  },
+  ...(['en', 'de', 'fr'] as const).map((locale) => ({
+    name: `layouts-${locale}`,
+    document: layoutsEmail(),
+    data: { ...NOW, recipient: { name: 'Arta' } },
+    locale,
+    brand: DEFAULT_BRAND,
+  })),
 ];
 
 describe('golden fixtures for the Python port', () => {
@@ -569,16 +489,6 @@ describe('golden fixtures for the Python port', () => {
     expectFile(
       '../../api/app/domains/email_builder/render/render_data.json',
       `${JSON.stringify({ fonts, rowLayouts: ROW_LAYOUTS }, null, 2)}\n`,
-    );
-  });
-
-  it('writes the staff notification email the API sends until one is designed', () => {
-    // `app/domains/notifications/delivery.py` renders this when no ACTIVE
-    // `staff_notification` template exists, so the email channel works the
-    // day it ships rather than the day somebody designs one.
-    expectFile(
-      '../../api/app/domains/notifications/staff_email.json',
-      `${JSON.stringify(staffNotificationEmail(registry, { stable: true }), null, 2)}\n`,
     );
   });
 
@@ -602,7 +512,7 @@ describe('golden fixtures for the Python port', () => {
         iconBase: ICON_BASE,
         expected: { subject: rendered.subject, preheader: rendered.preheader },
       };
-      const base = `../../api/tests/fixtures/email/golden/${golden.name}`;
+      const base = `../../api/tests/fixtures/email/golden/kit/${golden.name}`;
       expectFile(`${base}.json`, `${JSON.stringify(input, null, 2)}\n`);
       expectFile(`${base}.html`, rendered.html);
       expectFile(`${base}.txt`, rendered.text);

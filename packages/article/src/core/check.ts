@@ -14,6 +14,7 @@ import {
   type Localizable,
   type NodeTree,
   type RichText,
+  unknownLocaleIssues,
 } from '@motors/engine';
 import { z } from 'zod';
 
@@ -72,7 +73,17 @@ export function articleSchema(registry: ElementRegistry) {
 }
 
 /** Every issue worth showing the writer, errors first. */
-export function checkArticle(doc: ArticleDocument, registry: ElementRegistry): Issue[] {
+/** What a project tells the check: the languages its articles may be written in. */
+export interface CheckArticleOptions {
+  /** Languages outside this list are `i18n.locale.unknown` errors. Omitted: any language. */
+  locales?: readonly string[] | undefined;
+}
+
+export function checkArticle(
+  doc: ArticleDocument,
+  registry: ElementRegistry,
+  options: CheckArticleOptions = {},
+): Issue[] {
   const issues: Issue[] = [...structuralIssues(doc, registry), ...translationIssues(doc, registry)];
   const nodes = Object.values(doc.nodes);
 
@@ -101,6 +112,7 @@ export function checkArticle(doc: ArticleDocument, registry: ElementRegistry): I
   }
 
   issues.push(...headingIssues(doc), ...footnoteIssues(doc), ...metaIssues(doc));
+  if (options.locales) issues.push(...unknownLocaleIssues(doc, options.locales));
 
   return issues.sort((a, b) => (a.severity === b.severity ? 0 : a.severity === 'error' ? -1 : 1));
 }

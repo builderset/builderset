@@ -1,5 +1,5 @@
 import type { BuilderNode, NodeTree } from './document';
-import { localize, type ContentLocale, type Localizable } from './i18n';
+import { localize, type Localizable } from './i18n';
 import { ROOT_ID } from './ids';
 import { error, type Issue } from './issues';
 import { LIMITS } from './limits';
@@ -22,7 +22,7 @@ export function translationIssues(doc: Localizable, registry: ElementRegistry): 
   const issues: Issue[] = [];
   for (const [locale, translation] of Object.entries(i18n.translations)) {
     if (!translation) continue;
-    const view = localize({ ...doc, i18n: { ...i18n, enabled: true } }, locale as ContentLocale);
+    const view = localize({ ...doc, i18n: { ...i18n, enabled: true } }, locale);
     for (const id of Object.keys(translation.nodes ?? {})) {
       const node = view.nodes[id];
       if (!node || node === doc.nodes[id]) continue;

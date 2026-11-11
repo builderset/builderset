@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import type { BuilderNode, NodeTree } from './document';
 import type { NodeId } from './ids';
+import { error, type Issue } from './issues';
 
 /**
  * One document, every language.
@@ -27,11 +28,18 @@ import type { NodeId } from './ids';
  * rules; the email golden fixtures hold the two together.
  */
 
-export const CONTENT_LOCALES = ['sq', 'en', 'de'] as const;
-export type ContentLocale = (typeof CONTENT_LOCALES)[number];
+/**
+ * A language a document is written in: any BCP 47 tag. Which languages a
+ * project allows is the project's choice — the editor's `contentLocales`, and
+ * the `locales` option of a kit's check, which reports `i18n.locale.unknown`.
+ */
+export type ContentLocale = string;
 
-export const isContentLocale = (value: unknown): value is ContentLocale =>
-  typeof value === 'string' && (CONTENT_LOCALES as readonly string[]).includes(value);
+/** A BCP 47 tag, as far as we need it: `en`, `sq`, `pt-BR`, `zh-Hant`. */
+export const LOCALE_CODE = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8}){0,2}$/;
+
+export const isLocaleCode = (value: unknown): value is ContentLocale =>
+  typeof value === 'string' && LOCALE_CODE.test(value);
 
 /** One language's words: per node, per prop path; and the document's own (title, subject…). */
 export interface Translation {
@@ -61,13 +69,24 @@ const translationSchema = z.object({
 
 export const i18nSchema = z.object({
   enabled: z.boolean(),
-  base: z.enum(CONTENT_LOCALES),
-  translations: z.object({
-    sq: translationSchema.optional(),
-    en: translationSchema.optional(),
-    de: translationSchema.optional(),
-  }),
+  base: z.string().regex(LOCALE_CODE),
+  translations: z.record(z.string().regex(LOCALE_CODE), translationSchema),
 });
+
+/**
+ * The languages a document holds — its base and every language it has words
+ * in — that are not in the project's `locales`: each one a
+ * `i18n.locale.unknown` issue. A kit's check calls it when it is given the
+ * list.
+ */
+export function unknownLocaleIssues(doc: Localizable, locales: readonly string[]): Issue[] {
+  const i18n = doc.i18n;
+  if (!i18n) return [];
+  const held = [i18n.base, ...Object.keys(i18n.translations)];
+  return [...new Set(held)]
+    .filter((locale) => !locales.includes(locale))
+    .map((locale) => error('i18n.locale.unknown', { path: 'i18n', params: { locale } }));
+}
 
 /** Meta fields that are words, per document kind; everything else in meta is shared. */
 export const TRANSLATABLE_META = [
@@ -94,14 +113,14 @@ export interface Localizable extends NodeTree {
 export function documentLocales(doc: Localizable, locales?: readonly string[]): ContentLocale[] {
   const i18n = doc.i18n;
   if (!i18n?.enabled) return i18n ? [i18n.base] : [];
-  const others = locales ?? CONTENT_LOCALES;
-  return [i18n.base, ...others.filter((locale) => locale !== i18n.base)] as ContentLocale[];
+  const others = locales ?? Object.keys(i18n.translations);
+  return [i18n.base, ...others.filter((locale) => locale !== i18n.base)];
 }
 
 /** Whether `locale` is a translation (not the base) of this multi-language document. */
 export function isTranslating(doc: Localizable, locale: string | null | undefined): boolean {
   const i18n = doc.i18n;
-  return Boolean(i18n?.enabled && locale && locale !== i18n.base && isContentLocale(locale));
+  return Boolean(i18n?.enabled && locale && locale !== i18n.base && isLocaleCode(locale));
 }
 
 /** A translated value counts only when it says something; an empty one falls back. */
@@ -179,7 +198,7 @@ export function localize<D extends Localizable>(
     ? (value: unknown) => typeof value === 'string' || Array.isArray(value)
     : hasWords;
   if (!isTranslating(doc, locale)) return doc;
-  const translation = doc.i18n?.translations[locale as ContentLocale];
+  const translation = locale ? doc.i18n?.translations[locale] : undefined;
   if (!translation) return doc;
 
   let nodes: Record<NodeId, BuilderNode> | null = null;

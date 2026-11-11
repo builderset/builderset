@@ -101,8 +101,9 @@ export function EmailEditor({
         socialIconBase,
         locale: contentLocale,
         words,
+        contentLocales,
       }),
-    [registry, type, brand, host, words, socialIconBase, contentLocale],
+    [registry, type, brand, host, words, socialIconBase, contentLocale, contentLocales],
   );
   const sample = type?.samples.default ?? Object.values(type?.samples ?? {})[0] ?? {};
 

@@ -92,7 +92,9 @@ describe('localize', () => {
 
   it('knows which languages a document is written in', () => {
     const { doc } = article();
-    expect(documentLocales(doc)).toEqual(['sq', 'en', 'de']);
+    expect(documentLocales(doc, ['sq', 'en', 'de'])).toEqual(['sq', 'en', 'de']);
+    // Without the project's list: the languages the document holds words in.
+    expect(documentLocales(doc)).toEqual(['sq', ...Object.keys(doc.i18n?.translations ?? {})]);
     expect(documentLocales({ ...doc, i18n: undefined })).toEqual([]);
     expect(isTranslating(doc, 'en')).toBe(true);
     expect(isTranslating(doc, 'sq')).toBe(false);
@@ -106,5 +108,23 @@ describe('localize', () => {
     en.nodes = { h1: { text: [{ text: 'x'.repeat(20_000) }] } };
     const issues = checkArticle(doc, registry).filter((issue) => issue.path?.startsWith('en.'));
     expect(issues.length).toBeGreaterThan(0);
+  });
+
+  it('accepts any language code, and lets the project decide which it writes in', () => {
+    const registry = createArticleRegistry();
+    const { doc } = article();
+    const french: ArticleDocument = {
+      ...doc,
+      i18n: { enabled: true, base: 'fr', translations: { 'pt-BR': { meta: { title: 'Olá' } } } },
+    };
+    const codes = (issues: { code: string }[]) => issues.map((issue) => issue.code);
+    expect(codes(checkArticle(french, registry))).not.toContain('i18n.locale.unknown');
+    const unknown = checkArticle(french, registry, { locales: ['sq', 'en', 'de'] }).filter(
+      (issue) => issue.code === 'i18n.locale.unknown',
+    );
+    expect(unknown.map((issue) => issue.params)).toEqual([{ locale: 'fr' }, { locale: 'pt-BR' }]);
+    expect(unknown.every((issue) => issue.severity === 'error')).toBe(true);
+    expect(isTranslating(french, 'pt-BR')).toBe(true);
+    expect(isTranslating(french, 'not a code')).toBe(false);
   });
 });

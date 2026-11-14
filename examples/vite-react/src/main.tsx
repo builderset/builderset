@@ -1,11 +1,12 @@
 import {
-  createArticleDocument,
   createArticleRegistry,
   kitchenSinkDocument,
   type ArticleDocument,
 } from '@builderset/article';
 import { ArticleEditor } from '@builderset/article/editor';
 import { createMemoryHost as articleHost } from '@builderset/article/host';
+import { de as articleDe } from '@builderset/article/locales/de';
+import { sq as articleSq } from '@builderset/article/locales/sq';
 import { ArticleRenderer } from '@builderset/article/render';
 import {
   createEmailRegistry,
@@ -15,8 +16,10 @@ import {
 } from '@builderset/email';
 import { EmailEditor } from '@builderset/email/editor';
 import { createMemoryHost as emailHost } from '@builderset/email/host';
+import { de as emailDe } from '@builderset/email/locales/de';
+import { sq as emailSq } from '@builderset/email/locales/sq';
 import { DEFAULT_BRAND } from '@builderset/email/render';
-import { StrictMode, useEffect, useState, type ReactNode } from 'react';
+import { StrictMode, useEffect, useState, useSyncExternalStore, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Bar } from './bar';
@@ -50,12 +53,30 @@ const emailDocument: EmailDocument = starterEmail(emailRegistry, {
   name: 'Welcome',
   subject: 'Welcome aboard',
 });
-const articleDocument: ArticleDocument =
-  kitchenSinkDocument(articleRegistry) ?? createArticleDocument({ title: 'An article' });
+const articleDocument: ArticleDocument = kitchenSinkDocument(articleRegistry);
 const media = (key: string) => `https://picsum.photos/seed/${encodeURIComponent(key)}/1200/800`;
 const toast = (kind: string, message: string) => {
   console.info(`[${kind}] ${message}`);
 };
+
+// The hosts keep everything in memory, made once for the page. The bar shows
+// how many saves reached them.
+let saves = 0;
+const listeners = new Set<() => void>();
+const onSave = () => {
+  saves += 1;
+  for (const listener of listeners) listener();
+};
+const useSaves = () =>
+  useSyncExternalStore(
+    (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    () => saves,
+  );
+const emailMemory = emailHost<EmailDocument>({ document: emailDocument, toast, onSave });
+const articleMemory = articleHost<ArticleDocument>({ document: articleDocument, toast, onSave });
 
 function App() {
   const [settings, setSettings] = useState<Settings>(readSettings);
@@ -63,6 +84,7 @@ function App() {
     writeSettings(settings);
     applyToPage(settings);
   }, [settings]);
+  const saveCount = useSaves();
   const [ready, setReady] = useState(!stylesheets[route]);
   useEffect(() => {
     void stylesheets[route]?.().then(() => {
@@ -78,7 +100,7 @@ function App() {
       <EmailEditor
         document={emailDocument}
         registry={emailRegistry}
-        host={emailHost<EmailDocument>({ document: emailDocument, toast })}
+        host={emailMemory}
         type={resetType}
         brand={DEFAULT_BRAND}
         record={{ status: 'draft', scheduledAt: null, publishedAt: null }}
@@ -87,13 +109,15 @@ function App() {
         }}
         theme={settings.theme}
         tokens={tokens}
+        locale={settings.lang}
+        locales={{ sq: emailSq, de: emailDe }}
       />
     );
   } else if (route === '/article') {
     body = (
       <ArticleEditor
         document={articleDocument}
-        host={articleHost<ArticleDocument>({ document: articleDocument, toast })}
+        host={articleMemory}
         record={{
           status: 'draft',
           scheduledAt: null,
@@ -107,6 +131,8 @@ function App() {
         }}
         theme={settings.theme}
         tokens={tokens}
+        locale={settings.lang}
+        locales={{ sq: articleSq, de: articleDe }}
       />
     );
   } else if (route === '/article/view') {
@@ -116,7 +142,7 @@ function App() {
           document={articleDocument}
           registry={articleRegistry}
           resolveMedia={media}
-          locale="en"
+          locale={settings.lang}
           theme={settings.theme === 'light' ? 'auto' : settings.theme}
         />
       </main>
@@ -153,7 +179,7 @@ function App() {
   return (
     <>
       {body}
-      <Bar settings={settings} onChange={setSettings} />
+      <Bar settings={settings} onChange={setSettings} saves={saveCount} />
     </>
   );
 }

@@ -29,7 +29,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <ArticleRenderer
         document={document}
         registry={articleRegistry}
-        resolveMedia={(key) => `https://picsum.photos/seed/${encodeURIComponent(key)}/1200/800`}
+        // Every picture is the example's own sample image: an example makes no
+        // request to a third party.
+        resolveMedia={() => '/sample.png'}
         locale="en"
         linkComponent={Link}
         imageComponent={Picture}

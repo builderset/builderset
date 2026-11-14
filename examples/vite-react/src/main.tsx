@@ -54,7 +54,8 @@ const emailDocument: EmailDocument = starterEmail(emailRegistry, {
   subject: 'Welcome aboard',
 });
 const articleDocument: ArticleDocument = kitchenSinkDocument(articleRegistry);
-const media = (key: string) => `https://picsum.photos/seed/${encodeURIComponent(key)}/1200/800`;
+// Every picture is the example's own sample image: no request to a third party.
+const media = () => '/sample.png';
 const toast = (kind: string, message: string) => {
   console.info(`[${kind}] ${message}`);
 };

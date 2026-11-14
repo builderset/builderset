@@ -30,7 +30,8 @@ test.describe('the blog, a Server Component', () => {
   test.use({ javaScriptEnabled: false });
 
   test('the article is in the HTML, with JavaScript off', async ({ page }) => {
-    await page.goto('/blog/kitchen-sink');
+    // The HTML is what is tested; the pictures need not have finished loading.
+    await page.goto('/blog/kitchen-sink', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: 'Why buy a used car now' })).toBeVisible();
   });
 });
@@ -40,6 +41,7 @@ test('the editor is not in the blog’s JavaScript', async ({ page }) => {
   page.on('response', (response) => {
     if (response.request().resourceType() === 'script') scripts.push(response.text());
   });
+  // Every script the page asks for; the pictures are local, so load comes quickly.
   await page.goto('/blog/kitchen-sink', { waitUntil: 'load' });
   await page.waitForTimeout(1_000);
   const bodies = await Promise.all(scripts);

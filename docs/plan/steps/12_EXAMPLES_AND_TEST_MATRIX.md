@@ -175,7 +175,7 @@ Then break things on purpose and see the right test fail:
 
 - [x] The three examples exist, each with a README.
 - [x] `pnpm test:examples` installs them from a local registry outside the workspace and passes.
-- [x] The fifteen browser tests pass in Chromium, Firefox and WebKit.
+- [ ] The fifteen browser tests pass in Chromium, Firefox and WebKit.
 - [x] `node-render` passes on Node 20, 22 and 24.
 - [x] The `examples` job runs in CI and uploads its report on failure.
 - [x] Each of the five deliberate breaks made the expected test fail.
@@ -204,3 +204,5 @@ On the branch `feat/12-examples`, stacked on step 11's. Where the work differed 
 | Check | An unprefixed class fails "Hostile page"       | The prefix test fails (`top-bar.tsx:58  size-4`). The hostile test compares two pages of the same build, so a class missing from both is not a difference to it                                                                                                                                                              | —                                                                                             |
 
 **Checks.** `pnpm test:examples` passes: all three examples installed with npm from Verdaccio in the system's temporary folder; in Chromium, `vite-react` 10/10 and `next-shadcn` 5/5; `node-render` 11/11 on Node 26. The deliberate breaks: no `dist` in the email package's `files` → `node-render` fails (`ERR_MODULE_NOT_FOUND`); `document.title` at the top of a core file → `node-render` fails (`document is not defined`); an import of `@motors/ui` → `node-render` fails (`Cannot find package`); a renderer island without `'use client'` → the Next build fails; a top-bar class without the prefix → the prefix test fails. Firefox and WebKit, and Node 20 and 22, ran for the first time in CI on 2026-11-14 (commit `1092cce`), green — after two fixes: the all-in-one package's tests became a `node` project for the Node 20 run, and the Examples job was pinned to Ubuntu 24.04, since `ubuntu-latest` (26.04) is a system Playwright 1.58 cannot install its browsers on.
+
+**Correction, the same day.** The first Examples run in CI failed two Next tests in Firefox and WebKit: the blog fetched its pictures from picsum.photos through Next's image service, the requests timed out on the runner, and the page's `load` never came within 30 s (Chromium got there after 14 s). An example makes no request to a third party now: both serve one sample image from `public/`, and the server-HTML test waits for the HTML only. The box above is unticked until a green run shows all three browsers.

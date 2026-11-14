@@ -4,4 +4,22 @@
  * this kit's name.
  */
 
-export * from '@builderset/engine/host';
+export {
+  createMemoryHost,
+  createRestHost,
+  DEFAULT_REST_PATHS,
+  joinPath,
+  type BuilderHost,
+  type MemoryHost,
+  type MemoryHostOptions,
+  type MemoryHostState,
+  type OEmbedInfo,
+  type RestHostOptions,
+  type RestPaths,
+  type RestRecord,
+  type RevisionSummary,
+  type SavedSection,
+  type SaveReason,
+  type SaveResult,
+  type UploadResult,
+} from '@builderset/engine/host';

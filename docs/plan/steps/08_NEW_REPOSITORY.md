@@ -177,14 +177,14 @@ pnpm lint && pnpm typecheck && pnpm test
 
 ## Done when
 
-- [ ] The repository holds `packages/engine`, `packages/article`, `packages/email` with history.
-- [ ] No file contains `@motors/`, and no code or comment names MotorsAL.
+- [x] The repository holds `packages/engine`, `packages/article`, `packages/email` with history.
+- [x] No file contains `@motors/`, and no code or comment names MotorsAL (outside `docs/plan/`, see below).
 - [ ] Lint, type check and tests pass locally and in CI on Node 20, 22 and 24.
-- [ ] The secret scan is clean.
+- [x] The secret scan is clean.
 - [ ] `LICENSE`, `README.md`, `CONTRIBUTING.md` and `SECURITY.md` exist.
 - [ ] Branch protection and secret scanning are on, or, while the repository is private, their replacements from part 6 are in place.
 - [ ] MotorsAL's three folders carry the "frozen" README.
-- [ ] The plan is in the new repository.
+- [x] The plan is in the new repository.
 
 ## Traps
 
@@ -193,3 +193,24 @@ pnpm lint && pnpm typecheck && pnpm test
 - **Tests that still reach for `../../api`.** Step 07 removed them; if one is left, it fails here with a missing file. Fix it here and copy the fix to MotorsAL.
 - **Different line endings.** MotorsAL is developed on Windows. Add a `.gitattributes` with `* text=auto eol=lf` before the first commit in the new repository, or the fixture comparison tests fail on a Linux runner. The fixture tests already normalise `\r\n` when reading; the committed files should still be LF.
 - **Making the repository public "just to test Actions".** Public is not reversible in practice: forks and caches keep the content. Decide it once, at M4.
+
+## How it was done (2026-11-14) — local part
+
+Parts 1–5 and 9 are done in a local repository beside MotorsAL's checkout; parts 6–8 wait for step 01 (the GitHub repository, the licence, the project email). Nothing is pushed.
+
+| Part | What the plan said                                        | What was done                                                                                                                                                                                                                                                                                  | Why                                                                                                |
+| ---- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| —    | Start after M1 is merged and deployed                     | Started before the merge, with the owner's go-ahead after trying the editors on the reshaped packages                                                                                                                                                                                          | MotorsAL keeps its own copies until step 14, so nothing here can change the live admin             |
+| 1    | Clone MotorsAL's remote                                   | Cloned the local `builderset` branch (`--no-local --single-branch`), which is not on the remote yet; `git filter-repo` ran through `uvx`. The six old folders were the only places the packages ever lived (first commit 2026-09-27). 47 commits; `git log --follow` reaches back past step 02 | The branch holds steps 02–07 and exists only locally                                               |
+| 2    | `gitleaks detect`                                         | `gitleaks` 8.24.3 in Docker: no leaks. The search by hand found sample data only (`+355 69 123 4567`, `arta@example.com`). **Every commit's author email is a work address**; rewrite it with `git filter-repo --mailmap` before the first push if it should not be public                     | A public repository shows the author of every commit                                               |
+| 3    | `tooling/` with tsconfig, ESLint, Prettier                | As planned. The packages extend `../../tooling/tsconfig/library.json`; the root `eslint.config.js` and `prettier.config.js` re-export `tooling/`. The lockfile started as MotorsAL's and was pruned: pnpm downloaded nothing, so every dependency is the version MotorsAL tested               | Same versions, so a failure here is the move's, not a tool's                                       |
+| 3    | —                                                         | A one-character formatting fix in `language-switch.tsx`, the only file `format:check` refused (MotorsAL's CI does not run it)                                                                                                                                                                  | A step ends green                                                                                  |
+| 4    | `git grep -inE "motors\|marrimauto\|blejm"` finds nothing | True for every file except `docs/plan/`, which is this plan and is about the app it was written in. Comments that named MotorsAL's `@motors/tokens` now say "the theme stylesheet", and the engine's README lists the global rules the hosting app has to supply until step 10                 | Those rules are a real dependency step 10 must remove, not only a name                             |
+| 5    | `test` on Node 20, 22 and 24                              | Node 22 and 24 run every suite; Node 20 runs the `*.node.test.ts` suites only (`--project node`). pnpm runs standalone                                                                                                                                                                         | jsdom 30 needs Node 22.22, pnpm 11 needs Node 22.13; only `core`, `render`, `host` promise Node 20 |
+| 6, 7 | Settings, push                                            | Not done                                                                                                                                                                                                                                                                                       | The repository does not exist yet (step 01)                                                        |
+| 8    | Freeze MotorsAL's copies                                  | Not done: on the day of the push, so the README can link to the repository                                                                                                                                                                                                                     | —                                                                                                  |
+| 9    | Move the plan                                             | Copied to `docs/plan/`, kept here from now on. MotorsAL's folder becomes the pointer on the day of the push                                                                                                                                                                                    | —                                                                                                  |
+
+**Checks.** `pnpm lint`, `typecheck`, `test` and `format:check` pass on Node 26 (the only one on the machine): 222 tests in 26 files, the same counts as in MotorsAL, and no schema, fixture or golden file changed. The one lint warning (an unused `eslint-disable` in the article editor's test) came with the code. Node 20, 22 and 24 run for the first time in CI.
+
+**For decision D5.** Node 20 reached its end of life on 2026-04-30. Promising it means testing a version that no longer gets security fixes, through the workaround above. Node 22 or newer would let every suite run on every version in the matrix.

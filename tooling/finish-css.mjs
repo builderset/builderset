@@ -10,6 +10,12 @@
  * already needs, and it sets Tailwind's variables on every element of the page
  * (`*, ::before, ::after`), outside the editor.
  *
+ * Gives the utilities that are written entirely inside `:where()` — `space-y-*`
+ * and `divide-*`: `:where(.bst\:space-y-4>:not(:last-child))` — the editor's
+ * scope in front. With no specificity of their own they lost to the scoped
+ * reset (`.builderset :where(*) { margin: 0 }`); in Tailwind's layered build
+ * they win by layer, and here they win by coming later at the same weight.
+ *
  * Then fails on what must never ship:
  * - any `@layer`: a page's own layers, or its unlayered rules, would reorder it;
  * - a class that is not the product's: `.builderset…`, `.bst\:…`, `.bld-…`,
@@ -58,7 +64,10 @@ function selectors(css) {
 
 let failed = false;
 for (const file of process.argv.slice(2)) {
-  const css = stripPropertiesLayer(readFileSync(file, 'utf8'));
+  const css = stripPropertiesLayer(readFileSync(file, 'utf8')).replace(
+    /(^|[{},])(\s*):where\(\.bst\\:/g,
+    '$1$2.builderset :where(.bst\\:',
+  );
   writeFileSync(file, css);
   const problems = [];
   if (css.includes('@layer')) problems.push('contains @layer');

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-import { useEditorContext } from '@motors/engine/editor';
+import { useEditorContext } from '@builderset/engine/editor';
 
 import { useArticle } from './hooks';
 

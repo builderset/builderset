@@ -1,6 +1,6 @@
 /**
- * @motors/article/editor — the article builder: the shared editor
- * (`@motors/engine/editor`) with the article profile.
+ * @builderset/article/editor — the article builder: the shared editor
+ * (`@builderset/engine/editor`) with the article profile.
  */
 
 export { ArticleEditor, type ArticleEditorProps } from './editor';

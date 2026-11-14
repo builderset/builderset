@@ -1,7 +1,7 @@
 'use client';
 
-import type { Fragment } from '@motors/engine';
-import { useEditorContext } from '@motors/engine/editor';
+import type { Fragment } from '@builderset/engine';
+import { useEditorContext } from '@builderset/engine/editor';
 import { importEmailHtml, type EmailDocument } from '../core';
 import {
   Button,
@@ -15,7 +15,7 @@ import {
   barButtonClass,
   OverlayHeader,
   OverlayTitle,
-} from '@motors/engine/ui';
+} from '@builderset/engine/ui';
 import { FileCode2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 

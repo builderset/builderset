@@ -1,7 +1,7 @@
 'use client';
 
-import type { ElementRegistry } from '@motors/engine';
-import { pickLocale, type EditorProfile } from '@motors/engine/editor';
+import type { ElementRegistry } from '@builderset/engine';
+import { pickLocale, type EditorProfile } from '@builderset/engine/editor';
 
 import { ARTICLE_CATEGORIES, checkArticle, parseArticle, type ArticleDocument } from '../core';
 import { renderDocument, type RenderMessages } from '../render';

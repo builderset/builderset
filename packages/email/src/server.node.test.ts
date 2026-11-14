@@ -1,11 +1,11 @@
-import * as email from '@motors/email';
-import * as host from '@motors/email/host';
-import { renderEmail } from '@motors/email/render';
+import * as email from '@builderset/email';
+import * as host from '@builderset/email/host';
+import { renderEmail } from '@builderset/email/render';
 import { describe, expect, it } from 'vitest';
 
 /**
  * The entries a server imports load in plain Node: no `window`, no
- * `document`, no `DOMParser` (docs/builder_packages/steps/07). The imports
+ * `document`, no `DOMParser` (docs/plan/steps/07). The imports
  * above are the test — a module that touched the DOM while loading would fail
  * this file before any test ran.
  */

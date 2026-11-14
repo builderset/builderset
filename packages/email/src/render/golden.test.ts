@@ -30,7 +30,7 @@ import { renderEmail } from './html';
  * Each case is written to this package's `fixtures/golden/` as its input
  * (`<name>.json`) and its output (`<name>.html`, `<name>.txt`), and the font
  * stacks and row layouts the Python side needs to `fixtures/render_data.json`.
- * MotorsAL's API gets copies (`scripts/sync-builder-contract.mjs`). Run
+ * A backend in another language keeps a copy of them. Run
  * with `UPDATE_FIXTURES=1` after changing the renderer, and commit the files —
  * a stale fixture fails here first, and the Python test then says exactly where
  * the port diverged.

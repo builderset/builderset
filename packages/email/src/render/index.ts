@@ -1,7 +1,7 @@
 /**
- * @motors/email/render — email documents into HTML every mail client shows,
+ * @builderset/email/render — email documents into HTML every mail client shows,
  * and plain text. The React view for the builder's canvas is in
- * `@motors/email/editor`.
+ * `@builderset/email/editor`.
  */
 
 export {

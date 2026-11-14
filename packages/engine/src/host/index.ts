@@ -1,5 +1,5 @@
 /**
- * @motors/engine/host — the line between the editor and a project's backend.
+ * @builderset/engine/host — the line between the editor and a project's backend.
  *
  * `BuilderHost` is everything the editor asks of the application it runs in.
  * Two ready-made hosts: `createMemoryHost` (tests, demos, a playground) and

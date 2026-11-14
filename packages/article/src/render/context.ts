@@ -1,4 +1,4 @@
-import type { BuilderNode, EditableTextField, ElementRegistry } from '@motors/engine';
+import type { BuilderNode, EditableTextField, ElementRegistry } from '@builderset/engine';
 import type { ArticleDocument } from '../core/document';
 import type { OutlineEntry } from '../core/outline';
 import type { ComponentType, ReactNode } from 'react';

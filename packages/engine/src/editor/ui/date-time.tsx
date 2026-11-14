@@ -7,9 +7,9 @@ import { Input, type InputProps } from './input';
  * reader's own language and calendar, so it has no words to translate and is
  * accessible as it comes.
  *
- * It replaces `@motors/ui`'s `DatePicker` and `TimePicker` (Builderset plan,
+ * It replaces the `DatePicker` and `TimePicker` the editor first used (plan,
  * step 04, part d): those are the heaviest components the editor used and the
- * most tied to the admin's translations, for one field in two places.
+ * most tied to their app's translations, for one field in two places.
  *
  * `value` and `min` are ISO instants; the field shows and edits them in the
  * reader's local time. An empty or unfinished field reports `null`.

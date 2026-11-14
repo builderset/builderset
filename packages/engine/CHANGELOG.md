@@ -1,12 +1,13 @@
 # Changelog
 
-`@motors/engine` joins three earlier packages: `@motors/builder-core` (now
-`src/core`), `@motors/builder-render` (now `src/render`) and
-`@motors/builder-react` (now `src/editor`). Their entries are kept below.
+Nothing is published yet. The entries below are from before the packages had
+this name, when the engine was three private packages: `builder-core` (now
+`src/core`), `builder-render` (now `src/render`) and `builder-react` (now
+`src/editor`).
 
-## 0.1.0
+## Before 0.0.0
 
-### Core (`@motors/builder-core`)
+### Core (`builder-core`)
 
 - Document format v1: normalized node tree, rich text with marks, media by key,
   token-based per-breakpoint styles, document meta (title, excerpt, cover, SEO).
@@ -23,7 +24,7 @@
   legacy article body conversion.
 - Contract fixtures and the committed JSON Schema for the server.
 
-### Render (`@motors/builder-render`)
+### Render (`builder-render`)
 
 - `ArticleRenderer` / `renderDocument`: every standard element rendered as
   semantic, Server-Component-safe React, with per-breakpoint style classes.
@@ -33,7 +34,7 @@
   FAQPage, HowTo, Review) and `jsonLdString`.
 - Messages in English, Albanian and German.
 
-### Editor (`@motors/builder-react`)
+### Editor (`builder-react`)
 
 - First version of the editor: top bar, left rail (add, layers, templates),
   canvas with inline editing and drag and drop, schema-driven inspector,

@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { wrapChain, type Issue } from '@motors/engine';
+import { wrapChain, type Issue } from '@builderset/engine';
 import { describe, expect, it } from 'vitest';
 
 import { createEmailRegistry } from './blocks';
@@ -127,7 +127,7 @@ function expectFile(relative: string, content: string) {
   expect(committed, `${relative} is stale — run with UPDATE_FIXTURES=1`).toBe(content);
 }
 
-/** This package's alone: a backend copies them (MotorsAL's API by `scripts/sync-builder-contract.mjs`). */
+/** This package's alone: a backend in another language keeps a copy of them. */
 function expectFixture(relative: string, content: string) {
   expectFile(`fixtures/${relative}`, content);
 }

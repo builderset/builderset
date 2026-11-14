@@ -1,5 +1,5 @@
-import { rt } from '@motors/engine';
-import { createEditorStore } from '@motors/engine/editor';
+import { rt } from '@builderset/engine';
+import { createEditorStore } from '@builderset/engine/editor';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createArticleDocument, createArticleRegistry } from '../core';

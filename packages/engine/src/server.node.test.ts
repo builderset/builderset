@@ -1,10 +1,10 @@
-import * as core from '@motors/engine';
-import * as host from '@motors/engine/host';
+import * as core from '@builderset/engine';
+import * as host from '@builderset/engine/host';
 import { describe, expect, it } from 'vitest';
 
 /**
  * The entries a server imports load in plain Node: no `window`, no
- * `document`, no `DOMParser` (docs/builder_packages/steps/07). The imports
+ * `document`, no `DOMParser` (docs/plan/steps/07). The imports
  * above are the test — a module that touched the DOM while loading would fail
  * this file before any test ran.
  */

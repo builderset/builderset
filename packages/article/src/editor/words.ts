@@ -1,6 +1,6 @@
 'use client';
 
-import type { DeepPartial, EditorMessages, ElementText } from '@motors/engine/editor';
+import type { DeepPartial, EditorMessages, ElementText } from '@builderset/engine/editor';
 import { createContext, useContext } from 'react';
 
 import type { RenderMessages } from '../render';
@@ -25,11 +25,11 @@ export interface ArticleWords {
 
 /**
  * Everything the article kit says in one language — what a locale file
- * (`@motors/article/locales/sq`) exports and `locales` takes.
+ * (`@builderset/article/locales/sq`) exports and `locales` takes.
  */
 export interface ArticleLocale {
   code: string;
-  /** The workspace's words (`@motors/engine/locales/…`). */
+  /** The workspace's words (`@builderset/engine/locales/…`). */
   engine: EditorMessages;
   /** Workspace words the article editor says its own way: "Articles", "Untitled article". */
   workspace: Partial<EditorMessages>;

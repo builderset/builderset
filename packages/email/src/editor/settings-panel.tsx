@@ -7,7 +7,7 @@ import {
   NumberStepper,
   useEditor,
   useEditorContext,
-} from '@motors/engine/editor';
+} from '@builderset/engine/editor';
 import { variablesOf, type EmailDocument, type EmailMeta, type EmailSettings } from '../core';
 import { createContext as createRenderContext, fill } from '../render';
 import {
@@ -23,7 +23,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@motors/engine/ui';
+} from '@builderset/engine/ui';
 import { Braces } from 'lucide-react';
 import { useId, useState, type ReactNode } from 'react';
 

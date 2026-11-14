@@ -8,7 +8,7 @@ import { cn } from '../cn';
 
 /**
  * The boolean and single-choice controls the editor uses: the switch and the
- * segmented control. Copied from `@motors/ui` (primitives/toggles.tsx); the
+ * segmented control. The
  * checkbox and the radio group, which the editor does not use, are left out.
  *
  * They are Radix rather than native inputs, for the same reason the select

@@ -1,6 +1,6 @@
 /**
- * @motors/email/editor — the email template builder: the shared editor
- * (`@motors/engine/editor`) with the email profile, and the canvas view of an
+ * @builderset/email/editor — the email template builder: the shared editor
+ * (`@builderset/engine/editor`) with the email profile, and the canvas view of an
  * email document.
  */
 

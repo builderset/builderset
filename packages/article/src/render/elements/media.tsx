@@ -1,4 +1,4 @@
-import { isRichTextEmpty, type PropsOf } from '@motors/engine';
+import { isRichTextEmpty, type PropsOf } from '@builderset/engine';
 import type {
   audioElement,
   beforeAfterElement,

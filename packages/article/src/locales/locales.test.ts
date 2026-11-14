@@ -1,4 +1,4 @@
-import { resolveMessages } from '@motors/engine/editor';
+import { resolveMessages } from '@builderset/engine/editor';
 import { describe, expect, it } from 'vitest';
 
 import { de } from './de';

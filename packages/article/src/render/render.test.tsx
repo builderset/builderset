@@ -1,4 +1,4 @@
-import { applyChange, createFragment, insert, rt, update } from '@motors/engine';
+import { applyChange, createFragment, insert, rt, update } from '@builderset/engine';
 import { createArticleDocument, type ArticleDocument } from '../core/document';
 import { createArticleRegistry } from '../core/elements';
 import { kitchenSinkDocument } from '../core/kitchen-sink';

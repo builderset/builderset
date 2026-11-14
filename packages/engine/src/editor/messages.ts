@@ -202,7 +202,7 @@ export type DeepPartial<T> = T extends (...args: never[]) => unknown
  * back to the language alone (`sq`).
  *
  * English is the only language built in: a project imports the others
- * (`@motors/engine/locales/sq`) and passes them as `locales`, so an app that
+ * (`@builderset/engine/locales/sq`) and passes them as `locales`, so an app that
  * passes none ships no other language.
  */
 export function resolveMessages<T extends object>(

@@ -1,4 +1,4 @@
-import type { BuilderNode } from '@motors/engine';
+import type { BuilderNode } from '@builderset/engine';
 import {
   googleFontsUrl,
   ROW_LAYOUTS,

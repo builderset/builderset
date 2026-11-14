@@ -1,4 +1,4 @@
-import type { Issue } from '@motors/engine';
+import type { Issue } from '@builderset/engine';
 
 /**
  * What a saved email design may still contain before it is activated: no

@@ -7,7 +7,7 @@ import { cn } from '../cn';
 
 /**
  * The small shared surfaces the editor uses: skeleton, progress, spinner.
- * Copied from `@motors/ui` (primitives/misc.tsx); the separator and the
+ * The separator and the
  * avatar, which the editor does not use, are left out with their Radix
  * packages.
  */
@@ -18,7 +18,7 @@ import { cn } from '../cn';
  * The band is a transform, so it composites instead of repainting the box it
  * crosses — which matters when twenty of these are on screen at once, the exact
  * case a skeleton exists for. Under `prefers-reduced-motion` the global rule in
- * `@motors/tokens` flattens the animation and the plain surface remains.
+ * the theme stylesheet flattens the animation and the plain surface remains.
  */
 export function Skeleton({ className, ...props }: ComponentProps<'div'>) {
   return (

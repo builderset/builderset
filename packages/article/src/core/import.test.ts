@@ -7,7 +7,7 @@ import {
   insert,
   update,
   rt,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { readClipboard } from './paste';
 import { createArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';

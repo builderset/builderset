@@ -1,13 +1,13 @@
-# @motors/article
+# @builderset/article
 
 The model of the article builder: the article document and its meta, the
 standard elements, the article's checks, parsing with migrations, pasting,
-and import from HTML and Markdown. It is built on `@motors/engine`, which
+and import from HTML and Markdown. It is built on `@builderset/engine`, which
 holds what every builder shares: the node tree, the element registry, every
 editing operation with undo/redo, and the structural checks.
 
 Pure TypeScript — no React. The same code runs in the editor
-(`@motors/article/editor`), the renderer (`@motors/article/render`), tests, and
+(`@builderset/article/editor`), the renderer (`@builderset/article/render`), tests, and
 anything else that needs to read or write an article.
 
 ## Concepts
@@ -69,7 +69,7 @@ An element is data. The editor and renderer register their own components
 against the same `type`.
 
 ```ts
-import { defineElement, warning } from '@motors/engine';
+import { defineElement, warning } from '@builderset/engine';
 import { z } from 'zod';
 
 export const noteElement = defineElement({

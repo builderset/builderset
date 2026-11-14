@@ -29,7 +29,7 @@ import { usePortalContainer } from './portal';
  *
  * ── The bands ────────────────────────────────────────────────────────────────
  * `data-slot="overlay-panel|overlay-header|overlay-footer"` and `data-pad` are
- * read by CSS in `@motors/tokens`, which is what makes a header and a footer
+ * read by the theme stylesheet, which is what makes a header and a footer
  * reach the panel's own edges while the body between them keeps its padding.
  * That rule is stated once there rather than per component, because "overlay" is
  * four components here and will be five.

@@ -1,4 +1,4 @@
-import { warning, defineElement, isRichTextEmpty, type RichText } from '@motors/engine';
+import { warning, defineElement, isRichTextEmpty, type RichText } from '@builderset/engine';
 import { z } from 'zod';
 
 import {

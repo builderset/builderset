@@ -15,7 +15,7 @@ import { kitchenSinkDocument } from './kitchen-sink';
  * The CONTRACT with the server, as files.
  *
  * `schema/article.schema.json` and `fixtures/` are committed, and this
- * package's alone: a backend copies them (MotorsAL's API by `scripts/sync-builder-contract.mjs`).
+ * package's alone: a backend in another language keeps a copy of them.
  * Its contract test reads them: every valid fixture must be accepted, every
  * invalid one refused with the code the manifest names, and a draft lenient
  * on exactly the codes in `draft.json`. This test

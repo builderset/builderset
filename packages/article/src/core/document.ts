@@ -5,7 +5,7 @@ import {
   nodeShapeSchema,
   ROOT_ID,
   type EngineDocument,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { z } from 'zod';
 
 /**

@@ -1,13 +1,13 @@
 'use client';
 
-import type { ElementRegistry } from '@motors/engine';
+import type { ElementRegistry } from '@builderset/engine';
 import {
   BuilderEditor,
   resolveMessages,
   useHtmlLang,
   type BuilderHost,
   type EditorMessages,
-} from '@motors/engine/editor';
+} from '@builderset/engine/editor';
 import { useMemo } from 'react';
 
 import { createArticleRegistry, type ArticleDocument } from '../core';
@@ -30,7 +30,7 @@ export interface ArticleEditorProps {
   onDelete?: (() => Promise<boolean>) | undefined;
   /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
   locale?: string | undefined;
-  /** Other languages, by code: `{ sq }` from `@motors/article/locales/sq`. English is built in. */
+  /** Other languages, by code: `{ sq }` from `@builderset/article/locales/sq`. English is built in. */
   locales?: Readonly<Record<string, ArticleLocale | undefined>> | undefined;
   /** Replace single words, in whatever language is active. */
   messages?: ArticleMessages | undefined;

@@ -1,4 +1,4 @@
-import { error, warning, type Issue, defineElement, type RichText } from '@motors/engine';
+import { error, warning, type Issue, defineElement, type RichText } from '@builderset/engine';
 import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
 

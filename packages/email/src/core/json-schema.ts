@@ -1,4 +1,4 @@
-import type { ElementRegistry } from '@motors/engine';
+import type { ElementRegistry } from '@builderset/engine';
 import { z } from 'zod';
 
 import { ROW_LAYOUTS } from './blocks/structure';

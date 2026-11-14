@@ -7,9 +7,9 @@ import { useMessages } from '../context';
 import { cn } from '../cn';
 
 /**
- * The empty state, copied from `@motors/ui` (feedback/states.tsx). The error
- * and loading states in the same file are not used by the editor and are left
- * out; their notes below still describe the shared shape.
+ * The empty state. The error and loading states that usually sit beside it
+ * are not used by the editor and are left out; their notes below still
+ * describe the shared shape.
  *
  * Empty, error and loading — the three states every list has and most screens
  * forget two of.

@@ -1,4 +1,4 @@
-import { readFragmentJson, type ElementRegistry, type Fragment } from '@motors/engine';
+import { readFragmentJson, type ElementRegistry, type Fragment } from '@builderset/engine';
 
 import { fragmentFromBlocks, importHTML } from './import-html';
 import { importMarkdown, looksLikeMarkdown } from './import-markdown';

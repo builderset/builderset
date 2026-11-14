@@ -5,7 +5,7 @@ import {
   isAnchor,
   isSafeUrl,
   slugifyAnchor,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { describe, expect, it } from 'vitest';
 
 import { detectEmbedProvider } from './embeds';

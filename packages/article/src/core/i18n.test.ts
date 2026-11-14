@@ -4,7 +4,7 @@ import {
   isTranslating,
   localize,
   type Translation,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { checkArticle } from './check';
 import { createArticleDocument, type ArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';

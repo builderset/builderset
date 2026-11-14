@@ -5,7 +5,7 @@ import {
   readStored,
   type ElementRegistry,
   type ParseResult,
-} from '@motors/engine';
+} from '@builderset/engine';
 
 import { checkArticle } from './check';
 import {

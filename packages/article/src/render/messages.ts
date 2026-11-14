@@ -2,7 +2,7 @@
  * The handful of words the renderer itself writes — button labels, the
  * privacy notice on an embed, the heading over footnotes. Everything else on
  * the page is the writer's. English is built in; a host passes `messages` —
- * a language's `render` words from `@motors/article/locales/sq`, or single
+ * a language's `render` words from `@builderset/article/locales/sq`, or single
  * words — to change them.
  */
 
@@ -71,7 +71,7 @@ export const RENDER_EN: RenderMessages = {
   audio: 'Audio',
 };
 
-/** English, with `overrides` laid over it: a language from `@motors/article/locales/…` (its `render`), or single words. */
+/** English, with `overrides` laid over it: a language from `@builderset/article/locales/…` (its `render`), or single words. */
 export function messagesFor(overrides?: Partial<RenderMessages>): RenderMessages {
   return { ...RENDER_EN, ...overrides };
 }

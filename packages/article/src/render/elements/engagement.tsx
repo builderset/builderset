@@ -1,4 +1,4 @@
-import { parentOf, type PropsOf } from '@motors/engine';
+import { parentOf, type PropsOf } from '@builderset/engine';
 import type {
   accordionElement,
   accordionItemElement,

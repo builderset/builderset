@@ -1,5 +1,5 @@
 /**
- * @motors/engine/editor — the workspace every builder shares.
+ * @builderset/engine/editor — the workspace every builder shares.
  *
  * `<BuilderEditor>` is the whole workspace; a kit passes its profile (canvas,
  * checks, panels), and a host passes the document, the element registry and a

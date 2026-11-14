@@ -1,6 +1,6 @@
 'use client';
 
-import { plainText } from '@motors/engine';
+import { plainText } from '@builderset/engine';
 import {
   DateTimeField,
   Input,
@@ -11,7 +11,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@motors/engine/ui';
+} from '@builderset/engine/ui';
 import { Check, X } from 'lucide-react';
 import { Fragment, useId, useState, type ReactNode } from 'react';
 
@@ -20,7 +20,7 @@ import {
   MultilingualToggle,
   NumberStepper,
   useEditorContext,
-} from '@motors/engine/editor';
+} from '@builderset/engine/editor';
 
 import type { SeoMeta } from '../core';
 import { cn } from '../render/cn';

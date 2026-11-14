@@ -18,10 +18,12 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
     "@eslint/js": "9.39.5",
+    "@tailwindcss/cli": "4.3.3",
     "eslint": "9.39.5",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
     "publint": "0.3.25",
+    "tailwindcss": "4.3.3",
     "tsdown": "0.23.7",
     "turbo": "2.10.10",
     "typescript": "6.0.3",

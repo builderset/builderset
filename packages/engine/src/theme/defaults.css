@@ -1,0 +1,31 @@
+/*
+ * The built-in look: what each public variable falls back to. A light and a
+ * dark value on one line, chosen by `color-scheme` (scheme.css), so a colour
+ * cannot exist in one theme and be missing in the other.
+ *
+ * The neutrals are tuned for this editor: an elevation ramp in light (the
+ * surface is the only pure white, so a panel reads as raised), the same ramp
+ * upside down in dark. The brand is a neutral blue. Every text and background
+ * pair here clears 4.5:1 in both themes — contrast.node.test.ts measures them.
+ *
+ * Private: `--bst-d-*` may change in any release. Set `--builderset-*`.
+ */
+.builderset {
+  --bst-d-background: light-dark(oklch(0.972 0.002 258), #0b0c0e);
+  --bst-d-surface: light-dark(oklch(1 0 0), #1a1c1f);
+  --bst-d-foreground: light-dark(oklch(0.185 0.006 258), #ecedef);
+  --bst-d-muted: light-dark(oklch(0.945 0.003 258), #15171a);
+  --bst-d-muted-foreground: light-dark(oklch(0.505 0.008 258), oklch(0.7 0.01 258));
+  --bst-d-border: light-dark(oklch(0.905 0.004 258), #2a2d31);
+  --bst-d-primary: light-dark(oklch(0.55 0.19 258), oklch(0.78 0.11 258));
+  --bst-d-primary-foreground: light-dark(oklch(1 0 0), oklch(0.24 0.07 258));
+  --bst-d-danger: light-dark(oklch(0.577 0.245 27.325), oklch(0.704 0.191 22.216));
+  --bst-d-danger-foreground: light-dark(oklch(0.985 0 0), oklch(0.205 0 0));
+  --bst-d-success: light-dark(oklch(0.51 0.11 150), oklch(0.76 0.12 150));
+  --bst-d-warning: light-dark(oklch(0.505 0.115 62), oklch(0.79 0.115 62));
+  /* A document's state, on the status chip: three hues, one lightness. */
+  --bst-d-state-draft: light-dark(oklch(0.5 0.105 75), oklch(0.79 0.13 85));
+  --bst-d-state-scheduled: light-dark(oklch(0.5 0.09 200), oklch(0.78 0.1 195));
+  --bst-d-state-published: light-dark(oklch(0.5 0.12 150), oklch(0.76 0.13 150));
+  --bst-d-chart-1: light-dark(oklch(0.51 0.2 258), oklch(0.72 0.14 258));
+}

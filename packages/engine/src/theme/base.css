@@ -1,0 +1,93 @@
+/*
+ * What the editor is built on, before the utilities, so a `bst:` class on an
+ * element still wins: the root's type and ground, the motion constants, the
+ * focus ring, the disabled surface, scrollbars, reduced motion. Everything is
+ * inside `.builderset`; nothing here reaches the page around the editor.
+ */
+
+.builderset {
+  /* Motion. In an editor, motion confirms a change and is out of the way by
+     200ms; an overlay is the one surface allowed to be seen arriving. */
+  --bst-dur-1: 90ms; /* colour and opacity: hover, focus, selection */
+  --bst-dur-2: 140ms; /* micro elements: a chip, a pill, a checkbox */
+  --bst-dur-3: 220ms; /* panels: a block opening, a detail row */
+  --bst-dur-4: 320ms; /* heights and steps: a group collapsing, a drawer */
+  --bst-dur-state: 120ms;
+  --bst-dur-overlay: 180ms;
+  --bst-dur-overlay-in: 420ms;
+  --bst-dur-overlay-content: 450ms;
+  --bst-dur-overlay-content-out: 160ms;
+  --bst-overlay-step: 70ms;
+  /* A field is taller than a button: it is typed into, not pressed. The side
+     panels bring it down (panel.css). */
+  --bst-field-h: 40px;
+  /* Dims what is behind a dialog. Dark in both themes: dimming has no
+     light-mode opposite. */
+  --bst-scrim: color-mix(in oklab, oklch(0.145 0.018 258) 55%, transparent);
+
+  color: var(--builderset-foreground, var(--bst-d-foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Lines take the theme's border colour unless a class says otherwise. */
+.builderset :where(*, ::before, ::after) {
+  border-color: var(--builderset-border, var(--bst-d-border));
+}
+
+/* One focus ring for the whole editor: a keyboard user moving from a field to
+   the button beside it must not see the indicator change shape. */
+.builderset :where(:focus-visible) {
+  outline: 2px solid var(--builderset-ring, var(--builderset-foreground, var(--bst-d-foreground)));
+  outline-offset: 2px;
+}
+
+/* Disabled is a surface, never an opacity: an opacity takes the label, the
+   border and the placeholder below legibility together. Scoped to controls, so
+   the icon inside a disabled button is not repainted by inheritance. */
+.builderset
+  :where(
+    :where(
+      button,
+      input,
+      select,
+      textarea,
+      [role='button'],
+      [role='switch'],
+      [role='checkbox']
+    )[disabled],
+    :where(button, input, select, textarea)[aria-disabled='true'],
+    :where([role='button'], [role='switch'], [role='checkbox'])[aria-disabled='true']
+  ) {
+  opacity: 1;
+  background-color: var(--builderset-muted, var(--bst-d-muted));
+  color: var(--builderset-muted-foreground, var(--bst-d-muted-foreground));
+  border-color: var(--builderset-border, var(--bst-d-border));
+  cursor: not-allowed;
+}
+
+/* Scrollbars that take their colour from what they sit on. */
+.builderset,
+.builderset :where(*) {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(
+      in oklab,
+      var(--builderset-foreground, var(--bst-d-foreground)) 26%,
+      transparent
+    )
+    transparent;
+}
+
+/* Mobile Safari zooms the page when a focused field is under 16px, and does
+   not zoom back. Coarse pointers only: the desktop keeps its compact fields. */
+@media (pointer: coarse) {
+  .builderset
+    :where(
+      input:not([type='checkbox']):not([type='radio']):not([type='range']),
+      select,
+      textarea,
+      [contenteditable='true']
+    ) {
+    font-size: 16px;
+  }
+}

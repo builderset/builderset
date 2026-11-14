@@ -1,0 +1,20 @@
+/*
+ * @builderset/<kit>/theme/shadcn-hsl.css — as shadcn.css, for a project whose
+ * tokens are bare HSL numbers (`--primary: 222 47% 11%`, shadcn's older form),
+ * which would paint nothing unwrapped. Import it after the kit's stylesheet.
+ */
+.builderset {
+  --builderset-background: hsl(var(--background));
+  --builderset-surface: hsl(var(--card));
+  --builderset-foreground: hsl(var(--foreground));
+  --builderset-muted: hsl(var(--muted));
+  --builderset-muted-foreground: hsl(var(--muted-foreground));
+  --builderset-border: hsl(var(--border));
+  --builderset-primary: hsl(var(--primary));
+  --builderset-primary-foreground: hsl(var(--primary-foreground));
+  --builderset-danger: hsl(var(--destructive));
+  --builderset-ring: hsl(var(--ring));
+  --builderset-radius: var(--radius);
+  --builderset-font: var(--font-sans);
+  --builderset-font-mono: var(--font-mono);
+}

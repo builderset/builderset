@@ -1,0 +1,24 @@
+/*
+ * The engine's stylesheet: the editor's workspace and UI kit. Built to
+ * dist/styles.css; a kit's stylesheet imports these files and adds its own
+ * sources, so a project imports one file per kit.
+ *
+ * The order matters. The reset and the base rules come before the utilities,
+ * so a `bst:` class on an element wins over them; the rules that must win
+ * over a utility (the focus glow, the overlay bands, the dense panels) come
+ * after. No `@layer`: a page's own layers, or its unlayered rules, cannot
+ * reorder this file.
+ */
+@import 'tailwindcss/theme.css' prefix(bst);
+@import './theme.css';
+@import './defaults.css';
+@import './scheme.css';
+@import './reset.css';
+@import './base.css';
+@import './keyframes.css';
+@import 'tailwindcss/utilities.css' prefix(bst) source(none);
+@import './rules.css';
+@import './canvas.css';
+@import './panel.css';
+
+@source '../editor';

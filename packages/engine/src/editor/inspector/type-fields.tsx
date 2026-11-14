@@ -58,8 +58,8 @@ export function AlignField({
   const { messages } = useEditorContext();
   const label = messages.fieldLabels[name] ?? messages.styleKeys[name] ?? humanize(name);
   return (
-    <div className="space-y-1.5">
-      <Label className="text-xs font-medium">{label}</Label>
+    <div className="bst:space-y-1.5">
+      <Label className="bst:text-xs bst:font-medium">{label}</Label>
       <AlignButtons value={value} options={options} onChange={onChange} label={label} />
     </div>
   );
@@ -73,10 +73,15 @@ export function AlignButtons({
   label,
   tone = 'panel',
 }: {
+  /** The selected option, if any. */
   value: string | undefined;
+  /** The alignments offered, in order (`'left'`, `'center'`, …); each is drawn as its icon. */
   options: readonly string[];
+  /** Called with the option the writer clicks. */
   onChange: (value: string) => void;
+  /** The group's accessible name. */
   label: string;
+  /** `panel`: a full-width framed strip; `toolbar`: bare buttons for the block toolbar. Default: `'panel'`. */
   tone?: 'panel' | 'toolbar';
 }) {
   return (
@@ -84,9 +89,9 @@ export function AlignButtons({
       role="radiogroup"
       aria-label={label}
       className={cn(
-        'flex gap-0.5',
+        'bst:flex bst:gap-0.5',
         tone === 'panel' &&
-          'border-border bg-muted/40 w-full rounded-[var(--radius-control)] border p-0.5',
+          'bst:w-full bst:rounded-control bst:border bst:border-border bst:bg-muted/40 bst:p-0.5',
       )}
     >
       {options.map((option) => {
@@ -108,15 +113,15 @@ export function AlignButtons({
               onChange(option);
             }}
             className={cn(
-              'flex items-center justify-center rounded-md transition-[background-color,color,transform] active:scale-90 [&_svg]:size-3.5',
-              tone === 'panel' ? 'h-7 flex-1' : 'size-7',
+              'bst:flex bst:items-center bst:justify-center bst:rounded-md bst:transition-[background-color,color,transform] bst:active:scale-90 bst:[&_svg]:size-3.5',
+              tone === 'panel' ? 'bst:h-7 bst:flex-1' : 'bst:size-7',
               tone === 'panel'
                 ? active
-                  ? 'bg-background text-foreground shadow-xs'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bst:bg-background bst:text-foreground bst:shadow-xs'
+                  : 'bst:text-muted-foreground bst:hover:text-foreground'
                 : active
-                  ? 'bg-white/20'
-                  : 'hover:bg-white/15',
+                  ? 'bst:bg-white/20'
+                  : 'bst:hover:bg-white/15',
             )}
           >
             <Icon aria-hidden="true" />
@@ -137,8 +142,11 @@ export function FontField({
   onChange,
   nullable,
 }: {
+  /** The selected font's key, from the profile's fonts; empty means the inherited font. */
   value: string | null | undefined;
+  /** Called with the picked font's key, or `null` for the inherited font. */
   onChange: (value: string | null) => void;
+  /** Offers the inherited font at the top of the list, which clears the choice. */
   nullable: boolean;
 }) {
   const { profile, messages } = useEditorContext();
@@ -155,8 +163,8 @@ export function FontField({
   useStylesheet(open ? profile.fontsPreviewUrl : null);
 
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <Label htmlFor={id} className="bst:text-xs bst:font-medium">
         {messages.fieldLabels.font ?? humanize('font')}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
@@ -164,17 +172,23 @@ export function FontField({
           <button
             id={id}
             type="button"
-            className="border-input bg-background hover:bg-accent/40 flex h-9 w-full items-center justify-between gap-2 rounded-[var(--radius-control)] border px-3 text-left text-sm"
+            className="bst:flex bst:h-9 bst:w-full bst:items-center bst:justify-between bst:gap-2 bst:rounded-control bst:border bst:border-input bst:bg-background bst:px-3 bst:text-left bst:text-sm bst:hover:bg-accent/40"
           >
-            <span className="truncate" style={current ? { fontFamily: current.stack } : undefined}>
+            <span
+              className="bst:truncate"
+              style={current ? { fontFamily: current.stack } : undefined}
+            >
               {current?.label ?? messages.inheritFont}
             </span>
-            <ChevronsUpDown className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+            <ChevronsUpDown
+              className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+              aria-hidden="true"
+            />
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-72 p-1">
-          <div className="border-border mb-1 flex items-center gap-2 border-b px-2 pb-1.5">
-            <Search className="text-muted-foreground size-4" aria-hidden="true" />
+        <PopoverContent align="start" className="bst:w-72 bst:p-1">
+          <div className="bst:mb-1 bst:flex bst:items-center bst:gap-2 bst:border-b bst:border-border bst:px-2 bst:pb-1.5">
+            <Search className="bst:size-4 bst:text-muted-foreground" aria-hidden="true" />
             <input
               autoFocus
               value={query}
@@ -182,10 +196,10 @@ export function FontField({
                 setQuery(event.target.value);
               }}
               placeholder={messages.searchFonts}
-              className="h-8 w-full bg-transparent text-sm outline-none"
+              className="bst:h-8 bst:w-full bst:bg-transparent bst:text-sm bst:outline-none"
             />
           </div>
-          <div className="max-h-80 overflow-y-auto">
+          <div className="bst:max-h-80 bst:overflow-y-auto">
             {nullable ? (
               <FontOption
                 label={messages.inheritFont}
@@ -198,7 +212,7 @@ export function FontField({
             ) : null}
             {groups.map((group) => (
               <div key={group}>
-                <p className="text-muted-foreground px-2 pt-2 pb-1 text-[10px] font-semibold tracking-wider uppercase">
+                <p className="bst:px-2 bst:pt-2 bst:pb-1 bst:text-[10px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
                   {messages.fontGroups[group] ?? group}
                 </p>
                 {shown
@@ -244,22 +258,25 @@ function FontOption({
       type="button"
       onClick={onSelect}
       className={cn(
-        'flex w-full cursor-pointer items-center gap-2 rounded-[var(--radius-control)] px-2 py-1.5 text-left',
-        active ? 'bg-accent' : 'hover:bg-accent/60',
+        'bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:gap-2 bst:rounded-control bst:px-2 bst:py-1.5 bst:text-left',
+        active ? 'bst:bg-accent' : 'bst:hover:bg-accent/60',
       )}
     >
       <span
-        className="min-w-0 flex-1 truncate text-[15px]"
+        className="bst:min-w-0 bst:flex-1 bst:truncate bst:text-[15px]"
         style={stack ? { fontFamily: stack } : undefined}
       >
         {label}
       </span>
       {web ? (
-        <span className="text-muted-foreground shrink-0 text-[10px]" title={messages.webFontHint}>
+        <span
+          className="bst:shrink-0 bst:text-[10px] bst:text-muted-foreground"
+          title={messages.webFontHint}
+        >
           web
         </span>
       ) : null}
-      {active ? <Check className="size-4 shrink-0" aria-hidden="true" /> : null}
+      {active ? <Check className="bst:size-4 bst:shrink-0" aria-hidden="true" /> : null}
     </button>
   );
 }

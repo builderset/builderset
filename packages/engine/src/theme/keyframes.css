@@ -1,0 +1,114 @@
+/*
+ * The keyframes the classes name (`bst:animate-[bst-zoom-in_…]`). Under the
+ * `bst-` prefix, so a page's own `fade-in` cannot replace them. Radix sets
+ * `data-state` on a panel and its backdrop, and the components key their
+ * animations on it, so an exit plays before the node unmounts.
+ */
+@keyframes bst-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes bst-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes bst-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes bst-zoom-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes bst-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes bst-slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes bst-slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes bst-slide-out-bottom {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes bst-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* `bst-rise` reversed, with a shorter drop: the fade carries the message. */
+@keyframes bst-sink {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@keyframes bst-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-3px);
+  }
+  60% {
+    transform: translateX(3px);
+  }
+}
+/* A band crossing a surface while something loads; transform only. */
+@keyframes bst-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+@keyframes bst-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* The moment that means "done": overshoots on purpose. */
+@keyframes bst-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* The empty state's particles: a slow twinkle, each with its own delay. */
+@keyframes bst-particle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translateY(0) scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1);
+  }
+}

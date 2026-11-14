@@ -27,9 +27,13 @@ export function ColorField({
   onChange,
   nullable,
 }: {
+  /** The prop's name, which picks the field's label. */
   name: string;
+  /** The colour: a hex value or one of the profile's colour tokens; empty means none. */
   value: string | null | undefined;
+  /** Called with a hex value, a token's value, or `null` for none. */
   onChange: (value: string | null) => void;
+  /** Offers a "none" swatch first, which clears the colour. */
   nullable: boolean;
 }) {
   const { profile, messages } = useEditorContext();
@@ -43,11 +47,11 @@ export function ColorField({
   const label = messages.fieldLabels[name] ?? messages.styleKeys[name] ?? humanize(name);
 
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <Label htmlFor={id} className="bst:text-xs bst:font-medium">
         {label}
       </Label>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="bst:flex bst:flex-wrap bst:gap-1.5">
         {nullable ? (
           <button
             type="button"
@@ -58,11 +62,12 @@ export function ColorField({
               onChange(null);
             }}
             className={cn(
-              'border-border relative size-6 overflow-hidden rounded-md border bg-white transition-transform active:scale-90',
-              (value === null || value === undefined) && 'ring-primary ring-2 ring-offset-1',
+              'bst:relative bst:size-6 bst:overflow-hidden bst:rounded-md bst:border bst:border-border bst:bg-white bst:transition-transform bst:active:scale-90',
+              (value === null || value === undefined) &&
+                'bst:ring-2 bst:ring-primary bst:ring-offset-1',
             )}
           >
-            <span className="absolute inset-0 m-auto h-px w-8 -rotate-45 bg-red-500" />
+            <span className="bst:absolute bst:inset-0 bst:m-auto bst:h-px bst:w-8 bst:-rotate-45 bst:bg-red-500" />
           </button>
         ) : null}
         {tokens.map((token) => (
@@ -77,14 +82,14 @@ export function ColorField({
               setDraft(token.value);
             }}
             className={cn(
-              'border-border size-6 rounded-md border transition-transform active:scale-90',
-              value === token.value && 'ring-primary ring-2 ring-offset-1',
+              'bst:size-6 bst:rounded-md bst:border bst:border-border bst:transition-transform bst:active:scale-90',
+              value === token.value && 'bst:ring-2 bst:ring-primary bst:ring-offset-1',
             )}
             style={{ background: token.hex }}
           />
         ))}
       </div>
-      <div className="flex min-w-0 items-center gap-2">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:gap-2">
         <input
           type="color"
           aria-label={label}
@@ -93,13 +98,13 @@ export function ColorField({
             onChange(event.target.value);
             setDraft(event.target.value);
           }}
-          className="border-input size-[30px] shrink-0 cursor-pointer rounded-md border bg-transparent p-0.5"
+          className="bst:size-[30px] bst:shrink-0 bst:cursor-pointer bst:rounded-md bst:border bst:border-input bst:bg-transparent bst:p-0.5"
         />
         <Input
           id={id}
           value={draft}
           placeholder="#rrggbb"
-          className="font-mono text-xs"
+          className="bst:font-mono bst:text-xs"
           onChange={(event) => {
             setDraft(event.target.value);
             if (HEX.test(event.target.value)) onChange(event.target.value);
@@ -133,8 +138,11 @@ export function SpacingField({
   value,
   onChange,
 }: {
+  /** The prop's name, which picks the field's label. */
   name: string;
+  /** The four sides, in pixels. */
   value: Padding;
+  /** Called with all four sides on each change, each a whole number from 0 to 160. */
   onChange: (value: Padding) => void;
 }) {
   const { messages } = useEditorContext();
@@ -168,9 +176,9 @@ export function SpacingField({
   );
 
   return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <Label className="text-xs font-medium">{label}</Label>
+    <div className="bst:space-y-1.5">
+      <div className="bst:flex bst:items-center bst:justify-between">
+        <Label className="bst:text-xs bst:font-medium">{label}</Label>
         <button
           type="button"
           aria-pressed={linked}
@@ -178,7 +186,7 @@ export function SpacingField({
           onClick={() => {
             setLinked(!linked);
           }}
-          className="text-muted-foreground hover:text-foreground cursor-pointer [&_svg]:size-3.5"
+          className="bst:cursor-pointer bst:text-muted-foreground bst:hover:text-foreground bst:[&_svg]:size-3.5"
         >
           {linked ? <Link2 aria-hidden="true" /> : <Link2Off aria-hidden="true" />}
         </button>
@@ -186,10 +194,10 @@ export function SpacingField({
       {linked ? (
         stepper('top', `${label} · ${messages.allSides}`)
       ) : (
-        <div className="grid min-w-0 grid-cols-2 gap-x-2 gap-y-1.5">
+        <div className="bst:grid bst:min-w-0 bst:grid-cols-2 bst:gap-x-2 bst:gap-y-1.5">
           {(['top', 'right', 'bottom', 'left'] as const).map((side) => (
-            <div key={side} className="min-w-0 space-y-0.5">
-              <span className="text-muted-foreground block text-[10px] font-medium tracking-wide uppercase">
+            <div key={side} className="bst:min-w-0 bst:space-y-0.5">
+              <span className="bst:block bst:text-[10px] bst:font-medium bst:tracking-wide bst:text-muted-foreground bst:uppercase">
                 {messages.sides[side]}
               </span>
               {stepper(side, `${label} · ${messages.sides[side]}`)}
@@ -229,9 +237,9 @@ export function DisplayField({
   const variables = profile.variables ?? [];
 
   return (
-    <div className="space-y-3">
-      <div className="space-y-1.5">
-        <Label className="text-xs font-medium">{messages.visibility}</Label>
+    <div className="bst:space-y-3">
+      <div className="bst:space-y-1.5">
+        <Label className="bst:text-xs bst:font-medium">{messages.visibility}</Label>
         <SegmentedControl
           aria-label={messages.visibility}
           value={value.hideOn}
@@ -243,15 +251,15 @@ export function DisplayField({
             { value: 'mobile', label: messages.hideOnMobile },
             { value: 'desktop', label: messages.hideOnDesktop },
           ]}
-          className="w-full [&>*]:flex-1"
+          className="bst:w-full bst:[&>*]:flex-1"
         />
       </div>
-      <div className="space-y-2">
-        <Label className="text-xs font-medium">{messages.showWhen}</Label>
+      <div className="bst:space-y-2">
+        <Label className="bst:text-xs bst:font-medium">{messages.showWhen}</Label>
         {value.when.map((condition, index) => (
           <div
             key={index}
-            className="border-border space-y-1.5 rounded-[var(--radius-control)] border p-2"
+            className="bst:space-y-1.5 bst:rounded-control bst:border bst:border-border bst:p-2"
           >
             <Select
               value={condition.var}
@@ -266,7 +274,7 @@ export function DisplayField({
                 label: `${variable.label} (${variable.path})`,
               }))}
             />
-            <div className="grid min-w-0 grid-cols-2 gap-1.5">
+            <div className="bst:grid bst:min-w-0 bst:grid-cols-2 bst:gap-1.5">
               <Select
                 value={condition.op}
                 onValueChange={(op) => {
@@ -304,7 +312,7 @@ export function DisplayField({
           type="button"
           size="sm"
           variant="outline"
-          className="w-full border-dashed"
+          className="bst:w-full bst:border-dashed"
           disabled={value.when.length >= 5 || variables.length === 0}
           icon={<Plus aria-hidden="true" />}
           onClick={() => {

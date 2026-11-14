@@ -1,0 +1,9 @@
+/*
+ * @builderset/email/styles.css — everything the email editor needs, in one
+ * file: the engine's stylesheet (theme, reset, the editor's UI) and the
+ * classes of this kit's editor. The email itself is styled inline, by the
+ * renderer, and needs no stylesheet.
+ */
+@import '../../engine/src/theme/index.css';
+
+@source './editor';

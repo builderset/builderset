@@ -114,7 +114,7 @@ pnpm test:examples                          # the example apps from packed tarba
 
 Tick a step when every box in its **Done when** list is ticked.
 
-- [ ] 01 Decisions and accounts
+- [ ] 01 Decisions and accounts — D1–D4, D6 and D7 are decided; D5, D8 and the accounts are open: [DECISIONS.md](../DECISIONS.md)
 - [x] 02 Regroup the folders
 - [x] 03 Split the engine from the article kit
 - [x] 04 The editor's own UI kit
@@ -122,12 +122,12 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 06 Move MotorsAL content out
 - [x] 07 Host adapters and the backend contract
 - [x] **M1 — generic**
-- [ ] 08 The new repository
-- [ ] 09 Build and package shape
-- [ ] 10 Styles and theming
-- [ ] 11 The all-in-one package
-- [ ] 12 Example apps and the test matrix
-- [ ] 13 Publishing and releases
+- [x] 08 The new repository
+- [x] 09 Build and package shape
+- [x] 10 Styles and theming
+- [x] 11 The all-in-one package
+- [x] 12 Example apps and the test matrix
+- [ ] 13 Publishing and releases — `0.1.0-alpha` is on GitHub Packages and the examples pass against it; waits for the first release, `0.1.0`, through `production`
 - [ ] **M2 — installable**
 - [ ] 14 Adopt the packages in MotorsAL
 - [ ] 15 The Python package

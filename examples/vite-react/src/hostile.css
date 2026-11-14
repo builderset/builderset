@@ -1,0 +1,14 @@
+/* A page that styles every element it can reach (step 10's hostile case). */
+* {
+  box-sizing: content-box;
+}
+button {
+  padding: 40px;
+  text-transform: uppercase;
+}
+h2 {
+  font-size: 60px;
+}
+a {
+  color: red;
+}

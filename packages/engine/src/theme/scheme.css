@@ -1,0 +1,23 @@
+/*
+ * Light, dark or auto: `color-scheme` decides which half of every
+ * `light-dark()` default is used, and how the browser paints native controls.
+ *
+ * `auto` follows an ancestor marked `dark` or `light` (a class, or
+ * `data-theme`: Tailwind, shadcn and next-themes all use one of the two), and
+ * otherwise the operating system. A page with another convention sets `theme`.
+ */
+.builderset {
+  color-scheme: light;
+}
+.builderset[data-builderset-theme='dark'] {
+  color-scheme: dark;
+}
+.builderset[data-builderset-theme='auto'] {
+  color-scheme: light dark;
+}
+:is(.dark, [data-theme='dark']) .builderset[data-builderset-theme='auto'] {
+  color-scheme: dark;
+}
+:is(.light, [data-theme='light']) .builderset[data-builderset-theme='auto'] {
+  color-scheme: light;
+}

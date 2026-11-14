@@ -29,6 +29,20 @@ function show(document: ArticleDocument, extra: Record<string, unknown> = {}) {
   );
 }
 
+describe('the root', () => {
+  it("carries content.css's scope, and follows the site unless told otherwise", () => {
+    const { container } = show(createArticleDocument({ title: 'T' }));
+    const root = container.firstElementChild;
+    expect(root).toHaveClass('builderset', 'builderset-content');
+    expect(root).toHaveAttribute('data-builderset-theme', 'auto');
+  });
+
+  it('pins the theme when asked', () => {
+    const { container } = show(createArticleDocument({ title: 'T' }), { theme: 'dark' });
+    expect(container.firstElementChild).toHaveAttribute('data-builderset-theme', 'dark');
+  });
+});
+
 function withNodes(build: (doc: ArticleDocument) => ArticleDocument): ArticleDocument {
   return build(createArticleDocument({ title: 'T' }));
 }
@@ -172,13 +186,36 @@ describe('visibility', () => {
   });
 
   it('turns per-breakpoint styles into range classes', () => {
-    expect(styleClasses({ desktop: { paddingY: 'lg' } })).toBe('py-10');
+    expect(styleClasses({ desktop: { paddingY: 'lg' } })).toBe('bst:py-10');
     expect(
       styleClasses({ desktop: { hidden: true }, mobile: { hidden: false } })
         .split(' ')
         .sort(),
-    ).toEqual(['lg:hidden', 'sm:max-lg:hidden']);
+    ).toEqual(['bst:lg:hidden', 'bst:sm:max-lg:hidden']);
   });
+});
+
+describe('lists', () => {
+  it.each(['bullet', 'check', 'number'] as const)(
+    'puts a %s item’s own list under its text, not beside it',
+    (style) => {
+      const { doc } = add(createArticleDocument({ title: 'T' }), 'list', {
+        style,
+        items: [{ text: rt('Wider choice'), children: [{ text: rt('Especially diesels') }] }],
+      });
+      show(doc);
+      const parent = screen.getByText('Wider choice').closest('li');
+      const nested = screen.getByText('Especially diesels').closest('ul, ol');
+      if (!parent || !nested) throw new Error('the list did not render');
+      expect(parent.contains(nested)).toBe(true);
+      // A bullet or check item is a row (marker, then a column); its list
+      // belongs in the column with the text, or the row puts it to the right.
+      if (style !== 'number') {
+        expect(nested.parentElement).not.toBe(parent);
+        expect(nested.parentElement?.contains(screen.getByText('Wider choice'))).toBe(true);
+      }
+    },
+  );
 });
 
 describe('interactive pieces', () => {

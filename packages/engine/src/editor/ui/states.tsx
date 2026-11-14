@@ -22,8 +22,11 @@ import { cn } from '../cn';
  */
 
 export interface EmptyStateProps {
+  /** The heading, naming what is missing. Default: the editor's "No results". */
   title?: string | undefined;
+  /** One sentence under the title on what would go here. Default: the editor's hint for no results. */
   description?: string | undefined;
+  /** Shown in the tile at the centre. Default: an inbox. */
   icon?: ReactNode;
   /** The way out of the empty state — "Add the first line", "Create". */
   action?: ReactNode;
@@ -40,6 +43,7 @@ export interface EmptyStateProps {
    * which already has one.
    */
   bordered?: boolean | undefined;
+  /** Applied to the outer block. */
   className?: string | undefined;
 }
 
@@ -76,22 +80,22 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
     <div
       aria-hidden="true"
       className={cn(
-        'relative grid shrink-0 place-items-center',
-        compact ? 'mb-4 size-28' : 'mb-6 size-36',
+        'bst:relative bst:grid bst:shrink-0 bst:place-items-center',
+        compact ? 'bst:mb-4 bst:size-28' : 'bst:mb-6 bst:size-36',
       )}
     >
       {/* The glow, under everything: what lifts the tile off the surface. */}
-      <span className="bg-primary/10 absolute inset-6 rounded-full blur-2xl" />
+      <span className="bst:absolute bst:inset-6 bst:rounded-full bst:bg-primary/10 bst:blur-2xl" />
 
       {/* The orbit — dashed, and turning slowly with one dot riding it. */}
-      <span className="border-border absolute inset-2 rounded-full border border-dashed" />
-      <span className="absolute inset-2 animate-[ui-spin_14s_linear_infinite] rounded-full">
-        <span className="bg-primary ring-card absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2" />
+      <span className="bst:absolute bst:inset-2 bst:rounded-full bst:border bst:border-dashed bst:border-border" />
+      <span className="bst:absolute bst:inset-2 bst:animate-[bst-spin_14s_linear_infinite] bst:rounded-full">
+        <span className="bst:absolute bst:top-0 bst:left-1/2 bst:size-1.5 bst:-translate-x-1/2 bst:-translate-y-1/2 bst:rounded-full bst:bg-primary bst:ring-2 bst:ring-card" />
       </span>
       <span
         className={cn(
-          'border-border/70 bg-muted/30 absolute rounded-full border',
-          compact ? 'inset-6' : 'inset-7',
+          'bst:absolute bst:rounded-full bst:border bst:border-border/70 bst:bg-muted/30',
+          compact ? 'bst:inset-6' : 'bst:inset-7',
         )}
       />
 
@@ -99,8 +103,8 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
         <span
           key={`${String(dot.x)}-${String(dot.y)}`}
           className={cn(
-            'absolute animate-[ui-particle_3.2s_ease-in-out_infinite] rounded-full',
-            dot.primary ? 'bg-primary/70' : 'bg-muted-foreground/50',
+            'bst:absolute bst:animate-[bst-particle_3.2s_ease-in-out_infinite] bst:rounded-full',
+            dot.primary ? 'bst:bg-primary/70' : 'bst:bg-muted-foreground/50',
           )}
           style={{
             left: `${String(dot.x)}%`,
@@ -115,7 +119,7 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
         <svg
           key={`${String(star.x)}-${String(star.y)}`}
           viewBox="0 0 10 10"
-          className="text-primary/80 absolute animate-[ui-particle_3.6s_ease-in-out_infinite]"
+          className="bst:absolute bst:animate-[bst-particle_3.6s_ease-in-out_infinite] bst:text-primary/80"
           style={{
             left: `${String(star.x)}%`,
             top: `${String(star.y)}%`,
@@ -132,13 +136,13 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
           long soft shadow, so it reads as an object sitting in the rings. */}
       <span
         className={cn(
-          'text-foreground border-border relative grid place-items-center border',
-          'from-card to-muted bg-gradient-to-b',
-          'shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.08),0_12px_28px_-12px_rgb(0_0_0/0.35)]',
-          '[&_svg]:shrink-0',
+          'bst:relative bst:grid bst:place-items-center bst:border bst:border-border bst:text-foreground',
+          'bst:bg-gradient-to-b bst:from-card bst:to-muted',
+          'bst:shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.08),0_12px_28px_-12px_rgb(0_0_0/0.35)]',
+          'bst:[&_svg]:shrink-0',
           compact
-            ? 'size-12 rounded-[0.9rem] [&_svg]:size-5'
-            : 'size-15 rounded-2xl [&_svg]:size-6',
+            ? 'bst:size-12 bst:rounded-[0.9rem] bst:[&_svg]:size-5'
+            : 'bst:size-15 bst:rounded-2xl bst:[&_svg]:size-6',
         )}
       >
         {icon}
@@ -176,29 +180,35 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-1 flex-col items-center justify-center text-center',
-        'animate-[ui-rise_var(--dur-4)_var(--ease-enter)]',
+        'bst:flex bst:flex-1 bst:flex-col bst:items-center bst:justify-center bst:text-center',
+        'bst:animate-[bst-rise_var(--bst-dur-4)_var(--bst-ease-enter)]',
         // The same floor the other two states hold, so a table does not change
         // height as it moves between loading, empty and broken.
-        compact ? 'min-h-72 px-5 py-8' : 'min-h-80 px-6 py-12',
-        bordered && 'border-border bg-muted/20 rounded-[var(--radius-card)] border border-dashed',
+        compact ? 'bst:min-h-72 bst:px-5 bst:py-8' : 'bst:min-h-80 bst:px-6 bst:py-12',
+        bordered &&
+          'bst:rounded-card bst:border bst:border-dashed bst:border-border bst:bg-muted/20',
         className,
       )}
     >
       <EmptyArt icon={icon ?? <Inbox aria-hidden="true" />} compact={compact} />
 
-      <p className={cn('text-foreground font-semibold', compact ? 'text-sm' : 'text-base')}>
+      <p
+        className={cn(
+          'bst:font-semibold bst:text-foreground',
+          compact ? 'bst:text-sm' : 'bst:text-base',
+        )}
+      >
         {title ?? messages.noResults}
       </p>
       <p
         className={cn(
-          'text-muted-foreground mt-1.5 max-w-sm leading-relaxed',
-          compact ? 'text-xs' : 'text-sm',
+          'bst:mt-1.5 bst:max-w-sm bst:leading-relaxed bst:text-muted-foreground',
+          compact ? 'bst:text-xs' : 'bst:text-sm',
         )}
       >
         {description ?? messages.noResultsHint}
       </p>
-      {action ? <div className={compact ? 'mt-4' : 'mt-5'}>{action}</div> : null}
+      {action ? <div className={compact ? 'bst:mt-4' : 'bst:mt-5'}>{action}</div> : null}
     </div>
   );
 }

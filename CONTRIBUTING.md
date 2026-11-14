@@ -97,3 +97,7 @@ A project that installs the kits — on a laptop, in CI, in a Docker build — n
 ```
 
 In a Docker build, pass the token as a build secret, never as a build argument: an argument stays in the image's history. `builderset`, the all-in-one package, is not on GitHub Packages, which holds scoped names only; it arrives with the move to npm at launch.
+
+Until the first release, the kits carry only the `alpha` tag, with no `latest`: install `@builderset/email@alpha`, and `npm view @builderset/email` with no tag prints nothing.
+
+To run the examples against what is published rather than what is in the repository, with the token in your own `.npmrc`: `pnpm test:examples --from alpha`. `next-shadcn` is skipped: it needs the all-in-one package.

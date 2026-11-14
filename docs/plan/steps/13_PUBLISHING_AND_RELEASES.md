@@ -206,11 +206,12 @@ Add it as the pull request template the action uses:
 
 - [x] Changesets is configured with the fixed group.
 - [x] CI fails a package change with no changeset.
-- [ ] `release.yml` exists; the `npm` environment requires approval.
-- [ ] The four packages are published at `0.1.0-alpha.0` under the `alpha` tag.
-- [ ] Trusted publishing is configured for each package; no publish token is stored anywhere; tokens are disallowed for the packages.
+- [x] `release.yml` exists; the `npm` environment requires approval. _(GitHub Packages: the `packages` environment; the approval is the merge — see below.)_
+- [x] The four packages are published at `0.1.0-alpha.0` under the `alpha` tag. _(The three kits, at `0.1.0-alpha.20261114204535`; the all-in-one package waits for npm.)_
+- [x] Trusted publishing is configured for each package; no publish token is stored anywhere; tokens are disallowed for the packages. _(GitHub Packages: no token is stored — the workflow publishes with its own. Trusted publishing comes with the move to npm.)_
 - [x] `CONTRIBUTING.md` has the registry rules.
-- [ ] The examples pass against the real registry.
+- [x] The examples pass against the real registry. _(Two of three: `next-shadcn` needs the all-in-one package.)_
+- [ ] The first release, `0.1.0`, through the "Version packages" pull request on `production`.
 
 **This is milestone M2.**
 
@@ -222,9 +223,9 @@ Add it as the pull request template the action uses:
 - **The token left in place.** After trusted publishing works, the bootstrap token is the only secret that could publish a malicious version. Revoke it the same day.
 - **A release with a red examples job.** The workflow runs `check:packages` but not the slow examples job. Do not merge "Version Packages" until the last CI run on `main` is fully green.
 
-## How it was done (2026-11-14) — prepared, not yet published
+## How it was done (2026-11-14)
 
-Decided on 2026-11-14 ([DECISIONS.md](../DECISIONS.md)): GitHub Packages, private until launch (part 7 instead of parts 4–6); `staging` publishes pre-releases and `production` releases; the repository moves to a GitHub organisation named `builderset`, so the packages keep their `@builderset` scope — GitHub Packages names a package after the repository's owner. The branch `feat/13-releases` holds the work.
+Decided on 2026-11-14 ([DECISIONS.md](../DECISIONS.md)): GitHub Packages, private until launch (part 7 instead of parts 4–6); `staging` publishes pre-releases and `production` releases; the repository moves to a GitHub organisation named `builderset`, so the packages keep their `@builderset` scope — GitHub Packages names a package after the repository's owner.
 
 | Part | What the plan said                                                         | What was done                                                                                                                                                                                                                                                                                                                                                                                        | Why                                                                                               |
 | ---- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -235,4 +236,8 @@ Decided on 2026-11-14 ([DECISIONS.md](../DECISIONS.md)): GitHub Packages, privat
 | —    | The `npm` environment requires approval                                    | An environment named `packages`. Required reviewers need a public repository on the free plan; until then the approval is the merge into `staging` or `production`                                                                                                                                                                                                                                   | —                                                                                                 |
 | 8, 9 | Registry rules, release checklist                                          | In CONTRIBUTING.md, with how a project installs from GitHub Packages (`.npmrc`, a `read:packages` token, a build secret in Docker)                                                                                                                                                                                                                                                                   | The action writes its own pull request body, so the checklist lives where releases are described  |
 
-**Still to do, in this order.** Create the `builderset` organisation and transfer the repository into it; rewrite the commits' author email (decided at the transfer); merge `feat/13-releases`; merge `development` into `staging` — the first `0.1.0-alpha` — and install it in a fresh folder with a token; then `production` for `0.1.0`.
+**The first pre-release.** The organisation was created and the repository transferred into it; the commits' author email was rewritten at the transfer. `development` was merged into `staging`, and the Release workflow published `@builderset/engine`, `@builderset/email` and `@builderset/article` at `0.1.0-alpha.20261114204535`, tagged `alpha` only — no `latest`, so the trap above did not happen; it also means `npm view <package>` with no tag prints nothing.
+
+**Checks.** `npm view <package>@alpha version` prints `0.1.0-alpha.20261114204535` for the three kits, read with a `read:packages` token. GitHub Packages keeps no provenance statement; it comes with npm. `pnpm test:examples` takes `--from <tag>` now: instead of building and publishing to a local registry, it asks each package's own registry which version the tag names, then installs the examples outside the repository as before. With `--from alpha`, `node-render` passes 11/11 — it installs `@builderset/email@alpha` and imports `@builderset/email/render` in Node — and `vite-react` 10/10 in Chromium. `next-shadcn` is skipped by name: it needs the all-in-one `builderset`, which GitHub Packages cannot hold.
+
+**Still to do.** The first release, `0.1.0`: the organisation allows GitHub Actions to create pull requests (Settings → Actions → General → Workflow permissions); `staging` is merged into `production`; the workflow opens "Version packages"; merging it publishes `0.1.0` under `latest`; `production` is merged back into `development`.

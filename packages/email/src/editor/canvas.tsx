@@ -44,6 +44,7 @@ export interface EditableField {
 }
 
 export interface EmailCanvasProps extends RenderOptions {
+  /** The email to draw, as it is: a multi-language one is not switched to `locale` here. */
   document: EmailDocument;
   /** Editor only: draws an editable field in place of a rich-text value. */
   editText?: ((field: EditableField) => ReactNode) | undefined;

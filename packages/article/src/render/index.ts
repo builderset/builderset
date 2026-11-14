@@ -6,7 +6,16 @@
  * for the theme contract the classes rely on.
  */
 
-export * from './context';
+export {
+  type ElementRenderer,
+  type ElementRenderProps,
+  type ImageProps,
+  type LinkProps,
+  type NodeFrame,
+  type RelatedItem,
+  type RenderContext,
+  type RenderOptions,
+} from './context';
 export type { EditableTextField } from '@builderset/engine';
 export { embedSource, PROVIDER_NAMES, type EmbedSource } from './embed-source';
 export { fill, messagesFor, RENDER_EN, type RenderMessages } from './messages';

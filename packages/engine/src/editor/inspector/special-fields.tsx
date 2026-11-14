@@ -27,9 +27,13 @@ export function ColorField({
   onChange,
   nullable,
 }: {
+  /** The prop's name, which picks the field's label. */
   name: string;
+  /** The colour: a hex value or one of the profile's colour tokens; empty means none. */
   value: string | null | undefined;
+  /** Called with a hex value, a token's value, or `null` for none. */
   onChange: (value: string | null) => void;
+  /** Offers a "none" swatch first, which clears the colour. */
   nullable: boolean;
 }) {
   const { profile, messages } = useEditorContext();
@@ -133,8 +137,11 @@ export function SpacingField({
   value,
   onChange,
 }: {
+  /** The prop's name, which picks the field's label. */
   name: string;
+  /** The four sides, in pixels. */
   value: Padding;
+  /** Called with all four sides on each change, each a whole number from 0 to 160. */
   onChange: (value: Padding) => void;
 }) {
   const { messages } = useEditorContext();

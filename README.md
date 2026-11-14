@@ -45,6 +45,8 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm format:check
+pnpm build
+pnpm check:packages      # what was built: use client, imports, manifests, types
 ```
 
 [CONTRIBUTING.md](CONTRIBUTING.md) has the rules for a change.

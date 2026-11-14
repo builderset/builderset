@@ -7,15 +7,150 @@
  * editor, the renderer and the server alike.
  */
 
-export * from './blocks';
-export * from './document';
-export * from './draft';
-export * from './fields';
-export * from './fonts';
-export * from './import-html';
-export * from './json-schema';
-export * from './limits';
-export * from './rich-text';
-export * from './sample';
-export * from './validate';
-export * from './variables';
+export {
+  BLOCK_PARENTS,
+  buttonElement,
+  columnElement,
+  commerceElements,
+  conditionalElement,
+  contentElements,
+  couponElement,
+  createEmailRegistry,
+  dividerElement,
+  EMAIL_CATEGORIES,
+  emailRootElement,
+  footerElement,
+  headingElement,
+  imageElement,
+  keyValueElement,
+  lineItemsElement,
+  listElement,
+  logoElement,
+  menuElement,
+  productElement,
+  quoteElement,
+  repeatElement,
+  ROW_LAYOUTS,
+  rowElement,
+  sectionElement,
+  SOCIAL_NETWORKS,
+  socialElement,
+  spacerElement,
+  standardEmailElements,
+  STRUCTURE,
+  structureElements,
+  surveyElement,
+  textElement,
+  videoElement,
+  type RowLayout,
+} from './blocks';
+export {
+  createEmailDocument,
+  defaultSettings,
+  EMAIL_ROOT,
+  EMAIL_SCHEMA,
+  EMAIL_VERSION,
+  emailMetaSchema,
+  emailSettingsSchema,
+  emailShapeSchema,
+  type EmailDocument,
+  type EmailMeta,
+  type EmailSettings,
+} from './document';
+export { EMAIL_DRAFT_TOLERATES, isDraftBlocking, isPublishBlocking } from './draft';
+export {
+  alignSchema,
+  blockFont,
+  BRAND_COLORS,
+  color,
+  conditionSchema,
+  defaultDisplay,
+  displaySchema,
+  FONT_STACKS,
+  fontSchema,
+  isSafeTemplateUrl,
+  media,
+  optionalColor,
+  pad,
+  paddingSchema,
+  px,
+  templateText,
+  templateUrl,
+  type BrandColor,
+  type Condition,
+  type Display,
+  type FontStack,
+  type Padding,
+} from './fields';
+export {
+  EMAIL_FONTS,
+  FONT_KEYS,
+  fontOf,
+  googleFontsUrl,
+  type EmailFont,
+  type FontKey,
+} from './fonts';
+export { importEmailHtml, type HtmlImport, type ImportedImage } from './import-html';
+export { toEmailJSONSchema } from './json-schema';
+export { EMAIL_LIMITS } from './limits';
+export {
+  emailMarkSchema,
+  emailRichTextSchema,
+  emailRunSchema,
+  et,
+  fontMarkSchema,
+  linksIn,
+  plainOf,
+  richText,
+  v,
+  variableMarkSchema,
+  variableOf,
+  type EmailMark,
+  type EmailRichText,
+  type EmailRun,
+  type FontMark,
+  type VariableMark,
+} from './rich-text';
+export {
+  block,
+  buildEmail,
+  inLanguages,
+  isInLanguages,
+  kitchenSinkEmail,
+  mapWords,
+  row,
+  section,
+  starterEmail,
+  type BlockSpec,
+  type InLanguages,
+  type RowSpec,
+  type SectionSpec,
+  type Words,
+} from './sample';
+export {
+  checkEmail,
+  emailSchema,
+  parseEmail,
+  typeIssues,
+  variableUses,
+  type CheckEmailOptions,
+} from './validate';
+export {
+  flattenVariables,
+  FORMATS,
+  isTemplateString,
+  lookup,
+  SYSTEM_VARIABLES,
+  TEMPLATE_TOKEN,
+  tokensIn,
+  VARIABLE_PATH,
+  VARIABLE_TYPES,
+  variablesOf,
+  variableSpecSchema,
+  type EmailType,
+  type FlatVariable,
+  type VariableFormat,
+  type VariableSpec,
+  type VariableType,
+  type VariableUse,
+} from './variables';

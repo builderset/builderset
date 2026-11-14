@@ -72,13 +72,22 @@ const TONES: Record<ConfirmTone, { badge: string; fill: string; icon: ReactNode 
 };
 
 export interface ConfirmDialogProps {
+  /** Whether the dialog is shown. */
   open: boolean;
+  /**
+   * Called with `false` to close it: Cancel, Escape, the backdrop, or a confirm
+   * that succeeded.
+   */
   onOpenChange: (open: boolean) => void;
+  /** The question, as the heading. */
   title: string;
+  /** More on what will happen, under the title. */
   description?: ReactNode;
   /** Something to look at before deciding — a list of what is about to go. */
   children?: ReactNode;
+  /** The confirm button's text. Default: the editor's word for "Confirm". */
   confirmLabel?: string;
+  /** The cancel button's text. Default: the editor's word for "Cancel". */
   cancelLabel?: string;
   /**
    * A third answer — "save a copy", "discard and continue".
@@ -89,7 +98,12 @@ export interface ConfirmDialogProps {
    * width for a label that is a verb phrase.
    */
   secondaryLabel?: string;
+  /**
+   * Called when the third answer is pressed; shown only with `secondaryLabel`.
+   * The dialog stays open — close it here if the answer should.
+   */
   onSecondary?: () => void;
+  /** The colour of the icon disc and the confirm button, and the icon. Default: `'default'`. */
   tone?: ConfirmTone;
   /**
    * Resolves to a message on failure, or nothing on success.
@@ -102,6 +116,7 @@ export interface ConfirmDialogProps {
   onConfirm: () => Promise<string | null | undefined> | string | null | undefined;
   /** Escape and backdrop. Always blocked while busy, whatever this says. */
   dismissible?: boolean;
+  /** Replaces the tone's icon in the disc above the title. */
   icon?: ReactNode;
 }
 

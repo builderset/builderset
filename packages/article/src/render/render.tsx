@@ -271,8 +271,14 @@ export function renderDocument(
 }
 
 export interface ArticleRendererProps extends RenderOptions {
+  /** The article to render. */
   document: ArticleDocument;
+  /**
+   * The elements it may hold — usually `createArticleRegistry()`. A node whose
+   * type is missing here, or whose props do not pass its schema, is left out.
+   */
   registry: ElementRegistry;
+  /** Applied to the wrapping `<div>`. */
   className?: string | undefined;
 }
 

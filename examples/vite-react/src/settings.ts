@@ -12,6 +12,8 @@ export interface Settings {
   primary: string;
   /** A brand colour set on the page's root as --builderset-primary, in CSS. */
   rootPrimary: string;
+  /** The editor's language. */
+  lang: 'en' | 'sq' | 'de';
 }
 
 export function readSettings(): Settings {
@@ -22,6 +24,7 @@ export function readSettings(): Settings {
     pageDark: q.get('pageDark') === '1',
     primary: q.get('primary') ?? '',
     rootPrimary: q.get('rootPrimary') ?? '',
+    lang: q.get('lang') === 'sq' || q.get('lang') === 'de' ? (q.get('lang') as 'sq' | 'de') : 'en',
   };
 }
 
@@ -31,6 +34,7 @@ export function writeSettings(s: Settings): void {
   if (s.pageDark) q.set('pageDark', '1');
   if (s.primary) q.set('primary', s.primary);
   if (s.rootPrimary) q.set('rootPrimary', s.rootPrimary);
+  if (s.lang !== 'en') q.set('lang', s.lang);
   const search = q.toString();
   history.replaceState(null, '', `${location.pathname}${search ? `?${search}` : ''}`);
 }

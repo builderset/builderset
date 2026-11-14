@@ -1,15 +1,33 @@
 import type { Settings } from './settings';
 
-/** On every route: the theme, the page's own dark class and a brand colour. */
+/**
+ * On every route: the theme, the page's own dark class, the editor's language
+ * and a brand colour — and how many saves reached the host.
+ */
 export function Bar({
   settings,
   onChange,
+  saves,
 }: {
   settings: Settings;
   onChange: (s: Settings) => void;
+  saves: number;
 }) {
   return (
-    <div className="example-bar" data-example-bar="">
+    <div className="example-bar" data-example-bar="" data-saves={saves}>
+      <label>
+        Language{' '}
+        <select
+          value={settings.lang}
+          onChange={(e) => {
+            onChange({ ...settings, lang: e.target.value as Settings['lang'] });
+          }}
+        >
+          <option value="en">en</option>
+          <option value="sq">sq</option>
+          <option value="de">de</option>
+        </select>
+      </label>
       <label>
         Theme{' '}
         <select
@@ -43,6 +61,7 @@ export function Bar({
           }}
         />
       </label>
+      <span>saves: {saves}</span>
     </div>
   );
 }

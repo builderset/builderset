@@ -65,25 +65,29 @@ export default async function Article({ params }) {
 
 ## Styles and theme
 
-The package ships no stylesheet yet. Its classes are Tailwind 4 utilities on shadcn-style colour tokens — `background`, `foreground`, `card`, `muted`, `muted-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `border`, `border-strong`, `destructive`, plus `ok`, `warn`, `no` and `chart-1` for callout and pros/cons tones — so an app that uses Tailwind 4 and those tokens adds the package to its sources:
+One stylesheet for the editor, one for the site, each complete on its own — no Tailwind, no configuration:
 
-```css
-@source '../node_modules/@builderset/*/dist';
+```ts
+import '@builderset/article/styles.css'; // the back office: the editor
+import '@builderset/article/content.css'; // the site: a rendered article
 ```
 
-Optional variables, with their fallbacks: `--radius-card` (0.625rem), `--radius-control` (0.4rem), `--maxw-prose` (68ch). The editor also relies on a few global rules the app supplies today; [the engine's README](../engine/README.md#styles) lists them. A compiled, prefixed stylesheet that needs no Tailwind replaces all of this before the first release.
+`ArticleRenderer`'s root carries `builderset builderset-content` and `theme` (`'auto'` by default: an article follows the site's dark mode). The site sets the look with the same sixteen variables as the editor — `--builderset-font` for its typeface, `--builderset-primary` for links and accents, `--builderset-prose-width` for the reading measure — or imports `@builderset/article/theme/shadcn.css`. [The engine's README](../engine/README.md#styles) has the three ways to set them, `theme` and `tokens` on the editor, and the known limits.
 
 ## Entry points
 
-| Import                               | What                                                                                                                      | Runs on            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `@builderset/article`                | The document, the standard elements, the checks, parsing with migrations, the outline, import from HTML and Markdown      | Browser and server |
-| `@builderset/article/render`         | `ArticleRenderer`, structured data (`structuredData`, `jsonLdString`), the parts custom renderers use                     | Browser and server |
-| `@builderset/article/editor`         | `ArticleEditor` and the pieces of its settings panel                                                                      | Browser            |
-| `@builderset/article/host`           | `BuilderHost` and the two ready-made hosts, `createMemoryHost` and `createRestHost` (the engine's, under this kit's name) | Browser and server |
-| `@builderset/article/locales/<code>` | The editor's and the renderer's words in another language: `sq`, `de` (English is built in)                               | Both               |
-| `@builderset/article/schema.json`    | The document's JSON Schema, for a backend in another language                                                             | —                  |
-| `@builderset/article/fixtures/*`     | Valid and invalid documents, with the error each must produce, for a backend's contract test                              | —                  |
+| Import                                 | What                                                                                                                      | Runs on            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `@builderset/article`                  | The document, the standard elements, the checks, parsing with migrations, the outline, import from HTML and Markdown      | Browser and server |
+| `@builderset/article/render`           | `ArticleRenderer`, structured data (`structuredData`, `jsonLdString`), the parts custom renderers use                     | Browser and server |
+| `@builderset/article/editor`           | `ArticleEditor` and the pieces of its settings panel                                                                      | Browser            |
+| `@builderset/article/host`             | `BuilderHost` and the two ready-made hosts, `createMemoryHost` and `createRestHost` (the engine's, under this kit's name) | Browser and server |
+| `@builderset/article/locales/<code>`   | The editor's and the renderer's words in another language: `sq`, `de` (English is built in)                               | Both               |
+| `@builderset/article/styles.css`       | Everything the editor needs: theme, reset, the workspace, this kit's editor and renderer                                  | Browser            |
+| `@builderset/article/content.css`      | A rendered article on a site, with no editor                                                                              | Browser            |
+| `@builderset/article/theme/shadcn.css` | The editor and the article in a shadcn-themed project (`theme/shadcn-hsl.css` for HSL numbers)                            | Browser            |
+| `@builderset/article/schema.json`      | The document's JSON Schema, for a backend in another language                                                             | —                  |
+| `@builderset/article/fixtures/*`       | Valid and invalid documents, with the error each must produce, for a backend's contract test                              | —                  |
 
 ## Components
 
@@ -115,6 +119,7 @@ Optional variables, with their fallbacks: `--radius-card` (0.625rem), `--radius-
 | `theme`                | `"auto" \| "dark" \| "light"`                                              |          | 'light' (the default), 'dark', or 'auto' to follow the page. Menus and dialogs follow it too.                                                           |
 | `tokens`               | `Partial<Record<"font" \| "background" \| "surface" \| "foreground" \| "…` |          | Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`.                                                             |
 | `className`            | `string`                                                                   |          | Applied to the editor's root element, the one that carries the theme.                                                                                   |
+| `fontPreviews`         | `boolean`                                                                  |          | Previews of the font choices from the address the profile names. `false`: never. Default: `true`.                                                       |
 
 <!-- /props -->
 

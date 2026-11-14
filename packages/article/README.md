@@ -2,7 +2,7 @@
 
 The article builder: a block editor for long-form writing, a typed JSON document, and a renderer that turns the document into semantic React — Server Component safe, with no HTML stored anywhere. The editor's canvas is drawn by the same renderer as the published page, so what the writer sees is what the reader gets.
 
-> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/mkurtii/builderset).
+> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/builderset/builderset).
 
 ## Install
 
@@ -302,5 +302,5 @@ interface BuilderNode {
 
 ## Links
 
-- [The repository](https://github.com/mkurtii/builderset) · [what a backend must do](../engine/src/host/BACKEND.md) · [the engine](../engine/README.md)
+- [The repository](https://github.com/builderset/builderset) · [what a backend must do](../engine/src/host/BACKEND.md) · [the engine](../engine/README.md)
 - [Licence: MIT](LICENSE). The changelog starts with the first release.

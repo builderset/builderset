@@ -36,6 +36,9 @@ jobs:
       # 'use client' lines, imports, the manifests (publint) and the types as
       # each kind of consumer resolves them (arethetypeswrong).
       - run: pnpm check:packages
+      # The props tables in the packages' READMEs are generated from the built
+      # types; this fails when one is out of date (fix: pnpm readme:props).
+      - run: node tooling/readme-props.mjs --check
       # While the repository is private, GitHub's own secret scanning is not
       # available on the free plan (docs/plan/steps/08_NEW_REPOSITORY.md, part 6).
       - name: Secret scan

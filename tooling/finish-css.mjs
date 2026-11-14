@@ -16,6 +16,10 @@
  * reset (`.builderset :where(*) { margin: 0 }`); in Tailwind's layered build
  * they win by layer, and here they win by coming later at the same weight.
  *
+ * Moves Tailwind's theme variables from `:root, :host` to `.builderset`, so
+ * the page's own elements do not inherit them. Tailwind's `@property`
+ * registrations of `--tw-*` stay global: CSS has no way to scope them.
+ *
  * Then fails on what must never ship:
  * - any `@layer`: a page's own layers, or its unlayered rules, would reorder it;
  * - a class that is not the product's: `.builderset…`, `.bst\:…`, `.bld-…`,
@@ -64,10 +68,12 @@ function selectors(css) {
 
 let failed = false;
 for (const file of process.argv.slice(2)) {
-  const css = stripPropertiesLayer(readFileSync(file, 'utf8')).replace(
-    /(^|[{},])(\s*):where\(\.bst\\:/g,
-    '$1$2.builderset :where(.bst\\:',
-  );
+  const css = stripPropertiesLayer(readFileSync(file, 'utf8'))
+    .replace(/(^|[{},])(\s*):where\(\.bst\\:/g, '$1$2.builderset :where(.bst\\:')
+    // Tailwind declares its theme variables (--bst-spacing, --bst-text-sm…)
+    // on :root, where every element of the page inherits them. Only the
+    // editor uses them, so they are declared on the editor's root instead.
+    .replace(/:root,\s*:host\s*\{/g, '.builderset{');
   writeFileSync(file, css);
   const problems = [];
   if (css.includes('@layer')) problems.push('contains @layer');

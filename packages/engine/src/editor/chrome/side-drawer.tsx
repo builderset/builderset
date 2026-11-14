@@ -43,13 +43,13 @@ export function SideDrawer({
       <DrawerPanel
         side="right"
         closeLabel={messages.close}
-        className="sm:w-[min(26rem,calc(100vw-2rem))]"
+        className="bst:sm:w-[min(26rem,calc(100vw-2rem))]"
       >
-        <OverlayHeader className="border-border border-b px-5 py-4">
+        <OverlayHeader className="bst:border-b bst:border-border bst:px-5 bst:py-4">
           <OverlayTitle>{title}</OverlayTitle>
           {description ? <OverlayDescription>{description}</OverlayDescription> : null}
         </OverlayHeader>
-        <OverlayBody className="bld-panel flex-1 overflow-y-auto">{children}</OverlayBody>
+        <OverlayBody className="bld-panel bst:flex-1 bst:overflow-y-auto">{children}</OverlayBody>
       </DrawerPanel>
     </Overlay>
   );

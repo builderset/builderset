@@ -26,7 +26,7 @@ import { fill } from '../messages';
 import { frameProps, Picture } from '../parts';
 import { RichTextView } from '../rich-text';
 
-const TOC_INDENT = { 2: '', 3: 'pl-4', 4: 'pl-8' } as const;
+const TOC_INDENT = { 2: '', 3: 'bst:pl-4', 4: 'bst:pl-8' } as const;
 
 export function TocView({ props, frame, context }: ElementRenderProps<PropsOf<typeof tocElement>>) {
   const entries = context.outline.filter((entry) => entry.level <= props.depth);
@@ -39,25 +39,25 @@ export function TocView({ props, frame, context }: ElementRenderProps<PropsOf<ty
       {...frameProps(
         frame,
         cn(
-          'border-border bg-card my-8 rounded-card border px-5 py-4',
-          props.sticky && 'lg:sticky lg:top-24',
+          'bst:my-8 bst:rounded-card bst:border bst:border-border bst:bg-card bst:px-5 bst:py-4',
+          props.sticky && 'bst:lg:sticky bst:lg:top-24',
         ),
       )}
     >
-      <p className="text-foreground mb-2.5 text-sm font-semibold">
+      <p className="bst:mb-2.5 bst:text-sm bst:font-semibold bst:text-foreground">
         {props.title || context.messages.contents}
       </p>
       <List
         className={cn(
-          'space-y-1.5 text-sm',
-          props.numbered && 'marker:text-primary list-decimal pl-5',
+          'bst:space-y-1.5 bst:text-sm',
+          props.numbered && 'bst:list-decimal bst:pl-5 bst:marker:text-primary',
         )}
       >
         {entries.map((entry) => (
           <li key={entry.id} className={TOC_INDENT[entry.level]}>
             <Link
               href={`#${entry.anchor}`}
-              className="text-muted-foreground hover:text-primary transition-colors"
+              className="bst:text-muted-foreground bst:transition-colors bst:hover:text-primary"
             >
               {entry.text}
             </Link>
@@ -75,26 +75,28 @@ export function FaqView({
   context,
 }: ElementRenderProps<PropsOf<typeof faqElement>>) {
   return (
-    <section {...frameProps(frame, 'my-10')}>
+    <section {...frameProps(frame, 'bst:my-10')}>
       {props.title ? (
-        <h2 className="mb-4 text-xl font-semibold tracking-tight sm:text-2xl">{props.title}</h2>
+        <h2 className="bst:mb-4 bst:text-xl bst:font-semibold bst:tracking-tight bst:sm:text-2xl">
+          {props.title}
+        </h2>
       ) : null}
-      <div className="divide-border border-border rounded-card divide-y border">
+      <div className="bst:divide-y bst:divide-border bst:rounded-card bst:border bst:border-border">
         {props.items.map((item, index) => (
           <details
             key={index}
             name={`faq-${node.id}`}
             open={props.firstOpen && index === 0}
-            className="group px-5 [&_summary::-webkit-details-marker]:hidden"
+            className="bst:group bst:px-5 bst:[&_summary::-webkit-details-marker]:hidden"
           >
-            <summary className="text-foreground flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium">
+            <summary className="bst:flex bst:cursor-pointer bst:list-none bst:items-center bst:justify-between bst:gap-4 bst:py-4 bst:font-medium bst:text-foreground">
               {item.question}
               <ChevronDown
-                className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-open:rotate-180"
+                className="bst:size-4 bst:shrink-0 bst:text-muted-foreground bst:transition-transform bst:duration-200 bst:group-open:rotate-180"
                 aria-hidden="true"
               />
             </summary>
-            <div className="text-muted-foreground animate-[bst-rise_220ms_ease-out] pb-4 leading-relaxed">
+            <div className="bst:animate-[bst-rise_220ms_ease-out] bst:pb-4 bst:leading-relaxed bst:text-muted-foreground">
               <RichTextView value={item.answer} context={context} />
             </div>
           </details>
@@ -110,36 +112,38 @@ export function HowToView({
   context,
 }: ElementRenderProps<PropsOf<typeof howToElement>>) {
   return (
-    <section {...frameProps(frame, 'my-10')}>
+    <section {...frameProps(frame, 'bst:my-10')}>
       {props.title || props.totalMinutes ? (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="bst:mb-5 bst:flex bst:flex-wrap bst:items-center bst:justify-between bst:gap-3">
           {props.title ? (
-            <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{props.title}</h2>
+            <h2 className="bst:text-xl bst:font-semibold bst:tracking-tight bst:sm:text-2xl">
+              {props.title}
+            </h2>
           ) : (
             <span />
           )}
           {props.totalMinutes ? (
-            <span className="bg-muted text-muted-foreground inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
-              <Clock className="size-3.5" aria-hidden="true" />
+            <span className="bst:inline-flex bst:items-center bst:gap-1.5 bst:rounded-full bst:bg-muted bst:px-3 bst:py-1 bst:text-xs bst:font-medium bst:text-muted-foreground">
+              <Clock className="bst:size-3.5" aria-hidden="true" />
               {fill(context.messages.minutes, { n: props.totalMinutes })}
             </span>
           ) : null}
         </div>
       ) : null}
-      <ol className="space-y-6">
+      <ol className="bst:space-y-6">
         {props.steps.map((step, index) => (
-          <li key={index} className="flex gap-4">
-            <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-full text-sm font-semibold tabular-nums">
+          <li key={index} className="bst:flex bst:gap-4">
+            <span className="bst:grid bst:size-8 bst:shrink-0 bst:place-items-center bst:rounded-full bst:bg-primary bst:text-sm bst:font-semibold bst:text-primary-foreground bst:tabular-nums">
               {index + 1}
             </span>
-            <div className="min-w-0 flex-1 pt-1">
-              <p className="text-foreground font-semibold">
-                <span className="sr-only">
+            <div className="bst:min-w-0 bst:flex-1 bst:pt-1">
+              <p className="bst:font-semibold bst:text-foreground">
+                <span className="bst:sr-only">
                   {context.messages.step} {index + 1}:{' '}
                 </span>
                 {step.title}
               </p>
-              <div className="text-muted-foreground mt-1.5 leading-relaxed">
+              <div className="bst:mt-1.5 bst:leading-relaxed bst:text-muted-foreground">
                 <RichTextView value={step.text} context={context} />
               </div>
               {step.media ? (
@@ -147,7 +151,7 @@ export function HowToView({
                   media={step.media}
                   alt={step.alt}
                   context={context}
-                  className="bg-muted rounded-card mt-4 w-full"
+                  className="bst:mt-4 bst:w-full bst:rounded-card bst:bg-muted"
                 />
               ) : null}
             </div>
@@ -164,20 +168,27 @@ export function TimelineView({
   context,
 }: ElementRenderProps<PropsOf<typeof timelineElement>>) {
   return (
-    <ol {...frameProps(frame, 'border-border relative my-10 ml-2 space-y-7 border-l pl-6')}>
+    <ol
+      {...frameProps(
+        frame,
+        'bst:border-border bst:relative bst:my-10 bst:ml-2 bst:space-y-7 bst:border-l bst:pl-6',
+      )}
+    >
       {props.items.map((item, index) => (
-        <li key={index} className="relative">
+        <li key={index} className="bst:relative">
           <span
             aria-hidden="true"
-            className="bg-background border-primary absolute top-1.5 -left-[1.95rem] size-3 rounded-full border-2"
+            className="bst:absolute bst:top-1.5 bst:-left-[1.95rem] bst:size-3 bst:rounded-full bst:border-2 bst:border-primary bst:bg-background"
           />
           {item.date ? (
-            <p className="text-primary text-xs font-semibold tracking-wide uppercase">
+            <p className="bst:text-xs bst:font-semibold bst:tracking-wide bst:text-primary bst:uppercase">
               {item.date}
             </p>
           ) : null}
-          {item.title ? <p className="text-foreground mt-1 font-semibold">{item.title}</p> : null}
-          <div className="text-muted-foreground mt-1 leading-relaxed">
+          {item.title ? (
+            <p className="bst:mt-1 bst:font-semibold bst:text-foreground">{item.title}</p>
+          ) : null}
+          <div className="bst:mt-1 bst:leading-relaxed bst:text-muted-foreground">
             <RichTextView value={item.text} context={context} />
           </div>
         </li>
@@ -196,32 +207,38 @@ export function ProsConsView({
       title: props.prosTitle || context.messages.pros,
       lines: props.pros,
       Icon: ThumbsUp,
-      tone: 'text-ok',
-      box: 'border-ok/25 bg-ok/5',
+      tone: 'bst:text-ok',
+      box: 'bst:border-ok/25 bst:bg-ok/5',
     },
     {
       title: props.consTitle || context.messages.cons,
       lines: props.cons,
       Icon: ThumbsDown,
-      tone: 'text-no',
-      box: 'border-no/25 bg-no/5',
+      tone: 'bst:text-no',
+      box: 'bst:border-no/25 bst:bg-no/5',
     },
   ];
   return (
-    <div {...frameProps(frame, 'my-9 grid gap-4 sm:grid-cols-2')}>
+    <div {...frameProps(frame, 'bst:my-9 bst:grid bst:gap-4 bst:sm:grid-cols-2')}>
       {columns.map(({ title, lines, Icon, tone, box }) => (
-        <div key={title} className={cn('rounded-card border p-5', box)}>
-          <p className={cn('mb-3 flex items-center gap-2 font-semibold', tone)}>
-            <Icon className="size-4" aria-hidden="true" />
+        <div key={title} className={cn('bst:rounded-card bst:border bst:p-5', box)}>
+          <p className={cn('bst:mb-3 bst:flex bst:items-center bst:gap-2 bst:font-semibold', tone)}>
+            <Icon className="bst:size-4" aria-hidden="true" />
             {title}
           </p>
-          <ul className="space-y-2">
+          <ul className="bst:space-y-2">
             {lines
               .filter((line) => line.trim())
               .map((line, index) => (
-                <li key={index} className="text-foreground/85 flex gap-2.5 text-sm leading-relaxed">
+                <li
+                  key={index}
+                  className="bst:flex bst:gap-2.5 bst:text-sm bst:leading-relaxed bst:text-foreground/85"
+                >
                   <span
-                    className={cn('mt-[0.55em] size-1.5 shrink-0 rounded-full bg-current', tone)}
+                    className={cn(
+                      'bst:mt-[0.55em] bst:size-1.5 bst:shrink-0 bst:rounded-full bst:bg-current',
+                      tone,
+                    )}
                     aria-hidden="true"
                   />
                   {line}
@@ -235,33 +252,36 @@ export function ProsConsView({
 }
 
 const STAT_GRID = {
-  1: 'grid-cols-1',
-  2: 'grid-cols-2',
-  3: 'grid-cols-2 sm:grid-cols-3',
-  4: 'grid-cols-2 sm:grid-cols-4',
+  1: 'bst:grid-cols-1',
+  2: 'bst:grid-cols-2',
+  3: 'bst:grid-cols-2 bst:sm:grid-cols-3',
+  4: 'bst:grid-cols-2 bst:sm:grid-cols-4',
 } as const;
 
 export function StatsView({ props, frame }: ElementRenderProps<PropsOf<typeof statsElement>>) {
   const count = Math.min(4, Math.max(1, props.items.length)) as 1 | 2 | 3 | 4;
   return (
-    <div {...frameProps(frame, cn('my-9 grid gap-3', STAT_GRID[count]))}>
+    <div {...frameProps(frame, cn('bst:my-9 bst:grid bst:gap-3', STAT_GRID[count]))}>
       {props.items.map((item, index) => {
         const Trend =
           item.trend === 'up' ? TrendingUp : item.trend === 'down' ? TrendingDown : Minus;
         return (
-          <div key={index} className="border-border bg-card rounded-card border p-5">
-            <p className="flex items-baseline gap-2 text-3xl font-semibold tracking-tight tabular-nums">
+          <div
+            key={index}
+            className="bst:rounded-card bst:border bst:border-border bst:bg-card bst:p-5"
+          >
+            <p className="bst:flex bst:items-baseline bst:gap-2 bst:text-3xl bst:font-semibold bst:tracking-tight bst:tabular-nums">
               {item.value}
               {item.trend !== 'none' ? (
                 <Trend
-                  className={cn('size-4', item.trend === 'up' ? 'text-ok' : 'text-no')}
+                  className={cn('bst:size-4', item.trend === 'up' ? 'bst:text-ok' : 'bst:text-no')}
                   aria-hidden="true"
                 />
               ) : null}
             </p>
-            <p className="text-muted-foreground mt-1 text-sm">{item.label}</p>
+            <p className="bst:mt-1 bst:text-sm bst:text-muted-foreground">{item.label}</p>
             {item.note ? (
-              <p className="text-muted-foreground/80 mt-2 text-xs">{item.note}</p>
+              <p className="bst:mt-2 bst:text-xs bst:text-muted-foreground/80">{item.note}</p>
             ) : null}
           </div>
         );
@@ -273,17 +293,17 @@ export function StatsView({ props, frame }: ElementRenderProps<PropsOf<typeof st
 function Stars({ score, scale }: { score: number; scale: number }) {
   const fivePoint = (score / scale) * 5;
   return (
-    <span className="flex gap-0.5" aria-hidden="true">
+    <span className="bst:flex bst:gap-0.5" aria-hidden="true">
       {Array.from({ length: 5 }, (_, index) => {
         const fill = Math.max(0, Math.min(1, fivePoint - index));
         return (
-          <span key={index} className="relative size-5">
-            <Star className="text-border absolute inset-0 size-5" />
+          <span key={index} className="bst:relative bst:size-5">
+            <Star className="bst:absolute bst:inset-0 bst:size-5 bst:text-border" />
             <span
-              className="absolute inset-0 overflow-hidden"
+              className="bst:absolute bst:inset-0 bst:overflow-hidden"
               style={{ width: `${String(fill * 100)}%` }}
             >
-              <Star className="text-primary fill-primary size-5" />
+              <Star className="bst:size-5 bst:fill-primary bst:text-primary" />
             </span>
           </span>
         );
@@ -300,42 +320,49 @@ export function RatingView({
   const locale = context.options.locale ?? 'en';
   const score = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(props.score);
   return (
-    <section {...frameProps(frame, 'border-border bg-card my-10 rounded-card border p-6')}>
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <section
+      {...frameProps(
+        frame,
+        'bst:border-border bst:bg-card bst:my-10 bst:rounded-card bst:border bst:p-6',
+      )}
+    >
+      <div className="bst:flex bst:flex-wrap bst:items-center bst:justify-between bst:gap-4">
         <div>
           {props.title ? (
-            <p className="text-foreground text-lg font-semibold">{props.title}</p>
+            <p className="bst:text-lg bst:font-semibold bst:text-foreground">{props.title}</p>
           ) : null}
           {props.itemName ? (
-            <p className="text-muted-foreground text-sm">{props.itemName}</p>
+            <p className="bst:text-sm bst:text-muted-foreground">{props.itemName}</p>
           ) : null}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="bst:flex bst:items-center bst:gap-3">
           <Stars score={props.score} scale={props.scale} />
-          <p className="text-3xl font-semibold tabular-nums">
+          <p className="bst:text-3xl bst:font-semibold bst:tabular-nums">
             {score}
-            <span className="text-muted-foreground text-base font-medium">/{props.scale}</span>
+            <span className="bst:text-base bst:font-medium bst:text-muted-foreground">
+              /{props.scale}
+            </span>
           </p>
-          <span className="sr-only">
+          <span className="bst:sr-only">
             {fill(context.messages.ratingOutOf, { score, scale: props.scale })}
           </span>
         </div>
       </div>
       {props.criteria.length ? (
-        <dl className="mt-5 space-y-3">
+        <dl className="bst:mt-5 bst:space-y-3">
           {props.criteria.map((criterion, index) => (
             <div
               key={index}
-              className="grid grid-cols-[8rem_1fr_2.5rem] items-center gap-3 text-sm sm:grid-cols-[10rem_1fr_2.5rem]"
+              className="bst:grid bst:grid-cols-[8rem_1fr_2.5rem] bst:items-center bst:gap-3 bst:text-sm bst:sm:grid-cols-[10rem_1fr_2.5rem]"
             >
-              <dt className="text-muted-foreground truncate">{criterion.label}</dt>
-              <dd className="bg-muted h-2 overflow-hidden rounded-full">
+              <dt className="bst:truncate bst:text-muted-foreground">{criterion.label}</dt>
+              <dd className="bst:h-2 bst:overflow-hidden bst:rounded-full bst:bg-muted">
                 <span
-                  className="bg-primary block h-full rounded-full"
+                  className="bst:block bst:h-full bst:rounded-full bst:bg-primary"
                   style={{ width: `${String((criterion.score / props.scale) * 100)}%` }}
                 />
               </dd>
-              <dd className="text-foreground text-right font-medium tabular-nums">
+              <dd className="bst:text-right bst:font-medium bst:text-foreground bst:tabular-nums">
                 {criterion.score}
               </dd>
             </div>
@@ -343,7 +370,7 @@ export function RatingView({
         </dl>
       ) : null}
       {props.summary.length ? (
-        <div className="text-muted-foreground border-border mt-5 border-t pt-4 leading-relaxed">
+        <div className="bst:mt-5 bst:border-t bst:border-border bst:pt-4 bst:leading-relaxed bst:text-muted-foreground">
           <RichTextView value={props.summary} context={context} />
         </div>
       ) : null}
@@ -367,7 +394,7 @@ export function AuthorView({
     <aside
       {...frameProps(
         frame,
-        'border-border bg-card my-10 flex gap-4 rounded-card border p-5 sm:gap-5',
+        'bst:border-border bst:bg-card bst:my-10 bst:flex bst:gap-4 bst:rounded-card bst:border bst:p-5 bst:sm:gap-5',
       )}
     >
       {props.avatar ? (
@@ -375,28 +402,28 @@ export function AuthorView({
           media={props.avatar}
           alt={props.name}
           context={context}
-          className="size-14 shrink-0 rounded-full object-cover sm:size-16"
+          className="bst:size-14 bst:shrink-0 bst:rounded-full bst:object-cover bst:sm:size-16"
         />
       ) : (
-        <span className="bg-primary text-primary-foreground grid size-14 shrink-0 place-items-center rounded-full text-lg font-semibold sm:size-16">
+        <span className="bst:grid bst:size-14 bst:shrink-0 bst:place-items-center bst:rounded-full bst:bg-primary bst:text-lg bst:font-semibold bst:text-primary-foreground bst:sm:size-16">
           {initials}
         </span>
       )}
-      <div className="min-w-0">
-        <p className="text-foreground font-semibold">{props.name}</p>
-        {props.role ? <p className="text-muted-foreground text-sm">{props.role}</p> : null}
+      <div className="bst:min-w-0">
+        <p className="bst:font-semibold bst:text-foreground">{props.name}</p>
+        {props.role ? <p className="bst:text-sm bst:text-muted-foreground">{props.role}</p> : null}
         {props.bio.length ? (
-          <div className="text-muted-foreground mt-2 text-sm leading-relaxed">
+          <div className="bst:mt-2 bst:text-sm bst:leading-relaxed bst:text-muted-foreground">
             <RichTextView value={props.bio} context={context} />
           </div>
         ) : null}
         {props.links.length ? (
-          <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <div className="bst:mt-3 bst:flex bst:flex-wrap bst:gap-x-4 bst:gap-y-1 bst:text-sm">
             {props.links.map((link) => (
               <Link
                 key={link.href}
                 href={context.options.editing ? '#' : link.href}
-                className="text-primary font-medium hover:underline"
+                className="bst:font-medium bst:text-primary bst:hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -113,11 +113,13 @@ export function SlashMenu({
       initial={{ opacity: 0, y: -4, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.14 }}
-      className="border-border bg-popover text-popover-foreground rounded-card fixed z-[80] max-h-72 w-72 overflow-y-auto border p-1 shadow-lg"
+      className="bst:fixed bst:z-[80] bst:max-h-72 bst:w-72 bst:overflow-y-auto bst:rounded-card bst:border bst:border-border bst:bg-popover bst:p-1 bst:text-popover-foreground bst:shadow-lg"
       style={{ left: coords.left, top: coords.bottom + 6 }}
     >
       {matches.length === 0 ? (
-        <p className="text-muted-foreground px-3 py-2 text-sm">{messages.noElementsFound}</p>
+        <p className="bst:px-3 bst:py-2 bst:text-sm bst:text-muted-foreground">
+          {messages.noElementsFound}
+        </p>
       ) : (
         matches.map((choice, index) => (
           <button
@@ -134,16 +136,18 @@ export function SlashMenu({
               onChoose(choice.type);
             }}
             className={cn(
-              'rounded-control flex w-full items-center gap-3 px-2 py-1.5 text-left',
-              index === activeIndex ? 'bg-accent' : 'hover:bg-accent/60',
+              'bst:flex bst:w-full bst:items-center bst:gap-3 bst:rounded-control bst:px-2 bst:py-1.5 bst:text-left',
+              index === activeIndex ? 'bst:bg-accent' : 'bst:hover:bg-accent/60',
             )}
           >
-            <span className="border-border bg-background flex size-8 shrink-0 items-center justify-center rounded-md border">
-              <ElementIcon name={choice.icon} className="size-4" />
+            <span className="bst:flex bst:size-8 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-md bst:border bst:border-border bst:bg-background">
+              <ElementIcon name={choice.icon} className="bst:size-4" />
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-medium">{choice.name}</span>
-              <span className="text-muted-foreground block truncate text-xs">
+            <span className="bst:min-w-0">
+              <span className="bst:block bst:truncate bst:text-sm bst:font-medium">
+                {choice.name}
+              </span>
+              <span className="bst:block bst:truncate bst:text-xs bst:text-muted-foreground">
                 {choice.description}
               </span>
             </span>

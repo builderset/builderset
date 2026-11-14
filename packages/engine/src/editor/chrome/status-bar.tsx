@@ -24,7 +24,7 @@ const DEVICE_ICON = { desktop: Monitor, tablet: Tablet, mobile: Smartphone } as 
 
 function Stat({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <span className="flex items-center gap-1.5 whitespace-nowrap tabular-nums [&_svg]:size-3.5 [&_svg]:opacity-70">
+    <span className="bst:flex bst:items-center bst:gap-1.5 bst:whitespace-nowrap bst:tabular-nums bst:[&_svg]:size-3.5 bst:[&_svg]:opacity-70">
       {icon}
       {children}
     </span>
@@ -52,19 +52,19 @@ export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcut
   const Device = DEVICE_ICON[viewport];
 
   return (
-    <footer className="border-border bg-sidebar text-muted-foreground flex h-9 shrink-0 items-center justify-between gap-3 border-t px-3 text-xs">
+    <footer className="bst:flex bst:h-9 bst:shrink-0 bst:items-center bst:justify-between bst:gap-3 bst:border-t bst:border-border bst:bg-sidebar bst:px-3 bst:text-xs bst:text-muted-foreground">
       {/* ── Left: the article in numbers ── */}
-      <div className="flex min-w-0 items-center gap-4">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:gap-4">
         <Stat icon={<Type aria-hidden="true" />}>{messages.words(words)}</Stat>
         <Stat icon={<Clock aria-hidden="true" />}>{messages.readingTime(minutes)}</Stat>
-        <span className="hidden md:flex">
+        <span className="bst:hidden bst:md:flex">
           <Stat icon={<Blocks aria-hidden="true" />}>{blocks}</Stat>
         </span>
       </div>
 
       {/* ── Right: how you are looking at it ── */}
-      <div className="flex min-w-0 items-center justify-end gap-4">
-        <span className="hidden md:flex">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:justify-end bst:gap-4">
+        <span className="bst:hidden bst:md:flex">
           <Stat icon={<Device aria-hidden="true" />}>
             {messages[viewport]} · {zoom}%
           </Stat>
@@ -72,10 +72,10 @@ export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcut
         <button
           type="button"
           onClick={onShortcuts}
-          className="hover:text-foreground flex cursor-pointer items-center gap-1.5 transition-colors"
+          className="bst:flex bst:cursor-pointer bst:items-center bst:gap-1.5 bst:transition-colors bst:hover:text-foreground"
         >
-          <Keyboard className="size-3.5" aria-hidden="true" />
-          <span className="hidden sm:inline">{messages.shortcuts}</span>
+          <Keyboard className="bst:size-3.5" aria-hidden="true" />
+          <span className="bst:hidden bst:sm:inline">{messages.shortcuts}</span>
         </button>
         {/* Is it ready — last, at the edge, where the eye ends the row. */}
         <Popover>
@@ -83,51 +83,61 @@ export function StatusBar({ issues, onShortcuts }: { issues: Issue[]; onShortcut
             <button
               type="button"
               className={cn(
-                'flex h-6 items-center gap-1.5 rounded-full border px-2.5 font-medium transition-[colors,transform] active:scale-95',
+                'bst:flex bst:h-6 bst:items-center bst:gap-1.5 bst:rounded-full bst:border bst:px-2.5 bst:font-medium bst:transition-[colors,transform] bst:active:scale-95',
                 issues.length === 0
-                  ? 'border-ok/25 bg-ok/10 text-ok'
+                  ? 'bst:border-ok/25 bst:bg-ok/10 bst:text-ok'
                   : errors
-                    ? 'border-destructive/25 bg-destructive/10 text-destructive'
-                    : 'border-warn/25 bg-warn/10 text-warn',
+                    ? 'bst:border-destructive/25 bst:bg-destructive/10 bst:text-destructive'
+                    : 'bst:border-warn/25 bst:bg-warn/10 bst:text-warn',
               )}
             >
               {issues.length === 0 ? (
-                <CheckCircle2 className="size-3.5" aria-hidden="true" />
+                <CheckCircle2 className="bst:size-3.5" aria-hidden="true" />
               ) : errors ? (
-                <AlertCircle className="size-3.5" aria-hidden="true" />
+                <AlertCircle className="bst:size-3.5" aria-hidden="true" />
               ) : (
-                <AlertTriangle className="size-3.5" aria-hidden="true" />
+                <AlertTriangle className="bst:size-3.5" aria-hidden="true" />
               )}
               <motion.span
                 key={issues.length}
                 initial={{ scale: 1.25 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                className="tabular-nums"
+                className="bst:tabular-nums"
               >
                 {issues.length ? messages.issues(issues.length) : messages.noIssues}
               </motion.span>
             </button>
           </PopoverTrigger>
           {issues.length ? (
-            <PopoverContent align="end" side="top" className="max-h-80 w-80 overflow-y-auto p-1">
+            <PopoverContent
+              align="end"
+              side="top"
+              className="bst:max-h-80 bst:w-80 bst:overflow-y-auto bst:p-1"
+            >
               {issues.map((issue, index) => (
                 <div
                   key={`${issue.code}-${issue.nodeId ?? ''}-${String(index)}`}
-                  className="hover:bg-accent/50 flex items-center gap-2 rounded px-2 py-1.5 text-sm"
+                  className="bst:flex bst:items-center bst:gap-2 bst:rounded bst:px-2 bst:py-1.5 bst:text-sm bst:hover:bg-accent/50"
                 >
                   {issue.severity === 'error' ? (
-                    <AlertCircle className="text-destructive size-4 shrink-0" aria-hidden="true" />
+                    <AlertCircle
+                      className="bst:size-4 bst:shrink-0 bst:text-destructive"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <AlertTriangle className="text-warn size-4 shrink-0" aria-hidden="true" />
+                    <AlertTriangle
+                      className="bst:size-4 bst:shrink-0 bst:text-warn"
+                      aria-hidden="true"
+                    />
                   )}
-                  <span className="min-w-0 flex-1 truncate">
+                  <span className="bst:min-w-0 bst:flex-1 bst:truncate">
                     {messages.issueText[issue.code] ?? issue.code}
                   </span>
                   {issue.nodeId ? (
                     <button
                       type="button"
-                      className="text-primary shrink-0 text-xs font-medium hover:underline"
+                      className="bst:shrink-0 bst:text-xs bst:font-medium bst:text-primary bst:hover:underline"
                       onClick={() => {
                         const id = issue.nodeId;
                         if (!id) return;

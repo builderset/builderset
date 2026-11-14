@@ -26,10 +26,10 @@ export function Skeleton({ className, ...props }: ComponentProps<'div'>) {
       data-slot="skeleton"
       aria-hidden="true"
       className={cn(
-        'bg-muted rounded-control relative overflow-hidden',
-        'after:absolute after:inset-y-0 after:left-0 after:w-1/3',
-        'after:via-foreground/6 after:bg-gradient-to-r after:from-transparent after:to-transparent',
-        'after:animate-[bst-shimmer_1.4s_ease-in-out_infinite] after:content-[""]',
+        'bst:relative bst:overflow-hidden bst:rounded-control bst:bg-muted',
+        'bst:after:absolute bst:after:inset-y-0 bst:after:left-0 bst:after:w-1/3',
+        'bst:after:bg-gradient-to-r bst:after:from-transparent bst:after:via-foreground/6 bst:after:to-transparent',
+        'bst:after:animate-[bst-shimmer_1.4s_ease-in-out_infinite] bst:after:content-[""]',
         className,
       )}
       {...props}
@@ -66,15 +66,18 @@ export function Progress({ className, value, label, ...props }: ProgressProps) {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={clamped}
-      className={cn('bg-secondary relative h-2 w-full overflow-hidden rounded-full', className)}
+      className={cn(
+        'bst:relative bst:h-2 bst:w-full bst:overflow-hidden bst:rounded-full bst:bg-secondary',
+        className,
+      )}
       {...props}
     >
       <div
         className={cn(
-          'bg-primary ease-both h-full w-full transition-transform duration-(--bst-dur-3)',
+          'bst:h-full bst:w-full bst:bg-primary bst:transition-transform bst:duration-(--bst-dur-3) bst:ease-both',
           // With no value there is nothing to point at, so the bar sweeps
           // instead of sitting at zero — which reads as "stuck", not "working".
-          clamped === undefined && 'animate-[bst-shimmer_1.4s_ease-in-out_infinite]',
+          clamped === undefined && 'bst:animate-[bst-shimmer_1.4s_ease-in-out_infinite]',
         )}
         style={
           clamped === undefined
@@ -96,11 +99,14 @@ export function Spinner({ className, label, ...props }: SpinnerProps) {
     <span
       data-slot="spinner"
       role={label ? 'status' : undefined}
-      className={cn('text-muted-foreground inline-flex items-center justify-center', className)}
+      className={cn(
+        'bst:inline-flex bst:items-center bst:justify-center bst:text-muted-foreground',
+        className,
+      )}
       {...props}
     >
-      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-      {label ? <span className="sr-only">{label}</span> : null}
+      <Loader2 className="bst:size-4 bst:animate-spin" aria-hidden="true" />
+      {label ? <span className="bst:sr-only">{label}</span> : null}
     </span>
   );
 }

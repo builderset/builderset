@@ -131,11 +131,11 @@ export function TextToolbar({ editor }: { editor: Editor }) {
             // Keep the selection: a click on the bar must not blur the text.
             if (!(event.target instanceof HTMLInputElement)) event.preventDefault();
           }}
-          className="border-border bg-popover text-popover-foreground rounded-control fixed z-[80] flex items-center gap-0.5 border p-1 shadow-lg"
+          className="bst:fixed bst:z-[80] bst:flex bst:items-center bst:gap-0.5 bst:rounded-control bst:border bst:border-border bst:bg-popover bst:p-1 bst:text-popover-foreground bst:shadow-lg"
           style={{ left: position.left, top: position.top }}
         >
           {choosingFont ? (
-            <div className="w-72">
+            <div className="bst:w-72">
               <input
                 autoFocus
                 value={query}
@@ -146,17 +146,17 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                   if (event.key === 'Escape') setChoosingFont(false);
                 }}
                 placeholder={messages.searchFonts}
-                className="border-input bg-background mb-1 h-7 w-full rounded-md border px-2 text-sm outline-none"
+                className="bst:mb-1 bst:h-7 bst:w-full bst:rounded-md bst:border bst:border-input bst:bg-background bst:px-2 bst:text-sm bst:outline-none"
               />
-              <div className="max-h-72 overflow-y-auto">
+              <div className="bst:max-h-72 bst:overflow-y-auto">
                 <button
                   type="button"
                   onClick={() => {
                     applyFont(null);
                   }}
                   className={cn(
-                    'flex w-full items-center rounded px-2 py-1.5 text-left text-sm',
-                    !state.font ? 'bg-accent' : 'hover:bg-accent',
+                    'bst:flex bst:w-full bst:items-center bst:rounded bst:px-2 bst:py-1.5 bst:text-left bst:text-sm',
+                    !state.font ? 'bst:bg-accent' : 'bst:hover:bg-accent',
                   )}
                 >
                   {messages.inheritFont}
@@ -170,7 +170,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                   if (!inGroup.length) return null;
                   return (
                     <div key={group}>
-                      <p className="text-muted-foreground px-2 pt-2 pb-1 text-[10px] font-semibold tracking-wider uppercase">
+                      <p className="bst:px-2 bst:pt-2 bst:pb-1 bst:text-[10px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
                         {messages.fontGroups[group] ?? group}
                       </p>
                       {inGroup.map((font) => (
@@ -181,8 +181,8 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                             applyFont(font.key);
                           }}
                           className={cn(
-                            'flex w-full items-center rounded px-2 py-1.5 text-left text-[15px]',
-                            state.font === font.key ? 'bg-accent' : 'hover:bg-accent',
+                            'bst:flex bst:w-full bst:items-center bst:rounded bst:px-2 bst:py-1.5 bst:text-left bst:text-[15px]',
+                            state.font === font.key ? 'bst:bg-accent' : 'bst:hover:bg-accent',
                           )}
                           style={{ fontFamily: font.stack }}
                         >
@@ -195,7 +195,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
               </div>
             </div>
           ) : picking ? (
-            <div className="w-64">
+            <div className="bst:w-64">
               <input
                 autoFocus
                 value={query}
@@ -206,9 +206,9 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                   if (event.key === 'Escape') setPicking(false);
                 }}
                 placeholder={messages.searchVariables}
-                className="border-input bg-background mb-1 h-7 w-full rounded-md border px-2 text-sm outline-none"
+                className="bst:mb-1 bst:h-7 bst:w-full bst:rounded-md bst:border bst:border-input bst:bg-background bst:px-2 bst:text-sm bst:outline-none"
               />
-              <div className="max-h-56 overflow-y-auto">
+              <div className="bst:max-h-56 bst:overflow-y-auto">
                 {variables
                   .filter((variable) =>
                     `${variable.path} ${variable.label}`
@@ -222,10 +222,10 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                       onClick={() => {
                         insertVariable(variable.path);
                       }}
-                      className="hover:bg-accent flex w-full items-center justify-between gap-2 rounded px-2 py-1 text-left text-xs"
+                      className="bst:flex bst:w-full bst:items-center bst:justify-between bst:gap-2 bst:rounded bst:px-2 bst:py-1 bst:text-left bst:text-xs bst:hover:bg-accent"
                     >
-                      <span className="truncate">{variable.label}</span>
-                      <code className="text-muted-foreground shrink-0 text-[10px]">
+                      <span className="bst:truncate">{variable.label}</span>
+                      <code className="bst:shrink-0 bst:text-[10px] bst:text-muted-foreground">
                         {variable.path}
                       </code>
                     </button>
@@ -234,7 +234,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
             </div>
           ) : linking ? (
             <form
-              className="flex items-center gap-1"
+              className="bst:flex bst:items-center bst:gap-1"
               onSubmit={(event) => {
                 event.preventDefault();
                 applyLink();
@@ -251,10 +251,10 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                 }}
                 placeholder="https://"
                 aria-invalid={href.trim() !== '' && !isSafeUrl(href.trim())}
-                className="border-input bg-background aria-invalid:border-destructive h-7 w-60 rounded-md border px-2 text-sm outline-none"
+                className="bst:h-7 bst:w-60 bst:rounded-md bst:border bst:border-input bst:bg-background bst:px-2 bst:text-sm bst:outline-none bst:aria-invalid:border-destructive"
               />
               <ToolButton label="OK" onClick={applyLink}>
-                <span className="px-1 text-xs font-semibold">OK</span>
+                <span className="bst:px-1 bst:text-xs bst:font-semibold">OK</span>
               </ToolButton>
             </form>
           ) : (
@@ -268,17 +268,20 @@ export function TextToolbar({ editor }: { editor: Editor }) {
                     onClick={() => {
                       setChoosingFont(true);
                     }}
-                    className="hover:bg-accent flex h-7 max-w-36 items-center gap-1 rounded-md px-2 text-xs"
+                    className="bst:flex bst:h-7 bst:max-w-36 bst:items-center bst:gap-1 bst:rounded-md bst:px-2 bst:text-xs bst:hover:bg-accent"
                   >
                     <span
-                      className="truncate"
+                      className="bst:truncate"
                       style={currentFont ? { fontFamily: currentFont.stack } : undefined}
                     >
                       {currentFont?.label ?? messages.inheritFont}
                     </span>
-                    <ChevronDown className="size-3 shrink-0 opacity-60" aria-hidden="true" />
+                    <ChevronDown
+                      className="bst:size-3 bst:shrink-0 bst:opacity-60"
+                      aria-hidden="true"
+                    />
                   </button>
-                  <span className="bg-border mx-0.5 h-5 w-px" aria-hidden="true" />
+                  <span className="bst:mx-0.5 bst:h-5 bst:w-px bst:bg-border" aria-hidden="true" />
                 </>
               ) : null}
               <ToolButton label="Bold" active={state.bold} onClick={toggle('bold')}>
@@ -299,7 +302,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
               <ToolButton label="Highlight" active={state.highlight} onClick={toggle('highlight')}>
                 <Highlighter />
               </ToolButton>
-              <span className="bg-border mx-0.5 h-5 w-px" aria-hidden="true" />
+              <span className="bst:mx-0.5 bst:h-5 bst:w-px bst:bg-border" aria-hidden="true" />
               {state.link ? (
                 <ToolButton
                   label="Remove link"
@@ -367,8 +370,8 @@ function ToolButton({
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        'flex size-7 items-center justify-center rounded-md transition-colors active:scale-95 [&_svg]:size-4',
-        active ? 'bg-primary text-primary-foreground' : 'hover:bg-accent',
+        'bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:transition-colors bst:active:scale-95 bst:[&_svg]:size-4',
+        active ? 'bst:bg-primary bst:text-primary-foreground' : 'bst:hover:bg-accent',
       )}
     >
       {children}

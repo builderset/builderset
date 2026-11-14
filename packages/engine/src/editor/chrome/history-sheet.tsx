@@ -62,7 +62,7 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
     <SideDrawer open={open} onClose={onClose} title={messages.revisions}>
       {host.saveRevision ? (
         <form
-          className="mb-4 flex gap-2"
+          className="bst:mb-4 bst:flex bst:gap-2"
           onSubmit={(event) => {
             event.preventDefault();
             void saveVersion();
@@ -90,7 +90,7 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
         </form>
       ) : null}
       {revisions === null ? (
-        <div className="flex justify-center py-10">
+        <div className="bst:flex bst:justify-center bst:py-10">
           <Spinner />
         </div>
       ) : revisions.length === 0 ? (
@@ -100,17 +100,17 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
           title={messages.noRevisions}
         />
       ) : (
-        <ol className="space-y-1.5">
+        <ol className="bst:space-y-1.5">
           {revisions.map((revision) => (
             <li
               key={revision.id}
-              className="border-border bg-card rounded-control flex items-center gap-3 border px-3 py-2"
+              className="bst:flex bst:items-center bst:gap-3 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-3 bst:py-2"
             >
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">
+              <div className="bst:min-w-0 bst:flex-1">
+                <p className="bst:truncate bst:text-sm bst:font-medium">
                   {revision.label ?? messages.revisionKinds[revision.kind] ?? revision.kind}
                 </p>
-                <p className="text-muted-foreground truncate text-xs">
+                <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
                   {new Date(revision.createdAt).toLocaleString(locale)}
                   {revision.author ? ` · ${revision.author}` : ''}
                 </p>

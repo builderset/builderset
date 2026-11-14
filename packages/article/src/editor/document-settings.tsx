@@ -42,17 +42,17 @@ function Meter({ length, min, max }: { length: number; min: number; max: number 
   const ok = length >= min && length <= max;
   const width = Math.min(100, (length / max) * 100);
   return (
-    <div className="flex items-center gap-2">
-      <div className="bg-muted h-1 flex-1 overflow-hidden rounded-full">
+    <div className="bst:flex bst:items-center bst:gap-2">
+      <div className="bst:h-1 bst:flex-1 bst:overflow-hidden bst:rounded-full bst:bg-muted">
         <div
           className={cn(
-            'h-full rounded-full transition-[width,background-color] duration-200',
-            ok ? 'bg-ok' : length > max ? 'bg-destructive' : 'bg-warn',
+            'bst:h-full bst:rounded-full bst:transition-[width,background-color] bst:duration-200',
+            ok ? 'bst:bg-ok' : length > max ? 'bst:bg-destructive' : 'bst:bg-warn',
           )}
           style={{ width: `${String(width)}%` }}
         />
       </div>
-      <span className="text-muted-foreground w-14 text-right text-[11px] tabular-nums">
+      <span className="bst:w-14 bst:text-right bst:text-[11px] bst:text-muted-foreground bst:tabular-nums">
         {length}/{max}
       </span>
     </div>
@@ -74,12 +74,12 @@ export function SettingsFieldRow({
 }) {
   const id = useId();
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <Label htmlFor={id} className="bst:text-xs bst:font-medium">
         {label}
       </Label>
       {children(id)}
-      {hint ? <div className="text-muted-foreground text-xs">{hint}</div> : null}
+      {hint ? <div className="bst:text-xs bst:text-muted-foreground">{hint}</div> : null}
     </div>
   );
 }
@@ -101,31 +101,35 @@ export function DocumentSettings() {
   const words = useArticleWords();
   const [tab, setTab] = useState('general');
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-border flex h-11 shrink-0 flex-col justify-center border-b px-3">
-        <p className="text-sm font-semibold">{messages.document}</p>
-        <p className="text-muted-foreground text-xs">{words.nothingSelected}</p>
+    <div className="bst:flex bst:h-full bst:flex-col">
+      <div className="bst:flex bst:h-11 bst:shrink-0 bst:flex-col bst:justify-center bst:border-b bst:border-border bst:px-3">
+        <p className="bst:text-sm bst:font-semibold">{messages.document}</p>
+        <p className="bst:text-xs bst:text-muted-foreground">{words.nothingSelected}</p>
       </div>
-      <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
-        <TabsList className="mx-3 grid shrink-0 grid-cols-3 gap-0">
-          <TabsTrigger value="general" className="px-2 py-1.5 text-xs">
+      <Tabs
+        value={tab}
+        onValueChange={setTab}
+        className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
+      >
+        <TabsList className="bst:mx-3 bst:grid bst:shrink-0 bst:grid-cols-3 bst:gap-0">
+          <TabsTrigger value="general" className="bst:px-2 bst:py-1.5 bst:text-xs">
             {messages.general}
           </TabsTrigger>
-          <TabsTrigger value="seo" className="px-2 py-1.5 text-xs">
+          <TabsTrigger value="seo" className="bst:px-2 bst:py-1.5 bst:text-xs">
             {messages.seo}
           </TabsTrigger>
-          <TabsTrigger value="publishing" className="px-2 py-1.5 text-xs">
+          <TabsTrigger value="publishing" className="bst:px-2 bst:py-1.5 bst:text-xs">
             {words.publishing}
           </TabsTrigger>
         </TabsList>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <TabsContent value="general" className="space-y-4 p-4">
+        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+          <TabsContent value="general" className="bst:space-y-4 bst:p-4">
             <General />
           </TabsContent>
-          <TabsContent value="seo" className="space-y-4 p-4">
+          <TabsContent value="seo" className="bst:space-y-4 bst:p-4">
             <Seo />
           </TabsContent>
-          <TabsContent value="publishing" className="space-y-4 p-4">
+          <TabsContent value="publishing" className="bst:space-y-4 bst:p-4">
             <Publishing />
           </TabsContent>
         </div>
@@ -167,7 +171,7 @@ function General() {
         {(id) => (
           <div
             id={id}
-            className="border-border bg-muted/40 text-muted-foreground rounded-control truncate border px-3 py-2 font-mono text-xs"
+            className="bst:truncate bst:rounded-control bst:border bst:border-border bst:bg-muted/40 bst:px-3 bst:py-2 bst:font-mono bst:text-xs bst:text-muted-foreground"
           >
             {pathOf(siteUrl)}/{article.slug}
           </div>
@@ -240,13 +244,13 @@ function General() {
 
 function Check2({ ok, children }: { ok: boolean; children: ReactNode }) {
   return (
-    <li className="flex items-center gap-2 text-xs">
+    <li className="bst:flex bst:items-center bst:gap-2 bst:text-xs">
       {ok ? (
-        <Check className="text-ok size-3.5" aria-hidden="true" />
+        <Check className="bst:size-3.5 bst:text-ok" aria-hidden="true" />
       ) : (
-        <X className="text-muted-foreground size-3.5" aria-hidden="true" />
+        <X className="bst:size-3.5 bst:text-muted-foreground" aria-hidden="true" />
       )}
-      <span className={ok ? '' : 'text-muted-foreground'}>{children}</span>
+      <span className={ok ? '' : 'bst:text-muted-foreground'}>{children}</span>
     </li>
   );
 }
@@ -282,14 +286,14 @@ function Seo() {
     <>
       {at('preview')}
       {/* The result as a search engine would list it. */}
-      <div className="border-border bg-card rounded-control space-y-0.5 border p-3">
-        <p className="text-muted-foreground truncate text-xs">
+      <div className="bst:space-y-0.5 bst:rounded-control bst:border bst:border-border bst:bg-card bst:p-3">
+        <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
           {[...breadcrumbOf(siteUrl), article.slug].join(' › ')}
         </p>
-        <p className="line-clamp-1 text-[15px] font-medium text-[light-dark(#1a0dab,#8ab4f8)]">
+        <p className="bst:line-clamp-1 bst:text-[15px] bst:font-medium bst:text-[light-dark(#1a0dab,#8ab4f8)]">
           {title || messages.untitled}
         </p>
-        <p className="text-muted-foreground line-clamp-2 text-xs">{description}</p>
+        <p className="bst:line-clamp-2 bst:text-xs bst:text-muted-foreground">{description}</p>
       </div>
       {at('seoTitle')}
       <SettingsFieldRow
@@ -342,7 +346,7 @@ function Seo() {
         )}
       </SettingsFieldRow>
       {keyword ? (
-        <ul className="space-y-1">
+        <ul className="bst:space-y-1">
           <Check2 ok={title.toLowerCase().includes(keyword)}>{words.seoTitle}</Check2>
           <Check2 ok={description.toLowerCase().includes(keyword)}>{words.seoDescription}</Check2>
           <Check2 ok={firstParagraph.includes(keyword)}>

@@ -44,8 +44,8 @@ export function TabsIsland({
         role="tablist"
         onKeyDown={onKeyDown}
         className={cn(
-          'border-border flex gap-1 overflow-x-auto border-b',
-          align === 'center' && 'justify-center',
+          'bst:flex bst:gap-1 bst:overflow-x-auto bst:border-b bst:border-border',
+          align === 'center' && 'bst:justify-center',
         )}
       >
         {titles.map((title, index) => (
@@ -64,12 +64,12 @@ export function TabsIsland({
               setActive(index);
             }}
             className={cn(
-              'relative -mb-px cursor-pointer px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors',
-              'after:bg-primary after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:scale-x-0 after:rounded-full after:transition-transform after:duration-200',
-              align === 'stretch' && 'flex-1',
+              'bst:relative bst:-mb-px bst:cursor-pointer bst:px-4 bst:py-2.5 bst:text-sm bst:font-medium bst:whitespace-nowrap bst:transition-colors',
+              'bst:after:absolute bst:after:inset-x-2 bst:after:bottom-0 bst:after:h-0.5 bst:after:scale-x-0 bst:after:rounded-full bst:after:bg-primary bst:after:transition-transform bst:after:duration-200',
+              align === 'stretch' && 'bst:flex-1',
               index === active
-                ? 'text-foreground after:scale-x-100'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'bst:text-foreground bst:after:scale-x-100'
+                : 'bst:text-muted-foreground bst:hover:text-foreground',
             )}
           >
             {title}
@@ -84,7 +84,7 @@ export function TabsIsland({
           aria-labelledby={`${base}-tab-${String(index)}`}
           hidden={index !== active}
           tabIndex={0}
-          className="animate-[bst-fade-in_200ms_ease-out] pt-5 outline-none"
+          className="bst:animate-[bst-fade-in_200ms_ease-out] bst:pt-5 bst:outline-none"
         >
           {panel}
         </div>

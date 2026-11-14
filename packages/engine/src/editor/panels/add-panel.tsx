@@ -44,10 +44,13 @@ export function AddPanel() {
   };
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="p-3">
-        <label className="border-input bg-background focus-within:ring-ring/40 rounded-control flex h-9 items-center gap-2 border px-2.5 focus-within:ring-2">
-          <Search className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+    <div className="bst:flex bst:h-full bst:flex-col">
+      <div className="bst:p-3">
+        <label className="bst:flex bst:h-9 bst:items-center bst:gap-2 bst:rounded-control bst:border bst:border-input bst:bg-background bst:px-2.5 bst:focus-within:ring-2 bst:focus-within:ring-ring/40">
+          <Search
+            className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+            aria-hidden="true"
+          />
           <input
             value={query}
             onChange={(event) => {
@@ -55,7 +58,7 @@ export function AddPanel() {
             }}
             placeholder={messages.searchElements}
             aria-label={messages.searchElements}
-            className="h-full w-full bg-transparent text-sm outline-none"
+            className="bst:h-full bst:w-full bst:bg-transparent bst:text-sm bst:outline-none"
           />
           {query ? (
             <button
@@ -64,25 +67,27 @@ export function AddPanel() {
               onClick={() => {
                 setQuery('');
               }}
-              className="text-muted-foreground hover:text-foreground"
+              className="bst:text-muted-foreground bst:hover:text-foreground"
             >
-              <X className="size-4" aria-hidden="true" />
+              <X className="bst:size-4" aria-hidden="true" />
             </button>
           ) : null}
         </label>
       </div>
-      <div className="flex-1 space-y-5 overflow-y-auto px-3 pb-6">
+      <div className="bst:flex-1 bst:space-y-5 bst:overflow-y-auto bst:px-3 bst:pb-6">
         {query ? (
           matches.length ? (
             <Grid choices={matches} onInsert={insert} />
           ) : (
-            <p className="text-muted-foreground px-1 text-sm">{messages.noElementsFound}</p>
+            <p className="bst:px-1 bst:text-sm bst:text-muted-foreground">
+              {messages.noElementsFound}
+            </p>
           )
         ) : (
           <>
             {profile.structures?.length ? (
               <Group title={messages.structures}>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="bst:grid bst:grid-cols-2 bst:gap-2">
                   {profile.structures.map((structure) => (
                     <button
                       key={structure.id}
@@ -105,10 +110,10 @@ export function AddPanel() {
                       onClick={() => {
                         insertStructure(structure.build);
                       }}
-                      className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 rounded-control flex cursor-grab flex-col items-center gap-2 border px-2 py-3 transition-[colors,transform] active:scale-95 active:cursor-grabbing"
+                      className="bst:group bst:flex bst:cursor-grab bst:flex-col bst:items-center bst:gap-2 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-2 bst:py-3 bst:transition-[colors,transform] bst:hover:border-primary/50 bst:hover:bg-accent/40 bst:active:scale-95 bst:active:cursor-grabbing"
                     >
                       {structure.icon}
-                      <span className="text-xs font-medium">{structure.label}</span>
+                      <span className="bst:text-xs bst:font-medium">{structure.label}</span>
                     </button>
                   ))}
                 </div>
@@ -143,7 +148,7 @@ export function AddPanel() {
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h3 className="text-muted-foreground mb-2 px-1 text-[11px] font-semibold tracking-wider uppercase">
+      <h3 className="bst:mb-2 bst:px-1 bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
         {title}
       </h3>
       {children}
@@ -159,7 +164,7 @@ function Grid({
   onInsert: (type: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="bst:grid bst:grid-cols-2 bst:gap-2">
       {choices.map((choice, index) => (
         <button
           key={choice.type}
@@ -182,13 +187,15 @@ function Grid({
             onInsert(choice.type);
           }}
           title={choice.description}
-          className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 rounded-control flex cursor-grab flex-col items-center gap-1.5 border px-2 py-3 text-center transition-[colors,transform] active:scale-95 active:cursor-grabbing"
+          className="bst:group bst:flex bst:cursor-grab bst:flex-col bst:items-center bst:gap-1.5 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-2 bst:py-3 bst:text-center bst:transition-[colors,transform] bst:hover:border-primary/50 bst:hover:bg-accent/40 bst:active:scale-95 bst:active:cursor-grabbing"
         >
           <ElementIcon
             name={choice.icon}
-            className="text-muted-foreground group-hover:text-primary size-5 transition-[color,transform] group-hover:-translate-y-0.5"
+            className="bst:size-5 bst:text-muted-foreground bst:transition-[color,transform] bst:group-hover:-translate-y-0.5 bst:group-hover:text-primary"
           />
-          <span className="line-clamp-2 text-xs leading-tight font-medium">{choice.name}</span>
+          <span className="bst:line-clamp-2 bst:text-xs bst:leading-tight bst:font-medium">
+            {choice.name}
+          </span>
         </button>
       ))}
     </div>

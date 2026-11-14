@@ -60,7 +60,11 @@ export function LayersPanel() {
   }, [doc, selection]);
 
   return (
-    <div role="tree" aria-multiselectable="true" className="h-full overflow-y-auto p-2 text-sm">
+    <div
+      role="tree"
+      aria-multiselectable="true"
+      className="bst:h-full bst:overflow-y-auto bst:p-2 bst:text-sm"
+    >
       {root?.children?.map((id) => (
         <Row
           key={id}
@@ -212,11 +216,11 @@ function Row({
         onKeyDown={onKeyDown}
         style={{ paddingLeft: 6 + depth * 14 }}
         className={cn(
-          'group rounded-control relative flex h-8 cursor-pointer items-center gap-1.5 pr-1 transition-[background-color,opacity] duration-150 outline-none data-[dragging]:opacity-40',
-          selected ? 'bg-primary/10 text-foreground' : 'hover:bg-accent/60',
-          'focus-visible:ring-ring/50 focus-visible:ring-2',
-          showDrop === 'inside' && 'ring-primary ring-2',
-          node.hidden && 'opacity-50',
+          'bst:group bst:relative bst:flex bst:h-8 bst:cursor-pointer bst:items-center bst:gap-1.5 bst:rounded-control bst:pr-1 bst:transition-[background-color,opacity] bst:duration-150 bst:outline-none bst:data-[dragging]:opacity-40',
+          selected ? 'bst:bg-primary/10 bst:text-foreground' : 'bst:hover:bg-accent/60',
+          'bst:focus-visible:ring-2 bst:focus-visible:ring-ring/50',
+          showDrop === 'inside' && 'bst:ring-2 bst:ring-primary',
+          node.hidden && 'bst:opacity-50',
         )}
       >
         <AnimatePresence>
@@ -228,8 +232,8 @@ function Row({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.14 }}
               className={cn(
-                'bg-primary absolute right-1 left-1 h-0.5 rounded-full',
-                showDrop === 'before' ? '-top-px' : '-bottom-px',
+                'bst:absolute bst:right-1 bst:left-1 bst:h-0.5 bst:rounded-full bst:bg-primary',
+                showDrop === 'before' ? 'bst:-top-px' : 'bst:-bottom-px',
               )}
             />
           ) : null}
@@ -243,17 +247,23 @@ function Row({
             toggle();
           }}
           className={cn(
-            'text-muted-foreground flex size-4 shrink-0 items-center justify-center',
-            !hasChildren && 'invisible',
+            'bst:flex bst:size-4 bst:shrink-0 bst:items-center bst:justify-center bst:text-muted-foreground',
+            !hasChildren && 'bst:invisible',
           )}
         >
           <ChevronRight
-            className={cn('size-3.5 transition-transform duration-150', open && 'rotate-90')}
+            className={cn(
+              'bst:size-3.5 bst:transition-transform bst:duration-150',
+              open && 'bst:rotate-90',
+            )}
           />
         </button>
         <ElementIcon
           name={definition?.icon ?? 'box'}
-          className={cn('size-4 shrink-0', selected ? 'text-primary' : 'text-muted-foreground')}
+          className={cn(
+            'bst:size-4 bst:shrink-0',
+            selected ? 'bst:text-primary' : 'bst:text-muted-foreground',
+          )}
         />
         {renaming ? (
           <input
@@ -274,15 +284,15 @@ function Row({
               if (event.key === 'Enter') event.currentTarget.blur();
               if (event.key === 'Escape') setRenaming(false);
             }}
-            className="border-input bg-background h-6 min-w-0 flex-1 rounded border px-1.5 text-sm outline-none"
+            className="bst:h-6 bst:min-w-0 bst:flex-1 bst:rounded bst:border bst:border-input bst:bg-background bst:px-1.5 bst:text-sm bst:outline-none"
           />
         ) : (
-          <span className="min-w-0 flex-1 truncate">
-            <span className="font-medium">{label}</span>
-            {detail ? <span className="text-muted-foreground ml-1.5">{detail}</span> : null}
+          <span className="bst:min-w-0 bst:flex-1 bst:truncate">
+            <span className="bst:font-medium">{label}</span>
+            {detail ? <span className="bst:ml-1.5 bst:text-muted-foreground">{detail}</span> : null}
           </span>
         )}
-        <span className="flex shrink-0 items-center opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        <span className="bst:flex bst:shrink-0 bst:items-center bst:opacity-0 bst:transition-opacity bst:group-focus-within:opacity-100 bst:group-hover:opacity-100">
           <IconToggle
             label={node.hidden ? messages.show : messages.hide}
             onClick={() =>
@@ -305,7 +315,7 @@ function Row({
           </IconToggle>
         </span>
         {node.locked || node.hidden ? (
-          <span className="text-muted-foreground flex shrink-0 items-center gap-0.5 group-hover:hidden [&_svg]:size-3">
+          <span className="bst:flex bst:shrink-0 bst:items-center bst:gap-0.5 bst:text-muted-foreground bst:group-hover:hidden bst:[&_svg]:size-3">
             {node.hidden ? <EyeOff aria-hidden="true" /> : null}
             {node.locked ? <Lock aria-hidden="true" /> : null}
           </span>
@@ -349,7 +359,7 @@ function IconToggle({
         event.stopPropagation();
         onClick();
       }}
-      className="text-muted-foreground hover:text-foreground hover:bg-accent flex size-6 items-center justify-center rounded [&_svg]:size-3.5"
+      className="bst:flex bst:size-6 bst:items-center bst:justify-center bst:rounded bst:text-muted-foreground bst:hover:bg-accent bst:hover:text-foreground bst:[&_svg]:size-3.5"
     >
       {children}
     </button>

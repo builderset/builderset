@@ -25,11 +25,11 @@ import { usePortalContainer } from './portal';
 
 /** The floating surface, shared by all three. */
 const panelClass = cn(
-  'z-50 rounded-card border border-border bg-popover text-popover-foreground shadow-pop',
+  'bst:z-50 bst:rounded-card bst:border bst:border-border bst:bg-popover bst:text-popover-foreground bst:shadow-pop',
   // Direction-aware, so a menu that had to flip above its trigger animates from
   // below rather than sliding the wrong way out of it.
-  'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
-  'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
+  'bst:data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+  'bst:data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
 );
 
 // ── Popover ──────────────────────────────────────────────────────────────────
@@ -53,7 +53,7 @@ export function PopoverContent({
         // phone is the difference between a readable panel and one with its
         // right-hand column cut off.
         collisionPadding={8}
-        className={cn(panelClass, 'w-72 p-4 outline-none', className)}
+        className={cn(panelClass, 'bst:w-72 bst:p-4 bst:outline-none', className)}
         {...props}
       />
     </PopoverPrimitive.Portal>
@@ -80,11 +80,11 @@ export function DropdownMenuContent({
         collisionPadding={8}
         className={cn(
           panelClass,
-          'min-w-44 overflow-hidden p-1',
+          'bst:min-w-44 bst:overflow-hidden bst:p-1',
           // The menu is a scroller when it is taller than the space it has;
           // without this it simply overflows the viewport and the last items
           // are unreachable.
-          'max-h-(--radix-dropdown-menu-content-available-height) overflow-y-auto',
+          'bst:max-h-(--radix-dropdown-menu-content-available-height) bst:overflow-y-auto',
           className,
         )}
         {...props}
@@ -105,14 +105,14 @@ export function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-destructive={destructive ? true : undefined}
       className={cn(
-        'rounded-control relative flex cursor-pointer items-center gap-2',
-        'px-2.5 py-1.5 text-sm outline-none select-none',
+        'bst:relative bst:flex bst:cursor-pointer bst:items-center bst:gap-2 bst:rounded-control',
+        'bst:px-2.5 bst:py-1.5 bst:text-sm bst:outline-none bst:select-none',
         // `highlighted` covers pointer and keyboard together, so arrowing
         // through a menu looks the same as hovering it.
-        'data-highlighted:bg-accent data-highlighted:text-accent-foreground',
-        'data-[destructive=true]:text-destructive data-[destructive=true]:data-highlighted:bg-destructive/10',
-        'data-disabled:text-muted-foreground data-disabled:pointer-events-none',
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        'bst:data-highlighted:bg-accent bst:data-highlighted:text-accent-foreground',
+        'bst:data-[destructive=true]:text-destructive bst:data-[destructive=true]:data-highlighted:bg-destructive/10',
+        'bst:data-disabled:pointer-events-none bst:data-disabled:text-muted-foreground',
+        "bst:[&_svg]:pointer-events-none bst:[&_svg]:shrink-0 bst:[&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -126,7 +126,10 @@ export function DropdownMenuLabel({
 }: ComponentProps<typeof DropdownMenuPrimitive.Label>) {
   return (
     <DropdownMenuPrimitive.Label
-      className={cn('text-muted-foreground px-2.5 py-1.5 text-xs font-semibold', className)}
+      className={cn(
+        'bst:px-2.5 bst:py-1.5 bst:text-xs bst:font-semibold bst:text-muted-foreground',
+        className,
+      )}
       {...props}
     />
   );
@@ -138,7 +141,7 @@ export function DropdownMenuSeparator({
 }: ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
   return (
     <DropdownMenuPrimitive.Separator
-      className={cn('bg-border -mx-1 my-1 h-px', className)}
+      className={cn('bst:-mx-1 bst:my-1 bst:h-px bst:bg-border', className)}
       {...props}
     />
   );
@@ -220,7 +223,7 @@ export function Tooltip({ content, children, side = 'top' }: TooltipProps) {
           collisionPadding={8}
           className={cn(
             panelClass,
-            'bg-foreground text-background max-w-64 px-2.5 py-1.5 text-xs font-medium',
+            'bst:max-w-64 bst:bg-foreground bst:px-2.5 bst:py-1.5 bst:text-xs bst:font-medium bst:text-background',
           )}
         >
           {content}

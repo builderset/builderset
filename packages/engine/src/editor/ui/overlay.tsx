@@ -43,9 +43,9 @@ function Backdrop({ className, ...props }: ComponentProps<typeof DialogPrimitive
   return (
     <DialogPrimitive.Overlay
       className={cn(
-        'fixed inset-0 z-50 bg-(--bst-scrim) backdrop-blur-sm',
-        'data-[state=open]:animate-[bst-fade-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
-        'data-[state=closed]:animate-[bst-fade-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
+        'bst:fixed bst:inset-0 bst:z-50 bst:bg-(--bst-scrim) bst:backdrop-blur-sm',
+        'bst:data-[state=open]:animate-[bst-fade-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+        'bst:data-[state=closed]:animate-[bst-fade-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
         className,
       )}
       {...props}
@@ -104,13 +104,13 @@ function CloseButton({ label }: { label: string }) {
     <DialogPrimitive.Close
       aria-label={label}
       className={cn(
-        'bld-focus rounded-control absolute top-3 right-3 z-10 p-1.5',
-        'text-muted-foreground transition-colors duration-(--bst-dur-1)',
-        'hover:bg-accent hover:text-foreground',
+        'bld-focus bst:absolute bst:top-3 bst:right-3 bst:z-10 bst:rounded-control bst:p-1.5',
+        'bst:text-muted-foreground bst:transition-colors bst:duration-(--bst-dur-1)',
+        'bst:hover:bg-accent bst:hover:text-foreground',
         ICON_MOTION,
       )}
     >
-      <X className="size-4" aria-hidden="true" />
+      <X className="bst:size-4" aria-hidden="true" />
     </DialogPrimitive.Close>
   );
 }
@@ -135,21 +135,21 @@ export function DialogPanel({
         tabIndex={-1}
         {...focus}
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 flex w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2',
+          'bst:fixed bst:top-1/2 bst:left-1/2 bst:z-50 bst:flex bst:w-[calc(100vw-2rem)] bst:max-w-md bst:-translate-x-1/2 bst:-translate-y-1/2',
           // No elevation. The scrim is a near-black in BOTH themes now, so the
           // panel is already the only lit thing on screen — a drop shadow on top
           // of that is separating it from something that has nothing left to be
           // separated from, and in dark mode an outward bloom on a dark panel
           // over a dark scrim just smudges its edge.
-          'bg-background rounded-card flex-col outline-none',
+          'bst:flex-col bst:rounded-card bst:bg-background bst:outline-none',
           // The panel is capped at the viewport and its BODY scrolls, not the
           // page behind it — otherwise a tall dialog on a short window puts its
           // footer somewhere unreachable.
-          'max-h-[calc(100dvh-2rem)]',
-          pad === 'md' && 'p-6',
-          pad === 'lg' && 'p-8',
-          'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
-          'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
+          'bst:max-h-[calc(100dvh-2rem)]',
+          pad === 'md' && 'bst:p-6',
+          pad === 'lg' && 'bst:p-8',
+          'bst:data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+          'bst:data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
           className,
         )}
         {...props}
@@ -198,24 +198,24 @@ export function DrawerPanel({
         {...focus}
         className={cn(
           // Flat, for the same reason the dialog is — see `DialogPanel`.
-          'bg-card fixed z-50 flex flex-col outline-none',
+          'bst:fixed bst:z-50 bst:flex bst:flex-col bst:bg-card bst:outline-none',
           side === 'right'
             ? cn(
                 // Below `sm` it is a bottom sheet whichever side was asked for:
                 // a panel inset from the right on a 360px screen leaves a
                 // 40px strip of page nobody can use.
-                'rounded-t-card inset-x-0 bottom-0 max-h-[92dvh]',
-                'sm:inset-y-4 sm:right-4 sm:left-auto sm:max-h-none sm:w-[min(35rem,calc(100vw-2rem))]',
-                'sm:rounded-card',
-                'data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
-                'data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
-                'sm:data-[state=open]:animate-[bst-slide-in-right_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
-                'sm:data-[state=closed]:animate-[bst-slide-out-right_var(--bst-dur-3)_var(--bst-ease-exit)]',
+                'bst:inset-x-0 bst:bottom-0 bst:max-h-[92dvh] bst:rounded-t-card',
+                'bst:sm:inset-y-4 bst:sm:right-4 bst:sm:left-auto bst:sm:max-h-none bst:sm:w-[min(35rem,calc(100vw-2rem))]',
+                'bst:sm:rounded-card',
+                'bst:data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'bst:data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
+                'bst:sm:data-[state=open]:animate-[bst-slide-in-right_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'bst:sm:data-[state=closed]:animate-[bst-slide-out-right_var(--bst-dur-3)_var(--bst-ease-exit)]',
               )
             : cn(
-                'rounded-t-card inset-x-0 bottom-0 max-h-[92dvh]',
-                'data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
-                'data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
+                'bst:inset-x-0 bst:bottom-0 bst:max-h-[92dvh] bst:rounded-t-card',
+                'bst:data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'bst:data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
               ),
           className,
         )}
@@ -236,7 +236,10 @@ export function OverlayHeader({ className, ...props }: ComponentProps<'header'>)
   return (
     <header
       data-slot="overlay-header"
-      className={cn('flex shrink-0 flex-col px-5 py-4 text-left', className)}
+      className={cn(
+        'bst:flex bst:shrink-0 bst:flex-col bst:px-5 bst:py-4 bst:text-left',
+        className,
+      )}
       {...props}
     />
   );
@@ -253,7 +256,7 @@ export function OverlayTitle({
         // panel's corner. On the TITLE rather than on the band, because the band
         // is what has to reach the edges — a title sliding under an ✕ is a
         // collision, not a margin.
-        'text-foreground pr-8 text-base leading-tight font-semibold tracking-tight',
+        'bst:pr-8 bst:text-base bst:leading-tight bst:font-semibold bst:tracking-tight bst:text-foreground',
         className,
       )}
       {...props}
@@ -267,7 +270,10 @@ export function OverlayDescription({
 }: ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description
-      className={cn('text-muted-foreground mt-1 pr-8 text-sm leading-snug', className)}
+      className={cn(
+        'bst:mt-1 bst:pr-8 bst:text-sm bst:leading-snug bst:text-muted-foreground',
+        className,
+      )}
       {...props}
     />
   );
@@ -278,7 +284,7 @@ export function OverlayBody({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="overlay-body"
-      className={cn('min-h-0 flex-1 overflow-y-auto px-5 py-4', className)}
+      className={cn('bst:min-h-0 bst:flex-1 bst:overflow-y-auto bst:px-5 bst:py-4', className)}
       {...props}
     />
   );
@@ -296,7 +302,7 @@ export function OverlayFooter({ className, ...props }: ComponentProps<'footer'>)
   return (
     <footer
       data-slot="overlay-footer"
-      className={cn('mt-auto flex shrink-0 items-stretch', className)}
+      className={cn('bst:mt-auto bst:flex bst:shrink-0 bst:items-stretch', className)}
       {...props}
     />
   );
@@ -304,4 +310,4 @@ export function OverlayFooter({ className, ...props }: ComponentProps<'footer'>)
 
 /** Every button in the action bar: full height, one column, square corners. */
 export const barButtonClass =
-  'h-12 flex-1 gap-2 rounded-none border-0 text-sm font-semibold focus-visible:outline-offset-[-2px]';
+  'bst:h-12 bst:flex-1 bst:gap-2 bst:rounded-none bst:border-0 bst:text-sm bst:font-semibold bst:focus-visible:outline-offset-[-2px]';

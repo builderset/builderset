@@ -71,13 +71,13 @@ export function MediaField({
     kind === 'video' ? Video : kind === 'audio' ? Music : kind === 'file' ? FileText : ImageUp;
 
   return (
-    <div className="space-y-2">
+    <div className="bst:space-y-2">
       <input
         ref={input}
         id={id}
         type="file"
         accept={ACCEPT[kind]}
-        className="sr-only"
+        className="bst:sr-only"
         tabIndex={-1}
         onChange={(event) => {
           const file = event.target.files?.[0];
@@ -86,20 +86,20 @@ export function MediaField({
         }}
       />
       {value ? (
-        <div className="border-border bg-muted/30 rounded-control overflow-hidden border">
+        <div className="bst:overflow-hidden bst:rounded-control bst:border bst:border-border bst:bg-muted/30">
           {kind === 'image' && url ? (
-            <img src={url} alt="" className="aspect-video w-full object-cover" />
+            <img src={url} alt="" className="bst:aspect-video bst:w-full bst:object-cover" />
           ) : (
-            <div className="flex items-center gap-2 px-3 py-3 text-sm">
-              <Icon className="text-muted-foreground size-4" aria-hidden="true" />
-              <span className="truncate">{value.name ?? value.key.split('/').pop()}</span>
+            <div className="bst:flex bst:items-center bst:gap-2 bst:px-3 bst:py-3 bst:text-sm">
+              <Icon className="bst:size-4 bst:text-muted-foreground" aria-hidden="true" />
+              <span className="bst:truncate">{value.name ?? value.key.split('/').pop()}</span>
             </div>
           )}
         </div>
       ) : null}
       {progress !== null ? (
-        <div className="flex items-center gap-2">
-          <Progress value={Math.round(progress * 100)} className="flex-1" />
+        <div className="bst:flex bst:items-center bst:gap-2">
+          <Progress value={Math.round(progress * 100)} className="bst:flex-1" />
           <Button
             type="button"
             variant="ghost"
@@ -111,12 +111,12 @@ export function MediaField({
           </Button>
         </div>
       ) : (
-        <div className="flex gap-2">
+        <div className="bst:flex bst:gap-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="flex-1"
+            className="bst:flex-1"
             icon={value ? <RefreshCw aria-hidden="true" /> : <Icon aria-hidden="true" />}
             onClick={() => input.current?.click()}
           >
@@ -137,7 +137,7 @@ export function MediaField({
           ) : null}
         </div>
       )}
-      {error ? <p className="text-destructive text-xs">{error}</p> : null}
+      {error ? <p className="bst:text-xs bst:text-destructive">{error}</p> : null}
     </div>
   );
 }

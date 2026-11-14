@@ -24,9 +24,9 @@ export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrim
     <TabsPrimitive.List
       data-slot="tabs-list"
       className={cn(
-        'border-border flex items-center gap-1 overflow-x-auto border-b',
+        'bst:flex bst:items-center bst:gap-1 bst:overflow-x-auto bst:border-b bst:border-border',
         // The scrollbar under a 40px tab strip is most of the strip.
-        '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'bst:[scrollbar-width:none] bst:[&::-webkit-scrollbar]:hidden',
         className,
       )}
       {...props}
@@ -39,17 +39,17 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        'bld-focus relative shrink-0 cursor-pointer whitespace-nowrap',
-        'text-muted-foreground px-3 py-2 text-sm font-medium',
-        'hover:text-foreground transition-colors duration-(--bst-dur-1)',
-        'data-[state=active]:text-foreground',
+        'bld-focus bst:relative bst:shrink-0 bst:cursor-pointer bst:whitespace-nowrap',
+        'bst:px-3 bst:py-2 bst:text-sm bst:font-medium bst:text-muted-foreground',
+        'bst:transition-colors bst:duration-(--bst-dur-1) bst:hover:text-foreground',
+        'bst:data-[state=active]:text-foreground',
         // The indicator is a pseudo-element on the trigger rather than a
         // measured, animated bar: a bar positioned in JavaScript is one resize
         // away from pointing at the wrong tab, and this cannot be.
-        'after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full',
-        'after:bg-primary after:scale-x-0 after:transition-transform after:duration-(--bst-dur-2)',
-        'after:content-[""] data-[state=active]:after:scale-x-100',
-        'disabled:cursor-not-allowed',
+        'bst:after:absolute bst:after:inset-x-0 bst:after:-bottom-px bst:after:h-0.5 bst:after:rounded-full',
+        'bst:after:scale-x-0 bst:after:bg-primary bst:after:transition-transform bst:after:duration-(--bst-dur-2)',
+        'bst:after:content-[""] bst:data-[state=active]:after:scale-x-100',
+        'bst:disabled:cursor-not-allowed',
         className,
       )}
       {...props}
@@ -62,8 +62,8 @@ export function TabsContent({ className, ...props }: ComponentProps<typeof TabsP
     <TabsPrimitive.Content
       data-slot="tabs-content"
       className={cn(
-        'bld-focus mt-4 outline-none',
-        'data-[state=active]:animate-[bst-fade-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+        'bld-focus bst:mt-4 bst:outline-none',
+        'bst:data-[state=active]:animate-[bst-fade-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
         className,
       )}
       {...props}

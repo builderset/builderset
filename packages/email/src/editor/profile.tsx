@@ -52,11 +52,11 @@ export interface EmailProfileOptions {
 /** A row's column diagram, for the Structures tiles. */
 function ColumnsIcon({ widths }: { widths: readonly number[] }) {
   return (
-    <span className="flex h-6 w-16 gap-0.5" aria-hidden="true">
+    <span className="bst:flex bst:h-6 bst:w-16 bst:gap-0.5" aria-hidden="true">
       {widths.map((width, index) => (
         <span
           key={index}
-          className="bg-muted-foreground/35 group-hover:bg-primary/60 rounded-[2px] transition-colors"
+          className="bst:rounded-[2px] bst:bg-muted-foreground/35 bst:transition-colors bst:group-hover:bg-primary/60"
           style={{ flex: `${String(width)} 1 0` }}
         />
       ))}

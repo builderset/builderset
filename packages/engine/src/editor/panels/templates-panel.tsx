@@ -70,10 +70,10 @@ export function TemplatesPanel() {
   };
 
   return (
-    <div className="h-full space-y-6 overflow-y-auto p-3">
+    <div className="bst:h-full bst:space-y-6 bst:overflow-y-auto bst:p-3">
       {templates.length ? (
-        <section className="space-y-2">
-          <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
+        <section className="bst:space-y-2">
+          <h3 className="bst:px-1 bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
             {messages.templates}
           </h3>
           {templates.map((template) => (
@@ -83,31 +83,31 @@ export function TemplatesPanel() {
               onClick={() => {
                 insert(templateFragment(registry, template), template.name.en ?? template.id);
               }}
-              className="border-border bg-card hover:border-primary/50 rounded-control flex w-full items-center gap-3 border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
+              className="bst:flex bst:w-full bst:items-center bst:gap-3 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-3 bst:py-2.5 bst:text-left bst:transition-[colors,transform] bst:hover:border-primary/50 bst:active:scale-[0.98]"
             >
               <LayoutTemplate
-                className="text-muted-foreground size-4 shrink-0"
+                className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
                 aria-hidden="true"
               />
-              <span className="min-w-0 flex-1 truncate text-sm font-medium">
+              <span className="bst:min-w-0 bst:flex-1 bst:truncate bst:text-sm bst:font-medium">
                 {template.name[locale] ??
                   template.name[locale.split('-')[0] ?? ''] ??
                   template.name.en}
               </span>
-              <Plus className="text-muted-foreground size-4" aria-hidden="true" />
+              <Plus className="bst:size-4 bst:text-muted-foreground" aria-hidden="true" />
             </button>
           ))}
         </section>
       ) : null}
 
       {host.loadSections ? (
-        <section className="space-y-2">
-          <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
+        <section className="bst:space-y-2">
+          <h3 className="bst:px-1 bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
             {messages.savedSections}
           </h3>
           {host.saveSection ? (
             <form
-              className="flex gap-2"
+              className="bst:flex bst:gap-2"
               onSubmit={(event) => {
                 event.preventDefault();
                 void saveSection();
@@ -136,7 +136,7 @@ export function TemplatesPanel() {
             </form>
           ) : null}
           {sections === null ? (
-            <div className="flex justify-center py-4">
+            <div className="bst:flex bst:justify-center bst:py-4">
               <Spinner />
             </div>
           ) : sections.length === 0 ? (
@@ -153,13 +153,15 @@ export function TemplatesPanel() {
                 onClick={() => {
                   insert(reidFragment(section.fragment), section.name);
                 }}
-                className="border-border bg-card hover:border-primary/50 rounded-control flex w-full items-center gap-3 border px-3 py-2.5 text-left transition-colors"
+                className="bst:flex bst:w-full bst:items-center bst:gap-3 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-3 bst:py-2.5 bst:text-left bst:transition-colors bst:hover:border-primary/50"
               >
                 <BookmarkPlus
-                  className="text-muted-foreground size-4 shrink-0"
+                  className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
                   aria-hidden="true"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm">{section.name}</span>
+                <span className="bst:min-w-0 bst:flex-1 bst:truncate bst:text-sm">
+                  {section.name}
+                </span>
               </button>
             ))
           )}

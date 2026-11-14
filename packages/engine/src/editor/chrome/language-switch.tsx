@@ -38,7 +38,11 @@ export function LanguageSwitch({
       }}
       options={locales.map((locale) => ({
         value: locale,
-        label: <span className="px-0.5 text-[11px] font-semibold">{locale.toUpperCase()}</span>,
+        label: (
+          <span className="bst:px-0.5 bst:text-[11px] bst:font-semibold">
+            {locale.toUpperCase()}
+          </span>
+        ),
         ariaLabel: languageName(locale, messages.languages),
       }))}
       {...(className ? { className } : {})}

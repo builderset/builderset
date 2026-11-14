@@ -52,13 +52,15 @@
     },
     "./schema.json": "./schema/email.schema.json",
     "./fixtures/*": "./fixtures/*",
+    "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && node ../../tooling/finish-css.mjs dist/styles.css",
     "dev": "tsdown --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",

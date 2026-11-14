@@ -175,12 +175,12 @@ In the Next example: one page imports `EmailEditor` from `builderset/email/edito
 
 ## Done when
 
-- [ ] `packages/builderset` builds; every door of every kit is re-exported.
-- [ ] The re-export files are generated, and a test fails when they are stale.
-- [ ] Client doors start with `'use client'` and use named exports.
-- [ ] `import 'builderset'` fails; every sub-path imports.
-- [ ] `builderset/styles.css` contains each rule once and is smaller than the kit stylesheets added together.
-- [ ] `publint` and `attw` pass.
+- [x] `packages/builderset` builds; every door of every kit is re-exported.
+- [x] The re-export files are generated, and a test fails when they are stale.
+- [x] Client doors start with `'use client'` and use named exports.
+- [x] `import 'builderset'` fails; every sub-path imports.
+- [x] `builderset/styles.css` contains each rule once and is smaller than the kit stylesheets added together.
+- [x] `publint` and `attw` pass.
 - [ ] The Next example builds with imports from `builderset/…`.
 
 ## Traps
@@ -189,3 +189,19 @@ In the Next example: one page imports `EmailEditor` from `builderset/email/edito
 - **A type-only export re-exported as a value.** With `verbatimModuleSyntax` it is a build error; without it, a run-time "does not provide an export named". Generate `export type` for types.
 - **Two engines.** If `builderset` and a separately installed `@builderset/email` are at different versions, the project has two engines. Each editor still works, since an editor uses only its own engine, but the bundle doubles. The engine records its version on `globalThis` when it loads and logs one warning in development if a second, different version loads.
 - **Offering both and explaining neither.** The README of every kit must say "also available inside `builderset`", and the README of `builderset` must say each kit installs alone. Otherwise people install both.
+
+## How it was done (2026-11-14)
+
+On the branch `feat/11-all-in-one`, stacked on step 10's and the nested-list fix. Where the work differed from the parts above:
+
+| Part | What the plan said                                         | What was done                                                                                                                                                                                                                                                                                    | Why                                                                                                                                                                             |
+| ---- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1, 2 | `scripts/generate.mjs` writes the re-exports               | As planned: 21 files, from the kits' built type files, one TypeScript program for all of them (1.6 s), formatted with Prettier so a formatted file is not "stale". `--check` and `src/package.test.ts` fail on a stale or hand-edited file — seen to fail when one name was removed by hand      | —                                                                                                                                                                               |
+| 3    | One merged locale per language, `{ ...email, ...article }` | Each kit's languages under its own path: `builderset/email/locales/sq`, `builderset/article/locales/sq`, `builderset/engine/locales/sq`                                                                                                                                                          | Both kits' locale objects have the same keys with different words (the email editor says "Activate", the article editor "Publish"); a spread gives one editor the other's words |
+| 4    | `builderset/styles.css`                                    | 136.7 KB, against 228.7 KB for the email and article stylesheets together; each rule once (one keyframe step is shared by two animations)                                                                                                                                                        | —                                                                                                                                                                               |
+| 4    | Re-export `content.css`                                    | Copied as `builderset/article/content.css`, with the shadcn bridges as `builderset/theme/shadcn.css` and `shadcn-hsl.css`                                                                                                                                                                        | —                                                                                                                                                                               |
+| 5    | The manifest                                               | As planned, without a `"."` entry; the build runs the generator, tsdown, the stylesheet and the copies in one script (pnpm runs no `prebuild`)                                                                                                                                                   | —                                                                                                                                                                               |
+| —    | Trap: two engines                                          | `ENGINE_VERSION` in the engine's core, written from `package.json` at build (tsdown `define`, and Vitest's for its tests). Each editor records it on `globalThis` when it mounts — not at import, which the packages never do — and a second, different version gets one warning, in development | —                                                                                                                                                                               |
+| 7    | The README                                                 | As planned; every kit's README says it is also inside `builderset`, and to install one or the other                                                                                                                                                                                              | —                                                                                                                                                                               |
+
+**Checks.** `packages/builderset` builds; `check:packages` (publint, attw, check-dist) passes for it; all 21 doors import in plain Node, the client doors included; `import('builderset')` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. The Next example is step 12's, so the last box waits for it.

@@ -118,6 +118,13 @@ export {
 } from './style';
 export { countWords, plainText, readingMinutes } from './text-stats';
 export {
+  themeVariables,
+  TOKEN_NAMES,
+  type ThemeMode,
+  type ThemeTokens,
+  type TokenName,
+} from './theme';
+export {
   ancestors,
   contains,
   depthOf,

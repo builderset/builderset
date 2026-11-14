@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementRegistry } from '@builderset/engine';
+import type { ElementRegistry, ThemeMode, ThemeTokens } from '@builderset/engine';
 import {
   BuilderEditor,
   resolveMessages,
@@ -65,6 +65,12 @@ export interface ArticleEditorProps {
   siteUrl?: string | undefined;
   /** A project's own fields in Document settings, each in its tab and place. */
   settingsSections?: readonly SettingsSection[] | undefined;
+  /** 'light' (the default), 'dark', or 'auto' to follow the page. Menus and dialogs follow it too. */
+  theme?: ThemeMode | undefined;
+  /** Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`. */
+  tokens?: ThemeTokens | undefined;
+  /** Applied to the editor's root element, the one that carries the theme. */
+  className?: string | undefined;
 }
 
 /** The article builder: the shared editor with the article profile. */

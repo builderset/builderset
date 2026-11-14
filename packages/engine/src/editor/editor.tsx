@@ -1,6 +1,13 @@
 'use client';
 
-import type { ElementRegistry, EngineDocument, Issue } from '../core';
+import {
+  themeVariables,
+  type ElementRegistry,
+  type EngineDocument,
+  type Issue,
+  type ThemeMode,
+  type ThemeTokens,
+} from '../core';
 import {
   Button,
   ConfirmDialog,
@@ -103,6 +110,20 @@ export interface BuilderEditorProps<
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
+  /**
+   * 'light' (the default), 'dark', or 'auto' to follow the page: an ancestor
+   * marked `dark` or `light` (a class, or `data-theme`), else the operating
+   * system. Menus and dialogs follow it too.
+   */
+  theme?: ThemeMode | undefined;
+  /**
+   * Theme values from JavaScript, by the public variables' names without their
+   * prefix: `{ primary: '#da6c1e' }` sets `--builderset-primary`. CSS on the page
+   * can set the same variables instead.
+   */
+  tokens?: ThemeTokens | undefined;
+  /** Applied to the editor's root element, the one that carries the theme. */
+  className?: string | undefined;
 }
 
 const AUTOSAVE_MS = 2000;
@@ -217,14 +238,23 @@ export function BuilderEditor<
     ],
   );
 
+  // The root carries the theme: its class scopes the stylesheet, its attribute
+  // picks the scheme, its style holds the tokens. The portal container is
+  // inside it, so menus and dialogs inherit all three.
   return (
-    <EditorProvider value={value}>
-      <PortalProvider>
-        <TooltipProvider>
-          <Workspace {...props} store={store} messages={messages} />
-        </TooltipProvider>
-      </PortalProvider>
-    </EditorProvider>
+    <div
+      className={cn('builderset', props.className)}
+      data-builderset-theme={props.theme ?? 'light'}
+      style={themeVariables(props.tokens)}
+    >
+      <EditorProvider value={value}>
+        <PortalProvider>
+          <TooltipProvider>
+            <Workspace {...props} store={store} messages={messages} />
+          </TooltipProvider>
+        </PortalProvider>
+      </EditorProvider>
+    </div>
   );
 }
 

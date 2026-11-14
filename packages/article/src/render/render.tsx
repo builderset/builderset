@@ -1,4 +1,10 @@
-import { localize, walk, type ElementRegistry, type RichText } from '@builderset/engine';
+import {
+  localize,
+  walk,
+  type ElementRegistry,
+  type RichText,
+  type ThemeMode,
+} from '@builderset/engine';
 import type { ArticleDocument } from '../core/document';
 import { outline as buildOutline } from '../core/outline';
 import { Fragment, type ReactNode } from 'react';
@@ -64,6 +70,7 @@ import {
   TableView,
   TakeawaysView,
 } from './elements/text';
+import { cn } from './cn';
 import { messagesFor } from './messages';
 import { styleClasses, styleInline } from './node-style';
 import { RichTextView } from './rich-text';
@@ -285,16 +292,33 @@ export interface ArticleRendererProps extends RenderOptions {
    * type is missing here, or whose props do not pass its schema, is left out.
    */
   registry: ElementRegistry;
-  /** Applied to the wrapping `<div>`. */
+  /** Applied to the wrapping `<div>`, beside `builderset builderset-content`. */
   className?: string | undefined;
+  /**
+   * 'auto' (the default) follows the site: an ancestor marked `dark` or
+   * `light` (a class, or `data-theme`), else the operating system. 'light'
+   * and 'dark' pin it.
+   */
+  theme?: ThemeMode | undefined;
 }
 
-/** `renderDocument` as a component, in an `<article>`. */
+/**
+ * `renderDocument` as a component. Its root carries the stylesheet's scope
+ * (`@builderset/article/content.css`) and the theme.
+ */
 export function ArticleRenderer({
   document,
   registry,
   className,
+  theme,
   ...options
 }: ArticleRendererProps) {
-  return <div className={className}>{renderDocument(document, registry, options)}</div>;
+  return (
+    <div
+      className={cn('builderset builderset-content', className)}
+      data-builderset-theme={theme ?? 'auto'}
+    >
+      {renderDocument(document, registry, options)}
+    </div>
+  );
 }

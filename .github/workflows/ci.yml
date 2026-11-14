@@ -83,3 +83,7 @@ jobs:
       - name: Server entries only
         if: matrix.node == 20
         run: pnpm --filter "./packages/*" exec vitest run --project node
+      # The email renderer in a plain Node script, against the golden files.
+      - name: examples/node-render
+        if: matrix.node == 20
+        run: pnpm --filter example-node-render test

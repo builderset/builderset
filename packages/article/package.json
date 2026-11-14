@@ -1,7 +1,6 @@
 {
   "name": "@builderset/article",
   "version": "0.0.0",
-  "private": true,
   "description": "Article builder: a block editor, a typed document, and semantic, server-rendered React for the web.",
   "license": "MIT",
   "keywords": [
@@ -109,6 +108,6 @@
     "vitest": "4.1.11"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   }
 }

@@ -1,0 +1,64 @@
+name: Release
+
+# Publishes to GitHub Packages (decision D3), with the workflow's own token.
+#   staging     a pre-release of the waiting changesets, under the `alpha` tag
+#   production  a "Version packages" pull request; merging it publishes
+on:
+  push:
+    branches: [staging, production]
+
+concurrency: release-${{ github.ref }}
+
+permissions:
+  contents: write # the version commit and the tags
+  pull-requests: write # the "Version packages" pull request
+  packages: write # GitHub Packages
+
+jobs:
+  release:
+    # GitHub Packages names a package after the repository's owner, so only the
+    # builderset organisation can publish @builderset/*.
+    if: github.repository_owner == 'builderset'
+    runs-on: ubuntu-latest
+    environment: packages
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@builderset'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm check:packages
+
+      # A snapshot: versions like 0.1.0-alpha.20261115093000, written in this
+      # run only and never committed. Nothing is published when no changeset
+      # is waiting.
+      - name: Alpha pre-release
+        if: github.ref_name == 'staging'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pnpm changeset version --snapshot alpha
+          if git diff --quiet -- 'packages/*/package.json'; then
+            echo "No changeset is waiting: nothing to publish."
+          else
+            pnpm changeset publish --tag alpha --no-git-tag
+          fi
+
+      - name: Release
+        if: github.ref_name == 'production'
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm changeset publish
+          commit: 'chore: version packages'
+          title: 'Version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

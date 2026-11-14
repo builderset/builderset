@@ -125,8 +125,8 @@ Tick a step when every box in its **Done when** list is ticked.
 - [ ] 08 The new repository — done but for CI on Node 20, 22 and 24 seen green (the repository's settings follow the transfer to `xhiti`)
 - [ ] 09 Build and package shape — done but for CI seen green
 - [x] 10 Styles and theming
-- [ ] 11 The all-in-one package — done but for the Next example, which step 12 makes
-- [ ] 12 Example apps and the test matrix
+- [x] 11 The all-in-one package
+- [ ] 12 Example apps and the test matrix — done but for what runs only in CI: Firefox and WebKit, `node-render` on Node 20 and 22, and the `examples` job itself
 - [ ] 13 Publishing and releases
 - [ ] **M2 — installable**
 - [ ] 14 Adopt the packages in MotorsAL

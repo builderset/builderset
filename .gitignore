@@ -21,3 +21,12 @@ coverage/
 .DS_Store
 Thumbs.db
 .tarballs/
+
+# Playwright, in the examples
+test-results/
+playwright-report/
+
+# Next.js, in the examples
+.next/
+next-env.d.ts
+.data/

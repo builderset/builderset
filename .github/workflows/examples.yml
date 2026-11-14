@@ -1,0 +1,47 @@
+name: Examples
+
+# The examples, installed from a local registry outside the workspace and
+# tested in three browsers (docs/plan/steps/12). The slow job: it runs when the
+# packages, the examples or the tooling change, and on every push to the
+# release branches.
+on:
+  pull_request:
+    paths:
+      [
+        'packages/**',
+        'examples/**',
+        'tooling/**',
+        'pnpm-lock.yaml',
+        '.github/workflows/examples.yml',
+      ]
+  push:
+    branches: [development, staging, production]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: examples-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  examples:
+    name: Examples from a registry, in three browsers
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Playwright's browsers
+        run: pnpm --filter example-vite-react exec playwright install --with-deps chromium firefox webkit
+      - run: pnpm test:examples
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: examples/*/playwright-report

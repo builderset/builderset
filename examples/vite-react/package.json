@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "@builderset/article": "workspace:*",
@@ -15,9 +16,14 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "@types/node": "26.2.0",
+    "@types/pngjs": "6.0.5",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "6.0.5",
+    "pixelmatch": "7.1.0",
+    "pngjs": "7.0.0",
     "typescript": "6.0.3",
     "vite": "8.2.1"
   }

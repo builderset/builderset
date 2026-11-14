@@ -29,6 +29,20 @@ function show(document: ArticleDocument, extra: Record<string, unknown> = {}) {
   );
 }
 
+describe('the root', () => {
+  it("carries content.css's scope, and follows the site unless told otherwise", () => {
+    const { container } = show(createArticleDocument({ title: 'T' }));
+    const root = container.firstElementChild;
+    expect(root).toHaveClass('builderset', 'builderset-content');
+    expect(root).toHaveAttribute('data-builderset-theme', 'auto');
+  });
+
+  it('pins the theme when asked', () => {
+    const { container } = show(createArticleDocument({ title: 'T' }), { theme: 'dark' });
+    expect(container.firstElementChild).toHaveAttribute('data-builderset-theme', 'dark');
+  });
+});
+
 function withNodes(build: (doc: ArticleDocument) => ArticleDocument): ArticleDocument {
   return build(createArticleDocument({ title: 'T' }));
 }

@@ -1,5 +1,8 @@
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
+
+const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
 
 /**
  * Two environments. Most suites run in a document: the editor's component tests need a document.
@@ -9,6 +12,8 @@ import { defineConfig } from 'vitest/config';
  */
 export default defineConfig({
   plugins: [react()],
+  // As the build does: tsdown.config.ts.
+  define: { __BUILDERSET_ENGINE_VERSION__: JSON.stringify(version) },
   test: {
     globals: false,
     projects: [

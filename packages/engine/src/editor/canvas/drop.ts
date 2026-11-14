@@ -164,6 +164,10 @@ export function setActiveDrag(payload: DragPayload | null): void {
 /**
  * The picture that follows the pointer: a small labelled chip instead of the
  * browser's ghost of the whole block, which for a gallery is half the screen.
+ *
+ * It is drawn on `<body>`, outside the editor, so it sees a `--builderset-*`
+ * value only when the page sets one on its root; the fallbacks are the light
+ * defaults.
  */
 export function setDragChip(data: DataTransfer, label: string): void {
   const chip = document.createElement('div');
@@ -174,9 +178,9 @@ export function setDragChip(data: DataTransfer, label: string): void {
     'left:-100px',
     'padding:6px 12px',
     'border-radius:999px',
-    'font:600 12px/1.2 var(--font-sans, system-ui)',
-    'color:var(--primary-foreground, #fff)',
-    'background:var(--primary, #111)',
+    'font:600 12px/1.2 var(--builderset-font, system-ui, sans-serif)',
+    'color:var(--builderset-primary-foreground, #fff)',
+    'background:var(--builderset-primary, oklch(0.55 0.19 258))',
     'box-shadow:0 8px 24px rgb(0 0 0 / 0.18)',
     'white-space:nowrap',
     'pointer-events:none',

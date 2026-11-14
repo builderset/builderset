@@ -47,16 +47,18 @@ export interface EmailProfileOptions {
   words: EmailWords;
   /** The languages a design may be written in; others block activation. */
   contentLocales?: readonly string[] | undefined;
+  /** Load the fonts from Google Fonts: on the canvas, and to preview the choices. Default: true. */
+  fontPreviews?: boolean | undefined;
 }
 
 /** A row's column diagram, for the Structures tiles. */
 function ColumnsIcon({ widths }: { widths: readonly number[] }) {
   return (
-    <span className="flex h-6 w-16 gap-0.5" aria-hidden="true">
+    <span className="bst:flex bst:h-6 bst:w-16 bst:gap-0.5" aria-hidden="true">
       {widths.map((width, index) => (
         <span
           key={index}
-          className="bg-muted-foreground/35 group-hover:bg-primary/60 rounded-[2px] transition-colors"
+          className="bst:rounded-[2px] bst:bg-muted-foreground/35 bst:transition-colors bst:group-hover:bg-primary/60"
           style={{ flex: `${String(width)} 1 0` }}
         />
       ))}
@@ -124,6 +126,7 @@ export function emailProfile({
   locale,
   words,
   contentLocales,
+  fontPreviews = true,
 }: EmailProfileOptions): EditorProfile<EmailDocument> {
   const socialIcon = socialIconBase ? socialIconUrl(socialIconBase) : undefined;
   const variables = variablesOf(type).map((variable) => ({
@@ -144,6 +147,7 @@ export function emailProfile({
         locale={writing ?? locale}
         mode="preview-raw"
         socialIcon={socialIcon}
+        fontPreviews={fontPreviews}
       />
     ),
     canvasFrame: 'bare',
@@ -166,7 +170,9 @@ export function emailProfile({
       category: font.category,
       web: 'google' in font,
     })),
-    fontsPreviewUrl: googleFontsUrl(Object.keys(EMAIL_FONTS)) ?? undefined,
+    fontsPreviewUrl: fontPreviews
+      ? (googleFontsUrl(Object.keys(EMAIL_FONTS)) ?? undefined)
+      : undefined,
     colorTokens: BRAND_COLORS.map((name) => ({
       value: `brand.${name}`,
       label: name,

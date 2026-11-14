@@ -51,7 +51,7 @@ export function Inspector() {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -6 }}
         transition={{ duration: 0.14 }}
-        className="h-full"
+        className="bst:h-full"
       >
         {selection.length === 0 ? (
           <Settings />
@@ -74,9 +74,9 @@ function Settings() {
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
   const { store, messages } = useEditorContext();
   return (
-    <div className="space-y-3 p-4">
-      <p className="text-sm font-medium">{label}</p>
-      <div className="flex gap-2">
+    <div className="bst:space-y-3 bst:p-4">
+      <p className="bst:text-sm bst:font-medium">{label}</p>
+      <div className="bst:flex bst:gap-2">
         <Button
           type="button"
           variant="outline"
@@ -112,16 +112,16 @@ function NodeInspector({ id }: { id: NodeId }) {
   const schema = propsSchema(registry, node.type);
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-border flex h-11 shrink-0 items-center gap-2 border-b px-3">
-        <span className="bg-primary/10 text-primary flex size-7 shrink-0 items-center justify-center rounded-md">
-          <ElementIcon name={definition?.icon ?? 'box'} className="size-4" />
+    <div className="bst:flex bst:h-full bst:flex-col">
+      <div className="bst:flex bst:h-11 bst:shrink-0 bst:items-center bst:gap-2 bst:border-b bst:border-border bst:px-3">
+        <span className="bst:flex bst:size-7 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-md bst:bg-primary/10 bst:text-primary">
+          <ElementIcon name={definition?.icon ?? 'box'} className="bst:size-4" />
         </span>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">
+        <div className="bst:min-w-0">
+          <p className="bst:truncate bst:text-sm bst:font-semibold">
             {node.name ?? messages.elements[node.type]?.name ?? node.type}
           </p>
-          <p className="text-muted-foreground truncate text-xs">
+          <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
             {messages.elements[node.type]?.description}
           </p>
         </div>
@@ -131,27 +131,30 @@ function NodeInspector({ id }: { id: NodeId }) {
         onValueChange={(value) => {
           store.getState().setRightTab(value as RightTab);
         }}
-        className="flex min-h-0 flex-1 flex-col"
+        className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
       >
         <TabsList
-          className={cn('mx-3 grid shrink-0 gap-0', showStyle ? 'grid-cols-3' : 'grid-cols-2')}
+          className={cn(
+            'bst:mx-3 bst:grid bst:shrink-0 bst:gap-0',
+            showStyle ? 'bst:grid-cols-3' : 'bst:grid-cols-2',
+          )}
         >
-          <TabsTrigger value="content" className="px-2 py-1.5 text-xs">
+          <TabsTrigger value="content" className="bst:px-2 bst:py-1.5 bst:text-xs">
             {messages.content}
           </TabsTrigger>
           {showStyle ? (
-            <TabsTrigger value="style" className="px-2 py-1.5 text-xs">
+            <TabsTrigger value="style" className="bst:px-2 bst:py-1.5 bst:text-xs">
               {messages.style}
             </TabsTrigger>
           ) : null}
-          <TabsTrigger value="advanced" className="px-2 py-1.5 text-xs">
+          <TabsTrigger value="advanced" className="bst:px-2 bst:py-1.5 bst:text-xs">
             {messages.advanced}
           </TabsTrigger>
         </TabsList>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <TabsContent value="content" className="p-4">
+        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+          <TabsContent value="content" className="bst:p-4">
             {schema && Object.keys(schema.properties ?? {}).length ? (
-              <fieldset disabled={!!node.locked} className="disabled:opacity-60">
+              <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
                 <ObjectFields
                   schema={schema}
                   value={node.props}
@@ -177,13 +180,13 @@ function NodeInspector({ id }: { id: NodeId }) {
                 />
               </fieldset>
             ) : (
-              <p className="text-muted-foreground text-sm">—</p>
+              <p className="bst:text-sm bst:text-muted-foreground">—</p>
             )}
           </TabsContent>
-          <TabsContent value="style" className="p-4">
+          <TabsContent value="style" className="bst:p-4">
             <StylePanel id={id} />
           </TabsContent>
-          <TabsContent value="advanced" className="p-4">
+          <TabsContent value="advanced" className="bst:p-4">
             <AdvancedPanel id={id} />
           </TabsContent>
         </div>
@@ -211,9 +214,9 @@ const STYLE_GROUPS: {
 ];
 
 const DEVICE_ICON: Record<Breakpoint, ReactNode> = {
-  desktop: <Monitor className="size-4" aria-hidden="true" />,
-  tablet: <Tablet className="size-4" aria-hidden="true" />,
-  mobile: <Smartphone className="size-4" aria-hidden="true" />,
+  desktop: <Monitor className="bst:size-4" aria-hidden="true" />,
+  tablet: <Tablet className="bst:size-4" aria-hidden="true" />,
+  mobile: <Smartphone className="bst:size-4" aria-hidden="true" />,
 };
 
 function StylePanel({ id }: { id: NodeId }) {
@@ -236,9 +239,9 @@ function StylePanel({ id }: { id: NodeId }) {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="space-y-1.5">
-        <Label className="text-xs font-medium">{messages.breakpoint}</Label>
+    <div className="bst:space-y-5">
+      <div className="bst:space-y-1.5">
+        <Label className="bst:text-xs bst:font-medium">{messages.breakpoint}</Label>
         <SegmentedControl
           aria-label={messages.breakpoint}
           value={viewport}
@@ -250,13 +253,13 @@ function StylePanel({ id }: { id: NodeId }) {
             label: DEVICE_ICON[bp],
             ariaLabel: messages[bp],
           }))}
-          className="w-full [&>*]:flex-1"
+          className="bst:w-full bst:[&>*]:flex-1"
         />
       </div>
 
       {STYLE_GROUPS.map((group) => (
-        <section key={group.title} className="space-y-3">
-          <h4 className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
+        <section key={group.title} className="bst:space-y-3">
+          <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
             {messages[group.title]}
           </h4>
           {group.keys.map((key) => {
@@ -290,8 +293,8 @@ function StylePanel({ id }: { id: NodeId }) {
         </section>
       ))}
 
-      <section className="space-y-3">
-        <h4 className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
+      <section className="bst:space-y-3">
+        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
           {messages.styleKeys.background ?? 'Background'} · {messages.chooseImage}
         </h4>
         <MediaField
@@ -316,13 +319,13 @@ function StylePanel({ id }: { id: NodeId }) {
               if (current)
                 set('backgroundImage', { ...current, overlay: Number(event.target.value) });
             }}
-            className="accent-primary w-full"
+            className="bst:w-full bst:accent-primary"
           />
         ) : null}
       </section>
 
-      <section className="space-y-3">
-        <h4 className="text-muted-foreground text-[11px] font-semibold tracking-wider uppercase">
+      <section className="bst:space-y-3">
+        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
           {messages.visibility}
         </h4>
         <ToggleFlag
@@ -357,12 +360,14 @@ function StyleRow({
 }) {
   const id = useId();
   return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <div className="bst:flex bst:items-center bst:justify-between bst:gap-2">
+        <Label htmlFor={id} className="bst:text-xs bst:font-medium">
           {label}
           {inherited ? (
-            <span className="text-muted-foreground ml-1.5 font-normal">· {inheritedLabel}</span>
+            <span className="bst:ml-1.5 bst:font-normal bst:text-muted-foreground">
+              · {inheritedLabel}
+            </span>
           ) : null}
         </Label>
         {set ? (
@@ -371,13 +376,13 @@ function StyleRow({
             onClick={onReset}
             title={resetLabel}
             aria-label={resetLabel}
-            className="text-muted-foreground hover:text-foreground"
+            className="bst:text-muted-foreground bst:hover:text-foreground"
           >
-            <RotateCcw className="size-3.5" aria-hidden="true" />
+            <RotateCcw className="bst:size-3.5" aria-hidden="true" />
           </button>
         ) : null}
       </div>
-      <div className={cn(inherited && 'opacity-70')}>{children(id)}</div>
+      <div className={cn(inherited && 'bst:opacity-70')}>{children(id)}</div>
     </div>
   );
 }
@@ -400,9 +405,9 @@ function AdvancedPanel({ id }: { id: NodeId }) {
   const turnInto = replaceableTypes(node);
 
   return (
-    <div className="space-y-5">
-      <div className="space-y-1.5">
-        <Label htmlFor={`${id}-name`} className="text-xs font-medium">
+    <div className="bst:space-y-5">
+      <div className="bst:space-y-1.5">
+        <Label htmlFor={`${id}-name`} className="bst:text-xs bst:font-medium">
           {messages.elementName}
         </Label>
         <Input
@@ -418,15 +423,15 @@ function AdvancedPanel({ id }: { id: NodeId }) {
           }}
         />
       </div>
-      <div className="space-y-1.5">
-        <Label htmlFor={`${id}-anchor`} className="text-xs font-medium">
+      <div className="bst:space-y-1.5">
+        <Label htmlFor={`${id}-anchor`} className="bst:text-xs bst:font-medium">
           {messages.anchor}
         </Label>
         <Input
           id={`${id}-anchor`}
           value={anchor}
           aria-invalid={anchorError ? true : undefined}
-          className="font-mono text-xs"
+          className="bst:font-mono bst:text-xs"
           onChange={(event) => {
             setAnchor(event.target.value.toLowerCase());
           }}
@@ -437,13 +442,18 @@ function AdvancedPanel({ id }: { id: NodeId }) {
             }
           }}
         />
-        <p className={cn('text-xs', anchorError ? 'text-destructive' : 'text-muted-foreground')}>
+        <p
+          className={cn(
+            'bst:text-xs',
+            anchorError ? 'bst:text-destructive' : 'bst:text-muted-foreground',
+          )}
+        >
           {messages.anchorHint}
         </p>
       </div>
       {turnInto.length ? (
-        <div className="space-y-1.5">
-          <Label className="text-xs font-medium">{messages.turnInto}</Label>
+        <div className="bst:space-y-1.5">
+          <Label className="bst:text-xs bst:font-medium">{messages.turnInto}</Label>
           <Select
             value=""
             placeholder={messages.elements[node.type]?.name}

@@ -1,0 +1,105 @@
+/*
+ * The side panels are dense: a designer keeps many settings in view at once,
+ * so every control in them is a size smaller than in a form. Scoped to
+ * `.bld-panel` — the canvas keeps the document's own sizes — and written
+ * against the components' `data-slot` markers rather than by forking them.
+ *
+ * Also the width rules: a panel never scrolls sideways. Everything stretches to
+ * the panel's width, and anything too long wraps or truncates.
+ *
+ * After the utilities: `.bld-panel .bst\:text-sm` must beat `.bst\:text-sm`.
+ * A file in the bundle rather than a <style> written at run time, which a
+ * page's Content-Security-Policy would block.
+ */
+.builderset .bld-panel {
+  --bst-field-h: 30px;
+  font-size: 12px;
+  overflow-x: hidden;
+}
+.bld-panel .bst\:overflow-y-auto,
+.bld-panel [data-slot='tabs-content'] {
+  overflow-x: hidden;
+  min-width: 0;
+}
+.bld-panel [data-slot='tabs-content'] {
+  padding: 12px;
+}
+.bld-panel .bst\:space-y-4 > * + * {
+  margin-top: 12px;
+}
+.bld-panel .bst\:text-sm {
+  font-size: 12px;
+  line-height: 1.35;
+}
+.bld-panel .bst\:text-xs {
+  font-size: 11px;
+}
+.bld-panel [data-slot='label'] {
+  font-size: 11px;
+}
+.bld-panel [data-slot='input'],
+.bld-panel [data-slot='select-trigger'],
+.bld-panel [data-slot='textarea'] {
+  font-size: 12px;
+  padding-left: 8px;
+  padding-right: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+.bld-panel [data-slot='textarea'] {
+  min-height: 56px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.bld-panel input[type='number'] {
+  font-size: 12px;
+}
+.bld-panel [data-slot='button'] {
+  height: 28px;
+  font-size: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
+  gap: 6px;
+}
+.bld-panel [data-slot='button'][class~='bst:px-0'] {
+  width: 28px;
+  padding: 0;
+}
+.bld-panel [data-slot='button'] svg {
+  width: 14px;
+  height: 14px;
+}
+.bld-panel [data-slot='segmented-control'] {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 28px;
+}
+.bld-panel [data-slot='segmented-control'] > * {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 4px 6px;
+  font-size: 11px;
+  line-height: 1.15;
+  white-space: normal;
+  text-align: center;
+  min-height: 22px;
+}
+.bld-panel [data-slot='switch'] {
+  transform: scale(0.85);
+  transform-origin: right center;
+}
+.bld-panel label[data-state] {
+  padding: 8px 10px;
+  gap: 10px;
+  border-radius: calc(var(--builderset-radius, 0.625rem) * 0.7);
+}
+.bld-panel [data-slot='tabs-trigger'] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bld-panel fieldset {
+  min-width: 0;
+}

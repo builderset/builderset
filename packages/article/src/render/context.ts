@@ -42,9 +42,19 @@ export interface RelatedItem {
 export interface RenderOptions {
   /** Storage key → URL. */
   resolveMedia: (key: string) => string;
+  /**
+   * The visitor's language. A multi-language article is shown in it, its base
+   * language filling any gaps; numbers are formatted for it (default `'en'`).
+   */
   locale?: string | undefined;
+  /**
+   * The renderer's own words — button labels, the notes heading — replaced
+   * singly or with a language's `render` words. English is built in.
+   */
   messages?: Partial<RenderMessages> | undefined;
+  /** Draws every link — the router's own, such as `next/link`. Default: a plain `<a>`. */
   linkComponent?: ComponentType<LinkProps> | undefined;
+  /** Draws every picture — such as `next/image`. Default: a plain `<img>`, loaded lazily. */
   imageComponent?: ComponentType<ImageProps> | undefined;
   /** The site's own articles for a `related` element in automatic mode. */
   related?: readonly RelatedItem[] | undefined;

@@ -46,11 +46,19 @@ export const DEFAULT_BRAND: BrandKit = {
 };
 
 export interface RenderOptions {
+  /**
+   * The brand kit `brand.*` colours, the logo block and the footer's address
+   * come from. Default: `DEFAULT_BRAND`, a neutral placeholder.
+   */
   brand?: BrandKit | undefined;
   /** The values variables are filled with. */
   data?: Record<string, unknown> | undefined;
   /** Storage key → absolute URL. */
   assetUrl: (key: string) => string;
+  /**
+   * The reader's language: dates and money are formatted for it, and
+   * `renderEmail` shows a multi-language template in it. Default: `'en'`.
+   */
   locale?: string | undefined;
   /**
    * `send`: variables are replaced by their values. `preview-raw`: they stay

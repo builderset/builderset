@@ -14,7 +14,12 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 const PortalContext = createContext<HTMLElement | null>(null);
 
 /** Rendered once by `<BuilderEditor>`. */
-export function PortalProvider({ children }: { children: ReactNode }) {
+export function PortalProvider({
+  children,
+}: {
+  /** What is shown; the floating parts inside it portal into an element rendered after it. */
+  children: ReactNode;
+}) {
   const [container, setContainer] = useState<HTMLElement | null>(null);
   return (
     <PortalContext.Provider value={container}>

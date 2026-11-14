@@ -56,7 +56,7 @@ export function ObjectFields({
     ([key]) => !HIDDEN_PROPS.has(key),
   );
   return (
-    <div className={cn('space-y-4', depth > 0 && 'space-y-3')}>
+    <div className={cn('bst:space-y-4', depth > 0 && 'bst:space-y-3')}>
       {properties.map(([key, child]) => (
         <SchemaField
           key={key}
@@ -137,9 +137,9 @@ export function SchemaField(props: FieldProps) {
       return (
         <label
           htmlFor={id}
-          className="flex cursor-pointer items-center justify-between gap-3 text-sm"
+          className="bst:flex bst:cursor-pointer bst:items-center bst:justify-between bst:gap-3 bst:text-sm"
         >
-          <span className="font-medium">{label}</span>
+          <span className="bst:font-medium">{label}</span>
           <Switch
             id={id}
             checked={value === true}
@@ -163,7 +163,7 @@ export function SchemaField(props: FieldProps) {
                 onChange(next);
               }}
               options={options}
-              className="w-full [&>*]:flex-1"
+              className="bst:w-full bst:[&>*]:flex-1"
             />
           ) : (
             <Select
@@ -188,7 +188,7 @@ export function SchemaField(props: FieldProps) {
               rows={name === 'code' ? 8 : 3}
               maxLength={field.max}
               value={typeof value === 'string' ? value : ''}
-              className={cn(name === 'code' && 'font-mono text-xs')}
+              className={cn(name === 'code' && 'bst:font-mono bst:text-xs')}
               onChange={(event) => {
                 onChange(event.target.value);
               }}
@@ -273,14 +273,14 @@ export function SchemaField(props: FieldProps) {
         );
       }
       return (
-        <div className="relative">
+        <div className="bst:relative">
           <SchemaField {...props} schema={field.inner} />
           <button
             type="button"
             onClick={() => {
               onChange(null);
             }}
-            className="text-muted-foreground hover:text-destructive absolute top-0 right-0 text-xs"
+            className="bst:absolute bst:top-0 bst:right-0 bst:text-xs bst:text-muted-foreground bst:hover:text-destructive"
           >
             {messages.clear}
           </button>
@@ -301,8 +301,8 @@ export function SchemaField(props: FieldProps) {
         );
       }
       return (
-        <fieldset className="border-border space-y-3 rounded-[var(--radius-control)] border p-3">
-          <legend className="px-1 text-xs font-semibold">{label}</legend>
+        <fieldset className="bst:space-y-3 bst:rounded-control bst:border bst:border-border bst:p-3">
+          <legend className="bst:px-1 bst:text-xs bst:font-semibold">{label}</legend>
           <ObjectFields
             schema={schema}
             value={(value ?? {}) as Record<string, unknown>}
@@ -334,8 +334,8 @@ export function SchemaField(props: FieldProps) {
 
 function Row({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <Label htmlFor={id} className="bst:text-xs bst:font-medium">
         {label}
       </Label>
       {children}
@@ -389,14 +389,14 @@ function ArrayField({
   const simple = itemKind.kind !== 'object' && itemKind.kind !== 'array';
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium">{label}</span>
-        <span className="text-muted-foreground text-xs tabular-nums">
+    <div className="bst:space-y-2">
+      <div className="bst:flex bst:items-center bst:justify-between">
+        <span className="bst:text-xs bst:font-medium">{label}</span>
+        <span className="bst:text-xs bst:text-muted-foreground bst:tabular-nums">
           {value.length}/{max}
         </span>
       </div>
-      <div className="space-y-1.5">
+      <div className="bst:space-y-1.5">
         <AnimatePresence initial={false}>
           {value.map((entry, index) => (
             <motion.div
@@ -406,11 +406,11 @@ function ArrayField({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.16 }}
-              className="border-border bg-card overflow-hidden rounded-[var(--radius-control)] border"
+              className="bst:overflow-hidden bst:rounded-control bst:border bst:border-border bst:bg-card"
             >
               {simple ? (
-                <div className="flex items-start gap-2 p-2">
-                  <div className="min-w-0 flex-1">
+                <div className="bst:flex bst:items-start bst:gap-2 bst:p-2">
+                  <div className="bst:min-w-0 bst:flex-1">
                     <SchemaField
                       name={String(index + 1)}
                       schema={item}
@@ -434,23 +434,23 @@ function ArrayField({
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center gap-1 pr-1">
+                  <div className="bst:flex bst:items-center bst:gap-1 bst:pr-1">
                     <button
                       type="button"
                       aria-expanded={open === index}
                       onClick={() => {
                         setOpen(open === index ? null : index);
                       }}
-                      className="hover:bg-accent/50 flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-sm"
+                      className="bst:flex bst:min-w-0 bst:flex-1 bst:items-center bst:gap-2 bst:px-3 bst:py-2 bst:text-left bst:text-sm bst:hover:bg-accent/50"
                     >
                       <ChevronDown
                         className={cn(
-                          'text-muted-foreground size-3.5 shrink-0 transition-transform',
-                          open !== index && '-rotate-90',
+                          'bst:size-3.5 bst:shrink-0 bst:text-muted-foreground bst:transition-transform',
+                          open !== index && 'bst:-rotate-90',
                         )}
                         aria-hidden="true"
                       />
-                      <span className="truncate">{itemTitle(entry, index)}</span>
+                      <span className="bst:truncate">{itemTitle(entry, index)}</span>
                     </button>
                     <RemoveButton
                       disabled={value.length <= min}
@@ -462,7 +462,7 @@ function ArrayField({
                     />
                   </div>
                   {open === index ? (
-                    <div className="border-border border-t p-3">
+                    <div className="bst:border-t bst:border-border bst:p-3">
                       <SchemaField
                         name=""
                         schema={item}
@@ -487,7 +487,7 @@ function ArrayField({
         type="button"
         variant="outline"
         size="sm"
-        className="w-full border-dashed"
+        className="bst:w-full bst:border-dashed"
         disabled={value.length >= max}
         icon={<Plus aria-hidden="true" />}
         onClick={() => {
@@ -519,7 +519,7 @@ function RemoveButton({
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className="mt-1 shrink-0"
+      className="bst:mt-1 bst:shrink-0"
     >
       <Trash2 aria-hidden="true" />
     </Button>

@@ -14,9 +14,9 @@ import { cn } from '../cn';
  */
 const badge = cva(
   cn(
-    'inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full border',
-    'px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
-    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-3",
+    'bst:inline-flex bst:w-fit bst:shrink-0 bst:items-center bst:gap-1.5 bst:rounded-full bst:border',
+    'bst:px-2.5 bst:py-0.5 bst:text-xs bst:font-medium bst:whitespace-nowrap',
+    "bst:[&_svg]:pointer-events-none bst:[&_svg:not([class*='size-'])]:size-3",
   ),
   {
     variants: {
@@ -32,19 +32,20 @@ const badge = cva(
        */
       size: {
         default: '',
-        dense: 'px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase',
+        dense: 'bst:px-2 bst:py-0.5 bst:text-[9px] bst:font-bold bst:tracking-wider bst:uppercase',
       },
       tone: {
-        neutral: 'border-border bg-muted text-muted-foreground',
-        brand: 'border-primary/20 bg-primary/10 text-primary',
-        ok: 'border-ok/20 bg-ok/10 text-ok',
-        warn: 'border-warn/20 bg-warn/10 text-warn',
-        danger: 'border-no/20 bg-no/10 text-no',
-        pending: 'border-status-pending/25 bg-status-pending/12 text-status-pending',
-        valuated: 'border-status-valuated/25 bg-status-valuated/12 text-status-valuated',
-        scheduled: 'border-status-scheduled/25 bg-status-scheduled/12 text-status-scheduled',
-        finalized: 'border-status-finalized/25 bg-status-finalized/12 text-status-finalized',
-        refused: 'border-status-refused/25 bg-status-refused/12 text-status-refused',
+        neutral: 'bst:border-border bst:bg-muted bst:text-muted-foreground',
+        brand: 'bst:border-primary/20 bst:bg-primary/10 bst:text-primary',
+        ok: 'bst:border-ok/20 bst:bg-ok/10 bst:text-ok',
+        warn: 'bst:border-warn/20 bst:bg-warn/10 bst:text-warn',
+        danger: 'bst:border-no/20 bst:bg-no/10 bst:text-no',
+        // A document's state, on the top bar's status chip.
+        draft: 'bst:border-state-draft/25 bst:bg-state-draft/12 bst:text-state-draft',
+        scheduled:
+          'bst:border-state-scheduled/25 bst:bg-state-scheduled/12 bst:text-state-scheduled',
+        published:
+          'bst:border-state-published/25 bst:bg-state-published/12 bst:text-state-published',
       },
     },
     defaultVariants: { tone: 'neutral', size: 'default' },
@@ -53,7 +54,15 @@ const badge = cva(
 
 export type BadgeTone = NonNullable<VariantProps<typeof badge>['tone']>;
 
-export type BadgeProps = ComponentProps<'span'> & VariantProps<typeof badge>;
+export interface BadgeProps extends ComponentProps<'span'> {
+  /**
+   * The colour: `neutral`, `brand`, `ok`, `warn`, `danger`, or a document's
+   * state: `draft`, `scheduled`, `published`. Default: `'neutral'`.
+   */
+  tone?: VariantProps<typeof badge>['tone'];
+  /** `dense`: 9px bold capitals, for a status in a table row. Default: `'default'`. */
+  size?: VariantProps<typeof badge>['size'];
+}
 
 export function Badge({ className, tone, size, ...props }: BadgeProps) {
   return <span data-slot="badge" className={cn(badge({ tone, size }), className)} {...props} />;

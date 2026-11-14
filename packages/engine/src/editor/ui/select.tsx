@@ -37,18 +37,31 @@ export interface SelectOption {
 }
 
 export interface SelectProps {
+  /** The selected value, for a controlled select. `''` is a value like any other (an "All" option). */
   value?: string | undefined;
+  /** The value it starts with, for an uncontrolled select; ignored when `value` is set. */
   defaultValue?: string | undefined;
+  /** Called with the value of the option the reader picks. */
   onValueChange?: ((value: string) => void) | undefined;
+  /** The choices, in order; a `disabled` one is shown but cannot be picked. */
   options: readonly SelectOption[];
+  /** Shown while nothing is selected. */
   placeholder?: string | undefined;
+  /** The trigger's id, so a label can point at it. */
   id?: string | undefined;
+  /** The form field the value is submitted under. */
   name?: string | undefined;
+  /** Marks the form field as required. */
   required?: boolean | undefined;
+  /** Stops the select being opened. */
   disabled?: boolean | undefined;
+  /** Sets `aria-invalid` and the error look on the trigger together. */
   invalid?: boolean | undefined;
+  /** Applied to the trigger. */
   className?: string | undefined;
+  /** The id of the hint or error message that describes the field. */
   'aria-describedby'?: string | undefined;
+  /** The accessible name, when there is no visible label. */
   'aria-label'?: string | undefined;
 }
 
@@ -89,19 +102,22 @@ export function Select({
         aria-invalid={invalid ? true : undefined}
         className={cn(
           controlClass,
-          'justify-between gap-2 text-left',
+          'bst:justify-between bst:gap-2 bst:text-left',
           // The placeholder is rendered by Radix inside the value slot, so it
           // cannot be reached with `placeholder:` — this is the hook it exposes.
-          'data-[placeholder]:text-muted-foreground/60',
-          '[&>span]:min-w-0 [&>span]:truncate',
-          invalid && 'ui-invalid',
+          'bst:data-[placeholder]:text-muted-foreground/60',
+          'bst:[&>span]:min-w-0 bst:[&>span]:truncate',
+          invalid && 'bld-invalid',
           className,
         )}
         {...aria}
       >
         <SelectPrimitive.Value placeholder={placeholder} />
         <SelectPrimitive.Icon asChild>
-          <ChevronDown className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+          <ChevronDown
+            className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+            aria-hidden="true"
+          />
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
 
@@ -112,42 +128,42 @@ export function Select({
           position="popper"
           sideOffset={4}
           className={cn(
-            'z-50 max-h-72 min-w-(--radix-select-trigger-width) overflow-hidden',
-            'border-border bg-popover text-popover-foreground shadow-pop rounded-[var(--radius-control)] border',
-            'data-[state=open]:animate-[ui-zoom-in_var(--dur-2)_var(--ease-enter)]',
-            'data-[state=closed]:animate-[ui-zoom-out_var(--dur-1)_var(--ease-exit)]',
+            'bst:z-50 bst:max-h-72 bst:min-w-(--radix-select-trigger-width) bst:overflow-hidden',
+            'bst:rounded-control bst:border bst:border-border bst:bg-popover bst:text-popover-foreground bst:shadow-pop',
+            'bst:data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+            'bst:data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
           )}
         >
-          <SelectPrimitive.ScrollUpButton className="text-muted-foreground flex h-6 items-center justify-center">
-            <ChevronUp className="size-4" aria-hidden="true" />
+          <SelectPrimitive.ScrollUpButton className="bst:flex bst:h-6 bst:items-center bst:justify-center bst:text-muted-foreground">
+            <ChevronUp className="bst:size-4" aria-hidden="true" />
           </SelectPrimitive.ScrollUpButton>
 
-          <SelectPrimitive.Viewport className="p-1">
+          <SelectPrimitive.Viewport className="bst:p-1">
             {options.map((option) => (
               <SelectPrimitive.Item
                 key={option.value || EMPTY}
                 value={toRadix(option.value)}
                 {...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
                 className={cn(
-                  'relative flex cursor-pointer items-center gap-2 rounded-[var(--radius-control)]',
-                  'py-1.5 pr-8 pl-2.5 text-sm outline-none select-none',
+                  'bst:relative bst:flex bst:cursor-pointer bst:items-center bst:gap-2 bst:rounded-control',
+                  'bst:py-1.5 bst:pr-8 bst:pl-2.5 bst:text-sm bst:outline-none bst:select-none',
                   // `highlighted` covers both the pointer and the keyboard, so
                   // arrowing through the list looks like hovering it.
-                  'data-highlighted:bg-accent data-highlighted:text-accent-foreground',
-                  'data-[state=checked]:font-medium',
-                  'data-disabled:text-muted-foreground data-disabled:pointer-events-none',
+                  'bst:data-highlighted:bg-accent bst:data-highlighted:text-accent-foreground',
+                  'bst:data-[state=checked]:font-medium',
+                  'bst:data-disabled:pointer-events-none bst:data-disabled:text-muted-foreground',
                 )}
               >
                 <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
-                <SelectPrimitive.ItemIndicator className="absolute right-2 flex items-center">
-                  <Check className="text-primary size-4" aria-hidden="true" />
+                <SelectPrimitive.ItemIndicator className="bst:absolute bst:right-2 bst:flex bst:items-center">
+                  <Check className="bst:size-4 bst:text-primary" aria-hidden="true" />
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Viewport>
 
-          <SelectPrimitive.ScrollDownButton className="text-muted-foreground flex h-6 items-center justify-center">
-            <ChevronDown className="size-4" aria-hidden="true" />
+          <SelectPrimitive.ScrollDownButton className="bst:flex bst:h-6 bst:items-center bst:justify-center bst:text-muted-foreground">
+            <ChevronDown className="bst:size-4" aria-hidden="true" />
           </SelectPrimitive.ScrollDownButton>
         </SelectPrimitive.Content>
       </SelectPrimitive.Portal>

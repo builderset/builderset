@@ -27,29 +27,31 @@ export function BeforeAfter({
   const [position, setPosition] = useState(start);
 
   return (
-    <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-card,0.625rem)] select-none">
-      <div className="absolute inset-0 [&>*]:size-full [&>*]:object-cover">{after}</div>
+    <div className="bst:relative bst:aspect-[16/10] bst:w-full bst:overflow-hidden bst:rounded-card bst:bg-muted bst:select-none">
+      <div className="bst:absolute bst:inset-0 bst:[&>*]:size-full bst:[&>*]:object-cover">
+        {after}
+      </div>
       <div
-        className="absolute inset-0 [&>*]:size-full [&>*]:object-cover"
+        className="bst:absolute bst:inset-0 bst:[&>*]:size-full bst:[&>*]:object-cover"
         style={{ clipPath: `inset(0 ${String(100 - position)}% 0 0)` }}
       >
         {before}
       </div>
 
-      <span className="bg-background/85 text-foreground absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur">
+      <span className="bst:absolute bst:top-3 bst:left-3 bst:rounded-full bst:bg-background/85 bst:px-2.5 bst:py-1 bst:text-xs bst:font-semibold bst:text-foreground bst:backdrop-blur">
         {beforeLabel}
       </span>
-      <span className="bg-background/85 text-foreground absolute top-3 right-3 rounded-full px-2.5 py-1 text-xs font-semibold backdrop-blur">
+      <span className="bst:absolute bst:top-3 bst:right-3 bst:rounded-full bst:bg-background/85 bst:px-2.5 bst:py-1 bst:text-xs bst:font-semibold bst:text-foreground bst:backdrop-blur">
         {afterLabel}
       </span>
 
       <div
         aria-hidden="true"
-        className="bg-background pointer-events-none absolute inset-y-0 w-0.5 -translate-x-1/2 shadow-[0_0_0_1px_rgb(0_0_0/0.15)]"
+        className="bst:pointer-events-none bst:absolute bst:inset-y-0 bst:w-0.5 bst:-translate-x-1/2 bst:bg-background bst:shadow-[0_0_0_1px_rgb(0_0_0/0.15)]"
         style={{ left: `${String(position)}%` }}
       >
-        <span className="bg-background text-foreground absolute top-1/2 left-1/2 grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full shadow-lg">
-          <ChevronsLeftRight className="size-4" />
+        <span className="bst:absolute bst:top-1/2 bst:left-1/2 bst:grid bst:size-9 bst:-translate-x-1/2 bst:-translate-y-1/2 bst:place-items-center bst:rounded-full bst:bg-background bst:text-foreground bst:shadow-lg">
+          <ChevronsLeftRight className="bst:size-4" />
         </span>
       </div>
 
@@ -63,7 +65,7 @@ export function BeforeAfter({
         onChange={(event) => {
           setPosition(Number(event.target.value));
         }}
-        className="absolute inset-0 size-full cursor-ew-resize opacity-0"
+        className="bst:absolute bst:inset-0 bst:size-full bst:cursor-ew-resize bst:opacity-0"
       />
     </div>
   );

@@ -1,0 +1,12 @@
+{
+  "name": "example-node-render",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node render.mjs",
+    "test": "node --test test.mjs"
+  },
+  "dependencies": {
+    "@builderset/email": "workspace:*"
+  }
+}

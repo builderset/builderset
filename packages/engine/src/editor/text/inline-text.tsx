@@ -47,7 +47,10 @@ const Footnote = Mark.create({
   renderHTML({ HTMLAttributes }) {
     return [
       'sup',
-      mergeAttributes(HTMLAttributes, { 'data-footnote': '', class: 'text-primary font-semibold' }),
+      mergeAttributes(HTMLAttributes, {
+        'data-footnote': '',
+        class: 'bst:text-primary bst:font-semibold',
+      }),
       0,
     ];
   },
@@ -213,7 +216,8 @@ export function InlineText({ field }: { field: EditableTextField }) {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: 'outline-none [&_p]:m-0 [&_p]:inline-block [&_p]:min-w-[1ch] [&_p]:w-full',
+        class:
+          'bst:outline-none bst:[&_p]:m-0 bst:[&_p]:inline-block bst:[&_p]:min-w-[1ch] bst:[&_p]:w-full',
         'data-inline-text': '',
       },
       handleKeyDown(view, event) {
@@ -331,7 +335,7 @@ export function InlineText({ field }: { field: EditableTextField }) {
     <>
       <InlineContent
         editor={editor}
-        className="contents [&_.ProseMirror]:inline-block [&_.ProseMirror]:w-full"
+        className="bst:contents bst:[&_.ProseMirror]:inline-block bst:[&_.ProseMirror]:w-full"
       />
       {editingThis ? <TextToolbar editor={editor} /> : null}
       {slash !== null ? (

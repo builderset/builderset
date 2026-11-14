@@ -9,3 +9,8 @@ packages/email/schema/
 packages/email/fixtures/
 
 pnpm-lock.yaml
+
+# The Next example's build, its generated types and its data folder.
+.next/
+next-env.d.ts
+.data/

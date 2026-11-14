@@ -204,12 +204,12 @@ Add it as the pull request template the action uses:
 
 ## Done when
 
-- [ ] Changesets is configured with the fixed group.
-- [ ] CI fails a package change with no changeset.
+- [x] Changesets is configured with the fixed group.
+- [x] CI fails a package change with no changeset.
 - [ ] `release.yml` exists; the `npm` environment requires approval.
 - [ ] The four packages are published at `0.1.0-alpha.0` under the `alpha` tag.
 - [ ] Trusted publishing is configured for each package; no publish token is stored anywhere; tokens are disallowed for the packages.
-- [ ] `CONTRIBUTING.md` has the registry rules.
+- [x] `CONTRIBUTING.md` has the registry rules.
 - [ ] The examples pass against the real registry.
 
 **This is milestone M2.**
@@ -221,3 +221,18 @@ Add it as the pull request template the action uses:
 - **A pre-release published as `latest`.** Outside pre-release mode, a version such as `0.1.0-alpha.1` written by hand is published as `latest`. Use `changeset pre enter`; check `npm view <package> dist-tags` after the first release.
 - **The token left in place.** After trusted publishing works, the bootstrap token is the only secret that could publish a malicious version. Revoke it the same day.
 - **A release with a red examples job.** The workflow runs `check:packages` but not the slow examples job. Do not merge "Version Packages" until the last CI run on `main` is fully green.
+
+## How it was done (2026-11-14) — prepared, not yet published
+
+Decided on 2026-11-14 ([DECISIONS.md](../DECISIONS.md)): GitHub Packages, private until launch (part 7 instead of parts 4–6); `staging` publishes pre-releases and `production` releases; the repository moves to a GitHub organisation named `builderset`, so the packages keep their `@builderset` scope — GitHub Packages names a package after the repository's owner. The branch `feat/13-releases` holds the work.
+
+| Part | What the plan said                                                         | What was done                                                                                                                                                                                                                                                                                                                                                                                        | Why                                                                                               |
+| ---- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 1    | Changesets, `fixed: [["@builderset/*", "builderset"]]`, `changelog-github` | Changesets 3.0.3, the four packages named in one fixed group, the examples ignored, `baseBranch: development`, the default changelog. CI runs `changeset status --since=origin/<base>` on every pull request — seen to exit 1 on a package change with no changeset                                                                                                                                  | GitHub-linked changelogs need the repository at its final address                                 |
+| 2    | Remove `private`, `access: public`                                         | The three kits: `private` removed, `publishConfig.registry` is GitHub Packages. `builderset` stays private                                                                                                                                                                                                                                                                                           | GitHub Packages holds scoped names only; the all-in-one package is published with the move to npm |
+| 3    | `release.yml` on `main`                                                    | On `staging`: `changeset version --snapshot alpha` and `changeset publish --tag alpha` — `0.1.0-alpha.<datetime>`, never committed, nothing published when no changeset waits (tried locally). On `production`: `changesets/action`, a "Version packages" pull request, published when merged, then `production` is merged back into `development`. Only when the repository's owner is `builderset` | Decision on the branches                                                                          |
+| 4–6  | Trusted publishing on npm                                                  | Not needed on GitHub Packages: the workflow's own token, `packages: write`                                                                                                                                                                                                                                                                                                                           | Part 7                                                                                            |
+| —    | The `npm` environment requires approval                                    | An environment named `packages`. Required reviewers need a public repository on the free plan; until then the approval is the merge into `staging` or `production`                                                                                                                                                                                                                                   | —                                                                                                 |
+| 8, 9 | Registry rules, release checklist                                          | In CONTRIBUTING.md, with how a project installs from GitHub Packages (`.npmrc`, a `read:packages` token, a build secret in Docker)                                                                                                                                                                                                                                                                   | The action writes its own pull request body, so the checklist lives where releases are described  |
+
+**Still to do, in this order.** Create the `builderset` organisation and transfer the repository into it; rewrite the commits' author email (decided at the transfer); merge `feat/13-releases`; merge `development` into `staging` — the first `0.1.0-alpha` — and install it in a fresh folder with a token; then `production` for `0.1.0`.

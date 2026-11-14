@@ -18,9 +18,16 @@ import { cn } from '../cn';
  * going down, it rises from below. Holding a button keeps stepping.
  */
 export interface NumberStepperProps {
+  /** The number shown; empty shows a dash. */
   value: number | null | undefined;
+  /**
+   * Called on each step, as soon as a typed value is a number in range, and
+   * with `null` when a `nullable` box is cleared.
+   */
   onChange: (value: number | null) => void;
+  /** The lowest value. Stepping stops there, and a typed value is clamped to it on blur. */
   min?: number | undefined;
+  /** The highest value. Stepping stops there, and a typed value is clamped to it on blur. */
   max?: number | undefined;
   /** 1 by default; 0.1 steps (and rounds) to one decimal. */
   step?: number | undefined;
@@ -30,11 +37,17 @@ export interface NumberStepperProps {
   nullable?: boolean | undefined;
   /** Shown after the figure while not editing — "px", "min". */
   suffix?: string | undefined;
+  /** The input's id, so a label can point at it. */
   id?: string | undefined;
+  /** The accessible name, when there is no visible label. */
   'aria-label'?: string | undefined;
+  /** The − button's accessible name and tooltip. Default: `'Decrease'`. */
   decreaseLabel?: string | undefined;
+  /** The + button's accessible name and tooltip. Default: `'Increase'`. */
   increaseLabel?: string | undefined;
+  /** `sm` is a shorter box with narrower buttons, for tight rows. Default: `'md'`. */
   size?: 'md' | 'sm';
+  /** Applied to the outer box. */
   className?: string | undefined;
 }
 

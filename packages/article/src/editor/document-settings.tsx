@@ -65,8 +65,11 @@ export function SettingsFieldRow({
   hint,
   children,
 }: {
+  /** The field's label, above it. */
   label: string;
+  /** A note under the field. */
   hint?: ReactNode;
+  /** Draws the field, given the id the label points at — put it on the input. */
   children: (id: string) => ReactNode;
 }) {
   const id = useId();

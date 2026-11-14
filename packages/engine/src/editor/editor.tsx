@@ -53,16 +53,35 @@ export interface BuilderEditorProps<
   TDoc extends EngineDocument = EngineDocument,
   TRecord extends RecordFacts = RecordFacts,
 > {
+  /**
+   * The document to edit. Read once, when the editor mounts: to load another,
+   * remount it (a new `key`).
+   */
   document: TDoc;
+  /** The elements a document can hold: how each is drawn, edited and checked. */
   registry: ElementRegistry;
+  /** The adapter for everything that leaves the browser: saving, publishing, uploads, media URLs, notices. */
   host: BuilderHost<TDoc>;
   /** What kind of document this is: the kit's canvas, checks and panels. */
   profile: EditorProfile<TDoc>;
   /** The stored record's facts (status, schedule), when it has any. Default: a draft. */
   record?: TRecord | undefined;
+  /**
+   * Called with the facts the writer changed in the editor. Keep them and pass
+   * the updated record back as `record`; the change also counts as unsaved work.
+   */
   onRecordChange?: ((patch: Partial<TRecord>) => void) | undefined;
+  /**
+   * Called to leave the editor (the back button). With unsaved changes the
+   * writer is asked first; the editor does not navigate by itself.
+   */
   onBack: () => void;
+  /** Adds "Duplicate" to the publish menu; called when the writer picks it. */
   onDuplicate?: (() => void) | undefined;
+  /**
+   * Adds "Delete" to the publish menu; called once the writer confirms. Resolve
+   * `true` once it is deleted; leaving the editor afterwards is up to the host.
+   */
   onDelete?: (() => Promise<boolean>) | undefined;
   /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
   locale?: string | undefined;

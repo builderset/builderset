@@ -73,10 +73,15 @@ export function AlignButtons({
   label,
   tone = 'panel',
 }: {
+  /** The selected option, if any. */
   value: string | undefined;
+  /** The alignments offered, in order (`'left'`, `'center'`, …); each is drawn as its icon. */
   options: readonly string[];
+  /** Called with the option the writer clicks. */
   onChange: (value: string) => void;
+  /** The group's accessible name. */
   label: string;
+  /** `panel`: a full-width framed strip; `toolbar`: bare buttons for the block toolbar. Default: `'panel'`. */
   tone?: 'panel' | 'toolbar';
 }) {
   return (
@@ -137,8 +142,11 @@ export function FontField({
   onChange,
   nullable,
 }: {
+  /** The selected font's key, from the profile's fonts; empty means the inherited font. */
   value: string | null | undefined;
+  /** Called with the picked font's key, or `null` for the inherited font. */
   onChange: (value: string | null) => void;
+  /** Offers the inherited font at the top of the list, which clears the choice. */
   nullable: boolean;
 }) {
   const { profile, messages } = useEditorContext();

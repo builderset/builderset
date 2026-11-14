@@ -26,9 +26,13 @@ export function MediaField({
   kind = 'image',
   id,
 }: {
+  /** The current media, if any: an image is previewed, other kinds show their file name. */
   value: MediaRef | null | undefined;
+  /** Called with the new reference once an upload finishes, or `null` when cleared. */
   onChange: (value: MediaRef | null) => void;
+  /** What may be uploaded: sets the file types offered and the icon. Default: `'image'`. */
   kind?: MediaKind | undefined;
+  /** The hidden file input's id, so a label can point at it. */
   id?: string | undefined;
 }) {
   const { host, messages } = useEditorContext();

@@ -32,6 +32,13 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm format:check
+      # lint and typecheck built the packages; this checks what was built:
+      # 'use client' lines, imports, the manifests (publint) and the types as
+      # each kind of consumer resolves them (arethetypeswrong).
+      - run: pnpm check:packages
+      # The props tables in the packages' READMEs are generated from the built
+      # types; this fails when one is out of date (fix: pnpm readme:props).
+      - run: node tooling/readme-props.mjs --check
       # While the repository is private, GitHub's own secret scanning is not
       # available on the free plan (docs/plan/steps/08_NEW_REPOSITORY.md, part 6).
       - name: Secret scan
@@ -55,11 +62,17 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           standalone: true
+      # Install and build on Node 24: the build tool needs Node 22 or newer.
+      # What it writes is what the tests below load.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
       - name: Every test
         if: matrix.node != 20
         run: pnpm test

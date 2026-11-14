@@ -113,7 +113,7 @@ describe('fonts on the canvas', () => {
     Array.from(document.head.querySelectorAll('link[data-stylesheet]')).filter((link) =>
       (link.getAttribute('href') ?? '').includes('fonts.googleapis.com'),
     );
-  const designIn = (font: string) => {
+  const designIn = (font: ReturnType<typeof starterEmail>['settings']['font']) => {
     const doc = starterEmail(registry, { name: 'Fonts', subject: 'Fonts' });
     return { ...doc, settings: { ...doc.settings, font } };
   };

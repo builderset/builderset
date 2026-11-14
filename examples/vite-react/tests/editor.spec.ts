@@ -116,7 +116,7 @@ const differing = (a: PNG, b: PNG) =>
 /**
  * A screenshot once the page has stopped changing: two in a row the same.
  * Some of the editor's motion is JavaScript, which Playwright's
- *  does not stop, and a slow browser can be caught
+ * `animations: 'disabled'` does not stop, and a slow browser can be caught
  * in the middle of it.
  */
 async function settledShot(page: Page): Promise<PNG> {

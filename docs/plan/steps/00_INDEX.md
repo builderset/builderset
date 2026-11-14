@@ -126,8 +126,8 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 09 Build and package shape
 - [x] 10 Styles and theming
 - [x] 11 The all-in-one package
-- [ ] 12 Example apps and the test matrix — done but for a green Examples run in Firefox and WebKit, after the local-image fix
-- [ ] 13 Publishing and releases — prepared for GitHub Packages, in the `builderset` organisation; waits for the first publish
+- [x] 12 Example apps and the test matrix
+- [ ] 13 Publishing and releases — `0.1.0-alpha` is on GitHub Packages and the examples pass against it; waits for the first release, `0.1.0`, through `production`
 - [ ] **M2 — installable**
 - [ ] 14 Adopt the packages in MotorsAL
 - [ ] 15 The Python package

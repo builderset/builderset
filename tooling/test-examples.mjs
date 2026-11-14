@@ -7,6 +7,8 @@
  *   pnpm test:examples --example node-render   one of them (repeatable)
  *   pnpm test:examples -- --project=chromium   arguments for Playwright
  *   pnpm test:examples --keep                  keep the temporary folder
+ *   pnpm test:examples --from alpha            the packages already published
+ *                                              under that tag (docs/plan/steps/13)
  *
  * 1. Builds the packages.
  * 2. Starts a local registry (Verdaccio) with empty storage, on a free port.
@@ -16,6 +18,11 @@
  *    package manager would find the workspace and link folders again — points
  *    its dependencies at the published versions and installs it with npm.
  * 5. Builds the example and runs its tests.
+ *
+ * With `--from <tag>`, steps 1–3 are replaced by asking each package's own
+ * registry (its `publishConfig.registry`) which version the tag names. Reading
+ * from GitHub Packages needs a token in the user's .npmrc. An example that
+ * needs a package that is never published (`private`) is skipped, by name.
  */
 import { spawn, spawnSync } from 'node:child_process';
 import {
@@ -41,6 +48,8 @@ const ours = dash === -1 ? argv : argv.slice(0, dash);
 const playwrightArgs = dash === -1 ? [] : argv.slice(dash + 1);
 const only = ours.flatMap((a, i) => (a === '--example' ? [ours[i + 1]] : []));
 const keep = ours.includes('--keep');
+const from = ours.includes('--from') ? ours[ours.indexOf('--from') + 1] : null;
+if (ours.includes('--from') && !from) throw new Error('--from needs a tag: --from alpha');
 
 /** Each example: what proves it works, once installed. */
 const EXAMPLES = {
@@ -80,6 +89,22 @@ function run(command, args, options = {}) {
   if (result.status !== 0)
     throw new Error(`${command} ${args.join(' ')} failed (${result.status})`);
 }
+/** A command's output, or null when it fails. */
+function read(command, args) {
+  const result =
+    process.platform === 'win32'
+      ? spawnSync([command, ...args].map(quote).join(' '), { shell: true, encoding: 'utf8' })
+      : spawnSync(command, args, { encoding: 'utf8' });
+  return result.status === 0 ? result.stdout.trim() : null;
+}
+/** The repository's packages: name → manifest. */
+const PACKAGES = Object.fromEntries(
+  readdirSync(join(ROOT, 'packages'))
+    .map((name) => join(ROOT, 'packages', name, 'package.json'))
+    .filter((path) => existsSync(path))
+    .map((path) => JSON.parse(readFileSync(path, 'utf8')))
+    .map((manifest) => [manifest.name, manifest]),
+);
 /**
  * Unpacks a .tgz into a folder, in Node: no `tar` on the PATH to depend on
  * (Git Bash's reads `C:` in a path as a host name). Regular files and folders,
@@ -126,89 +151,133 @@ const freePort = () =>
 const work = mkdtempSync(join(tmpdir(), 'builderset-examples-'));
 let registry;
 let failed = false;
+/** The version each package is installed at. */
+const versions = {};
+/** Packages that are never published: name → why. */
+const unpublished = {};
+let env = process.env;
+/** The .npmrc each example is installed with. */
+let exampleNpmrc = '';
 try {
-  log('Building the packages');
-  run('pnpm', ['build', '--filter', './packages/*'], { cwd: ROOT });
+  if (from) {
+    log(`Asking each package's registry for its "${from}" version`);
+    const scopes = new Set();
+    for (const [name, manifest] of Object.entries(PACKAGES)) {
+      if (manifest.private) {
+        unpublished[name] = 'private, never published';
+        continue;
+      }
+      const registry = manifest.publishConfig?.registry ?? 'https://registry.npmjs.org/';
+      const version = read('npm', ['view', `${name}@${from}`, 'version', '--registry', registry]);
+      if (!version)
+        throw new Error(
+          `${name}@${from} is not on ${registry}, or there is no token to read it in your .npmrc`,
+        );
+      console.log(`  ${name}@${version}   (${registry})`);
+      versions[name] = version;
+      if (name.startsWith('@')) scopes.add(`${name.split('/')[0]}:registry=${registry}`);
+    }
+    exampleNpmrc = `${[...scopes].join('\n')}\n`;
+  } else {
+    log('Building the packages');
+    run('pnpm', ['build', '--filter', './packages/*'], { cwd: ROOT });
 
-  log('Starting a local registry with empty storage');
-  const port = await freePort();
-  const url = `http://127.0.0.1:${port}`;
-  writeFileSync(
-    join(work, 'verdaccio.yaml'),
-    [
-      `storage: ${JSON.stringify(join(work, 'storage'))}`,
-      `auth:\n  htpasswd:\n    file: ${JSON.stringify(join(work, 'htpasswd'))}\n    max_users: 10`,
-      'uplinks:\n  npmjs:\n    url: https://registry.npmjs.org/',
-      'packages:',
-      "  '@builderset/*':\n    access: $all\n    publish: $authenticated",
-      "  'builderset':\n    access: $all\n    publish: $authenticated",
-      "  '**':\n    access: $all\n    proxy: npmjs",
-      'log: { type: stdout, format: pretty, level: error }',
-      '',
-    ].join('\n'),
-  );
-  // Verdaccio exports no package.json; it is a dev dependency of the workspace root.
-  const verdaccioDir = join(ROOT, 'node_modules', 'verdaccio');
-  const bin = JSON.parse(readFileSync(join(verdaccioDir, 'package.json'), 'utf8')).bin;
-  const binPath = join(verdaccioDir, typeof bin === 'string' ? bin : bin.verdaccio);
-  registry = spawn(
-    process.execPath,
-    [binPath, '--config', join(work, 'verdaccio.yaml'), '--listen', `127.0.0.1:${port}`],
-    {
-      stdio: 'inherit',
-    },
-  );
-  for (let i = 0; ; i++) {
-    if (
-      await fetch(`${url}/-/ping`).then(
-        (r) => r.ok,
-        () => false,
-      )
-    )
-      break;
-    if (i > 60) throw new Error('the registry did not start');
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  // A throwaway user, so npm has a token to publish with.
-  const user = await fetch(`${url}/-/user/org.couchdb.user:examples`, {
-    method: 'PUT',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name: 'examples', password: 'examples-password' }),
-  }).then((r) => r.json());
-  const npmrc = join(work, '.npmrc');
-  writeFileSync(npmrc, `registry=${url}/\n//127.0.0.1:${port}/:_authToken=${user.token}\n`);
-  const env = { ...process.env, NPM_CONFIG_USERCONFIG: npmrc, npm_config_registry: `${url}/` };
-
-  log('Publishing the packages to it');
-  const versions = {};
-  for (const name of readdirSync(join(ROOT, 'packages'))) {
-    const dir = join(ROOT, 'packages', name);
-    if (!existsSync(join(dir, 'package.json'))) continue;
-    const tarballs = join(work, 'tarballs', name);
-    mkdirSync(tarballs, { recursive: true });
-    run('pnpm', ['pack', '--pack-destination', tarballs], { cwd: dir });
-    const tarball = join(
-      tarballs,
-      readdirSync(tarballs).find((f) => f.endsWith('.tgz')),
+    log('Starting a local registry with empty storage');
+    const port = await freePort();
+    const url = `http://127.0.0.1:${port}`;
+    writeFileSync(
+      join(work, 'verdaccio.yaml'),
+      [
+        `storage: ${JSON.stringify(join(work, 'storage'))}`,
+        `auth:\n  htpasswd:\n    file: ${JSON.stringify(join(work, 'htpasswd'))}\n    max_users: 10`,
+        'uplinks:\n  npmjs:\n    url: https://registry.npmjs.org/',
+        'packages:',
+        "  '@builderset/*':\n    access: $all\n    publish: $authenticated",
+        "  'builderset':\n    access: $all\n    publish: $authenticated",
+        "  '**':\n    access: $all\n    proxy: npmjs",
+        'log: { type: stdout, format: pretty, level: error }',
+        '',
+      ].join('\n'),
     );
-    const unpacked = join(work, 'publish', name);
-    mkdirSync(unpacked, { recursive: true });
-    untar(tarball, unpacked);
-    const manifestPath = join(unpacked, 'package', 'package.json');
-    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-    // The published copy only: it goes to this registry, whatever the real
-    // package says (publishConfig points at GitHub Packages), and it is public here.
-    delete manifest.private;
-    delete manifest.publishConfig;
-    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    versions[manifest.name] = manifest.version;
-    run('npm', ['publish', join(unpacked, 'package'), '--registry', `${url}/`, '--tag', 'latest'], {
-      env,
-    });
+    // Verdaccio exports no package.json; it is a dev dependency of the workspace root.
+    const verdaccioDir = join(ROOT, 'node_modules', 'verdaccio');
+    const bin = JSON.parse(readFileSync(join(verdaccioDir, 'package.json'), 'utf8')).bin;
+    const binPath = join(verdaccioDir, typeof bin === 'string' ? bin : bin.verdaccio);
+    registry = spawn(
+      process.execPath,
+      [binPath, '--config', join(work, 'verdaccio.yaml'), '--listen', `127.0.0.1:${port}`],
+      {
+        stdio: 'inherit',
+      },
+    );
+    for (let i = 0; ; i++) {
+      if (
+        await fetch(`${url}/-/ping`).then(
+          (r) => r.ok,
+          () => false,
+        )
+      )
+        break;
+      if (i > 60) throw new Error('the registry did not start');
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    // A throwaway user, so npm has a token to publish with.
+    const user = await fetch(`${url}/-/user/org.couchdb.user:examples`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'examples', password: 'examples-password' }),
+    }).then((r) => r.json());
+    const npmrc = join(work, '.npmrc');
+    writeFileSync(npmrc, `registry=${url}/\n//127.0.0.1:${port}/:_authToken=${user.token}\n`);
+    env = { ...process.env, NPM_CONFIG_USERCONFIG: npmrc, npm_config_registry: `${url}/` };
+    exampleNpmrc = `registry=${url}/\n`;
+
+    log('Publishing the packages to it');
+    for (const name of readdirSync(join(ROOT, 'packages'))) {
+      const dir = join(ROOT, 'packages', name);
+      if (!existsSync(join(dir, 'package.json'))) continue;
+      const tarballs = join(work, 'tarballs', name);
+      mkdirSync(tarballs, { recursive: true });
+      run('pnpm', ['pack', '--pack-destination', tarballs], { cwd: dir });
+      const tarball = join(
+        tarballs,
+        readdirSync(tarballs).find((f) => f.endsWith('.tgz')),
+      );
+      const unpacked = join(work, 'publish', name);
+      mkdirSync(unpacked, { recursive: true });
+      untar(tarball, unpacked);
+      const manifestPath = join(unpacked, 'package', 'package.json');
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      // The published copy only: it goes to this registry, whatever the real
+      // package says (publishConfig points at GitHub Packages), and it is public here.
+      delete manifest.private;
+      delete manifest.publishConfig;
+      writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+      versions[manifest.name] = manifest.version;
+      run(
+        'npm',
+        ['publish', join(unpacked, 'package'), '--registry', `${url}/`, '--tag', 'latest'],
+        {
+          env,
+        },
+      );
+    }
   }
 
+  const skipped = [];
   for (const [example, steps] of Object.entries(EXAMPLES)) {
     if (only.length && !only.includes(example)) continue;
+    const own = JSON.parse(readFileSync(join(ROOT, 'examples', example, 'package.json'), 'utf8'));
+    const missing = Object.keys({ ...own.dependencies, ...own.devDependencies }).filter(
+      (dep) => unpublished[dep],
+    );
+    if (missing.length) {
+      log(
+        `Example ${example}: SKIPPED — it needs ${missing.map((dep) => `${dep} (${unpublished[dep]})`).join(', ')}`,
+      );
+      skipped.push(example);
+      continue;
+    }
     log(`Example ${example}: installed from the registry, outside the repository`);
     const target = join(work, 'examples', example);
     cpSync(join(ROOT, 'examples', example), target, {
@@ -221,7 +290,7 @@ try {
       for (const [dep, version] of Object.entries(manifest[field] ?? {}))
         if (String(version).startsWith('workspace:')) manifest[field][dep] = versions[dep];
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-    writeFileSync(join(target, '.npmrc'), `registry=${url}/\n`);
+    writeFileSync(join(target, '.npmrc'), exampleNpmrc);
     run('npm', ['install', '--no-audit', '--no-fund'], { cwd: target, env });
     try {
       for (const [command, ...args] of steps) run(command, args, { cwd: target, env });
@@ -233,7 +302,11 @@ try {
       throw error;
     }
   }
-  log('Every example passed');
+  log(
+    skipped.length
+      ? `Every example that ran passed; skipped: ${skipped.join(', ')}`
+      : 'Every example passed',
+  );
 } catch (error) {
   failed = true;
   console.error(`\n✗ ${error instanceof Error ? error.message : String(error)}`);

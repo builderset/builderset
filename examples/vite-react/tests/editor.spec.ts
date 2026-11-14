@@ -109,24 +109,50 @@ test('one content language: no language switch in the top bar', async ({ page })
   await expect(topBar(page).getByText(/^EN$/)).toHaveCount(0);
 });
 
-test('a hostile page stylesheet does not change the editor', async ({ page }) => {
+/** Pixels that differ, past pixelmatch's usual tolerance for anti-aliasing. */
+const differing = (a: PNG, b: PNG) =>
+  pixelmatch(a.data, b.data, undefined, a.width, a.height, { threshold: 0.1 });
+
+/**
+ * A screenshot once the page has stopped changing: two in a row the same.
+ * Some of the editor's motion is JavaScript, which Playwright's
+ * `animations: 'disabled'` does not stop, and a slow browser can be caught
+ * in the middle of it.
+ */
+async function settledShot(page: Page): Promise<PNG> {
+  let previous: PNG | null = null;
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const shot = PNG.sync.read(await page.screenshot({ animations: 'disabled', caret: 'hide' }));
+    if (previous && differing(previous, shot) === 0) return shot;
+    previous = shot;
+    await page.waitForTimeout(250);
+  }
+  throw new Error('the page kept changing for ten seconds');
+}
+
+test('a hostile page stylesheet does not change the editor', async ({ page }, info) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const shot = async (path: string) => {
     await open(page, path);
     await page.locator('[data-example-bar]').evaluate((bar) => bar.remove());
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(500);
-    return page.screenshot({ animations: 'disabled', caret: 'hide' });
+    return settledShot(page);
   };
   const plain = await shot('/email');
   const hostile = await shot('/hostile');
   // The hostile sheet did load: it reaches the page's own body.
   expect(await page.evaluate(() => getComputedStyle(document.body).boxSizing)).toBe('content-box');
-  // Pixels, not PNG bytes (the encoder does not write identical pictures
-  // identically), and pixelmatch's usual tolerance for anti-aliasing noise.
-  const one = PNG.sync.read(plain);
-  const two = PNG.sync.read(hostile);
-  expect(pixelmatch(one.data, two.data, undefined, one.width, one.height, { threshold: 0.1 })).toBe(
-    0,
-  );
+  const count = differing(plain, hostile);
+  if (count > 0) {
+    // In the report, to see what moved.
+    const diff = new PNG({ width: plain.width, height: plain.height });
+    pixelmatch(plain.data, hostile.data, diff.data, plain.width, plain.height, { threshold: 0.1 });
+    for (const [name, png] of [
+      ['plain', plain],
+      ['hostile', hostile],
+      ['diff', diff],
+    ] as const)
+      await info.attach(name, { body: PNG.sync.write(png), contentType: 'image/png' });
+  }
+  expect(count).toBe(0);
 });

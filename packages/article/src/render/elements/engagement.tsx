@@ -20,10 +20,11 @@ import { ButtonLink, frameProps } from '../parts';
 import { RichTextView } from '../rich-text';
 
 const CTA_TONE = {
-  neutral: 'border-border bg-card border',
+  neutral: 'bst:border-border bst:bg-card bst:border',
   primary:
-    'bg-primary text-primary-foreground [&_.text-muted-foreground]:text-primary-foreground/80',
-  inverted: 'bg-foreground text-background [&_.text-muted-foreground]:text-background/75',
+    'bst:bg-primary bst:text-primary-foreground bst:[&_[class~="bst:text-muted-foreground"]]:text-primary-foreground/80',
+  inverted:
+    'bst:bg-foreground bst:text-background bst:[&_[class~="bst:text-muted-foreground"]]:text-background/75',
 } as const;
 
 export function CtaView({ props, frame, context }: ElementRenderProps<PropsOf<typeof ctaElement>>) {
@@ -33,26 +34,31 @@ export function CtaView({ props, frame, context }: ElementRenderProps<PropsOf<ty
       {...frameProps(
         frame,
         cn(
-          'my-12 px-6 py-10 sm:px-10',
-          props.layout === 'card' ? 'rounded-[var(--radius-card,0.625rem)]' : '-mx-4 sm:-mx-8',
+          'bst:my-12 bst:px-6 bst:py-10 bst:sm:px-10',
+          props.layout === 'card' ? 'bst:rounded-card' : 'bst:-mx-4 bst:sm:-mx-8',
           CTA_TONE[props.tone],
-          center ? 'text-center' : 'text-start',
+          center ? 'bst:text-center' : 'bst:text-start',
         ),
       )}
     >
       {props.title ? (
-        <h2 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+        <h2 className="bst:text-2xl bst:font-semibold bst:tracking-tight bst:text-balance bst:sm:text-3xl">
           {props.title}
         </h2>
       ) : null}
       {props.text.length ? (
         <p
-          className={cn('text-muted-foreground mt-3 leading-relaxed', center && 'mx-auto max-w-lg')}
+          className={cn(
+            'bst:mt-3 bst:leading-relaxed bst:text-muted-foreground',
+            center && 'bst:mx-auto bst:max-w-lg',
+          )}
         >
           <RichTextView value={props.text} context={context} />
         </p>
       ) : null}
-      <div className={cn('mt-7 flex flex-wrap gap-3', center && 'justify-center')}>
+      <div
+        className={cn('bst:mt-7 bst:flex bst:flex-wrap bst:gap-3', center && 'bst:justify-center')}
+      >
         {props.buttons.map((button, index) => (
           <ButtonLink
             key={index}
@@ -73,10 +79,10 @@ export function CtaView({ props, frame, context }: ElementRenderProps<PropsOf<ty
 }
 
 const BUTTONS_ALIGN = {
-  start: 'justify-start',
-  center: 'justify-center',
-  end: 'justify-end',
-  stretch: '[&>*]:flex-1',
+  start: 'bst:justify-start',
+  center: 'bst:justify-center',
+  end: 'bst:justify-end',
+  stretch: 'bst:[&>*]:flex-1',
 } as const;
 
 export function ButtonsView({
@@ -85,7 +91,12 @@ export function ButtonsView({
   context,
 }: ElementRenderProps<PropsOf<typeof buttonsElement>>) {
   return (
-    <div {...frameProps(frame, cn('my-7 flex flex-wrap gap-3', BUTTONS_ALIGN[props.align]))}>
+    <div
+      {...frameProps(
+        frame,
+        cn('bst:my-7 bst:flex bst:flex-wrap bst:gap-3', BUTTONS_ALIGN[props.align]),
+      )}
+    >
       {props.buttons.map((button, index) => (
         <ButtonLink key={index} button={button} context={context} size={props.size} />
       ))}
@@ -105,26 +116,28 @@ function RelatedCard({
   return (
     <Link
       href={editing ? '#' : item.href}
-      className="group border-border bg-card hover:border-border-strong flex flex-col overflow-hidden rounded-[var(--radius-card,0.625rem)] border transition-colors"
+      className="bst:group bst:flex bst:flex-col bst:overflow-hidden bst:rounded-card bst:border bst:border-border bst:bg-card bst:transition-colors bst:hover:border-border-strong"
     >
       {item.cover ? (
         <img
           src={item.cover}
           alt=""
           loading="lazy"
-          className="bg-muted aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+          className="bst:aspect-[16/9] bst:w-full bst:bg-muted bst:object-cover bst:transition-transform bst:duration-500 bst:group-hover:scale-[1.02]"
         />
       ) : null}
-      <span className="flex flex-1 flex-col gap-1.5 p-4">
-        <span className="text-foreground flex items-start justify-between gap-2 leading-snug font-semibold">
+      <span className="bst:flex bst:flex-1 bst:flex-col bst:gap-1.5 bst:p-4">
+        <span className="bst:flex bst:items-start bst:justify-between bst:gap-2 bst:leading-snug bst:font-semibold bst:text-foreground">
           {item.title}
           <ArrowUpRight
-            className="text-muted-foreground group-hover:text-primary size-4 shrink-0 transition-colors"
+            className="bst:size-4 bst:shrink-0 bst:text-muted-foreground bst:transition-colors bst:group-hover:text-primary"
             aria-hidden="true"
           />
         </span>
         {item.excerpt ? (
-          <span className="text-muted-foreground line-clamp-2 text-sm">{item.excerpt}</span>
+          <span className="bst:line-clamp-2 bst:text-sm bst:text-muted-foreground">
+            {item.excerpt}
+          </span>
         ) : null}
       </span>
     </Link>
@@ -140,11 +153,11 @@ export function RelatedView({
     props.mode === 'manual' ? props.items : (context.options.related ?? []).slice(0, props.count);
   if (items.length === 0 && !context.options.editing) return null;
   return (
-    <section {...frameProps(frame, 'my-12')}>
-      <h2 className="mb-5 text-xl font-semibold tracking-tight sm:text-2xl">
+    <section {...frameProps(frame, 'bst:my-12')}>
+      <h2 className="bst:mb-5 bst:text-xl bst:font-semibold bst:tracking-tight bst:sm:text-2xl">
         {props.title || context.messages.readNext}
       </h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="bst:grid bst:gap-4 bst:sm:grid-cols-2 bst:lg:grid-cols-3">
         {items.map((item) => (
           <RelatedCard
             key={item.id}
@@ -167,16 +180,18 @@ export function NewsletterView({
     <section
       {...frameProps(
         frame,
-        'border-border bg-muted/40 my-12 rounded-[var(--radius-card,0.625rem)] border px-6 py-8 sm:px-8',
+        'bst:border-border bst:bg-muted/40 bst:my-12 bst:rounded-card bst:border bst:px-6 bst:py-8 bst:sm:px-8',
       )}
     >
-      {props.title ? <h2 className="text-xl font-semibold tracking-tight">{props.title}</h2> : null}
+      {props.title ? (
+        <h2 className="bst:text-xl bst:font-semibold bst:tracking-tight">{props.title}</h2>
+      ) : null}
       {props.text.length ? (
-        <p className="text-muted-foreground mt-2 mb-5 leading-relaxed">
+        <p className="bst:mt-2 bst:mb-5 bst:leading-relaxed bst:text-muted-foreground">
           <RichTextView value={props.text} context={context} />
         </p>
       ) : (
-        <div className="mb-5" />
+        <div className="bst:mb-5" />
       )}
       <NewsletterForm
         action={context.options.editing ? undefined : context.options.newsletterAction}
@@ -197,7 +212,7 @@ export function AccordionView({
     <div
       {...frameProps(
         frame,
-        'divide-border border-border my-8 divide-y rounded-[var(--radius-card,0.625rem)] border',
+        'bst:divide-border bst:border-border bst:my-8 bst:divide-y bst:rounded-card bst:border',
       )}
     >
       {children}
@@ -221,16 +236,18 @@ export function AccordionItemView({
       // exclusive accordion, with no script.
       {...(settings && !settings.allowMultiple ? { name: `accordion-${parent?.id ?? ''}` } : {})}
       open={Boolean(settings?.firstOpen && first) || Boolean(context.options.editing)}
-      {...frameProps(frame, 'group px-5 [&_summary::-webkit-details-marker]:hidden')}
+      {...frameProps(frame, 'bst:group bst:px-5 bst:[&_summary::-webkit-details-marker]:hidden')}
     >
-      <summary className="text-foreground flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium">
+      <summary className="bst:flex bst:cursor-pointer bst:list-none bst:items-center bst:justify-between bst:gap-4 bst:py-4 bst:font-medium bst:text-foreground">
         {props.title}
         <ChevronDown
-          className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-open:rotate-180"
+          className="bst:size-4 bst:shrink-0 bst:text-muted-foreground bst:transition-transform bst:duration-200 bst:group-open:rotate-180"
           aria-hidden="true"
         />
       </summary>
-      <div className="animate-[ui-rise_220ms_ease-out] pb-4 [&>*:first-child]:mt-0">{children}</div>
+      <div className="bst:animate-[bst-rise_220ms_ease-out] bst:pb-4 bst:[&>*:first-child]:mt-0">
+        {children}
+      </div>
     </details>
   );
 }
@@ -247,7 +264,7 @@ export function TabsView({
     return typeof item?.props.title === 'string' ? item.props.title : '';
   });
   return (
-    <div {...frameProps(frame, 'my-8')}>
+    <div {...frameProps(frame, 'bst:my-8')}>
       <TabsIsland
         titles={titles}
         panels={ids.map((id) => context.renderNode(id))}
@@ -261,7 +278,7 @@ export function TabItemView({
   frame,
   children,
 }: ElementRenderProps<PropsOf<typeof tabItemElement>>) {
-  return <div {...frameProps(frame, '[&>*:first-child]:mt-0')}>{children}</div>;
+  return <div {...frameProps(frame, 'bst:[&>*:first-child]:mt-0')}>{children}</div>;
 }
 
 export function DisclaimerView({
@@ -273,7 +290,7 @@ export function DisclaimerView({
     <p
       {...frameProps(
         frame,
-        'text-muted-foreground border-border my-8 border-t pt-4 text-xs leading-relaxed',
+        'bst:text-muted-foreground bst:border-border bst:my-8 bst:border-t bst:pt-4 bst:text-xs bst:leading-relaxed',
       )}
     >
       <RichTextView value={props.text} context={context} />

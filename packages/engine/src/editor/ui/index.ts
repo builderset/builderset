@@ -7,10 +7,10 @@
  * separate code and drift apart on purpose: a fix in the app's kit does not
  * reach this kit.
  *
- * The class names still use the shadcn-style token names (`bg-card`,
- * `rounded-[var(--radius-control)]`); step 10 maps them to the product's own
+ * The class names use the theme's internal names (`bst:bg-card`,
+ * `bst:rounded-control`), which `src/theme/theme.css` maps to the public
  * variables. Every `data-slot` is kept: the side panels' dense layout targets
- * them (`chrome/panel-css.ts`).
+ * them (`src/theme/panel.css`).
  */
 
 export { Badge, type BadgeProps, type BadgeTone } from './badge';

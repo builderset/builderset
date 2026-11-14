@@ -1,0 +1,206 @@
+/*
+ * The rules that must win over a utility, so they come after them: the focus
+ * glow, the invalid field, the overlay bands and how an overlay fills in, and
+ * reduced motion. Scoped to `.builderset`; the `data-slot` names are the
+ * editor's own components', and a page that uses the same names (shadcn does)
+ * is not touched, because nothing here reaches outside the editor.
+ */
+
+/* ── The control focus glow ───────────────────────────────────────────────────
+   Every field gets the same brand border and soft ring. A glow, where the
+   global ring is an outline at an offset: a control carrying this class wears
+   one indicator, not two. `:focus-visible`, not `:focus`: a dialog restores
+   focus to the control that opened it, and a mouse user must not be left with
+   a ring on it. */
+.builderset .bld-focus {
+  transition:
+    color var(--bst-dur-3) cubic-bezier(0.2, 0, 0, 1),
+    border-color var(--bst-dur-3) cubic-bezier(0.2, 0, 0, 1),
+    box-shadow var(--bst-dur-3) cubic-bezier(0.2, 0, 0, 1),
+    background-color var(--bst-dur-3) cubic-bezier(0.2, 0, 0, 1);
+}
+.builderset .bld-focus:focus-visible,
+.builderset .bld-focus[data-state='open'] {
+  outline: none;
+  border-color: color-mix(
+    in oklab,
+    var(--builderset-primary, var(--bst-d-primary)) 55%,
+    transparent
+  );
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--builderset-primary, var(--bst-d-primary)) 12%, transparent);
+}
+
+/* ── The invalid field ────────────────────────────────────────────────────────
+   After the glow, so a field that is invalid AND focused reads as invalid
+   first. A tint and a shake, because a colour flip alone is missed by someone
+   looking at the button they just pressed. */
+.builderset .bld-invalid {
+  border-color: color-mix(in oklab, var(--builderset-danger, var(--bst-d-danger)) 55%, transparent);
+  background-color: color-mix(
+    in oklab,
+    var(--builderset-danger, var(--bst-d-danger)) 4%,
+    var(--builderset-surface, var(--bst-d-surface))
+  );
+  animation: bst-shake 0.25s ease-in-out;
+}
+.builderset .bld-invalid:focus,
+.builderset .bld-invalid:focus-visible,
+.builderset .bld-invalid[data-state='open'] {
+  outline: none;
+  border-color: color-mix(in oklab, var(--builderset-danger, var(--bst-d-danger)) 65%, transparent);
+  box-shadow: 0 0 0 3px
+    color-mix(in oklab, var(--builderset-danger, var(--bst-d-danger)) 12%, transparent);
+}
+
+/* ══ Overlay bands ════════════════════════════════════════════════════════════
+   The header and the footer of a dialog or drawer reach the panel's edges; the
+   body between them keeps the panel's padding (`--bst-overlay-pad`). One rule
+   for every overlay rather than one per component. */
+.builderset :where([data-slot='overlay-header'], [data-slot='overlay-footer']) {
+  padding: 0;
+}
+.builderset :where([data-slot='overlay-panel']) {
+  overflow: hidden;
+}
+/* No border on a panel: the footer's action bar is full-bleed, and the scrim
+   carries the panel's edge. */
+.builderset [data-slot='overlay-panel'] {
+  border: 0;
+}
+.builderset [data-slot='overlay-panel'][data-pad='0'] {
+  --bst-overlay-pad: 0px;
+}
+.builderset [data-slot='overlay-panel'][data-pad='lg'] {
+  --bst-overlay-pad: 2rem;
+}
+.builderset [data-slot='overlay-header'],
+.builderset [data-slot='overlay-footer'] {
+  margin-left: calc(var(--bst-overlay-pad, 0px) * -1);
+  margin-right: calc(var(--bst-overlay-pad, 0px) * -1);
+}
+.builderset [data-slot='overlay-header'] {
+  margin-top: calc(var(--bst-overlay-pad, 0px) * -1);
+  border-bottom: 1px solid var(--builderset-border, var(--bst-d-border));
+}
+.builderset [data-slot='overlay-footer'] {
+  margin-bottom: calc(var(--bst-overlay-pad, 0px) * -1);
+  border-top: none;
+}
+/* A header followed straight by a footer (a confirm dialog) needs no rule. */
+.builderset [data-slot='overlay-header']:has(+ [data-slot='overlay-footer']) {
+  border-bottom: none;
+}
+
+/* ══ An overlay fills in ══════════════════════════════════════════════════════
+   Its contents arrive in reading order — what this is, what to fill in, what to
+   press — and leave together, fast. Only when motion is welcome, so nothing is
+   ever left at opacity 0. */
+@media (prefers-reduced-motion: no-preference) {
+  .builderset [data-slot='overlay-panel'][data-state='open'] > *:not(form),
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    :is([data-slot='overlay-header'], [data-slot='overlay-body'], [data-slot='overlay-footer'])
+    > *,
+  .builderset [data-slot='overlay-panel'][data-state='open'] [data-slot='overlay-header'] > * > * {
+    animation: bst-rise var(--bst-dur-overlay-content) cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .builderset [data-slot='overlay-panel'][data-state='open'] [data-slot='overlay-header'] > * {
+    animation-delay: calc(var(--bst-overlay-step) * 1);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-header']
+    > *
+    > *:nth-child(1) {
+    animation-delay: calc(var(--bst-overlay-step) * 2);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-header']
+    > *
+    > *:nth-child(2) {
+    animation-delay: calc(var(--bst-overlay-step) * 3);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-header']
+    > *
+    > *:nth-child(n + 3) {
+    animation-delay: calc(var(--bst-overlay-step) * 4);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-body']
+    > *:nth-child(1) {
+    animation-delay: calc(var(--bst-overlay-step) * 4);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-body']
+    > *:nth-child(2) {
+    animation-delay: calc(var(--bst-overlay-step) * 5);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-body']
+    > *:nth-child(3) {
+    animation-delay: calc(var(--bst-overlay-step) * 6);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-body']
+    > *:nth-child(4) {
+    animation-delay: calc(var(--bst-overlay-step) * 7);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-body']
+    > *:nth-child(n + 5) {
+    animation-delay: calc(var(--bst-overlay-step) * 8);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-footer']
+    > *:nth-child(1) {
+    animation-delay: calc(var(--bst-overlay-step) * 6);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-footer']
+    > *:nth-child(2) {
+    animation-delay: calc(var(--bst-overlay-step) * 7);
+  }
+  .builderset
+    [data-slot='overlay-panel'][data-state='open']
+    [data-slot='overlay-footer']
+    > *:nth-child(n + 3) {
+    animation-delay: calc(var(--bst-overlay-step) * 8);
+  }
+  /* Leaving: together, faster than the panel. Last, so it resets the delays. */
+  .builderset [data-slot='overlay-panel'][data-state='closed'] > *:not(form),
+  .builderset
+    [data-slot='overlay-panel'][data-state='closed']
+    :is([data-slot='overlay-header'], [data-slot='overlay-body'], [data-slot='overlay-footer'])
+    > *,
+  .builderset
+    [data-slot='overlay-panel'][data-state='closed']
+    [data-slot='overlay-header']
+    > *
+    > * {
+    animation: bst-sink var(--bst-dur-overlay-content-out) cubic-bezier(0.4, 0, 1, 1) both;
+  }
+}
+
+/* ── Reduced motion: every transition and animation, except opacity ──────────
+   Stated once rather than per component. A fade carries no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .builderset,
+  .builderset :where(*, ::before, ::after) {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -40,86 +40,89 @@ import { cn } from '../cn';
  * motion is handled once, globally, in the base layer.
  */
 export const ICON_MOTION = cn(
-  '[&_svg]:transition-[scale,rotate] [&_svg]:duration-(--dur-3) [&_svg]:ease-(--ease-enter)',
-  'hover:[&_svg:not(.animate-spin)]:scale-115 hover:[&_svg:not(.animate-spin)]:-rotate-8',
+  'bst:[&_svg]:transition-[scale,rotate] bst:[&_svg]:duration-(--bst-dur-3) bst:[&_svg]:ease-enter',
+  'bst:hover:[&_svg:not([class~="bst:animate-spin"])]:scale-115 bst:hover:[&_svg:not([class~="bst:animate-spin"])]:-rotate-8',
 );
 
 const button = cva(
   cn(
-    'group/button relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2',
-    'rounded-[var(--radius-control)] border border-transparent bg-clip-padding',
-    'text-sm font-medium whitespace-nowrap select-none outline-none',
-    // `ui-focus` rather than an offset outline, and the difference is not
+    'bst:group/button bst:relative bst:inline-flex bst:shrink-0 bst:cursor-pointer bst:items-center bst:justify-center bst:gap-2',
+    'bst:rounded-control bst:border bst:border-transparent bst:bg-clip-padding',
+    'bst:text-sm bst:font-medium bst:whitespace-nowrap bst:outline-none bst:select-none',
+    // `bld-focus` rather than an offset outline, and the difference is not
     // cosmetic: every input and select in the product draws a 3px glow, and an
     // outline-plus-gap here meant a keyboard reader crossing from a field to the
     // button beside it watched the indicator change SHAPE. One treatment, stated
     // once in the theme stylesheet, is the whole reason that class exists.
     //
     // It also carries the transition, which is why there is no `transition-*`
-    // utility here any more: `.ui-focus` is UNLAYERED and would have overridden
+    // utility here any more: `.bld-focus` is UNLAYERED and would have overridden
     // one anyway, so a utility beside it was a declaration that never applied.
     // The four properties it animates are the four this button changes; the
     // press nudge below is deliberately left instant.
-    'ui-focus',
+    'bld-focus',
     // A press pushes the button down a pixel — except on a menu trigger, where
     // the surface stays put while its menu is open and a nudge would read as the
     // panel having moved rather than the button.
-    '[&:active:not([aria-haspopup])]:translate-y-px',
+    'bst:[&:active:not([aria-haspopup])]:translate-y-px',
     // `pointer-events-none` so a disabled button fires no hover styles and does
     // not swallow a click meant for what is behind it. Its COLOURS come from the
     // global disabled rule in the theme stylesheet — a surface, never an opacity
     // cascade that drags the label and the border below threshold with it.
-    'disabled:pointer-events-none',
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    'bst:disabled:pointer-events-none',
+    "bst:[&_svg]:pointer-events-none bst:[&_svg]:shrink-0 bst:[&_svg:not([class*='size-'])]:size-4",
     ICON_MOTION,
   ),
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/85',
+        primary: 'bst:bg-primary bst:text-primary-foreground bst:hover:bg-primary/85',
         // `aria-expanded:` on the three quiet variants: a button holding a menu
         // open is in a STATE, and leaving it to look at rest means the only mark
         // of an open dropdown is the dropdown itself — which on a crowded
         // toolbar is not enough to say which control opened it.
         secondary: cn(
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-          'aria-expanded:bg-secondary aria-expanded:text-secondary-foreground',
+          'bst:bg-secondary bst:text-secondary-foreground bst:hover:bg-secondary/80',
+          'bst:aria-expanded:bg-secondary bst:aria-expanded:text-secondary-foreground',
         ),
         outline: cn(
-          'border-border bg-input/40 text-foreground hover:border-border-strong hover:bg-input',
-          'aria-expanded:border-border-strong aria-expanded:bg-input',
+          'bst:border-border bst:bg-input/40 bst:text-foreground bst:hover:border-border-strong bst:hover:bg-input',
+          'bst:aria-expanded:border-border-strong bst:aria-expanded:bg-input',
         ),
-        ghost: 'text-foreground hover:bg-accent aria-expanded:bg-accent',
+        ghost: 'bst:text-foreground bst:hover:bg-accent bst:aria-expanded:bg-accent',
         destructive: cn(
-          'border-destructive/25 bg-destructive/10 text-destructive',
-          'hover:border-destructive/40 hover:bg-destructive/20',
+          'bst:border-destructive/25 bst:bg-destructive/10 bst:text-destructive',
+          'bst:hover:border-destructive/40 bst:hover:bg-destructive/20',
         ),
         // The same tint construction as `destructive`, for the action that is
         // reversible but wants thinking about — a retry, a force-sync, a
         // publish over something already live.
-        warning: cn('border-warn/25 bg-warn/10 text-warn', 'hover:border-warn/40 hover:bg-warn/20'),
-        danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/85',
-        link: 'text-primary underline-offset-4 hover:underline',
+        warning: cn(
+          'bst:border-warn/25 bst:bg-warn/10 bst:text-warn',
+          'bst:hover:border-warn/40 bst:hover:bg-warn/20',
+        ),
+        danger: 'bst:bg-destructive bst:text-destructive-foreground bst:hover:bg-destructive/85',
+        link: 'bst:text-primary bst:underline-offset-4 bst:hover:underline',
       },
       size: {
         // `default` is `--control-h` — 36px, the height of every other control
         // in the back office. A button that is not that tall sits visibly proud
         // of the input beside it.
-        default: 'h-9 px-3',
-        sm: 'h-8 gap-1.5 px-2.5 text-[13px]',
+        default: 'bst:h-9 bst:px-3',
+        sm: 'bst:h-8 bst:gap-1.5 bst:px-2.5 bst:text-[13px]',
         // 24px, for a control that lives INSIDE another object — a chip's
         // dismiss, a toolbar's overflow, an action in a table row. At this size
         // the icon comes down with the box, or a 16px glyph in a 24px square is
         // all glyph and no button.
-        xs: "h-6 gap-1 px-2 text-xs [&_svg:not([class*='size-'])]:size-3",
+        xs: "bst:h-6 bst:gap-1 bst:px-2 bst:text-xs bst:[&_svg:not([class*='size-'])]:size-3",
         // `md` and `lg` are the public site's scale: a marketing page's primary
         // action is the point of the screen and an operator tool's is not.
-        md: 'h-10 px-4',
-        lg: 'h-12 px-6 text-base',
-        icon: 'size-9 px-0',
-        'icon-xs': "size-6 px-0 [&_svg:not([class*='size-'])]:size-3",
-        'icon-sm': 'size-8 px-0',
-        'icon-lg': 'size-10 px-0',
+        md: 'bst:h-10 bst:px-4',
+        lg: 'bst:h-12 bst:px-6 bst:text-base',
+        icon: 'bst:size-9 bst:px-0',
+        'icon-xs': "bst:size-6 bst:px-0 bst:[&_svg:not([class*='size-'])]:size-3",
+        'icon-sm': 'bst:size-8 bst:px-0',
+        'icon-lg': 'bst:size-10 bst:px-0',
       },
     },
     defaultVariants: { variant: 'primary', size: 'default' },
@@ -183,7 +186,7 @@ export function Button({
         children
       ) : (
         <>
-          {loading ? <Loader2 className="animate-spin" aria-hidden="true" /> : icon}
+          {loading ? <Loader2 className="bst:animate-spin" aria-hidden="true" /> : icon}
           {children}
         </>
       )}

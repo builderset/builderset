@@ -35,9 +35,9 @@ export function InsertMenu({
       }}
     >
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-72 p-1" align="center">
-        <div className="border-border mb-1 flex items-center gap-2 border-b px-2 pb-1.5">
-          <Search className="text-muted-foreground size-4" aria-hidden="true" />
+      <PopoverContent className="bst:w-72 bst:p-1" align="center">
+        <div className="bst:mb-1 bst:flex bst:items-center bst:gap-2 bst:border-b bst:border-border bst:px-2 bst:pb-1.5">
+          <Search className="bst:size-4 bst:text-muted-foreground" aria-hidden="true" />
           <input
             autoFocus
             value={query}
@@ -59,12 +59,14 @@ export function InsertMenu({
               }
             }}
             placeholder={messages.searchElements}
-            className="h-8 w-full bg-transparent text-sm outline-none"
+            className="bst:h-8 bst:w-full bst:bg-transparent bst:text-sm bst:outline-none"
           />
         </div>
-        <div className="max-h-72 overflow-y-auto" role="listbox">
+        <div className="bst:max-h-72 bst:overflow-y-auto" role="listbox">
           {matches.length === 0 ? (
-            <p className="text-muted-foreground px-3 py-2 text-sm">{messages.noElementsFound}</p>
+            <p className="bst:px-3 bst:py-2 bst:text-sm bst:text-muted-foreground">
+              {messages.noElementsFound}
+            </p>
           ) : (
             matches.map((choice, index) => (
               <button
@@ -79,12 +81,15 @@ export function InsertMenu({
                   onChoose(choice.type);
                 }}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-[var(--radius-control)] px-2 py-1.5 text-left',
-                  index === active ? 'bg-accent' : '',
+                  'bst:flex bst:w-full bst:items-center bst:gap-3 bst:rounded-control bst:px-2 bst:py-1.5 bst:text-left',
+                  index === active ? 'bst:bg-accent' : '',
                 )}
               >
-                <ElementIcon name={choice.icon} className="text-muted-foreground size-4 shrink-0" />
-                <span className="truncate text-sm">{choice.name}</span>
+                <ElementIcon
+                  name={choice.icon}
+                  className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+                />
+                <span className="bst:truncate bst:text-sm">{choice.name}</span>
               </button>
             ))
           )}

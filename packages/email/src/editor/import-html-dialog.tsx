@@ -132,13 +132,13 @@ export function ImportHtmlDialog({
       <DrawerPanel
         side="right"
         closeLabel={w.cancel}
-        className="sm:w-[min(40rem,calc(100vw-2rem))]"
+        className="bst:sm:w-[min(40rem,calc(100vw-2rem))]"
       >
-        <OverlayHeader className="border-border border-b px-5 py-4">
+        <OverlayHeader className="bst:border-b bst:border-border bst:px-5 bst:py-4">
           <OverlayTitle>{w.title}</OverlayTitle>
           <OverlayDescription>{w.body}</OverlayDescription>
         </OverlayHeader>
-        <OverlayBody className="bld-panel flex flex-1 flex-col gap-4 overflow-y-auto px-5 py-4">
+        <OverlayBody className="bld-panel bst:flex bst:flex-1 bst:flex-col bst:gap-4 bst:overflow-y-auto bst:px-5 bst:py-4">
           <SegmentedControl
             aria-label={w.mode}
             value={mode}
@@ -147,7 +147,7 @@ export function ImportHtmlDialog({
               { value: 'replace', label: w.replace },
               { value: 'append', label: w.append },
             ]}
-            className="w-full [&>*]:flex-1"
+            className="bst:w-full bst:[&>*]:flex-1"
           />
           <Textarea
             value={html}
@@ -156,13 +156,13 @@ export function ImportHtmlDialog({
             }}
             placeholder="<!DOCTYPE html>…"
             spellCheck={false}
-            className="min-h-72 flex-1 font-mono text-xs"
+            className="bst:min-h-72 bst:flex-1 bst:font-mono bst:text-xs"
           />
           <input
             ref={file}
             type="file"
             accept=".html,.htm,text/html"
-            className="sr-only"
+            className="bst:sr-only"
             tabIndex={-1}
             onChange={(event) => {
               const picked = event.target.files?.[0];
@@ -170,7 +170,7 @@ export function ImportHtmlDialog({
               if (picked) void picked.text().then(setHtml);
             }}
           />
-          <p className="text-muted-foreground text-xs">{w.hint}</p>
+          <p className="bst:text-xs bst:text-muted-foreground">{w.hint}</p>
         </OverlayBody>
         <OverlayFooter>
           <Button

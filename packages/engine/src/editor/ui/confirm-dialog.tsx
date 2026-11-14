@@ -46,28 +46,28 @@ export type ConfirmTone = 'default' | 'destructive' | 'warning' | 'success';
 
 const TONES: Record<ConfirmTone, { badge: string; fill: string; icon: ReactNode }> = {
   default: {
-    badge: 'bg-primary/10 text-primary',
-    fill: 'bg-primary text-primary-foreground hover:bg-primary/85',
-    icon: <Info className="size-7" aria-hidden="true" />,
+    badge: 'bst:bg-primary/10 bst:text-primary',
+    fill: 'bst:bg-primary bst:text-primary-foreground bst:hover:bg-primary/85',
+    icon: <Info className="bst:size-7" aria-hidden="true" />,
   },
   destructive: {
-    badge: 'bg-destructive/10 text-destructive',
-    fill: 'bg-destructive text-destructive-foreground hover:bg-destructive/85',
-    icon: <AlertTriangle className="size-7" aria-hidden="true" />,
+    badge: 'bst:bg-destructive/10 bst:text-destructive',
+    fill: 'bst:bg-destructive bst:text-destructive-foreground bst:hover:bg-destructive/85',
+    icon: <AlertTriangle className="bst:size-7" aria-hidden="true" />,
   },
   // `--warn` and `--ok` carry no foreground token of their own, and
   // `--background` is the right answer rather than a stand-in: near-white in
   // light and near-black in dark, which is exactly the inversion a fill this
   // saturated needs.
   warning: {
-    badge: 'bg-warn/10 text-warn',
-    fill: 'bg-warn text-background hover:bg-warn/85',
-    icon: <AlertTriangle className="size-7" aria-hidden="true" />,
+    badge: 'bst:bg-warn/10 bst:text-warn',
+    fill: 'bst:bg-warn bst:text-background bst:hover:bg-warn/85',
+    icon: <AlertTriangle className="bst:size-7" aria-hidden="true" />,
   },
   success: {
-    badge: 'bg-ok/10 text-ok',
-    fill: 'bg-ok text-background hover:bg-ok/85',
-    icon: <Check className="size-7" aria-hidden="true" />,
+    badge: 'bst:bg-ok/10 bst:text-ok',
+    fill: 'bst:bg-ok bst:text-background bst:hover:bg-ok/85',
+    icon: <Check className="bst:size-7" aria-hidden="true" />,
   },
 };
 
@@ -184,41 +184,41 @@ export function ConfirmDialog({
         onPointerDownOutside={block}
         onInteractOutside={block}
       >
-        <OverlayHeader className="items-center px-8 pt-8 pb-6 text-center">
-          <div className="flex flex-col items-center gap-3">
+        <OverlayHeader className="bst:items-center bst:px-8 bst:pt-8 bst:pb-6 bst:text-center">
+          <div className="bst:flex bst:flex-col bst:items-center bst:gap-3">
             <div
               className={cn(
                 // 56px. This is the only graphic in a panel whose whole
                 // job is one question, and at 48 it read as an icon beside the
                 // title rather than as the thing the title explains.
-                'flex size-14 items-center justify-center rounded-full',
-                'animate-[ui-zoom-in_var(--dur-3)_var(--ease-enter)]',
+                'bst:flex bst:size-14 bst:items-center bst:justify-center bst:rounded-full',
+                'bst:animate-[bst-zoom-in_var(--bst-dur-3)_var(--bst-ease-enter)]',
                 palette.badge,
               )}
             >
               {icon ?? palette.icon}
             </div>
-            <OverlayTitle className="pr-0 text-center">{title}</OverlayTitle>
+            <OverlayTitle className="bst:pr-0 bst:text-center">{title}</OverlayTitle>
             {description ? (
-              <OverlayDescription asChild className="pr-0 text-center">
+              <OverlayDescription asChild className="bst:pr-0 bst:text-center">
                 <div>{description}</div>
               </OverlayDescription>
             ) : null}
           </div>
         </OverlayHeader>
 
-        {children ? <div className="px-8 pb-6">{children}</div> : null}
+        {children ? <div className="bst:px-8 bst:pb-6">{children}</div> : null}
 
         {error ? (
           <p
             role="alert"
-            className="border-destructive/30 bg-destructive/10 text-destructive mx-8 mb-6 rounded-[var(--radius-control)] border px-3 py-2 text-sm"
+            className="bst:mx-8 bst:mb-6 bst:rounded-control bst:border bst:border-destructive/30 bst:bg-destructive/10 bst:px-3 bst:py-2 bst:text-sm bst:text-destructive"
           >
             {error}
           </p>
         ) : null}
 
-        <OverlayFooter className={cn(hasSecondary && 'flex-col-reverse items-stretch')}>
+        <OverlayFooter className={cn(hasSecondary && 'bst:flex-col-reverse bst:items-stretch')}>
           <Button
             variant="secondary"
             disabled={busy}

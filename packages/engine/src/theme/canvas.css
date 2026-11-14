@@ -1,0 +1,37 @@
+/*
+ * Editor-only rules for the document on the canvas: an empty container still
+ * has a body to drop into, hidden blocks are dimmed rather than gone, a text
+ * field shows its placeholder. After the utilities, and a file in the bundle
+ * rather than a <style> written at run time.
+ */
+.builderset .bld-canvas [data-node]:empty {
+  min-height: 3rem;
+  border: 1px dashed var(--builderset-border, var(--bst-d-border));
+  border-radius: calc(var(--builderset-radius, 0.625rem) * 0.7);
+}
+.builderset .bld-canvas [data-hidden-node] {
+  opacity: 0.45;
+}
+.builderset .bld-canvas [data-node] {
+  transition: opacity 160ms ease;
+  cursor: default;
+}
+.builderset .bld-canvas [data-dragging] {
+  opacity: 0.3;
+  filter: saturate(0.6);
+}
+.builderset .bld-canvas .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--builderset-muted-foreground, var(--bst-d-muted-foreground));
+  opacity: 0.7;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+.builderset .bld-canvas .ProseMirror {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.builderset .bld-canvas [data-inline-text] {
+  cursor: text;
+}

@@ -1,4 +1,10 @@
-import { localize, walk, type ElementRegistry, type RichText } from '@builderset/engine';
+import {
+  localize,
+  walk,
+  type ElementRegistry,
+  type RichText,
+  type ThemeMode,
+} from '@builderset/engine';
 import type { ArticleDocument } from '../core/document';
 import { outline as buildOutline } from '../core/outline';
 import { Fragment, type ReactNode } from 'react';
@@ -64,6 +70,7 @@ import {
   TableView,
   TakeawaysView,
 } from './elements/text';
+import { cn } from './cn';
 import { messagesFor } from './messages';
 import { styleClasses, styleInline } from './node-style';
 import { RichTextView } from './rich-text';
@@ -223,22 +230,29 @@ function Footnotes({ context }: { context: RenderContext }) {
   if (context.footnotes.size === 0 || context.options.editing) return null;
   const entries = [...context.footnotes.entries()].sort((a, b) => a[1] - b[1]);
   return (
-    <section aria-labelledby="footnotes-heading" className="border-border mt-12 border-t pt-6">
+    <section
+      aria-labelledby="footnotes-heading"
+      className="bst:mt-12 bst:border-t bst:border-border bst:pt-6"
+    >
       <h2
         id="footnotes-heading"
-        className="text-foreground mb-3 text-sm font-semibold tracking-wide uppercase"
+        className="bst:mb-3 bst:text-sm bst:font-semibold bst:tracking-wide bst:text-foreground bst:uppercase"
       >
         {context.messages.notes}
       </h2>
-      <ol className="text-muted-foreground space-y-2 text-sm">
+      <ol className="bst:space-y-2 bst:text-sm bst:text-muted-foreground">
         {entries.map(([id, number]) => {
           const text = context.document.nodes[id]?.props.text as RichText | undefined;
           return (
-            <li key={id} id={`fn-${id}`} className="flex gap-2">
-              <span className="text-primary font-semibold tabular-nums">{number}.</span>
-              <span className="min-w-0 flex-1">
+            <li key={id} id={`fn-${id}`} className="bst:flex bst:gap-2">
+              <span className="bst:font-semibold bst:text-primary bst:tabular-nums">{number}.</span>
+              <span className="bst:min-w-0 bst:flex-1">
                 <RichTextView value={text} context={context} />{' '}
-                <a href={`#fnref-${id}`} className="text-primary no-underline" aria-label="↩">
+                <a
+                  href={`#fnref-${id}`}
+                  className="bst:text-primary bst:no-underline"
+                  aria-label="↩"
+                >
                   ↩
                 </a>
               </span>
@@ -278,16 +292,33 @@ export interface ArticleRendererProps extends RenderOptions {
    * type is missing here, or whose props do not pass its schema, is left out.
    */
   registry: ElementRegistry;
-  /** Applied to the wrapping `<div>`. */
+  /** Applied to the wrapping `<div>`, beside `builderset builderset-content`. */
   className?: string | undefined;
+  /**
+   * 'auto' (the default) follows the site: an ancestor marked `dark` or
+   * `light` (a class, or `data-theme`), else the operating system. 'light'
+   * and 'dark' pin it.
+   */
+  theme?: ThemeMode | undefined;
 }
 
-/** `renderDocument` as a component, in an `<article>`. */
+/**
+ * `renderDocument` as a component. Its root carries the stylesheet's scope
+ * (`@builderset/article/content.css`) and the theme.
+ */
 export function ArticleRenderer({
   document,
   registry,
   className,
+  theme,
   ...options
 }: ArticleRendererProps) {
-  return <div className={className}>{renderDocument(document, registry, options)}</div>;
+  return (
+    <div
+      className={cn('builderset builderset-content', className)}
+      data-builderset-theme={theme ?? 'auto'}
+    >
+      {renderDocument(document, registry, options)}
+    </div>
+  );
 }

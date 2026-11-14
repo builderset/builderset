@@ -40,12 +40,12 @@ function Row({
 }) {
   const id = useId();
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium">
+    <div className="bst:space-y-1.5">
+      <Label htmlFor={id} className="bst:text-xs bst:font-medium">
         {label}
       </Label>
       {children(id)}
-      {hint ? <p className="text-muted-foreground text-xs">{hint}</p> : null}
+      {hint ? <p className="bst:text-xs bst:text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
@@ -99,12 +99,12 @@ export function EmailSettingsPanel() {
           type="button"
           aria-label={w.insertVariable}
           title={w.insertVariable}
-          className="border-input hover:bg-accent flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-control)] border [&_svg]:size-4"
+          className="bst:flex bst:size-9 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-control bst:border bst:border-input bst:hover:bg-accent bst:[&_svg]:size-4"
         >
           <Braces aria-hidden="true" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="max-h-72 w-64 overflow-y-auto">
+      <DropdownMenuContent align="end" className="bst:max-h-72 bst:w-64 bst:overflow-y-auto">
         {variables.map((variable) => (
           <DropdownMenuItem
             key={variable.path}
@@ -112,8 +112,8 @@ export function EmailSettingsPanel() {
               onPick(variable.path);
             }}
           >
-            <span className="min-w-0 flex-1 truncate">{variable.label}</span>
-            <code className="text-muted-foreground text-[10px]">{variable.path}</code>
+            <span className="bst:min-w-0 bst:flex-1 bst:truncate">{variable.label}</span>
+            <code className="bst:text-[10px] bst:text-muted-foreground">{variable.path}</code>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -135,46 +135,52 @@ export function EmailSettingsPanel() {
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-border flex h-11 shrink-0 flex-col justify-center border-b px-3">
-        <p className="text-sm font-semibold">{w.settings}</p>
+    <div className="bst:flex bst:h-full bst:flex-col">
+      <div className="bst:flex bst:h-11 bst:shrink-0 bst:flex-col bst:justify-center bst:border-b bst:border-border bst:px-3">
+        <p className="bst:text-sm bst:font-semibold">{w.settings}</p>
         {type ? (
-          <p className="text-muted-foreground truncate text-xs">
+          <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
             {w.type}: {type.label[locale] ?? type.label.en}
           </p>
         ) : null}
       </div>
-      <Tabs value={tab} onValueChange={setTab} className="flex min-h-0 flex-1 flex-col">
-        <TabsList className="mx-3 grid shrink-0 grid-cols-4 gap-0">
-          <TabsTrigger value="general" className="px-1 py-1.5 text-xs">
+      <Tabs
+        value={tab}
+        onValueChange={setTab}
+        className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
+      >
+        <TabsList className="bst:mx-3 bst:grid bst:shrink-0 bst:grid-cols-4 bst:gap-0">
+          <TabsTrigger value="general" className="bst:px-1 bst:py-1.5 bst:text-xs">
             {w.general}
           </TabsTrigger>
-          <TabsTrigger value="style" className="px-1 py-1.5 text-xs">
+          <TabsTrigger value="style" className="bst:px-1 bst:py-1.5 bst:text-xs">
             {w.style}
           </TabsTrigger>
-          <TabsTrigger value="dark" className="px-1 py-1.5 text-xs">
+          <TabsTrigger value="dark" className="bst:px-1 bst:py-1.5 bst:text-xs">
             {w.darkMode}
           </TabsTrigger>
-          <TabsTrigger value="tracking" className="px-1 py-1.5 text-xs">
+          <TabsTrigger value="tracking" className="bst:px-1 bst:py-1.5 bst:text-xs">
             {w.tracking}
           </TabsTrigger>
         </TabsList>
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <TabsContent value="general" className="space-y-4 p-4">
+        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+          <TabsContent value="general" className="bst:space-y-4 bst:p-4">
             <MultilingualToggle />
             {/* What the reader sees before opening it. */}
-            <div className="border-border bg-card rounded-[var(--radius-control)] border p-3">
-              <p className="text-muted-foreground mb-2 text-[11px] font-semibold tracking-wider uppercase">
+            <div className="bst:rounded-control bst:border bst:border-border bst:bg-card bst:p-3">
+              <p className="bst:mb-2 bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
                 {w.inboxPreview}
               </p>
-              <div className="flex gap-3">
-                <span className="bg-primary text-primary-foreground flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
+              <div className="bst:flex bst:gap-3">
+                <span className="bst:flex bst:size-9 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-full bst:bg-primary bst:text-sm bst:font-semibold bst:text-primary-foreground">
                   {brand.name.charAt(0).toUpperCase()}
                 </span>
-                <div className="min-w-0 text-sm">
-                  <p className="truncate font-semibold">{brand.name}</p>
-                  <p className="truncate">{subjectPreview || '—'}</p>
-                  <p className="text-muted-foreground truncate text-xs">{preheaderPreview}</p>
+                <div className="bst:min-w-0 bst:text-sm">
+                  <p className="bst:truncate bst:font-semibold">{brand.name}</p>
+                  <p className="bst:truncate">{subjectPreview || '—'}</p>
+                  <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
+                    {preheaderPreview}
+                  </p>
                 </div>
               </div>
             </div>
@@ -192,7 +198,7 @@ export function EmailSettingsPanel() {
             </Row>
             <Row label={w.subject} hint={w.subjectHint}>
               {(id) => (
-                <div className="flex gap-2">
+                <div className="bst:flex bst:gap-2">
                   <Input
                     id={id}
                     maxLength={200}
@@ -213,7 +219,7 @@ export function EmailSettingsPanel() {
             </Row>
             <Row label={w.preheader} hint={w.preheaderHint}>
               {(id) => (
-                <div className="flex gap-2">
+                <div className="bst:flex bst:gap-2">
                   <Input
                     id={id}
                     maxLength={250}
@@ -233,14 +239,14 @@ export function EmailSettingsPanel() {
               )}
             </Row>
             {variables.length ? (
-              <div className="space-y-1.5">
-                <p className="text-xs font-medium">{w.variables}</p>
-                <div className="flex flex-wrap gap-1">
+              <div className="bst:space-y-1.5">
+                <p className="bst:text-xs bst:font-medium">{w.variables}</p>
+                <div className="bst:flex bst:flex-wrap bst:gap-1">
                   {variables.map((variable) => (
                     <code
                       key={variable.path}
                       title={variable.label}
-                      className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[11px] text-blue-700 dark:text-blue-300"
+                      className="bst:rounded bst:bg-blue-500/10 bst:px-1.5 bst:py-0.5 bst:text-[11px] bst:text-[light-dark(var(--bst-color-blue-700),var(--bst-color-blue-300))]"
                     >
                       {variable.path}
                     </code>
@@ -250,7 +256,7 @@ export function EmailSettingsPanel() {
             ) : null}
           </TabsContent>
 
-          <TabsContent value="style" className="space-y-4 p-4">
+          <TabsContent value="style" className="bst:space-y-4 bst:p-4">
             <Row label={w.width}>
               {(id) => (
                 <NumberStepper
@@ -318,7 +324,7 @@ export function EmailSettingsPanel() {
             {color('linkColor', w.linkColor)}
           </TabsContent>
 
-          <TabsContent value="dark" className="space-y-4 p-4">
+          <TabsContent value="dark" className="bst:space-y-4 bst:p-4">
             <Row label={w.darkModeMode} hint={w.darkHint}>
               {() => (
                 <SegmentedControl
@@ -331,7 +337,7 @@ export function EmailSettingsPanel() {
                     { value: 'auto', label: w.darkAuto },
                     { value: 'custom', label: w.darkCustom },
                   ]}
-                  className="w-full [&>*]:flex-1"
+                  className="bst:w-full bst:[&>*]:flex-1"
                 />
               )}
             </Row>
@@ -356,7 +362,7 @@ export function EmailSettingsPanel() {
               : null}
           </TabsContent>
 
-          <TabsContent value="tracking" className="space-y-4 p-4">
+          <TabsContent value="tracking" className="bst:space-y-4 bst:p-4">
             <ToggleFlag
               title={w.utmEnabled}
               description={w.utmHint}

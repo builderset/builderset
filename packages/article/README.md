@@ -10,6 +10,8 @@ The article builder: a block editor for long-form writing, a typed JSON document
 npm install @builderset/article
 ```
 
+Also inside [`builderset`](../builderset/README.md), with every other kit, as `builderset/article/…`. Install one or the other: both at different versions put two engines in the page.
+
 `react` and `react-dom` 19 for the editor and the renderer. The `core` and `host` entries need neither and run on Node 20 or newer.
 
 ## The smallest working example
@@ -65,25 +67,29 @@ export default async function Article({ params }) {
 
 ## Styles and theme
 
-The package ships no stylesheet yet. Its classes are Tailwind 4 utilities on shadcn-style colour tokens — `background`, `foreground`, `card`, `muted`, `muted-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `border`, `border-strong`, `destructive`, plus `ok`, `warn`, `no` and `chart-1` for callout and pros/cons tones — so an app that uses Tailwind 4 and those tokens adds the package to its sources:
+One stylesheet for the editor, one for the site, each complete on its own — no Tailwind, no configuration:
 
-```css
-@source '../node_modules/@builderset/*/dist';
+```ts
+import '@builderset/article/styles.css'; // the back office: the editor
+import '@builderset/article/content.css'; // the site: a rendered article
 ```
 
-Optional variables, with their fallbacks: `--radius-card` (0.625rem), `--radius-control` (0.4rem), `--maxw-prose` (68ch). The editor also relies on a few global rules the app supplies today; [the engine's README](../engine/README.md#styles) lists them. A compiled, prefixed stylesheet that needs no Tailwind replaces all of this before the first release.
+`ArticleRenderer`'s root carries `builderset builderset-content` and `theme` (`'auto'` by default: an article follows the site's dark mode). The site sets the look with the same sixteen variables as the editor — `--builderset-font` for its typeface, `--builderset-primary` for links and accents, `--builderset-prose-width` for the reading measure — or imports `@builderset/article/theme/shadcn.css`. [The engine's README](../engine/README.md#styles) has the three ways to set them, `theme` and `tokens` on the editor, and the known limits.
 
 ## Entry points
 
-| Import                               | What                                                                                                                      | Runs on            |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `@builderset/article`                | The document, the standard elements, the checks, parsing with migrations, the outline, import from HTML and Markdown      | Browser and server |
-| `@builderset/article/render`         | `ArticleRenderer`, structured data (`structuredData`, `jsonLdString`), the parts custom renderers use                     | Browser and server |
-| `@builderset/article/editor`         | `ArticleEditor` and the pieces of its settings panel                                                                      | Browser            |
-| `@builderset/article/host`           | `BuilderHost` and the two ready-made hosts, `createMemoryHost` and `createRestHost` (the engine's, under this kit's name) | Browser and server |
-| `@builderset/article/locales/<code>` | The editor's and the renderer's words in another language: `sq`, `de` (English is built in)                               | Both               |
-| `@builderset/article/schema.json`    | The document's JSON Schema, for a backend in another language                                                             | —                  |
-| `@builderset/article/fixtures/*`     | Valid and invalid documents, with the error each must produce, for a backend's contract test                              | —                  |
+| Import                                 | What                                                                                                                      | Runs on            |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `@builderset/article`                  | The document, the standard elements, the checks, parsing with migrations, the outline, import from HTML and Markdown      | Browser and server |
+| `@builderset/article/render`           | `ArticleRenderer`, structured data (`structuredData`, `jsonLdString`), the parts custom renderers use                     | Browser and server |
+| `@builderset/article/editor`           | `ArticleEditor` and the pieces of its settings panel                                                                      | Browser            |
+| `@builderset/article/host`             | `BuilderHost` and the two ready-made hosts, `createMemoryHost` and `createRestHost` (the engine's, under this kit's name) | Browser and server |
+| `@builderset/article/locales/<code>`   | The editor's and the renderer's words in another language: `sq`, `de` (English is built in)                               | Both               |
+| `@builderset/article/styles.css`       | Everything the editor needs: theme, reset, the workspace, this kit's editor and renderer                                  | Browser            |
+| `@builderset/article/content.css`      | A rendered article on a site, with no editor                                                                              | Browser            |
+| `@builderset/article/theme/shadcn.css` | The editor and the article in a shadcn-themed project (`theme/shadcn-hsl.css` for HSL numbers)                            | Browser            |
+| `@builderset/article/schema.json`      | The document's JSON Schema, for a backend in another language                                                             | —                  |
+| `@builderset/article/fixtures/*`       | Valid and invalid documents, with the error each must produce, for a backend's contract test                              | —                  |
 
 ## Components
 
@@ -93,25 +99,29 @@ Optional variables, with their fallbacks: `--radius-card` (0.625rem), `--radius-
 
 #### `ArticleEditor`
 
-| Prop                   | Type                                                                     | Required | What it does                                                                                                                                            |
-| ---------------------- | ------------------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `document`             | `ArticleDocument`                                                        | yes      | The article to edit. Read once, when the editor mounts: to load another, remount it (a new `key`).                                                      |
-| `host`                 | `BuilderHost<ArticleDocument>`                                           | yes      | The adapter for everything that leaves the browser: saving, publishing, uploads, media URLs, notices.                                                   |
-| `registry`             | `ElementRegistry`                                                        |          | Defaults to `createArticleRegistry()`.                                                                                                                  |
-| `record`               | `ArticleFacts`                                                           | yes      | The stored row's facts — status, schedule, slug, language — shown and edited beside the article.                                                        |
-| `onRecordChange`       | `(patch: Partial<ArticleFacts>) => void`                                 | yes      | Called with the facts the writer changed (the slug, a project's own fields). Keep them and pass the updated record back as `record`.                    |
-| `onBack`               | `() => void`                                                             | yes      | Called to leave the editor (the back button). With unsaved changes the writer is asked first; the editor does not navigate by itself.                   |
-| `onDuplicate`          | `() => void`                                                             |          | Adds "Duplicate" to the publish menu; called when the writer picks it.                                                                                  |
-| `onDelete`             | `() => Promise<boolean>`                                                 |          | Adds "Delete" to the publish menu; called once the writer confirms. Resolve `true` once it is deleted; leaving the editor afterwards is up to the host. |
-| `locale`               | `string`                                                                 |          | The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`.                                                                             |
-| `locales`              | `Readonly<Record<string, ArticleLocale \| undefined>>`                   |          | Other languages, by code: `{ sq }` from `@builderset/article/locales/sq`. English is built in.                                                          |
-| `messages`             | `{ engine?: { back?: string \| undefined; untitled?: string \| undefin…` |          | Replace single words, in whatever language is active.                                                                                                   |
-| `contentLocales`       | `readonly string[]`                                                      |          | The languages an article can be written in. One: no language switch.                                                                                    |
-| `defaultContentLocale` | `string`                                                                 |          | The language a new article is written in. Default: the first of `contentLocales`.                                                                       |
-| `storageKey`           | `string`                                                                 |          | Where the crash-safety copy is kept in localStorage; omit to disable.                                                                                   |
-| `savedAt`              | `string \| null`                                                         |          | When the server copy was last saved — a local copy newer than this is offered back.                                                                     |
-| `siteUrl`              | `string`                                                                 |          | Where articles are published, for the slug and the search preview: `https://example.com/blog`.                                                          |
-| `settingsSections`     | `readonly SettingsSection[]`                                             |          | A project's own fields in Document settings, each in its tab and place.                                                                                 |
+| Prop                   | Type                                                                       | Required | What it does                                                                                                                                            |
+| ---------------------- | -------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `document`             | `ArticleDocument`                                                          | yes      | The article to edit. Read once, when the editor mounts: to load another, remount it (a new `key`).                                                      |
+| `host`                 | `BuilderHost<ArticleDocument>`                                             | yes      | The adapter for everything that leaves the browser: saving, publishing, uploads, media URLs, notices.                                                   |
+| `registry`             | `ElementRegistry`                                                          |          | Defaults to `createArticleRegistry()`.                                                                                                                  |
+| `record`               | `ArticleFacts`                                                             | yes      | The stored row's facts — status, schedule, slug, language — shown and edited beside the article.                                                        |
+| `onRecordChange`       | `(patch: Partial<ArticleFacts>) => void`                                   | yes      | Called with the facts the writer changed (the slug, a project's own fields). Keep them and pass the updated record back as `record`.                    |
+| `onBack`               | `() => void`                                                               | yes      | Called to leave the editor (the back button). With unsaved changes the writer is asked first; the editor does not navigate by itself.                   |
+| `onDuplicate`          | `() => void`                                                               |          | Adds "Duplicate" to the publish menu; called when the writer picks it.                                                                                  |
+| `onDelete`             | `() => Promise<boolean>`                                                   |          | Adds "Delete" to the publish menu; called once the writer confirms. Resolve `true` once it is deleted; leaving the editor afterwards is up to the host. |
+| `locale`               | `string`                                                                   |          | The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`.                                                                             |
+| `locales`              | `Readonly<Record<string, ArticleLocale \| undefined>>`                     |          | Other languages, by code: `{ sq }` from `@builderset/article/locales/sq`. English is built in.                                                          |
+| `messages`             | `{ engine?: { back?: string \| undefined; untitled?: string \| undefin…`   |          | Replace single words, in whatever language is active.                                                                                                   |
+| `contentLocales`       | `readonly string[]`                                                        |          | The languages an article can be written in. One: no language switch.                                                                                    |
+| `defaultContentLocale` | `string`                                                                   |          | The language a new article is written in. Default: the first of `contentLocales`.                                                                       |
+| `storageKey`           | `string`                                                                   |          | Where the crash-safety copy is kept in localStorage; omit to disable.                                                                                   |
+| `savedAt`              | `string \| null`                                                           |          | When the server copy was last saved — a local copy newer than this is offered back.                                                                     |
+| `siteUrl`              | `string`                                                                   |          | Where articles are published, for the slug and the search preview: `https://example.com/blog`.                                                          |
+| `settingsSections`     | `readonly SettingsSection[]`                                               |          | A project's own fields in Document settings, each in its tab and place.                                                                                 |
+| `theme`                | `"auto" \| "dark" \| "light"`                                              |          | 'light' (the default), 'dark', or 'auto' to follow the page. Menus and dialogs follow it too.                                                           |
+| `tokens`               | `Partial<Record<"font" \| "background" \| "surface" \| "foreground" \| "…` |          | Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`.                                                             |
+| `className`            | `string`                                                                   |          | Applied to the editor's root element, the one that carries the theme.                                                                                   |
+| `fontPreviews`         | `boolean`                                                                  |          | Previews of the font choices from the address the profile names. `false`: never. Default: `true`.                                                       |
 
 <!-- /props -->
 
@@ -139,7 +149,8 @@ Optional variables, with their fallbacks: `--radius-card` (0.625rem), `--radius-
 | ------------------ | ----------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `document`         | `ArticleDocument`                                                       | yes      | The article to render.                                                                                                                                                                                                  |
 | `registry`         | `ElementRegistry`                                                       | yes      | The elements it may hold — usually `createArticleRegistry()`. A node whose type is missing here, or whose props do not pass its schema, is left out.                                                                    |
-| `className`        | `string`                                                                |          | Applied to the wrapping `<div>`.                                                                                                                                                                                        |
+| `className`        | `string`                                                                |          | Applied to the wrapping `<div>`, beside `builderset builderset-content`.                                                                                                                                                |
+| `theme`            | `"auto" \| "dark" \| "light"`                                           |          | 'auto' (the default) follows the site: an ancestor marked `dark` or `light` (a class, or `data-theme`), else the operating system. 'light' and 'dark' pin it.                                                           |
 | `resolveMedia`     | `(key: string) => string`                                               | yes      | Storage key → URL.                                                                                                                                                                                                      |
 | `locale`           | `string`                                                                |          | The visitor's language. A multi-language article is shown in it, its base language filling any gaps; numbers are formatted for it (default `'en'`).                                                                     |
 | `messages`         | `Partial<RenderMessages>`                                               |          | The renderer's own words — button labels, the notes heading — replaced singly or with a language's `render` words. English is built in.                                                                                 |

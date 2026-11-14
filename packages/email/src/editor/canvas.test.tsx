@@ -107,3 +107,26 @@ describe('<EmailCanvas>', () => {
     expect(marked).toBe(Object.keys(doc.nodes).length - 1);
   });
 });
+
+describe('fonts on the canvas', () => {
+  const googleLinks = () =>
+    Array.from(document.head.querySelectorAll('link[data-stylesheet]')).filter((link) =>
+      (link.getAttribute('href') ?? '').includes('fonts.googleapis.com'),
+    );
+  const designIn = (font: ReturnType<typeof starterEmail>['settings']['font']) => {
+    const doc = starterEmail(registry, { name: 'Fonts', subject: 'Fonts' });
+    return { ...doc, settings: { ...doc.settings, font } };
+  };
+
+  it('asks no third party when fontPreviews is false', () => {
+    render(<EmailCanvas document={designIn('poppins')} assetUrl={assetUrl} fontPreviews={false} />);
+    expect(googleLinks()).toHaveLength(0);
+  });
+
+  it('loads the fonts the email uses by default', () => {
+    render(<EmailCanvas document={designIn('montserrat')} assetUrl={assetUrl} />);
+    expect(googleLinks().some((l) => (l.getAttribute('href') ?? '').includes('Montserrat'))).toBe(
+      true,
+    );
+  });
+});

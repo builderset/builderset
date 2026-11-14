@@ -1,6 +1,13 @@
 'use client';
 
-import type { ElementRegistry, EngineDocument, Issue } from '../core';
+import {
+  themeVariables,
+  type ElementRegistry,
+  type EngineDocument,
+  type Issue,
+  type ThemeMode,
+  type ThemeTokens,
+} from '../core';
 import {
   Button,
   ConfirmDialog,
@@ -26,11 +33,11 @@ import {
 import { Canvas } from './canvas/canvas';
 import { PortalProvider } from './ui/portal';
 import { HistorySheet } from './chrome/history-sheet';
-import { PANEL_CSS } from './chrome/panel-css';
 import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
+import { registerEngine } from './one-engine';
 import {
   EditorProvider,
   useEditor,
@@ -104,6 +111,27 @@ export interface BuilderEditorProps<
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
+  /**
+   * 'light' (the default), 'dark', or 'auto' to follow the page: an ancestor
+   * marked `dark` or `light` (a class, or `data-theme`), else the operating
+   * system. Menus and dialogs follow it too.
+   */
+  theme?: ThemeMode | undefined;
+  /**
+   * Theme values from JavaScript, by the public variables' names without their
+   * prefix: `{ primary: '#da6c1e' }` sets `--builderset-primary`. CSS on the page
+   * can set the same variables instead.
+   */
+  tokens?: ThemeTokens | undefined;
+  /** Applied to the editor's root element, the one that carries the theme. */
+  className?: string | undefined;
+  /**
+   * Previews of the font choices, loaded from the address the kit names (the
+   * email kit's: Google Fonts) when a font menu opens. `false`: never — for a
+   * page whose Content-Security-Policy allows no font host, or that may not
+   * call a third party. Default: `true`.
+   */
+  fontPreviews?: boolean | undefined;
 }
 
 const AUTOSAVE_MS = 2000;
@@ -153,6 +181,17 @@ export function BuilderEditor<
 >(props: BuilderEditorProps<TDoc, TRecord>) {
   const htmlLang = useHtmlLang();
   const locale = props.locale === 'auto' ? htmlLang : (props.locale ?? 'en');
+  useEffect(() => {
+    registerEngine();
+  }, []);
+  // fontPreviews={false}: no font host is ever asked for a preview.
+  const profile = useMemo(
+    () =>
+      props.fontPreviews === false
+        ? { ...props.profile, fontsPreviewUrl: undefined }
+        : props.profile,
+    [props.profile, props.fontPreviews],
+  );
   const messages = useMemo(
     () => resolveMessages<EditorMessages>(en, locale, props.locales, props.messages),
     [locale, props.locales, props.messages],
@@ -202,7 +241,7 @@ export function BuilderEditor<
       defaultContentLocale,
       record: props.record ?? DRAFT,
       setRecord,
-      profile: props.profile,
+      profile,
     }),
     [
       store,
@@ -214,19 +253,27 @@ export function BuilderEditor<
       defaultContentLocale,
       props.record,
       setRecord,
-      props.profile,
+      profile,
     ],
   );
 
+  // The root carries the theme: its class scopes the stylesheet, its attribute
+  // picks the scheme, its style holds the tokens. The portal container is
+  // inside it, so menus and dialogs inherit all three.
   return (
-    <EditorProvider value={value}>
-      <PortalProvider>
-        <TooltipProvider>
-          <style>{PANEL_CSS}</style>
-          <Workspace {...props} store={store} messages={messages} />
-        </TooltipProvider>
-      </PortalProvider>
-    </EditorProvider>
+    <div
+      className={cn('builderset', props.className)}
+      data-builderset-theme={props.theme ?? 'light'}
+      style={themeVariables(props.tokens)}
+    >
+      <EditorProvider value={value}>
+        <PortalProvider>
+          <TooltipProvider>
+            <Workspace {...props} store={store} messages={messages} />
+          </TooltipProvider>
+        </PortalProvider>
+      </EditorProvider>
+    </div>
   );
 }
 
@@ -484,7 +531,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   const rightPanel = <Inspector />;
 
   return (
-    <div className="bg-background text-foreground fixed inset-0 z-40 flex flex-col">
+    <div className="bst:fixed bst:inset-0 bst:z-40 bst:flex bst:flex-col bst:bg-background bst:text-foreground">
       <TopBar
         busy={busy}
         onBack={back}
@@ -512,13 +559,13 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         }
       />
 
-      <div className="relative flex min-h-0 flex-1">
+      <div className="bst:relative bst:flex bst:min-h-0 bst:flex-1">
         {desktop ? (
           <>
             <SidePanel open={leftOpen} side="left">
               {leftPanel}
             </SidePanel>
-            <main className="min-w-0 flex-1">
+            <main className="bst:min-w-0 bst:flex-1">
               <Canvas />
             </main>
             <SidePanel open={rightOpen} side="right">
@@ -527,7 +574,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
           </>
         ) : (
           <>
-            <main className="min-w-0 flex-1">
+            <main className="bst:min-w-0 bst:flex-1">
               <Canvas />
             </main>
             {phone ? (
@@ -539,7 +586,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
                   }}
                   title={messages[leftTab]}
                 >
-                  <div className="bld-panel h-[60vh]">{leftPanel}</div>
+                  <div className="bld-panel bst:h-[60vh]">{leftPanel}</div>
                 </Sheet>
                 <Sheet
                   open={mobilePanel === 'right'}
@@ -548,7 +595,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
                   }}
                   title={messages.settings}
                 >
-                  <div className="bld-panel h-[65vh]">{rightPanel}</div>
+                  <div className="bld-panel bst:h-[65vh]">{rightPanel}</div>
                 </Sheet>
               </>
             ) : (
@@ -578,7 +625,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
       </div>
 
       {phone ? (
-        <nav className="border-border bg-sidebar grid h-14 shrink-0 grid-cols-5 border-t">
+        <nav className="bst:grid bst:h-14 bst:shrink-0 bst:grid-cols-5 bst:border-t bst:border-border bst:bg-sidebar">
           <BottomAction
             label={messages.add}
             onClick={() => {
@@ -640,7 +687,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         tone="destructive"
         title={messages.publishBlocked}
         description={
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-left">
+          <ul className="bst:mt-2 bst:list-disc bst:space-y-1 bst:pl-5 bst:text-left">
             {(blocking ?? []).slice(0, 8).map((issue, index) => (
               <li key={`${issue.code}-${String(index)}`}>
                 {messages.issueText[issue.code] ?? issue.code}
@@ -739,15 +786,15 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         }}
         title={messages.shortcuts}
       >
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+        <dl className="bst:grid bst:grid-cols-[auto_1fr] bst:gap-x-6 bst:gap-y-2 bst:text-sm">
           {messages.shortcutList.map(([keys, action]) => (
-            <div key={keys} className="contents">
+            <div key={keys} className="bst:contents">
               <dt>
-                <kbd className="border-border bg-muted rounded border px-1.5 py-0.5 font-mono text-xs">
+                <kbd className="bst:rounded bst:border bst:border-border bst:bg-muted bst:px-1.5 bst:py-0.5 bst:font-mono bst:text-xs">
                   {keys}
                 </kbd>
               </dt>
-              <dd className="text-muted-foreground">{action}</dd>
+              <dd className="bst:text-muted-foreground">{action}</dd>
             </div>
           ))}
         </dl>
@@ -772,23 +819,23 @@ function LeftRail({
   messages: EditorMessages;
 }) {
   const tabs: { value: LeftTab; label: string; icon: ReactNode }[] = [
-    { value: 'add', label: messages.add, icon: <Plus className="size-4" aria-hidden="true" /> },
+    { value: 'add', label: messages.add, icon: <Plus className="bst:size-4" aria-hidden="true" /> },
     {
       value: 'layers',
       label: messages.layers,
-      icon: <Layers className="size-4" aria-hidden="true" />,
+      icon: <Layers className="bst:size-4" aria-hidden="true" />,
     },
     {
       value: 'templates',
       label: messages.templates,
-      icon: <LayoutTemplate className="size-4" aria-hidden="true" />,
+      icon: <LayoutTemplate className="bst:size-4" aria-hidden="true" />,
     },
   ];
   return (
-    <div className="flex h-full flex-col">
+    <div className="bst:flex bst:h-full bst:flex-col">
       <div
         role="tablist"
-        className="border-border mx-3 mt-1 grid shrink-0 grid-cols-[1fr_1fr_1.35fr] border-b"
+        className="bst:mx-3 bst:mt-1 bst:grid bst:shrink-0 bst:grid-cols-[1fr_1fr_1.35fr] bst:border-b bst:border-border"
       >
         {tabs.map((item) => (
           <button
@@ -800,10 +847,10 @@ function LeftRail({
               onTab(item.value);
             }}
             className={cn(
-              'relative flex h-7 min-w-0 cursor-pointer items-center justify-center gap-1 px-1.5 text-xs font-medium whitespace-nowrap transition-colors [&_svg]:size-3.5 [&_svg]:shrink-0',
+              'bst:relative bst:flex bst:h-7 bst:min-w-0 bst:cursor-pointer bst:items-center bst:justify-center bst:gap-1 bst:px-1.5 bst:text-xs bst:font-medium bst:whitespace-nowrap bst:transition-colors bst:[&_svg]:size-3.5 bst:[&_svg]:shrink-0',
               tab === item.value
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'bst:text-foreground'
+                : 'bst:text-muted-foreground bst:hover:text-foreground',
             )}
           >
             {item.icon}
@@ -811,13 +858,13 @@ function LeftRail({
             {tab === item.value ? (
               <motion.span
                 layoutId="bld-left-tab"
-                className="bg-primary absolute inset-x-0 -bottom-px h-0.5 rounded-full"
+                className="bst:absolute bst:inset-x-0 bst:-bottom-px bst:h-0.5 bst:rounded-full bst:bg-primary"
               />
             ) : null}
           </button>
         ))}
       </div>
-      <div className="min-h-0 flex-1">
+      <div className="bst:min-h-0 bst:flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={tab}
@@ -825,7 +872,7 @@ function LeftRail({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.12 }}
-            className="h-full"
+            className="bst:h-full"
           >
             {tab === 'add' ? <AddPanel /> : tab === 'layers' ? <LayersPanel /> : <ThirdTab />}
           </motion.div>
@@ -851,12 +898,12 @@ function SidePanel({
       animate={{ width: open ? width : 0 }}
       transition={{ duration: 0.22, ease: [0.2, 0, 0, 1] }}
       className={cn(
-        'bg-sidebar border-border shrink-0 overflow-hidden',
-        side === 'left' ? 'border-r' : 'border-l',
-        !open && 'border-0',
+        'bst:shrink-0 bst:overflow-hidden bst:border-border bst:bg-sidebar',
+        side === 'left' ? 'bst:border-r' : 'bst:border-l',
+        !open && 'bst:border-0',
       )}
     >
-      <div style={{ width }} className="bld-panel h-full">
+      <div style={{ width }} className="bld-panel bst:h-full">
         {children}
       </div>
     </motion.aside>
@@ -880,7 +927,7 @@ function OverlayPanel({
         <>
           <motion.div
             key="backdrop"
-            className="absolute inset-0 z-30 bg-black/20"
+            className="bst:absolute bst:inset-0 bst:z-30 bst:bg-black/20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -893,8 +940,8 @@ function OverlayPanel({
             exit={{ x: side === 'left' ? -320 : 360 }}
             transition={{ duration: 0.22, ease: [0.2, 0, 0, 1] }}
             className={cn(
-              'bld-panel bg-sidebar border-border absolute inset-y-0 z-40 w-80 shadow-xl',
-              side === 'left' ? 'left-0 border-r' : 'right-0 border-l',
+              'bld-panel bst:absolute bst:inset-y-0 bst:z-40 bst:w-80 bst:border-border bst:bg-sidebar bst:shadow-xl',
+              side === 'left' ? 'bst:left-0 bst:border-r' : 'bst:right-0 bst:border-l',
             )}
           >
             {children}
@@ -918,7 +965,7 @@ function BottomAction({
     <button
       type="button"
       onClick={onClick}
-      className="text-muted-foreground active:text-foreground flex flex-col items-center justify-center gap-0.5 text-[11px] transition-transform active:scale-95 [&_svg]:size-5"
+      className="bst:flex bst:flex-col bst:items-center bst:justify-center bst:gap-0.5 bst:text-[11px] bst:text-muted-foreground bst:transition-transform bst:active:scale-95 bst:active:text-foreground bst:[&_svg]:size-5"
     >
       {children}
       {label}
@@ -952,14 +999,14 @@ function ScheduleDialog({
       title={messages.schedule.replace('…', '')}
       description={messages.scheduleHint}
     >
-      <div className="space-y-4">
-        <div className="space-y-1.5">
-          <Label htmlFor={id} className="text-xs font-medium">
+      <div className="bst:space-y-4">
+        <div className="bst:space-y-1.5">
+          <Label htmlFor={id} className="bst:text-xs bst:font-medium">
             {messages.publishAt}
           </Label>
           <DateTimeField id={id} value={when} min={new Date().toISOString()} onChange={setWhen} />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="bst:grid bst:grid-cols-2 bst:gap-2">
           <Button type="button" variant="outline" onClick={onClose}>
             {messages.cancel}
           </Button>

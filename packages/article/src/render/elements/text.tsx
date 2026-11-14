@@ -42,13 +42,16 @@ export function HeadingView({
   const anchor = context.outline.find((entry) => entry.id === node.id)?.anchor;
   const Tag = `h${String(props.level)}` as 'h2' | 'h3' | 'h4';
   const size = {
-    2: 'mt-12 mb-4 text-xl font-semibold tracking-tight sm:text-2xl',
-    3: 'mt-10 mb-3 text-lg font-semibold tracking-tight',
-    4: 'mt-8 mb-2 text-base font-semibold',
+    2: 'bst:mt-12 bst:mb-4 bst:text-xl bst:font-semibold bst:tracking-tight bst:sm:text-2xl',
+    3: 'bst:mt-10 bst:mb-3 bst:text-lg bst:font-semibold bst:tracking-tight',
+    4: 'bst:mt-8 bst:mb-2 bst:text-base bst:font-semibold',
   }[props.level];
   return (
     <Tag
-      {...frameProps({ ...frame, id: frame.id ?? anchor }, cn('scroll-mt-24 text-balance', size))}
+      {...frameProps(
+        { ...frame, id: frame.id ?? anchor },
+        cn('bst:scroll-mt-24 bst:text-balance', size),
+      )}
     >
       <RichTextView
         value={props.text}
@@ -70,10 +73,10 @@ export function ParagraphView({
       {...frameProps(
         frame,
         cn(
-          'text-muted-foreground mb-5 leading-[1.75]',
-          props.lead && 'text-foreground/85 text-lg leading-relaxed sm:text-xl',
+          'bst:mb-5 bst:leading-[1.75] bst:text-muted-foreground',
+          props.lead && 'bst:text-lg bst:leading-relaxed bst:text-foreground/85 bst:sm:text-xl',
           props.dropCap &&
-            'first-letter:text-primary first-letter:float-left first-letter:mt-1 first-letter:mr-2.5 first-letter:text-[3.4em] first-letter:leading-[0.8] first-letter:font-semibold',
+            'bst:first-letter:float-left bst:first-letter:mt-1 bst:first-letter:mr-2.5 bst:first-letter:text-[3.4em] bst:first-letter:leading-[0.8] bst:first-letter:font-semibold bst:first-letter:text-primary',
         ),
       )}
     >
@@ -88,7 +91,10 @@ export function ParagraphView({
 
 function Bullet() {
   return (
-    <span className="bg-primary mt-[0.7em] size-1.5 shrink-0 rounded-full" aria-hidden="true" />
+    <span
+      className="bst:mt-[0.7em] bst:size-1.5 bst:shrink-0 bst:rounded-full bst:bg-primary"
+      aria-hidden="true"
+    />
   );
 }
 
@@ -97,8 +103,8 @@ function CheckMark({ checked }: { checked: boolean | undefined }) {
   return (
     <Icon
       className={cn(
-        'mt-[0.2em] size-[1.15em] shrink-0',
-        checked ? 'text-primary' : 'text-muted-foreground',
+        'bst:mt-[0.2em] bst:size-[1.15em] bst:shrink-0',
+        checked ? 'bst:text-primary' : 'bst:text-muted-foreground',
       )}
       aria-hidden="true"
     />
@@ -127,8 +133,8 @@ function ItemBody({
       ) : null}
       <span
         className={cn(
-          'min-w-0',
-          style === 'check' && item.checked && 'text-muted-foreground/80 line-through',
+          'bst:min-w-0',
+          style === 'check' && item.checked && 'bst:text-muted-foreground/80 bst:line-through',
         )}
       >
         <RichTextView value={item.text} context={context} field={field} />
@@ -145,54 +151,56 @@ export function ListView({
 }: ElementRenderProps<PropsOf<typeof listElement>>) {
   const Tag = props.style === 'number' ? 'ol' : 'ul';
   const itemClass = cn(
-    'text-muted-foreground leading-relaxed',
-    props.style === 'number' ? 'marker:text-primary pl-1 marker:font-semibold' : 'flex gap-3',
+    'bst:leading-relaxed bst:text-muted-foreground',
+    props.style === 'number'
+      ? 'bst:pl-1 bst:marker:font-semibold bst:marker:text-primary'
+      : 'bst:flex bst:gap-3',
   );
   // Only top-level items are edited in place (`prefix` is set for them);
   // nested ones are edited in the inspector.
   const renderItems = (items: readonly ListItem[] | ListItem['children'], prefix?: string) =>
-    (items ?? []).map((item, index) => (
-      <li key={index} className={itemClass}>
-        {props.style === 'number' ? (
-          <RichTextView
-            value={item.text}
-            context={context}
-            field={prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined}
-          />
-        ) : (
-          <div className="flex min-w-0 flex-1 flex-col gap-2.5">
-            <div className="flex gap-3">
-              <ItemBody
-                item={item}
-                style={props.style}
-                context={context}
-                field={
-                  prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined
-                }
-              />
-            </div>
-          </div>
-        )}
-        {'children' in item && item.children?.length ? (
+    (items ?? []).map((item, index) => {
+      const field = prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined;
+      // An item's own list goes UNDER its text. In a bullet or check item that
+      // means inside the item's column — a sibling of the column would sit in
+      // the item's flex row, to the right of the text.
+      const nested =
+        'children' in item && item.children?.length ? (
           <Tag
             className={cn(
-              'mt-2.5 space-y-2',
-              props.style === 'number' ? 'list-[lower-alpha] pl-5' : 'pl-5',
+              'bst:space-y-2 bst:pl-5',
+              props.style === 'number' && 'bst:mt-2.5 bst:list-[lower-alpha]',
             )}
           >
             {renderItems(item.children)}
           </Tag>
-        ) : null}
-      </li>
-    ));
+        ) : null;
+      return (
+        <li key={index} className={itemClass}>
+          {props.style === 'number' ? (
+            <>
+              <RichTextView value={item.text} context={context} field={field} />
+              {nested}
+            </>
+          ) : (
+            <div className="bst:flex bst:min-w-0 bst:flex-1 bst:flex-col bst:gap-2.5">
+              <div className="bst:flex bst:gap-3">
+                <ItemBody item={item} style={props.style} context={context} field={field} />
+              </div>
+              {nested}
+            </div>
+          )}
+        </li>
+      );
+    });
   return (
     <Tag
       {...frameProps(
         frame,
         cn(
-          'mb-6 space-y-2.5',
-          props.style === 'number' && 'list-decimal pl-5',
-          props.style === 'check' && 'list-none',
+          'bst:mb-6 bst:space-y-2.5',
+          props.style === 'number' && 'bst:list-decimal bst:pl-5',
+          props.style === 'check' && 'bst:list-none',
         ),
       )}
     >
@@ -209,9 +217,9 @@ export function QuoteView({
 }: ElementRenderProps<PropsOf<typeof quoteElement>>) {
   const { Link } = context;
   return (
-    <figure {...frameProps(frame, 'my-8')}>
+    <figure {...frameProps(frame, 'bst:my-8')}>
       <blockquote
-        className="border-primary bg-muted/50 rounded-r-[var(--radius-card,0.625rem)] border-l-2 px-6 py-5 text-lg leading-relaxed font-medium"
+        className="bst:rounded-r-card bst:border-l-2 bst:border-primary bst:bg-muted/50 bst:px-6 bst:py-5 bst:text-lg bst:leading-relaxed bst:font-medium"
         {...(props.source ? { cite: props.source } : {})}
       >
         <RichTextView
@@ -221,12 +229,12 @@ export function QuoteView({
         />
       </blockquote>
       {props.cite ? (
-        <figcaption className="text-muted-foreground mt-3 pl-6 text-sm">
+        <figcaption className="bst:mt-3 bst:pl-6 bst:text-sm bst:text-muted-foreground">
           —{' '}
           {props.source ? (
             <Link
               href={context.options.editing ? '#' : props.source}
-              className="hover:text-foreground underline underline-offset-2"
+              className="bst:underline bst:underline-offset-2 bst:hover:text-foreground"
             >
               {props.cite}
             </Link>
@@ -245,17 +253,23 @@ export function PullQuoteView({
 }: ElementRenderProps<PropsOf<typeof pullQuoteElement>>) {
   return (
     <figure
-      {...frameProps(frame, cn('my-12', props.align === 'center' ? 'text-center' : 'text-start'))}
+      {...frameProps(
+        frame,
+        cn('bst:my-12', props.align === 'center' ? 'bst:text-center' : 'bst:text-start'),
+      )}
     >
       <Quote
-        className={cn('text-primary/35 mb-3 size-10', props.align === 'center' && 'mx-auto')}
+        className={cn(
+          'bst:mb-3 bst:size-10 bst:text-primary/35',
+          props.align === 'center' && 'bst:mx-auto',
+        )}
         aria-hidden="true"
       />
-      <blockquote className="text-2xl leading-snug font-semibold tracking-tight text-balance sm:text-3xl">
+      <blockquote className="bst:text-2xl bst:leading-snug bst:font-semibold bst:tracking-tight bst:text-balance bst:sm:text-3xl">
         {props.text}
       </blockquote>
       {props.cite ? (
-        <figcaption className="text-muted-foreground mt-4 text-sm font-medium">
+        <figcaption className="bst:mt-4 bst:text-sm bst:font-medium bst:text-muted-foreground">
           — {props.cite}
         </figcaption>
       ) : null}
@@ -267,11 +281,11 @@ const CALLOUT: Record<
   PropsOf<typeof calloutElement>['tone'],
   { box: string; icon: string; Icon: LucideIcon }
 > = {
-  info: { box: 'bg-chart-1/8 border-chart-1/25', icon: 'text-chart-1', Icon: Info },
-  tip: { box: 'bg-primary/8 border-primary/25', icon: 'text-primary', Icon: Lightbulb },
-  success: { box: 'bg-ok/8 border-ok/25', icon: 'text-ok', Icon: CircleCheck },
-  warning: { box: 'bg-warn/8 border-warn/30', icon: 'text-warn', Icon: TriangleAlert },
-  danger: { box: 'bg-no/8 border-no/25', icon: 'text-no', Icon: OctagonAlert },
+  info: { box: 'bst:bg-chart-1/8 bst:border-chart-1/25', icon: 'bst:text-chart-1', Icon: Info },
+  tip: { box: 'bst:bg-primary/8 bst:border-primary/25', icon: 'bst:text-primary', Icon: Lightbulb },
+  success: { box: 'bst:bg-ok/8 bst:border-ok/25', icon: 'bst:text-ok', Icon: CircleCheck },
+  warning: { box: 'bst:bg-warn/8 bst:border-warn/30', icon: 'bst:text-warn', Icon: TriangleAlert },
+  danger: { box: 'bst:bg-no/8 bst:border-no/25', icon: 'bst:text-no', Icon: OctagonAlert },
 };
 
 export function CalloutView({
@@ -286,15 +300,20 @@ export function CalloutView({
       role="note"
       {...frameProps(
         frame,
-        cn('my-8 flex gap-3.5 rounded-[var(--radius-card,0.625rem)] border px-5 py-4', tone.box),
+        cn('bst:my-8 bst:flex bst:gap-3.5 bst:rounded-card bst:border bst:px-5 bst:py-4', tone.box),
       )}
     >
       {props.showIcon ? (
-        <tone.Icon className={cn('mt-0.5 size-5 shrink-0', tone.icon)} aria-hidden="true" />
+        <tone.Icon
+          className={cn('bst:mt-0.5 bst:size-5 bst:shrink-0', tone.icon)}
+          aria-hidden="true"
+        />
       ) : null}
-      <div className="min-w-0 flex-1">
-        {props.title ? <p className="text-foreground mb-1 font-semibold">{props.title}</p> : null}
-        <div className="text-muted-foreground leading-relaxed">
+      <div className="bst:min-w-0 bst:flex-1">
+        {props.title ? (
+          <p className="bst:mb-1 bst:font-semibold bst:text-foreground">{props.title}</p>
+        ) : null}
+        <div className="bst:leading-relaxed bst:text-muted-foreground">
           <RichTextView
             value={props.text}
             context={context}
@@ -308,23 +327,23 @@ export function CalloutView({
 
 /** Prism token types → theme-aware classes. */
 const TOKEN_CLASS: Record<string, string> = {
-  comment: 'text-muted-foreground italic',
-  prolog: 'text-muted-foreground',
-  keyword: 'text-violet-600 dark:text-violet-400',
-  builtin: 'text-violet-600 dark:text-violet-400',
-  string: 'text-emerald-700 dark:text-emerald-400',
-  char: 'text-emerald-700 dark:text-emerald-400',
-  'attr-value': 'text-emerald-700 dark:text-emerald-400',
-  number: 'text-amber-700 dark:text-amber-400',
-  boolean: 'text-amber-700 dark:text-amber-400',
-  constant: 'text-amber-700 dark:text-amber-400',
-  function: 'text-sky-700 dark:text-sky-400',
-  'class-name': 'text-sky-700 dark:text-sky-400',
-  tag: 'text-rose-700 dark:text-rose-400',
-  'attr-name': 'text-sky-700 dark:text-sky-400',
-  property: 'text-sky-700 dark:text-sky-400',
-  operator: 'text-foreground/70',
-  punctuation: 'text-foreground/60',
+  comment: 'bst:text-muted-foreground bst:italic',
+  prolog: 'bst:text-muted-foreground',
+  keyword: 'bst:text-[light-dark(var(--bst-color-violet-600),var(--bst-color-violet-400))]',
+  builtin: 'bst:text-[light-dark(var(--bst-color-violet-600),var(--bst-color-violet-400))]',
+  string: 'bst:text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  char: 'bst:text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  'attr-value': 'bst:text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  number: 'bst:text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  boolean: 'bst:text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  constant: 'bst:text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  function: 'bst:text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  'class-name': 'bst:text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  tag: 'bst:text-[light-dark(var(--bst-color-rose-700),var(--bst-color-rose-400))]',
+  'attr-name': 'bst:text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  property: 'bst:text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  operator: 'bst:text-foreground/70',
+  punctuation: 'bst:text-foreground/60',
 };
 
 type PrismToken = string | { type: string; content: PrismToken | PrismToken[] };
@@ -370,11 +389,11 @@ export function CodeView({
     <figure
       {...frameProps(
         frame,
-        'border-border bg-card my-8 overflow-hidden rounded-[var(--radius-card,0.625rem)] border',
+        'bst:border-border bst:bg-card bst:my-8 bst:overflow-hidden bst:rounded-card bst:border',
       )}
     >
-      <figcaption className="border-border bg-muted/50 flex items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-4">
-        <span className="text-muted-foreground truncate font-mono text-xs">
+      <figcaption className="bst:flex bst:items-center bst:justify-between bst:gap-3 bst:border-b bst:border-border bst:bg-muted/50 bst:py-1.5 bst:pr-1.5 bst:pl-4">
+        <span className="bst:truncate bst:font-mono bst:text-xs bst:text-muted-foreground">
           {props.filename || (props.language === 'plain' ? '' : props.language)}
         </span>
         <CopyButton
@@ -383,19 +402,20 @@ export function CodeView({
           done={context.messages.copied}
         />
       </figcaption>
-      <pre className="overflow-x-auto py-4 font-mono text-[13px] leading-6">
-        <code className="grid min-w-max">
+      <pre className="bst:overflow-x-auto bst:py-4 bst:font-mono bst:text-[13px] bst:leading-6">
+        <code className="bst:grid bst:min-w-max">
           {lines.map((line, index) => (
             <span
               key={index}
               className={cn(
-                'px-4',
-                highlighted.has(index + 1) && 'bg-primary/10 shadow-[inset_2px_0_0_var(--primary)]',
+                'bst:px-4',
+                highlighted.has(index + 1) &&
+                  'bst:bg-primary/10 bst:shadow-[inset_2px_0_0_var(--builderset-primary,var(--bst-d-primary))]',
               )}
             >
               {props.lineNumbers ? (
                 <span
-                  className="text-muted-foreground/60 mr-4 inline-block w-6 text-right select-none"
+                  className="bst:mr-4 bst:inline-block bst:w-6 bst:text-right bst:text-muted-foreground/60 bst:select-none"
                   aria-hidden="true"
                 >
                   {index + 1}
@@ -416,7 +436,11 @@ export function CodeView({
   );
 }
 
-const CELL_ALIGN = { start: 'text-start', center: 'text-center', end: 'text-end' } as const;
+const CELL_ALIGN = {
+  start: 'bst:text-start',
+  center: 'bst:text-center',
+  end: 'bst:text-end',
+} as const;
 
 export function TableView({
   props,
@@ -426,18 +450,18 @@ export function TableView({
   const [head, ...body] = props.rows;
   const rows = props.headerRow ? body : props.rows;
   return (
-    <figure {...frameProps(frame, 'my-8')}>
-      <div className="border-border overflow-x-auto rounded-[var(--radius-card,0.625rem)] border">
-        <table className="w-full border-collapse text-sm">
+    <figure {...frameProps(frame, 'bst:my-8')}>
+      <div className="bst:overflow-x-auto bst:rounded-card bst:border bst:border-border">
+        <table className="bst:w-full bst:border-collapse bst:text-sm">
           {props.headerRow && head ? (
-            <thead className="bg-muted/60">
+            <thead className="bst:bg-muted/60">
               <tr>
                 {head.map((cell, column) => (
                   <th
                     key={column}
                     scope="col"
                     className={cn(
-                      'text-foreground px-4 py-3 font-semibold',
+                      'bst:px-4 bst:py-3 bst:font-semibold bst:text-foreground',
                       CELL_ALIGN[props.align[column] ?? 'start'],
                     )}
                   >
@@ -452,8 +476,8 @@ export function TableView({
               <tr
                 key={rowIndex}
                 className={cn(
-                  'border-border border-t',
-                  props.striped && rowIndex % 2 === 1 && 'bg-muted/30',
+                  'bst:border-t bst:border-border',
+                  props.striped && rowIndex % 2 === 1 && 'bst:bg-muted/30',
                 )}
               >
                 {row.map((cell, column) => {
@@ -464,8 +488,10 @@ export function TableView({
                       key={column}
                       {...(header ? { scope: 'row' } : {})}
                       className={cn(
-                        'px-4 py-3 align-top',
-                        header ? 'text-foreground font-semibold' : 'text-muted-foreground',
+                        'bst:px-4 bst:py-3 bst:align-top',
+                        header
+                          ? 'bst:font-semibold bst:text-foreground'
+                          : 'bst:text-muted-foreground',
                         CELL_ALIGN[props.align[column] ?? 'start'],
                       )}
                     >
@@ -479,7 +505,9 @@ export function TableView({
         </table>
       </div>
       {props.caption ? (
-        <figcaption className="text-muted-foreground mt-2.5 text-sm">{props.caption}</figcaption>
+        <figcaption className="bst:mt-2.5 bst:text-sm bst:text-muted-foreground">
+          {props.caption}
+        </figcaption>
       ) : null}
     </figure>
   );
@@ -498,8 +526,15 @@ export function FootnoteView({
 }: ElementRenderProps<PropsOf<typeof footnoteElement>>) {
   if (!context.options.editing) return null;
   return (
-    <p {...frameProps(frame, 'text-muted-foreground border-border my-4 border-l-2 pl-3 text-sm')}>
-      <sup className="text-primary mr-1 font-semibold">{context.footnotes.get(node.id)}</sup>
+    <p
+      {...frameProps(
+        frame,
+        'bst:text-muted-foreground bst:border-border bst:my-4 bst:border-l-2 bst:pl-3 bst:text-sm',
+      )}
+    >
+      <sup className="bst:mr-1 bst:font-semibold bst:text-primary">
+        {context.footnotes.get(node.id)}
+      </sup>
       <RichTextView value={props.text} context={context} field={{ node: node.id, path: 'text' }} />
     </p>
   );
@@ -514,19 +549,22 @@ export function TakeawaysView({
     <aside
       {...frameProps(
         frame,
-        'border-primary/25 bg-primary/5 my-8 rounded-[var(--radius-card,0.625rem)] border px-6 py-5',
+        'bst:border-primary/25 bst:bg-primary/5 bst:my-8 bst:rounded-card bst:border bst:px-6 bst:py-5',
       )}
     >
       {props.title ? (
-        <p className="text-foreground mb-3 text-sm font-semibold tracking-wide uppercase">
+        <p className="bst:mb-3 bst:text-sm bst:font-semibold bst:tracking-wide bst:text-foreground bst:uppercase">
           {props.title}
         </p>
       ) : null}
-      <ul className="space-y-2">
+      <ul className="bst:space-y-2">
         {props.items.map((item, index) => (
-          <li key={index} className="text-foreground/85 flex gap-2.5 leading-relaxed">
+          <li
+            key={index}
+            className="bst:flex bst:gap-2.5 bst:leading-relaxed bst:text-foreground/85"
+          >
             <CircleCheck
-              className="text-primary mt-[0.2em] size-[1.1em] shrink-0"
+              className="bst:mt-[0.2em] bst:size-[1.1em] bst:shrink-0 bst:text-primary"
               aria-hidden="true"
             />
             <span>
@@ -545,11 +583,19 @@ export function DefinitionsView({
   context,
 }: ElementRenderProps<PropsOf<typeof definitionListElement>>) {
   return (
-    <dl {...frameProps(frame, 'divide-border border-border my-8 divide-y border-y')}>
+    <dl
+      {...frameProps(
+        frame,
+        'bst:divide-border bst:border-border bst:my-8 bst:divide-y bst:border-y',
+      )}
+    >
       {props.items.map((item, index) => (
-        <div key={index} className="grid gap-1 py-3.5 sm:grid-cols-[12rem_1fr] sm:gap-6">
-          <dt className="text-foreground font-semibold">{item.term}</dt>
-          <dd className="text-muted-foreground leading-relaxed">
+        <div
+          key={index}
+          className="bst:grid bst:gap-1 bst:py-3.5 bst:sm:grid-cols-[12rem_1fr] bst:sm:gap-6"
+        >
+          <dt className="bst:font-semibold bst:text-foreground">{item.term}</dt>
+          <dd className="bst:leading-relaxed bst:text-muted-foreground">
             <RichTextView value={item.description} context={context} />
           </dd>
         </div>

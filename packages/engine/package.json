@@ -47,13 +47,17 @@
       "types": "./dist/locales/*.d.ts",
       "default": "./dist/locales/*.js"
     },
+    "./styles.css": "./dist/styles.css",
+    "./theme/shadcn.css": "./dist/theme/shadcn.css",
+    "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
     "./package.json": "./package.json"
   },
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i src/theme/index.css -o dist/styles.css --minify && node ../../tooling/finish-css.mjs dist/styles.css && node ../../tooling/copy-theme-files.mjs dist/theme",
     "dev": "tsdown --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",

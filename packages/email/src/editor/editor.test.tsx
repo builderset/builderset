@@ -48,6 +48,34 @@ function mount(document = starterEmail(registry, { name: 'Reset design', subject
 }
 
 describe('<EmailEditor>', () => {
+  it('carries the theme on one root, with the floating parts inside it', () => {
+    const { container } = render(
+      <EmailEditor
+        document={starterEmail(registry, { name: 'Reset design', subject: 'Reset' })}
+        registry={registry}
+        host={host()}
+        type={type}
+        brand={DEFAULT_BRAND}
+        record={record}
+        onBack={() => undefined}
+        theme="dark"
+        tokens={{ primary: '#da6c1e' }}
+        className="mine"
+      />,
+    );
+    const root = container.firstElementChild as HTMLElement;
+    expect(root).toHaveClass('builderset', 'mine');
+    expect(root).toHaveAttribute('data-builderset-theme', 'dark');
+    expect(root.style.getPropertyValue('--builderset-primary')).toBe('#da6c1e');
+    // Menus, popovers and dialogs portal here, so they inherit all three.
+    expect(root.querySelector('[data-builderset-portal]')).not.toBeNull();
+  });
+
+  it('is light unless told otherwise', () => {
+    const { container } = mount();
+    expect(container.firstElementChild).toHaveAttribute('data-builderset-theme', 'light');
+  });
+
   it('draws the email and names the design', () => {
     const { container } = mount();
     expect(screen.getByText('Reset design')).toBeInTheDocument();

@@ -27,7 +27,9 @@ concurrency:
 jobs:
   examples:
     name: Examples from a registry, in three browsers
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest: that is Ubuntu 26.04, which Playwright 1.58 cannot
+    # install its browsers on. Move up with Playwright.
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5

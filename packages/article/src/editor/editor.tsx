@@ -71,6 +71,8 @@ export interface ArticleEditorProps {
   tokens?: ThemeTokens | undefined;
   /** Applied to the editor's root element, the one that carries the theme. */
   className?: string | undefined;
+  /** Previews of the font choices from the address the profile names. `false`: never. Default: `true`. */
+  fontPreviews?: boolean | undefined;
 }
 
 /** The article builder: the shared editor with the article profile. */

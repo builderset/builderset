@@ -124,6 +124,13 @@ export interface BuilderEditorProps<
   tokens?: ThemeTokens | undefined;
   /** Applied to the editor's root element, the one that carries the theme. */
   className?: string | undefined;
+  /**
+   * Previews of the font choices, loaded from the address the kit names (the
+   * email kit's: Google Fonts) when a font menu opens. `false`: never — for a
+   * page whose Content-Security-Policy allows no font host, or that may not
+   * call a third party. Default: `true`.
+   */
+  fontPreviews?: boolean | undefined;
 }
 
 const AUTOSAVE_MS = 2000;
@@ -173,6 +180,14 @@ export function BuilderEditor<
 >(props: BuilderEditorProps<TDoc, TRecord>) {
   const htmlLang = useHtmlLang();
   const locale = props.locale === 'auto' ? htmlLang : (props.locale ?? 'en');
+  // fontPreviews={false}: no font host is ever asked for a preview.
+  const profile = useMemo(
+    () =>
+      props.fontPreviews === false
+        ? { ...props.profile, fontsPreviewUrl: undefined }
+        : props.profile,
+    [props.profile, props.fontPreviews],
+  );
   const messages = useMemo(
     () => resolveMessages<EditorMessages>(en, locale, props.locales, props.messages),
     [locale, props.locales, props.messages],
@@ -222,7 +237,7 @@ export function BuilderEditor<
       defaultContentLocale,
       record: props.record ?? DRAFT,
       setRecord,
-      profile: props.profile,
+      profile,
     }),
     [
       store,
@@ -234,7 +249,7 @@ export function BuilderEditor<
       defaultContentLocale,
       props.record,
       setRecord,
-      props.profile,
+      profile,
     ],
   );
 

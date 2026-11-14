@@ -52,6 +52,11 @@ export interface EmailCanvasProps extends RenderOptions {
   mobile?: boolean | undefined;
   /** Editor only: marks every node so the overlay can find it. */
   editing?: boolean | undefined;
+  /**
+   * Load the fonts the email uses from Google Fonts, as a mail client would.
+   * `false`: the fallback fonts, and no request to a third party. Default: true.
+   */
+  fontPreviews?: boolean | undefined;
 }
 
 interface Frame {
@@ -963,13 +968,14 @@ export function EmailCanvas({
   editText,
   mobile = false,
   editing = false,
+  fontPreviews = true,
   ...options
 }: EmailCanvasProps) {
   const context = createContext(doc, options);
   const env: Env = { context, editText, mobile, editing };
   const settings = doc.settings;
   const root = doc.nodes[doc.root];
-  const fontsUrl = googleFontsUrl(fontsInUse(doc));
+  const fontsUrl = fontPreviews ? googleFontsUrl(fontsInUse(doc)) : null;
   useStylesheet(fontsUrl);
   return (
     <div

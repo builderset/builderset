@@ -173,12 +173,12 @@ Then break things on purpose and see the right test fail:
 
 ## Done when
 
-- [ ] The three examples exist, each with a README.
-- [ ] `pnpm test:examples` installs them from a local registry outside the workspace and passes.
+- [x] The three examples exist, each with a README.
+- [x] `pnpm test:examples` installs them from a local registry outside the workspace and passes.
 - [ ] The fifteen browser tests pass in Chromium, Firefox and WebKit.
 - [ ] `node-render` passes on Node 20, 22 and 24.
 - [ ] The `examples` job runs in CI and uploads its report on failure.
-- [ ] Each of the five deliberate breaks made the expected test fail.
+- [x] Each of the five deliberate breaks made the expected test fail.
 
 ## Traps
 
@@ -186,3 +186,21 @@ Then break things on purpose and see the right test fail:
 - **Screenshots that differ between machines.** Fonts and anti-aliasing differ between Windows and the Linux runner. Create the reference screenshots in CI, or compare computed styles and not pixels where possible.
 - **The local registry's cache.** A second run that publishes the same version is refused. Start it with an empty storage folder every time.
 - **Examples growing into applications.** Authentication, a database, a design system — each makes the example harder to read and adds a reason to fail that is not about the packages. The reference backends belong in the docs.
+
+## How it was done (2026-11-14)
+
+On the branch `feat/12-examples`, stacked on step 11's. Where the work differed from the parts above:
+
+| Part  | What the plan said                             | What was done                                                                                                                                                                                                                                                                                                                | Why                                                                                           |
+| ----- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 1     | `vite-react`                                   | Step 10's shell, finished: the bar also switches the language and counts the saves that reached the memory host (made once for the page). Its tsconfig no longer extends the repository's                                                                                                                                    | An example is copied out of the repository to be tested                                       |
+| 1     | `next-shadcn`                                  | As planned. The article pages read the package's kitchen sink rather than an article store; the email routes keep JSON files in `.data/` and leave out versions, sections, previews and oEmbed (`paths: { …: null }`)                                                                                                        | Kept small enough to read in five minutes                                                     |
+| 1     | `node-render`                                  | `render.mjs` and `test.mjs` (`node --test`): every golden case the email package ships, rendered and compared byte for byte, and the script's own output                                                                                                                                                                     | —                                                                                             |
+| 2     | `tooling/test-examples.mjs`                    | As planned, with npm for every example. The packages stay `private` in the repository; the script clears the flag in the packed copy it publishes. It unpacks the tarballs in Node                                                                                                                                           | Step 13 decides when the real packages are public; Git Bash's `tar` reads `C:` as a host name |
+| 3     | Fifteen browser tests                          | Ten in `vite-react`, five in `next-shadcn`. Two compare with tolerance: the hostile-page screenshots with pixelmatch (the PNG encoder writes identical pictures differently, and 10 pixels differed by anti-aliasing), and the parent's button ignores Tailwind's `--tw-*` `@property` registrations, which CSS cannot scope | Exact bytes and exact property lists failed on things that are not a difference               |
+| 3     | —                                              | The "parent not disturbed" test found the stylesheet's theme variables declared on `:root`; `finish-css.mjs` now declares them on `.builderset`                                                                                                                                                                              | Nothing the editor uses may reach the page                                                    |
+| 4     | A third job in `ci.yml`                        | A separate `examples.yml`, on changes to `packages/`, `examples/`, `tooling/` and on pushes to the release branches; `node-render` also runs on Node 20 in `ci.yml`'s test matrix                                                                                                                                            | A path filter is per workflow                                                                 |
+| Check | Delete `'use client'` from a built editor file | Deleted from a built renderer island (`render/client/copy-button.js`): the Next build fails, "importing a module that depends on `useEffect` into a React Server Component". The example imports every editor inside a client component, so an editor file's line is not what a server page reaches                          | —                                                                                             |
+| Check | An unprefixed class fails "Hostile page"       | The prefix test fails (`top-bar.tsx:58  size-4`). The hostile test compares two pages of the same build, so a class missing from both is not a difference to it                                                                                                                                                              | —                                                                                             |
+
+**Checks.** `pnpm test:examples` passes: all three examples installed with npm from Verdaccio in the system's temporary folder; in Chromium, `vite-react` 10/10 and `next-shadcn` 5/5; `node-render` 11/11 on Node 26. The deliberate breaks: no `dist` in the email package's `files` → `node-render` fails (`ERR_MODULE_NOT_FOUND`); `document.title` at the top of a core file → `node-render` fails (`document is not defined`); an import of `@motors/ui` → `node-render` fails (`Cannot find package`); a renderer island without `'use client'` → the Next build fails; a top-bar class without the prefix → the prefix test fails. Firefox and WebKit, and Node 20 and 22, run for the first time in CI.

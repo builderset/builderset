@@ -1,0 +1,11 @@
+# The kits' contract files: generated, and compared byte for byte by the tests
+# that write them (packages/article/src/core/fixtures.test.ts,
+# packages/email/src/core/email.test.ts, packages/email/src/render/golden.test.ts).
+# Reformatting them by hand would make those tests fail; regenerate with
+# UPDATE_FIXTURES=1 instead.
+packages/article/schema/
+packages/article/fixtures/
+packages/email/schema/
+packages/email/fixtures/
+
+pnpm-lock.yaml

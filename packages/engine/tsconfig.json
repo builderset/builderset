@@ -1,5 +1,5 @@
 {
-  "extends": "@motors/config/tsconfig/library",
+  "extends": "../../tooling/tsconfig/library.json",
   "compilerOptions": {
     "types": ["node"]
   },

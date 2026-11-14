@@ -89,7 +89,9 @@ export function RichTextView({
   context,
   field,
 }: {
+  /** The text. Empty draws nothing, unless the editor is editing it in place. */
   value: RichText | undefined | null;
+  /** The render context, for links, footnote numbers and editing in place. */
   context: RenderContext;
   /** Which prop this is — lets the editor edit it in place. */
   field?: { node: string; path: string; placeholder?: string } | undefined;

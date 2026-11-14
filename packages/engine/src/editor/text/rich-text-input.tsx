@@ -34,9 +34,13 @@ export function RichTextInput({
   id,
   multiline = true,
 }: {
+  /** The text shown. A different value from outside replaces what is in the box. */
   value: RichText;
+  /** Called with the whole text after each edit. */
   onChange: (value: RichText) => void;
+  /** The editable box's id, so a label can point at it. */
   id?: string | undefined;
+  /** Enter adds a line break; when false it does not. Default: `true`. */
   multiline?: boolean;
 }) {
   const { profile } = useEditorContext();

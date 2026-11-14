@@ -19,14 +19,33 @@ import { ArticleSettingsProvider, type SettingsSection } from './settings';
 import { ArticleWordsProvider, type ArticleLocale, type ArticleMessages } from './words';
 
 export interface ArticleEditorProps {
+  /**
+   * The article to edit. Read once, when the editor mounts: to load another,
+   * remount it (a new `key`).
+   */
   document: ArticleDocument;
+  /** The adapter for everything that leaves the browser: saving, publishing, uploads, media URLs, notices. */
   host: BuilderHost<ArticleDocument>;
   /** Defaults to `createArticleRegistry()`. */
   registry?: ElementRegistry | undefined;
+  /** The stored row's facts — status, schedule, slug, language — shown and edited beside the article. */
   record: ArticleFacts;
+  /**
+   * Called with the facts the writer changed (the slug, a project's own
+   * fields). Keep them and pass the updated record back as `record`.
+   */
   onRecordChange: (patch: Partial<ArticleFacts>) => void;
+  /**
+   * Called to leave the editor (the back button). With unsaved changes the
+   * writer is asked first; the editor does not navigate by itself.
+   */
   onBack: () => void;
+  /** Adds "Duplicate" to the publish menu; called when the writer picks it. */
   onDuplicate?: (() => void) | undefined;
+  /**
+   * Adds "Delete" to the publish menu; called once the writer confirms. Resolve
+   * `true` once it is deleted; leaving the editor afterwards is up to the host.
+   */
   onDelete?: (() => Promise<boolean>) | undefined;
   /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
   locale?: string | undefined;

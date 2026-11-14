@@ -97,7 +97,10 @@ export function DropdownMenuItem({
   className,
   destructive,
   ...props
-}: ComponentProps<typeof DropdownMenuPrimitive.Item> & { destructive?: boolean }) {
+}: ComponentProps<typeof DropdownMenuPrimitive.Item> & {
+  /** Draws the item in the destructive colour — for a delete. */
+  destructive?: boolean;
+}) {
   return (
     <DropdownMenuPrimitive.Item
       data-destructive={destructive ? true : undefined}
@@ -159,8 +162,11 @@ export function TooltipProvider({
 }
 
 export interface TooltipProps {
+  /** What the tooltip says. */
   content: React.ReactNode;
+  /** The trigger: one element that can hold a ref, such as a button. */
   children: React.ReactNode;
+  /** Which side of the trigger it opens on. Default: `'top'`. */
   side?: 'top' | 'right' | 'bottom' | 'left';
 }
 

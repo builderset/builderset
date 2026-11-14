@@ -53,7 +53,15 @@ const badge = cva(
 
 export type BadgeTone = NonNullable<VariantProps<typeof badge>['tone']>;
 
-export type BadgeProps = ComponentProps<'span'> & VariantProps<typeof badge>;
+export interface BadgeProps extends ComponentProps<'span'> {
+  /**
+   * The colour: `neutral`, `brand`, `ok`, `warn`, `danger`, or one of the
+   * status tones the top bar's status chip uses. Default: `'neutral'`.
+   */
+  tone?: VariantProps<typeof badge>['tone'];
+  /** `dense`: 9px bold capitals, for a status in a table row. Default: `'default'`. */
+  size?: VariantProps<typeof badge>['size'];
+}
 
 export function Badge({ className, tone, size, ...props }: BadgeProps) {
   return <span data-slot="badge" className={cn(badge({ tone, size }), className)} {...props} />;

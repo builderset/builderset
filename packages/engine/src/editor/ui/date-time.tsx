@@ -18,8 +18,11 @@ export interface DateTimeFieldProps extends Omit<
   InputProps,
   'type' | 'value' | 'defaultValue' | 'onChange' | 'min'
 > {
+  /** The instant, as an ISO string; `null` shows an empty field. */
   value: string | null;
+  /** Called with the edited instant as an ISO string, or `null` while the field is empty or unfinished. */
   onChange: (iso: string | null) => void;
+  /** The earliest instant that can be picked, as an ISO string. */
   min?: string | null | undefined;
 }
 

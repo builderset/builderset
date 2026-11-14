@@ -225,7 +225,7 @@ It must print `function function`.
 - [x] The tarballs contain only what part 5d lists.
 - [x] Plain Node imports the `core` and `render` doors.
 - [x] Each package has one README with the nine sections.
-- [ ] CI builds and checks the packages.
+- [x] CI builds and checks the packages.
 
 ## Traps
 

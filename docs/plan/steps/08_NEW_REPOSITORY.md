@@ -179,7 +179,7 @@ pnpm lint && pnpm typecheck && pnpm test
 
 - [x] The repository holds `packages/engine`, `packages/article`, `packages/email` with history.
 - [x] No file contains `@motors/`, and no code or comment names MotorsAL (outside `docs/plan/`, see below).
-- [ ] Lint, type check and tests pass locally and in CI on Node 20, 22 and 24.
+- [x] Lint, type check and tests pass locally and in CI on Node 20, 22 and 24.
 - [x] The secret scan is clean.
 - [x] `LICENSE`, `README.md`, `CONTRIBUTING.md` and `SECURITY.md` exist.
 - [x] Branch protection and secret scanning are on, or, while the repository is private, their replacements from part 6 are in place.

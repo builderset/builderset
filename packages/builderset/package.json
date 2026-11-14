@@ -129,8 +129,5 @@
     "react-dom": "19.2.8",
     "typescript": "6.0.3",
     "vitest": "4.1.11"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

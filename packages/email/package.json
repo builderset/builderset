@@ -1,7 +1,6 @@
 {
   "name": "@builderset/email",
   "version": "0.0.0",
-  "private": true,
   "description": "Email template builder: a block editor, a typed document, and HTML that every mail client shows.",
   "license": "MIT",
   "keywords": [
@@ -105,6 +104,6 @@
     "vitest": "4.1.11"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   }
 }

@@ -1,7 +1,6 @@
 {
   "name": "@builderset/engine",
   "version": "0.0.0",
-  "private": true,
   "description": "The engine under every Builderset kit: a typed node tree, operations with undo, the host contract and a generic block editor for React.",
   "license": "MIT",
   "keywords": [
@@ -132,6 +131,6 @@
     "vitest": "4.1.11"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   }
 }

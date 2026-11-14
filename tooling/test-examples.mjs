@@ -196,7 +196,10 @@ try {
     untar(tarball, unpacked);
     const manifestPath = join(unpacked, 'package', 'package.json');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-    delete manifest.private; // the published copy only; step 13 decides for the real one
+    // The published copy only: it goes to this registry, whatever the real
+    // package says (publishConfig points at GitHub Packages), and it is public here.
+    delete manifest.private;
+    delete manifest.publishConfig;
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
     versions[manifest.name] = manifest.version;
     run('npm', ['publish', join(unpacked, 'package'), '--registry', `${url}/`, '--tag', 'latest'], {

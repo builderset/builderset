@@ -11,6 +11,7 @@
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,css,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,css,yml,yaml}\"",
+    "check:packages": "node tooling/check-dist.mjs && pnpm --filter \"./packages/*\" exec publint --strict && pnpm --filter \"./packages/*\" exec attw --pack . --profile esm-only --format table-flipped",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {

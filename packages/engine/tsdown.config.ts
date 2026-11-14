@@ -13,7 +13,9 @@ export default defineConfig({
   format: 'esm',
   platform: 'neutral',
   outDir: 'dist',
-  dts: true,
+  // No type maps: they would point at src/, which is not shipped. The
+  // JavaScript maps carry their sources inside them.
+  dts: { sourcemap: false },
   sourcemap: true,
   clean: true,
   // One output file per source file. This is what keeps every 'use client'

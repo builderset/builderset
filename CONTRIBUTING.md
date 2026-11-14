@@ -18,6 +18,8 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm format:check
+pnpm build
+pnpm check:packages      # what was built: use client, imports, manifests, types
 ```
 
 CI runs the same, and the tests on Node 20, 22 and 24 once merged.

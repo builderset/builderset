@@ -65,7 +65,8 @@ function checkPackage(dir) {
     if (!/\.tsx?$/.test(file) || /\.test\.tsx?$|test-setup\.ts$/.test(file)) continue;
     if (!isClient(read(file))) continue;
     const built = join(dist, relative(src, file)).replace(/\.tsx?$/, '.js');
-    if (!existsSync(built)) fail(file, `starts with 'use client' but was not built (${unix(relative(dir, built))})`);
+    if (!existsSync(built))
+      fail(file, `starts with 'use client' but was not built (${unix(relative(dir, built))})`);
     else if (!isClient(read(built))) fail(built, `lost its 'use client' line`);
   }
 
@@ -79,19 +80,25 @@ function checkPackage(dir) {
     // 2. Leftovers: the old scope, a source path, the build machine's path.
     if (file.endsWith('.map')) {
       const map = JSON.parse(text);
-      if (!Array.isArray(map.sourcesContent) || map.sourcesContent.length !== map.sources.length || map.sourcesContent.some((s) => s == null))
+      if (
+        !Array.isArray(map.sourcesContent) ||
+        map.sourcesContent.length !== map.sources.length ||
+        map.sourcesContent.some((s) => s == null)
+      )
         fail(file, 'source map without sourcesContent: it points at src/, which is not shipped');
     } else {
       if (text.includes('@motors/')) fail(file, 'names @motors/');
       if (/['"`(]\.{0,2}\/?[\w./-]*\/src\//.test(text)) fail(file, 'names a path in src/');
     }
-    if (rootPaths.some((p) => text.includes(p))) fail(file, 'contains the build machine\'s path');
+    if (rootPaths.some((p) => text.includes(p))) fail(file, "contains the build machine's path");
     if (!isJs && !isDts) continue;
 
     // 3. The server doors render nothing.
-    if (SERVER_FOLDERS.includes(folder) && isJs && isClient(text)) fail(file, `'use client' in ${folder}/`);
+    if (SERVER_FOLDERS.includes(folder) && isJs && isClient(text))
+      fail(file, `'use client' in ${folder}/`);
     // 4. A renderer is never a client component as a whole.
-    if (path === 'render/index.js' && isClient(text)) fail(file, 'the renderer starts with \'use client\'');
+    if (path === 'render/index.js' && isClient(text))
+      fail(file, "the renderer starts with 'use client'");
 
     for (const specifier of specifiers(text)) {
       if (specifier.startsWith('.')) {
@@ -128,7 +135,8 @@ function checkPackage(dir) {
     const targets = typeof target === 'string' ? [target] : Object.values(target);
     for (const t of targets) {
       if (!t.includes('*')) {
-        if (!existsSync(join(dir, t))) fail(join(dir, 'package.json'), `"${door}" → ${t} does not exist`);
+        if (!existsSync(join(dir, t)))
+          fail(join(dir, 'package.json'), `"${door}" → ${t} does not exist`);
         continue;
       }
       const [before, after] = t.split('*');

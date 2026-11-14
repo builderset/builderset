@@ -114,7 +114,7 @@ pnpm test:examples                          # the example apps from packed tarba
 
 Tick a step when every box in its **Done when** list is ticked.
 
-- [ ] 01 Decisions and accounts
+- [ ] 01 Decisions and accounts — the name and the licence (MIT) are decided; the rest, and the accounts, are open: [DECISIONS.md](../DECISIONS.md)
 - [x] 02 Regroup the folders
 - [x] 03 Split the engine from the article kit
 - [x] 04 The editor's own UI kit
@@ -122,10 +122,10 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 06 Move MotorsAL content out
 - [x] 07 Host adapters and the backend contract
 - [x] **M1 — generic**
-- [ ] 08 The new repository
-- [ ] 09 Build and package shape
-- [ ] 10 Styles and theming
-- [ ] 11 The all-in-one package
+- [ ] 08 The new repository — done but for CI on Node 20, 22 and 24 seen green (the repository's settings follow the transfer to `xhiti`)
+- [ ] 09 Build and package shape — done but for CI seen green
+- [x] 10 Styles and theming
+- [ ] 11 The all-in-one package — done but for the Next example, which step 12 makes
 - [ ] 12 Example apps and the test matrix
 - [ ] 13 Publishing and releases
 - [ ] **M2 — installable**

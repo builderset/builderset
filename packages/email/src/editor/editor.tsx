@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementRegistry } from '@builderset/engine';
+import type { ElementRegistry, ThemeMode, ThemeTokens } from '@builderset/engine';
 import {
   BuilderEditor,
   resolveMessages,
@@ -67,6 +67,18 @@ export interface EmailEditorProps {
   storageKey?: string | undefined;
   /** When the server copy was last saved — a local copy newer than this is offered back. */
   savedAt?: string | null | undefined;
+  /** 'light' (the default), 'dark', or 'auto' to follow the page. Menus and dialogs follow it too. */
+  theme?: ThemeMode | undefined;
+  /** Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`. */
+  tokens?: ThemeTokens | undefined;
+  /** Applied to the editor's root element, the one that carries the theme. */
+  className?: string | undefined;
+  /**
+   * Load fonts from Google Fonts: the ones the email uses, on the canvas, and
+   * previews of the choices in the font menu. `false`: never — for a page whose
+   * Content-Security-Policy allows no font host. Default: `true`.
+   */
+  fontPreviews?: boolean | undefined;
 }
 
 /**
@@ -87,6 +99,10 @@ export function EmailEditor({
   onDelete,
   storageKey,
   savedAt,
+  theme,
+  tokens,
+  className,
+  fontPreviews,
   locale: requested,
   locales,
   messages,
@@ -124,8 +140,19 @@ export function EmailEditor({
         locale: contentLocale,
         words,
         contentLocales,
+        fontPreviews,
       }),
-    [registry, type, brand, host, words, socialIconBase, contentLocale, contentLocales],
+    [
+      registry,
+      type,
+      brand,
+      host,
+      words,
+      socialIconBase,
+      contentLocale,
+      contentLocales,
+      fontPreviews,
+    ],
   );
   const sample = type?.samples.default ?? Object.values(type?.samples ?? {})[0] ?? {};
 
@@ -147,6 +174,10 @@ export function EmailEditor({
         contentLocales={contentLocales}
         defaultContentLocale={contentLocale}
         profile={profile}
+        theme={theme}
+        tokens={tokens}
+        className={className}
+        fontPreviews={fontPreviews}
       />
     </EmailProvider>
   );

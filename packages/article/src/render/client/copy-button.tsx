@@ -25,13 +25,13 @@ export function CopyButton({ text, label, done }: { text: string; label: string;
           setCopied(true);
         });
       }}
-      className="text-muted-foreground hover:text-foreground hover:bg-muted inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control,0.4rem)] px-2 text-xs font-medium transition-colors"
+      className="bst:inline-flex bst:h-7 bst:cursor-pointer bst:items-center bst:gap-1.5 bst:rounded-control bst:px-2 bst:text-xs bst:font-medium bst:text-muted-foreground bst:transition-colors bst:hover:bg-muted bst:hover:text-foreground"
       aria-live="polite"
     >
       {copied ? (
-        <Check className="size-3.5 animate-[ui-pop_220ms_ease-out]" aria-hidden="true" />
+        <Check className="bst:size-3.5 bst:animate-[bst-pop_220ms_ease-out]" aria-hidden="true" />
       ) : (
-        <Copy className="size-3.5" aria-hidden="true" />
+        <Copy className="bst:size-3.5" aria-hidden="true" />
       )}
       {copied ? done : label}
     </button>

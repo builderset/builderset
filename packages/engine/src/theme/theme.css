@@ -1,0 +1,141 @@
+/*
+ * The internal names the classes use, mapped to the public variables.
+ *
+ * `inline`: a class reads its variable where it is used — `bst:bg-card` is
+ * `background-color: var(--builderset-surface, …)` — so a value set on the
+ * editor's element, or on any element inside it, takes effect there. A theme
+ * variable computed at `:root` would ignore it.
+ *
+ * Every public variable falls back to a default from `defaults.css`, which has
+ * a light and a dark value on one line. The table of names is in README.md.
+ */
+@theme inline {
+  /* ── Surfaces and text ──────────────────────────────────────────────────── */
+  --color-background: var(--builderset-background, var(--bst-d-background));
+  --color-foreground: var(--builderset-foreground, var(--bst-d-foreground));
+  --color-card: var(--builderset-surface, var(--bst-d-surface));
+  --color-card-foreground: var(--builderset-foreground, var(--bst-d-foreground));
+  --color-popover: var(--builderset-surface, var(--bst-d-surface));
+  --color-popover-foreground: var(--builderset-foreground, var(--bst-d-foreground));
+  --color-muted: var(--builderset-muted, var(--bst-d-muted));
+  --color-muted-foreground: var(--builderset-muted-foreground, var(--bst-d-muted-foreground));
+  /* A step up from muted: a secondary button must read as a button on a card. */
+  --color-secondary: light-dark(
+    color-mix(
+      in oklab,
+      var(--builderset-muted, var(--bst-d-muted)),
+      var(--builderset-foreground, var(--bst-d-foreground)) 6%
+    ),
+    color-mix(
+      in oklab,
+      var(--builderset-muted, var(--bst-d-muted)),
+      var(--builderset-foreground, var(--bst-d-foreground)) 12%
+    )
+  );
+  --color-secondary-foreground: var(--builderset-foreground, var(--bst-d-foreground));
+  /* Hover: ink, never the brand — the brand is kept for what is selected. A
+     step of ink must be larger on a dark ground to read. */
+  --color-accent: light-dark(
+    color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 6%, transparent),
+    color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 10%, transparent)
+  );
+  --color-accent-foreground: var(--builderset-foreground, var(--bst-d-foreground));
+  /* The rail beside the canvas: between the surface and the ground. */
+  --color-sidebar: color-mix(
+    in oklab,
+    var(--builderset-surface, var(--bst-d-surface)) 85%,
+    var(--builderset-background, var(--bst-d-background))
+  );
+  /* A field sits a step off the surface it is on. */
+  --color-input: light-dark(
+    color-mix(
+      in oklab,
+      var(--builderset-surface, var(--bst-d-surface)),
+      var(--builderset-foreground, var(--bst-d-foreground)) 5%
+    ),
+    color-mix(
+      in oklab,
+      var(--builderset-surface, var(--bst-d-surface)),
+      var(--builderset-foreground, var(--bst-d-foreground)) 4%
+    )
+  );
+
+  /* ── Lines ──────────────────────────────────────────────────────────────── */
+  --color-border: var(--builderset-border, var(--bst-d-border));
+  /* An edge that must be seen — an empty field, a drop zone: 3:1 on any surface. */
+  --color-border-strong: color-mix(
+    in oklab,
+    var(--builderset-border, var(--bst-d-border)),
+    var(--builderset-foreground, var(--bst-d-foreground)) 45%
+  );
+  --color-ring: var(--builderset-ring, var(--builderset-foreground, var(--bst-d-foreground)));
+
+  /* ── Intent ─────────────────────────────────────────────────────────────── */
+  --color-primary: var(--builderset-primary, var(--bst-d-primary));
+  --color-primary-foreground: var(--builderset-primary-foreground, var(--bst-d-primary-foreground));
+  --color-destructive: var(--builderset-danger, var(--bst-d-danger));
+  --color-destructive-foreground: var(--bst-d-danger-foreground);
+  --color-no: var(--builderset-danger, var(--bst-d-danger));
+  --color-ok: var(--builderset-success, var(--bst-d-success));
+  --color-warn: var(--builderset-warning, var(--bst-d-warning));
+  /* Not public: a document's state, and one accent in the article's callouts. */
+  --color-state-draft: var(--bst-d-state-draft);
+  --color-state-scheduled: var(--bst-d-state-scheduled);
+  --color-state-published: var(--bst-d-state-published);
+  --color-chart-1: var(--bst-d-chart-1);
+
+  /* ── Shape ──────────────────────────────────────────────────────────────── */
+  /* `--builderset-radius` is a card's corner, as shadcn's `--radius` is; a
+     control's is 0.7 of it, so a button beside a field does not look round. */
+  --radius-card: var(--builderset-radius, 0.625rem);
+  --radius-control: calc(var(--builderset-radius, 0.625rem) * 0.7);
+  --radius-sm: calc(var(--builderset-radius, 0.625rem) * 0.7);
+  --radius-md: calc(var(--builderset-radius, 0.625rem) * 0.7);
+  --radius-lg: var(--builderset-radius, 0.625rem);
+  --radius-xl: var(--builderset-radius, 0.625rem);
+  --radius-2xl: var(--builderset-radius, 0.625rem);
+  --radius-3xl: var(--builderset-radius, 0.625rem);
+  --radius-4xl: var(--builderset-radius, 0.625rem);
+
+  /* Shadows from the ink: dark on a light ground, a soft bloom on a dark one. */
+  --shadow-pop:
+    0 4px 12px -3px
+      color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 12%, transparent),
+    0 2px 4px -2px
+      color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 7%, transparent);
+  --shadow-modal:
+    0 24px 48px -16px
+      color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 22%, transparent),
+    0 8px 16px -10px
+      color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 12%, transparent);
+
+  /* ── Type and measure ───────────────────────────────────────────────────── */
+  --font-sans: var(
+    --builderset-font,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif
+  );
+  --font-mono: var(
+    --builderset-font-mono,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    'Liberation Mono',
+    monospace
+  );
+  /* `bst:max-w-measure`: the reading width of an article's prose. */
+  --container-measure: var(--builderset-prose-width, 68ch);
+
+  /* ── Motion: Tailwind's `ease-*` utilities, under their own names ───────── */
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-both: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-state: cubic-bezier(0.2, 0, 0, 1);
+}

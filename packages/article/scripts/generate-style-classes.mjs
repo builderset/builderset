@@ -16,7 +16,7 @@ const PROPS = {
   paddingY: scale('py'),
   width: {
     auto: '',
-    prose: 'max-w-[var(--maxw-prose,68ch)]',
+    prose: 'max-w-measure',
     wide: 'max-w-5xl',
     full: 'w-full max-w-none',
   },
@@ -49,8 +49,8 @@ const PROPS = {
   },
   radius: {
     none: 'rounded-none',
-    sm: 'rounded-[var(--radius-control,0.4rem)]',
-    md: 'rounded-[var(--radius-card,0.625rem)]',
+    sm: 'rounded-control',
+    md: 'rounded-card',
     lg: 'rounded-2xl',
     full: 'rounded-full',
   },
@@ -62,7 +62,8 @@ const prefix = (p, cls) =>
   cls
     ? cls
         .split(' ')
-        .map((c) => p + c)
+        // The product's class prefix comes before the breakpoint: bst:lg:mt-4.
+        .map((c) => `bst:${p}${c}`)
         .join(' ')
     : '';
 const key = (k) => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : `'${k}'`);

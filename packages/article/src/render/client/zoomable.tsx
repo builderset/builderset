@@ -27,7 +27,7 @@ export function Zoomable({
         type="button"
         aria-label={enlargeLabel}
         onClick={() => dialog.current?.showModal()}
-        className="block w-full cursor-zoom-in overflow-hidden rounded-[inherit] [&_img]:transition-transform [&_img]:duration-500 hover:[&_img]:scale-[1.02]"
+        className="bst:block bst:w-full bst:cursor-zoom-in bst:overflow-hidden bst:rounded-[inherit] bst:[&_img]:transition-transform bst:[&_img]:duration-500 bst:hover:[&_img]:scale-[1.02]"
       >
         {children}
       </button>
@@ -37,17 +37,17 @@ export function Zoomable({
           // A press on the backdrop (the dialog itself, not its content) closes.
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
-        className="m-auto max-h-[92vh] max-w-[94vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm open:animate-[ui-zoom-in_220ms_ease-out]"
+        className="bst:m-auto bst:max-h-[92vh] bst:max-w-[94vw] bst:overflow-visible bst:bg-transparent bst:p-0 bst:backdrop:bg-black/80 bst:backdrop:backdrop-blur-sm bst:open:animate-[bst-zoom-in_220ms_ease-out]"
       >
-        <div className="relative [&_img]:max-h-[88vh] [&_img]:w-auto [&_img]:rounded-lg">
+        <div className="bst:relative bst:[&_img]:max-h-[88vh] bst:[&_img]:w-auto bst:[&_img]:rounded-lg">
           {full}
           <button
             type="button"
             aria-label={closeLabel}
             onClick={() => dialog.current?.close()}
-            className="bg-background text-foreground absolute -top-3 -right-3 grid size-9 cursor-pointer place-items-center rounded-full shadow-lg transition-transform hover:scale-105"
+            className="bst:absolute bst:-top-3 bst:-right-3 bst:grid bst:size-9 bst:cursor-pointer bst:place-items-center bst:rounded-full bst:bg-background bst:text-foreground bst:shadow-lg bst:transition-transform bst:hover:scale-105"
           >
-            <X className="size-4" aria-hidden="true" />
+            <X className="bst:size-4" aria-hidden="true" />
           </button>
         </div>
       </dialog>

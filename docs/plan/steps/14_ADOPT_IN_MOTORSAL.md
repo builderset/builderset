@@ -16,6 +16,14 @@ MotorsAL installs the builders from the registry like any other project. `packag
 - Any urgent fix made in MotorsAL's frozen copies since step 08 has been ported to the new repository and released. List them in this step's pull request.
 - Screenshots of both editors and a blog article from the current production build, light and dark, in `sq`, `en` and `de`.
 
+## Fixes copied into the frozen folders
+
+Fixed in the new repository first, then copied into MotorsAL's `packages/engine`, `packages/article` or `packages/email`. Each is in the new repository already; this list is what to check is not lost when the folders are deleted.
+
+| Date       | Fix                                                                                                    | New repository    | MotorsAL                |
+| ---------- | ------------------------------------------------------------------------------------------------------ | ----------------- | ----------------------- |
+| 2026-11-14 | A nested list item rendered to the right of its parent item, not under it (`render/elements/text.tsx`) | `fix/nested-list` | the `builderset` branch |
+
 ## The work
 
 Do this on a branch that is deployed to staging and used for a few days before it reaches production.

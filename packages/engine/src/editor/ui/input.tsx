@@ -9,7 +9,7 @@ import { cn } from '../cn';
  * the same object visually and differ only in what they do. Six components
  * restating this string is six components that drift apart one class at a time.
  *
- * `ui-focus` is the shared glow from the theme stylesheet; `ui-invalid` is the error
+ * `bld-focus` is the shared glow from the theme stylesheet; `bld-invalid` is the error
  * treatment, and it is UNLAYERED there so it beats the glow when a field is both
  * focused and invalid — which is the state a reader is in immediately after a
  * failed submit, and the one that must read as invalid first.
@@ -20,16 +20,16 @@ export const controlClass = cn(
   // where the 36px a BUTTON is read as the smallest part of its own group. A
   // container that wants them denser — the filter toolbar — sets the token once
   // and every control inside comes down together, still equal to each other.
-  'ui-focus flex h-(--field-h) w-full min-w-0 items-center rounded-[var(--radius-control)]',
-  'border border-border bg-input px-3 text-sm text-foreground',
-  'placeholder:text-muted-foreground/60',
-  'disabled:cursor-not-allowed',
+  'bld-focus bst:flex bst:h-(--bst-field-h) bst:w-full bst:min-w-0 bst:items-center bst:rounded-control',
+  'bst:border bst:border-border bst:bg-input bst:px-3 bst:text-sm bst:text-foreground',
+  'bst:placeholder:text-muted-foreground/60',
+  'bst:disabled:cursor-not-allowed',
   // A control reddens when the FIELD around it is invalid, not only when it was
   // handed `invalid` itself. A drawer validates the whole submission at once and
   // the errors reach `Field`, which is the wrapper — without this the message
   // appeared under a control that still looked perfectly fine.
-  'group-data-[invalid=true]/field:border-destructive/55',
-  'group-data-[invalid=true]/field:bg-[color-mix(in_oklch,var(--destructive)_4%,var(--input))]',
+  'bst:group-data-[invalid=true]/field:border-destructive/55',
+  'bst:group-data-[invalid=true]/field:bg-[color-mix(in_oklab,var(--builderset-danger,var(--bst-d-danger))_4%,var(--builderset-surface,var(--bst-d-surface)))]',
 );
 
 export interface InputProps extends Omit<ComponentProps<'input'>, 'size'> {
@@ -54,9 +54,9 @@ export function Input({ className, invalid, type = 'text', ...props }: InputProp
         // The spinners on a number input are 20px of unlabelled control that
         // change a value on a stray scroll. Every numeric field here has a
         // keyboard and a validation rule instead.
-        '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-        '[-moz-appearance:textfield]',
-        invalid && 'ui-invalid',
+        'bst:[&::-webkit-inner-spin-button]:appearance-none bst:[&::-webkit-outer-spin-button]:appearance-none',
+        'bst:[-moz-appearance:textfield]',
+        invalid && 'bld-invalid',
         className,
       )}
       {...props}
@@ -90,8 +90,8 @@ export function Textarea({ className, invalid, rows, ...props }: TextareaProps) 
         // restores what a one-line control gets from centring. The minimum
         // height is the same five lines in `lh` (plus the padding and the
         // border), so dragging the resize handle cannot shrink it below them.
-        'h-auto min-h-[calc(5lh+1rem+2px)] py-2 leading-relaxed',
-        invalid && 'ui-invalid',
+        'bst:h-auto bst:min-h-[calc(5lh+1rem+2px)] bst:py-2 bst:leading-relaxed',
+        invalid && 'bld-invalid',
         className,
       )}
       {...props}

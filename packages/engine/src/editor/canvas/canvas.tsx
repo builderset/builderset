@@ -190,22 +190,21 @@ export function Canvas() {
   return (
     <div
       ref={scrollRef}
-      className="bld-canvas bg-muted/40 relative h-full overflow-x-hidden overflow-y-auto"
+      className="bld-canvas bst:relative bst:h-full bst:overflow-x-hidden bst:overflow-y-auto bst:bg-muted/40"
       onClick={(event) => {
         if (event.target === event.currentTarget) store.getState().select([]);
       }}
     >
-      <style>{CANVAS_CSS}</style>
       {lang ? (
         <p
           role="status"
-          className="border-primary/30 bg-primary/10 text-primary sticky top-3 z-20 mx-auto mt-3 w-fit max-w-[90%] rounded-full border px-4 py-1.5 text-center text-xs font-medium shadow-xs backdrop-blur"
+          className="bst:sticky bst:top-3 bst:z-20 bst:mx-auto bst:mt-3 bst:w-fit bst:max-w-[90%] bst:rounded-full bst:border bst:border-primary/30 bst:bg-primary/10 bst:px-4 bst:py-1.5 bst:text-center bst:text-xs bst:font-medium bst:text-primary bst:shadow-xs bst:backdrop-blur"
         >
           {messages.writingIn(languageName(lang, messages.languages))}
         </p>
       ) : null}
       <motion.div
-        className="mx-auto py-6"
+        className="bst:mx-auto bst:py-6"
         initial={false}
         animate={{ width: pageWidth * scale }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
@@ -214,14 +213,18 @@ export function Canvas() {
           style={{ width: pageWidth, zoom: scale }}
           className={
             bare
-              ? 'border-border min-h-[70vh] overflow-hidden rounded-[var(--radius-card)] border shadow-sm'
-              : 'bg-background border-border min-h-[70vh] rounded-[var(--radius-card)] border shadow-sm'
+              ? 'bst:min-h-[70vh] bst:overflow-hidden bst:rounded-card bst:border bst:border-border bst:shadow-sm'
+              : 'bst:min-h-[70vh] bst:rounded-card bst:border bst:border-border bst:bg-background bst:shadow-sm'
           }
         >
           <div
             ref={pageRef}
             role="presentation"
-            className={bare ? 'relative min-h-[70vh]' : 'relative px-6 py-10 sm:px-12'}
+            className={
+              bare
+                ? 'bst:relative bst:min-h-[70vh]'
+                : 'bst:relative bst:px-6 bst:py-10 bst:sm:px-12'
+            }
             onClick={onClick}
             onMouseOver={(event) => {
               if (activeDrag()) return;
@@ -236,7 +239,7 @@ export function Canvas() {
             }}
             onDrop={onDrop}
           >
-            <article className={bare ? 'min-h-[70vh]' : 'mx-auto max-w-[var(--maxw-prose,68ch)]'}>
+            <article className={bare ? 'bst:min-h-[70vh]' : 'bst:mx-auto bst:max-w-measure'}>
               {Header ? <Header /> : null}
               {empty ? (
                 <EmptyState
@@ -247,7 +250,7 @@ export function Canvas() {
                   action={
                     <button
                       type="button"
-                      className="bg-primary text-primary-foreground inline-flex h-9 items-center gap-2 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-transform active:scale-95"
+                      className="bst:inline-flex bst:h-9 bst:items-center bst:gap-2 bst:rounded-control bst:bg-primary bst:px-3 bst:text-sm bst:font-medium bst:text-primary-foreground bst:transition-transform bst:active:scale-95"
                       onClick={() => {
                         const state = store.getState();
                         // Through `insertElement`, so a host whose text must sit
@@ -259,7 +262,7 @@ export function Canvas() {
                         if (id) state.setEditing(id);
                       }}
                     >
-                      <PenLine className="size-4" aria-hidden="true" />
+                      <PenLine className="bst:size-4" aria-hidden="true" />
                       {messages.startWriting}
                     </button>
                   }
@@ -275,19 +278,3 @@ export function Canvas() {
     </div>
   );
 }
-
-/**
- * Editor-only rules for the rendered article: an empty container still has a
- * body to drop into, hidden blocks are dimmed rather than gone, and a text
- * field shows its placeholder.
- */
-const CANVAS_CSS = `
-.bld-canvas [data-node]:empty { min-height: 3rem; border: 1px dashed var(--border); border-radius: var(--radius-control, 0.4rem); }
-.bld-canvas [data-hidden-node] { opacity: 0.45; }
-.bld-canvas [data-node] { transition: opacity 160ms ease; }
-.bld-canvas [data-dragging] { opacity: 0.3; filter: saturate(0.6); }
-.bld-canvas .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--muted-foreground); opacity: 0.7; pointer-events: none; float: left; height: 0; }
-.bld-canvas .ProseMirror { white-space: pre-wrap; word-break: break-word; }
-.bld-canvas [data-node] { cursor: default; }
-.bld-canvas [data-inline-text] { cursor: text; }
-`;

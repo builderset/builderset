@@ -191,12 +191,12 @@ export function NumberStepper({
 
   const atMin = current !== null && min !== undefined && current <= min;
   const atMax = current !== null && max !== undefined && current >= max;
-  const height = size === 'sm' ? 'h-7' : 'h-[30px]';
+  const height = size === 'sm' ? 'bst:h-7' : 'bst:h-[30px]';
   const button = cn(
-    'text-muted-foreground flex shrink-0 cursor-pointer items-center justify-center transition-colors',
-    'hover:bg-accent hover:text-foreground active:scale-90 disabled:cursor-not-allowed disabled:opacity-35',
-    'disabled:hover:bg-transparent [&_svg]:size-3.5',
-    size === 'sm' ? 'w-6' : 'w-7',
+    'bst:flex bst:shrink-0 bst:cursor-pointer bst:items-center bst:justify-center bst:text-muted-foreground bst:transition-colors',
+    'bst:hover:bg-accent bst:hover:text-foreground bst:active:scale-90 bst:disabled:cursor-not-allowed bst:disabled:opacity-35',
+    'bst:disabled:hover:bg-transparent bst:[&_svg]:size-3.5',
+    size === 'sm' ? 'bst:w-6' : 'bst:w-7',
   );
   const variants = {
     enter: (direction: number) => ({ y: direction > 0 ? '-100%' : '100%', opacity: 0 }),
@@ -208,7 +208,7 @@ export function NumberStepper({
     <div
       data-slot="number-stepper"
       className={cn(
-        'border-input bg-background focus-within:ring-ring/40 flex w-full min-w-0 items-stretch overflow-hidden rounded-[var(--radius-control)] border focus-within:ring-2',
+        'bst:flex bst:w-full bst:min-w-0 bst:items-stretch bst:overflow-hidden bst:rounded-control bst:border bst:border-input bst:bg-background bst:focus-within:ring-2 bst:focus-within:ring-ring/40',
         height,
         className,
       )}
@@ -223,12 +223,12 @@ export function NumberStepper({
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
         onPointerCancel={stopHold}
-        className={cn(button, 'border-input border-r')}
+        className={cn(button, 'bst:border-r bst:border-input')}
       >
         <Minus aria-hidden="true" />
       </button>
 
-      <div className="relative min-w-0 flex-1 overflow-hidden">
+      <div className="bst:relative bst:min-w-0 bst:flex-1 bst:overflow-hidden">
         <input
           id={id}
           type="text"
@@ -279,9 +279,9 @@ export function NumberStepper({
             }
           }}
           className={cn(
-            'absolute inset-0 h-full w-full bg-transparent px-1 text-center text-xs tabular-nums outline-none',
+            'bst:absolute bst:inset-0 bst:h-full bst:w-full bst:bg-transparent bst:px-1 bst:text-center bst:text-xs bst:tabular-nums bst:outline-none',
             // While not editing, the rolling figure below is what is seen.
-            !editing && 'text-transparent',
+            !editing && 'bst:text-transparent',
           )}
         />
         {!editing ? (
@@ -297,14 +297,14 @@ export function NumberStepper({
                 reduceMotion ? { duration: 0 } : { duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }
               }
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 flex items-center justify-center gap-0.5 text-xs tabular-nums"
+              className="bst:pointer-events-none bst:absolute bst:inset-0 bst:flex bst:items-center bst:justify-center bst:gap-0.5 bst:text-xs bst:tabular-nums"
             >
               {current === null ? (
-                <span className="text-muted-foreground">—</span>
+                <span className="bst:text-muted-foreground">—</span>
               ) : (
                 <>
                   {format(current)}
-                  {suffix ? <span className="text-muted-foreground">{suffix}</span> : null}
+                  {suffix ? <span className="bst:text-muted-foreground">{suffix}</span> : null}
                 </>
               )}
             </motion.span>
@@ -322,7 +322,7 @@ export function NumberStepper({
         onPointerUp={stopHold}
         onPointerLeave={stopHold}
         onPointerCancel={stopHold}
-        className={cn(button, 'border-input border-l')}
+        className={cn(button, 'bst:border-l bst:border-input')}
       >
         <Plus aria-hidden="true" />
       </button>

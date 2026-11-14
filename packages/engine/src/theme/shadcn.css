@@ -1,0 +1,27 @@
+/*
+ * @builderset/<kit>/theme/shadcn.css — the editor in a project themed the
+ * shadcn way, with its tokens as complete colours (Tailwind 4, shadcn's
+ * current form: `--primary: oklch(0.21 0.006 285.885)`). Import it after the
+ * kit's stylesheet.
+ *
+ * A token the project does not define makes its --builderset-* variable
+ * invalid, and the editor's own default is used: nothing breaks.
+ *
+ * For tokens stored as bare HSL numbers (`--primary: 222 47% 11%`), import
+ * shadcn-hsl.css instead.
+ */
+.builderset {
+  --builderset-background: var(--background);
+  --builderset-surface: var(--card);
+  --builderset-foreground: var(--foreground);
+  --builderset-muted: var(--muted);
+  --builderset-muted-foreground: var(--muted-foreground);
+  --builderset-border: var(--border);
+  --builderset-primary: var(--primary);
+  --builderset-primary-foreground: var(--primary-foreground);
+  --builderset-danger: var(--destructive);
+  --builderset-ring: var(--ring);
+  --builderset-radius: var(--radius);
+  --builderset-font: var(--font-sans);
+  --builderset-font-mono: var(--font-mono);
+}

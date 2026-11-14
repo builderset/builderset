@@ -30,7 +30,7 @@ export function Carousel({
   };
 
   return (
-    <div className="relative">
+    <div className="bst:relative">
       <div
         ref={track}
         onScroll={(event) => {
@@ -38,24 +38,24 @@ export function Carousel({
           const width = element.firstElementChild?.clientWidth ?? 1;
           setIndex(Math.round(element.scrollLeft / Math.max(1, width)));
         }}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="bst:flex bst:snap-x bst:snap-mandatory bst:[scrollbar-width:none] bst:gap-3 bst:overflow-x-auto bst:scroll-smooth bst:pb-2 bst:[&::-webkit-scrollbar]:hidden"
       >
         {slides.map((slide, slideIndex) => (
-          <div key={slideIndex} className="w-[85%] shrink-0 snap-start sm:w-[70%]">
+          <div key={slideIndex} className="bst:w-[85%] bst:shrink-0 bst:snap-start bst:sm:w-[70%]">
             {slide}
           </div>
         ))}
       </div>
-      <div className="mt-3 flex items-center justify-between gap-3">
-        <div className="flex gap-1.5" aria-hidden="true">
+      <div className="bst:mt-3 bst:flex bst:items-center bst:justify-between bst:gap-3">
+        <div className="bst:flex bst:gap-1.5" aria-hidden="true">
           {slides.map((_, dot) => (
             <span
               key={dot}
-              className={`h-1.5 rounded-full transition-all duration-300 ${dot === index ? 'bg-primary w-5' : 'bg-border w-1.5'}`}
+              className={`bst:h-1.5 bst:rounded-full bst:transition-all bst:duration-300 ${dot === index ? 'bst:w-5 bst:bg-primary' : 'bst:w-1.5 bst:bg-border'}`}
             />
           ))}
         </div>
-        <div className="flex gap-2">
+        <div className="bst:flex bst:gap-2">
           {[
             { label: previous, to: index - 1, Icon: ChevronLeft, disabled: index === 0 },
             {
@@ -73,9 +73,9 @@ export function Carousel({
               onClick={() => {
                 go(to);
               }}
-              className="border-border hover:bg-muted grid size-9 cursor-pointer place-items-center rounded-full border transition-[background-color,scale] active:scale-90 disabled:cursor-default disabled:opacity-40"
+              className="bst:grid bst:size-9 bst:cursor-pointer bst:place-items-center bst:rounded-full bst:border bst:border-border bst:transition-[background-color,scale] bst:hover:bg-muted bst:active:scale-90 bst:disabled:cursor-default bst:disabled:opacity-40"
             >
-              <Icon className="size-4" aria-hidden="true" />
+              <Icon className="bst:size-4" aria-hidden="true" />
             </button>
           ))}
         </div>

@@ -42,17 +42,17 @@ export const BUTTON_ICON: Record<NonNullable<ButtonSpec['icon']>, LucideIcon> = 
 
 /** The same shapes as the editor's `Button` (`@builderset/engine/ui`), drawn from the same tokens. */
 const VARIANT: Record<ButtonSpec['variant'], string> = {
-  primary: 'bg-primary text-primary-foreground hover:bg-primary/85',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  primary: 'bst:bg-primary bst:text-primary-foreground bst:hover:bg-primary/85',
+  secondary: 'bst:bg-secondary bst:text-secondary-foreground bst:hover:bg-secondary/80',
   outline:
-    'border border-border bg-transparent text-foreground hover:border-border-strong hover:bg-muted',
-  ghost: 'text-foreground hover:bg-muted',
+    'bst:border bst:border-border bst:bg-transparent bst:text-foreground bst:hover:border-border-strong bst:hover:bg-muted',
+  ghost: 'bst:text-foreground bst:hover:bg-muted',
 };
 
 const SIZE = {
-  sm: 'h-8 px-3 text-[13px]',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-base',
+  sm: 'bst:h-8 bst:px-3 bst:text-[13px]',
+  md: 'bst:h-10 bst:px-4 bst:text-sm',
+  lg: 'bst:h-12 bst:px-6 bst:text-base',
 } as const;
 
 export function ButtonLink({
@@ -77,7 +77,7 @@ export function ButtonLink({
     <Link
       href={context.options.editing ? '#' : button.href}
       className={cn(
-        'group inline-flex items-center justify-center gap-2 rounded-[var(--radius-control,0.4rem)] font-medium whitespace-nowrap transition-colors',
+        'bst:group bst:inline-flex bst:items-center bst:justify-center bst:gap-2 bst:rounded-control bst:font-medium bst:whitespace-nowrap bst:transition-colors',
         VARIANT[button.variant],
         SIZE[size],
         className,
@@ -88,7 +88,7 @@ export function ButtonLink({
       {button.label}
       {Icon ? (
         <Icon
-          className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
+          className="bst:size-4 bst:transition-transform bst:duration-200 bst:group-hover:translate-x-0.5"
           aria-hidden="true"
         />
       ) : null}

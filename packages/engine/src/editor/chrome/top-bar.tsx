@@ -55,9 +55,9 @@ export interface TopBarActions {
 }
 
 const DEVICES: { value: Breakpoint; icon: ReactNode }[] = [
-  { value: 'desktop', icon: <Monitor className="size-4" aria-hidden="true" /> },
-  { value: 'tablet', icon: <Tablet className="size-4" aria-hidden="true" /> },
-  { value: 'mobile', icon: <Smartphone className="size-4" aria-hidden="true" /> },
+  { value: 'desktop', icon: <Monitor className="bst:size-4" aria-hidden="true" /> },
+  { value: 'tablet', icon: <Tablet className="bst:size-4" aria-hidden="true" /> },
+  { value: 'mobile', icon: <Smartphone className="bst:size-4" aria-hidden="true" /> },
 ];
 
 const ZOOMS = [50, 75, 100, 125, 150];
@@ -85,20 +85,20 @@ function SaveIndicator() {
 
   let icon: ReactNode;
   let text: string;
-  let tone = 'text-muted-foreground';
+  let tone = 'bst:text-muted-foreground';
   if (saveState === 'saving') {
-    icon = <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />;
+    icon = <Loader2 className="bst:size-3.5 bst:animate-spin" aria-hidden="true" />;
     text = messages.saveSaving;
   } else if (saveState === 'conflict') {
-    icon = <AlertTriangle className="size-3.5" aria-hidden="true" />;
+    icon = <AlertTriangle className="bst:size-3.5" aria-hidden="true" />;
     text = messages.saveConflict;
-    tone = 'text-destructive';
+    tone = 'bst:text-destructive';
   } else if (saveState === 'error') {
-    icon = <CloudOff className="size-3.5" aria-hidden="true" />;
+    icon = <CloudOff className="bst:size-3.5" aria-hidden="true" />;
     text = messages.saveError;
-    tone = 'text-warn';
+    tone = 'bst:text-warn';
   } else if (dirty) {
-    icon = <span className="bg-warn size-2 rounded-full" aria-hidden="true" />;
+    icon = <span className="bst:size-2 bst:rounded-full bst:bg-warn" aria-hidden="true" />;
     text = messages.saveDirty;
   } else if (lastSavedAt) {
     const minutes = Math.floor((now - lastSavedAt) / 60_000);
@@ -110,10 +110,10 @@ function SaveIndicator() {
         : minutes < 60
           ? relative.format(-minutes, 'minute')
           : relative.format(-Math.floor(minutes / 60), 'hour');
-    icon = <Check className="text-ok size-3.5" aria-hidden="true" />;
+    icon = <Check className="bst:size-3.5 bst:text-ok" aria-hidden="true" />;
     text = messages.savedAgo(when);
   } else {
-    icon = <Check className="size-3.5" aria-hidden="true" />;
+    icon = <Check className="bst:size-3.5" aria-hidden="true" />;
     text = messages.saveIdle;
   }
 
@@ -121,7 +121,7 @@ function SaveIndicator() {
     <span
       role="status"
       aria-live="polite"
-      className={`hidden items-center gap-1.5 text-xs lg:flex ${tone}`}
+      className={`bst:hidden bst:items-center bst:gap-1.5 bst:text-xs bst:lg:flex ${tone}`}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
@@ -130,12 +130,12 @@ function SaveIndicator() {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.6, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 500, damping: 26 }}
-          className="flex"
+          className="bst:flex"
         >
           {icon}
         </motion.span>
       </AnimatePresence>
-      <span className="whitespace-nowrap">{text}</span>
+      <span className="bst:whitespace-nowrap">{text}</span>
     </span>
   );
 }
@@ -161,9 +161,9 @@ export function TopBar(actions: TopBarActions) {
     // Three zones: where you are (left), how you are looking at it (center),
     // what you do with it (right). The outer two share the leftover width
     // equally, so the center group sits in the true middle of the window.
-    <header className="border-border bg-sidebar grid h-14 shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 border-b px-2 sm:px-3">
+    <header className="bst:grid bst:h-14 bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] bst:items-center bst:gap-3 bst:border-b bst:border-border bst:bg-sidebar bst:px-2 bst:sm:px-3">
       {/* ── Left: navigation and identity ── */}
-      <div className="flex min-w-0 items-center gap-1">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:gap-1">
         <Tooltip content={messages.back}>
           <Button
             type="button"
@@ -183,7 +183,7 @@ export function TopBar(actions: TopBarActions) {
             size="icon"
             aria-label={messages.add}
             aria-pressed={leftOpen}
-            className="hidden md:inline-flex"
+            className="bst:hidden bst:md:inline-flex"
             onClick={() => {
               store.getState().toggleLeft();
             }}
@@ -191,11 +191,13 @@ export function TopBar(actions: TopBarActions) {
             <PanelLeft aria-hidden="true" />
           </Button>
         </Tooltip>
-        <div className="ml-1 flex min-w-0 items-center gap-2">
-          <span className="truncate text-sm font-semibold">{title || messages.untitled}</span>
+        <div className="bst:ml-1 bst:flex bst:min-w-0 bst:items-center bst:gap-2">
+          <span className="bst:truncate bst:text-sm bst:font-semibold">
+            {title || messages.untitled}
+          </span>
           <Badge
-            tone={published ? 'finalized' : scheduled ? 'scheduled' : 'pending'}
-            className="hidden shrink-0 sm:inline-flex"
+            tone={published ? 'published' : scheduled ? 'scheduled' : 'draft'}
+            className="bst:hidden bst:shrink-0 bst:sm:inline-flex"
           >
             {messages[statusKey]}
           </Badge>
@@ -203,7 +205,7 @@ export function TopBar(actions: TopBarActions) {
       </div>
 
       {/* ── Center: view controls, one group ── */}
-      <div className="border-border bg-background/70 flex items-center gap-0.5 rounded-[var(--radius-control)] border p-0.5 shadow-xs">
+      <div className="bst:flex bst:items-center bst:gap-0.5 bst:rounded-control bst:border bst:border-border bst:bg-background/70 bst:p-0.5 bst:shadow-xs">
         <Tooltip
           content={canUndo ? `${messages.undo}: ${undoLabel ?? ''}` : messages.nothingToUndo}
         >
@@ -238,11 +240,14 @@ export function TopBar(actions: TopBarActions) {
         </Tooltip>
         {multilingual ? (
           <>
-            <span className="bg-border mx-1 h-5 w-px" aria-hidden="true" />
-            <LanguageSwitch className="border-0 bg-transparent p-0" />
+            <span className="bst:mx-1 bst:h-5 bst:w-px bst:bg-border" aria-hidden="true" />
+            <LanguageSwitch className="bst:border-0 bst:bg-transparent bst:p-0" />
           </>
         ) : null}
-        <span className="bg-border mx-1 hidden h-5 w-px md:block" aria-hidden="true" />
+        <span
+          className="bst:mx-1 bst:hidden bst:h-5 bst:w-px bst:bg-border bst:md:block"
+          aria-hidden="true"
+        />
         <SegmentedControl
           aria-label={messages.breakpoint}
           value={viewport}
@@ -254,9 +259,12 @@ export function TopBar(actions: TopBarActions) {
             label: device.icon,
             ariaLabel: messages[device.value],
           }))}
-          className="hidden border-0 bg-transparent p-0 md:flex"
+          className="bst:hidden bst:border-0 bst:bg-transparent bst:p-0 bst:md:flex"
         />
-        <span className="bg-border mx-1 hidden h-5 w-px lg:block" aria-hidden="true" />
+        <span
+          className="bst:mx-1 bst:hidden bst:h-5 bst:w-px bst:bg-border bst:lg:block"
+          aria-hidden="true"
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -264,7 +272,7 @@ export function TopBar(actions: TopBarActions) {
               variant="ghost"
               size="sm"
               aria-label={messages.zoom}
-              className="hidden w-[4.5rem] justify-between tabular-nums lg:inline-flex"
+              className="bst:hidden bst:w-[4.5rem] bst:justify-between bst:tabular-nums bst:lg:inline-flex"
             >
               {zoom}%
               <ChevronDown aria-hidden="true" />
@@ -279,7 +287,9 @@ export function TopBar(actions: TopBarActions) {
                 }}
               >
                 {value}%
-                {value === zoom ? <Check className="ml-auto size-4" aria-hidden="true" /> : null}
+                {value === zoom ? (
+                  <Check className="bst:ml-auto bst:size-4" aria-hidden="true" />
+                ) : null}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -287,7 +297,7 @@ export function TopBar(actions: TopBarActions) {
       </div>
 
       {/* ── Right: saving and publishing ── */}
-      <div className="flex min-w-0 items-center justify-end gap-1">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:justify-end bst:gap-1">
         <SaveIndicator />
         {actions.onHistory ? (
           <Tooltip content={messages.revisions}>
@@ -315,14 +325,14 @@ export function TopBar(actions: TopBarActions) {
             </Button>
           </Tooltip>
         ) : null}
-        <div className="ml-1 flex items-center">
+        <div className="bst:ml-1 bst:flex bst:items-center">
           <Button
             type="button"
             size="sm"
             loading={actions.busy}
             icon={<Rocket aria-hidden="true" />}
             onClick={actions.onPublish}
-            className="rounded-r-none"
+            className="bst:rounded-r-none"
           >
             {published ? messages.update : messages.publish}
           </Button>
@@ -332,41 +342,41 @@ export function TopBar(actions: TopBarActions) {
                 type="button"
                 size="icon-sm"
                 aria-label={messages.moreOptions}
-                className="border-primary-foreground/20 rounded-l-none border-l"
+                className="bst:rounded-l-none bst:border-l bst:border-primary-foreground/20"
                 disabled={actions.busy}
               >
                 <ChevronDown aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="bst:w-56">
               <DropdownMenuItem onSelect={actions.onSave}>
-                <Save className="size-4" aria-hidden="true" />
+                <Save className="bst:size-4" aria-hidden="true" />
                 {messages.saveDraft}
-                <span className="text-muted-foreground ml-auto text-xs">Ctrl S</span>
+                <span className="bst:ml-auto bst:text-xs bst:text-muted-foreground">Ctrl S</span>
               </DropdownMenuItem>
               {!published ? (
                 <DropdownMenuItem onSelect={actions.onSchedule}>
-                  <CalendarClock className="size-4" aria-hidden="true" />
+                  <CalendarClock className="bst:size-4" aria-hidden="true" />
                   {messages.schedule}
                 </DropdownMenuItem>
               ) : null}
               {published && actions.onUnpublish ? (
                 <DropdownMenuItem onSelect={actions.onUnpublish}>
-                  <Undo className="size-4" aria-hidden="true" />
+                  <Undo className="bst:size-4" aria-hidden="true" />
                   {messages.unpublish}
                 </DropdownMenuItem>
               ) : null}
               {actions.onDuplicate ? (
                 <DropdownMenuItem onSelect={actions.onDuplicate}>
-                  <Copy className="size-4" aria-hidden="true" />
+                  <Copy className="bst:size-4" aria-hidden="true" />
                   {messages.duplicateDocument}
                 </DropdownMenuItem>
               ) : null}
               {actions.onDelete ? (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={actions.onDelete} className="text-destructive">
-                    <Trash2 className="size-4" aria-hidden="true" />
+                  <DropdownMenuItem onSelect={actions.onDelete} className="bst:text-destructive">
+                    <Trash2 className="bst:size-4" aria-hidden="true" />
                     {messages.deleteDocument}
                   </DropdownMenuItem>
                 </>
@@ -382,7 +392,7 @@ export function TopBar(actions: TopBarActions) {
             size="icon"
             aria-label={messages.settings}
             aria-pressed={rightOpen}
-            className="hidden md:inline-flex"
+            className="bst:hidden bst:md:inline-flex"
             onClick={() => {
               store.getState().toggleRight();
             }}
@@ -396,5 +406,10 @@ export function TopBar(actions: TopBarActions) {
 }
 
 function Divider() {
-  return <span className="bg-border mx-1 hidden h-6 w-px md:block" aria-hidden="true" />;
+  return (
+    <span
+      className="bst:mx-1 bst:hidden bst:h-6 bst:w-px bst:bg-border bst:md:block"
+      aria-hidden="true"
+    />
+  );
 }

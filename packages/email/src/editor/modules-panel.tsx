@@ -83,26 +83,28 @@ export function ModulesPanel() {
   };
 
   return (
-    <div className="h-full space-y-4 overflow-y-auto p-3">
+    <div className="bst:h-full bst:space-y-4 bst:overflow-y-auto bst:p-3">
       <button
         type="button"
         onClick={() => {
           window.dispatchEvent(new CustomEvent(OPEN_IMPORT_HTML));
         }}
-        className="border-primary/40 bg-primary/5 hover:bg-primary/10 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border border-dashed px-3 py-3 text-left transition-[colors,transform] active:scale-[0.98]"
+        className="bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:gap-3 bst:rounded-control bst:border bst:border-dashed bst:border-primary/40 bst:bg-primary/5 bst:px-3 bst:py-3 bst:text-left bst:transition-[colors,transform] bst:hover:bg-primary/10 bst:active:scale-[0.98]"
       >
-        <FileCode2 className="text-primary size-5 shrink-0" aria-hidden="true" />
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-medium">{words.importHtml.open}</span>
-          <span className="text-muted-foreground block truncate text-xs">.html</span>
+        <FileCode2 className="bst:size-5 bst:shrink-0 bst:text-primary" aria-hidden="true" />
+        <span className="bst:min-w-0 bst:flex-1">
+          <span className="bst:block bst:text-sm bst:font-medium">{words.importHtml.open}</span>
+          <span className="bst:block bst:truncate bst:text-xs bst:text-muted-foreground">
+            .html
+          </span>
         </span>
       </button>
-      <h3 className="text-muted-foreground px-1 text-[11px] font-semibold tracking-wider uppercase">
+      <h3 className="bst:px-1 bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
         {w.modules}
       </h3>
       {host.saveSection ? (
         <form
-          className="flex gap-2"
+          className="bst:flex bst:gap-2"
           onSubmit={(event) => {
             event.preventDefault();
             void save();
@@ -132,13 +134,13 @@ export function ModulesPanel() {
         </form>
       ) : null}
       {modules === null ? (
-        <div className="flex justify-center py-6">
+        <div className="bst:flex bst:justify-center bst:py-6">
           <Spinner />
         </div>
       ) : modules.length === 0 ? (
         <EmptyState size="compact" icon={<Boxes aria-hidden="true" />} title={w.noModules} />
       ) : (
-        <div className="space-y-2">
+        <div className="bst:space-y-2">
           {modules.map((module) => (
             <button
               key={module.id}
@@ -146,10 +148,13 @@ export function ModulesPanel() {
               onClick={() => {
                 insert(module.fragment, module.name);
               }}
-              className="border-border bg-card hover:border-primary/50 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
+              className="bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:gap-3 bst:rounded-control bst:border bst:border-border bst:bg-card bst:px-3 bst:py-2.5 bst:text-left bst:transition-[colors,transform] bst:hover:border-primary/50 bst:active:scale-[0.98]"
             >
-              <Boxes className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-              <span className="min-w-0 flex-1 truncate text-sm">{module.name}</span>
+              <Boxes
+                className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+                aria-hidden="true"
+              />
+              <span className="bst:min-w-0 bst:flex-1 bst:truncate bst:text-sm">{module.name}</span>
             </button>
           ))}
         </div>

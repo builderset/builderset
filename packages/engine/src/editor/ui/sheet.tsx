@@ -82,7 +82,7 @@ export function Sheet({ open, onClose, title, description, children, className }
           // sliding up over the page rather than a panel sitting on it, and the
           // curve is what says which edge it came from — so this is a literal
           // rather than `--radius-card`, which is solved for a dense table.
-          'max-h-[85dvh] rounded-t-[1.5rem]',
+          'bst:max-h-[85dvh] bst:rounded-t-[1.5rem]',
           className,
         )}
       >
@@ -92,7 +92,7 @@ export function Sheet({ open, onClose, title, description, children, className }
             docked to the bottom of the screen. */}
         <span
           aria-hidden="true"
-          className="bg-border-strong mt-3 block h-1 w-9 shrink-0 self-center rounded-full"
+          className="bst:mt-3 bst:block bst:h-1 bst:w-9 bst:shrink-0 bst:self-center bst:rounded-full bst:bg-border-strong"
         />
 
         {/* The heading and the close, as one row: the button is centred
@@ -101,11 +101,11 @@ export function Sheet({ open, onClose, title, description, children, className }
             Vertical room on both sides — the header draws its own rule
             underneath (see `base.css`), and at `pb-0` the description sat on
             that line. */}
-        <OverlayHeader className="flex-row items-center gap-3 px-4 py-0 pt-5 pb-6">
-          <div className="flex min-w-0 flex-1 flex-col">
-            <OverlayTitle className="text-base leading-tight">{title}</OverlayTitle>
+        <OverlayHeader className="bst:flex-row bst:items-center bst:gap-3 bst:px-4 bst:py-0 bst:pt-5 bst:pb-6">
+          <div className="bst:flex bst:min-w-0 bst:flex-1 bst:flex-col">
+            <OverlayTitle className="bst:text-base bst:leading-tight">{title}</OverlayTitle>
             {description ? (
-              <OverlayDescription className="mt-0.5 pr-0 text-xs leading-snug">
+              <OverlayDescription className="bst:mt-0.5 bst:pr-0 bst:text-xs bst:leading-snug">
                 {description}
               </OverlayDescription>
             ) : null}
@@ -113,16 +113,16 @@ export function Sheet({ open, onClose, title, description, children, className }
           <OverlayClose
             aria-label={messages.close}
             className={cn(
-              'ui-focus text-muted-foreground hover:text-foreground hover:bg-accent border-border grid size-9 shrink-0 cursor-pointer place-items-center rounded-[var(--radius-control)] border',
-              'transition-[background-color,color,scale] duration-(--dur-2) active:scale-90',
+              'bld-focus bst:grid bst:size-9 bst:shrink-0 bst:cursor-pointer bst:place-items-center bst:rounded-control bst:border bst:border-border bst:text-muted-foreground bst:hover:bg-accent bst:hover:text-foreground',
+              'bst:transition-[background-color,color,scale] bst:duration-(--bst-dur-2) bst:active:scale-90',
               ICON_MOTION,
             )}
           >
-            <X className="size-4" aria-hidden="true" />
+            <X className="bst:size-4" aria-hidden="true" />
           </OverlayClose>
         </OverlayHeader>
 
-        <OverlayBody className="px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <OverlayBody className="bst:px-4 bst:pt-4 bst:pb-[max(1rem,env(safe-area-inset-bottom))]">
           {children}
         </OverlayBody>
       </DrawerPanel>
@@ -159,28 +159,30 @@ export function SheetOption({ icon, name, description, selected, onSelect }: She
         onClick={onSelect}
         aria-current={selected}
         className={cn(
-          'ui-focus flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-card)] border p-3 text-left',
-          'transition-colors duration-(--dur-2)',
+          'bld-focus bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:gap-3 bst:rounded-card bst:border bst:p-3 bst:text-left',
+          'bst:transition-colors bst:duration-(--bst-dur-2)',
           selected
-            ? 'border-primary/50 bg-primary/8'
-            : 'border-border bg-background active:bg-accent',
+            ? 'bst:border-primary/50 bst:bg-primary/8'
+            : 'bst:border-border bst:bg-background bst:active:bg-accent',
         )}
       >
         {icon ? (
           <span
             className={cn(
-              'flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full',
-              selected ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground',
+              'bst:flex bst:size-9 bst:shrink-0 bst:items-center bst:justify-center bst:overflow-hidden bst:rounded-full',
+              selected
+                ? 'bst:bg-primary/15 bst:text-primary'
+                : 'bst:bg-muted bst:text-muted-foreground',
             )}
           >
             {icon}
           </span>
         ) : null}
 
-        <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold">{name}</span>
+        <span className="bst:min-w-0 bst:flex-1">
+          <span className="bst:block bst:text-sm bst:font-semibold">{name}</span>
           {description ? (
-            <span className="text-muted-foreground mt-0.5 block text-xs leading-snug">
+            <span className="bst:mt-0.5 bst:block bst:text-xs bst:leading-snug bst:text-muted-foreground">
               {description}
             </span>
           ) : null}
@@ -191,11 +193,11 @@ export function SheetOption({ icon, name, description, selected, onSelect }: She
         <span
           aria-hidden="true"
           className={cn(
-            'flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
-            selected ? 'border-primary' : 'border-border-strong',
+            'bst:flex bst:size-4 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-full bst:border-2 bst:transition-colors',
+            selected ? 'bst:border-primary' : 'bst:border-border-strong',
           )}
         >
-          {selected ? <span className="bg-primary size-1.5 rounded-full" /> : null}
+          {selected ? <span className="bst:size-1.5 bst:rounded-full bst:bg-primary" /> : null}
         </span>
       </button>
     </li>
@@ -233,30 +235,37 @@ export function SheetAction({
         type="button"
         onClick={onSelect}
         className={cn(
-          'ui-focus flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-card)] border p-3 text-left',
-          'transition-colors duration-(--dur-2)',
+          'bld-focus bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:gap-3 bst:rounded-card bst:border bst:p-3 bst:text-left',
+          'bst:transition-colors bst:duration-(--bst-dur-2)',
           destructive
-            ? 'border-destructive/30 bg-destructive/5 active:bg-destructive/10'
-            : 'border-border bg-background active:bg-accent',
+            ? 'bst:border-destructive/30 bst:bg-destructive/5 bst:active:bg-destructive/10'
+            : 'bst:border-border bst:bg-background bst:active:bg-accent',
         )}
       >
         {icon ? (
           <span
             className={cn(
-              'flex size-9 shrink-0 items-center justify-center rounded-full',
-              destructive ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground',
+              'bst:flex bst:size-9 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-full',
+              destructive
+                ? 'bst:bg-destructive/10 bst:text-destructive'
+                : 'bst:bg-muted bst:text-muted-foreground',
             )}
           >
             {icon}
           </span>
         ) : null}
 
-        <span className="min-w-0 flex-1">
-          <span className={cn('block text-sm font-semibold', destructive && 'text-destructive')}>
+        <span className="bst:min-w-0 bst:flex-1">
+          <span
+            className={cn(
+              'bst:block bst:text-sm bst:font-semibold',
+              destructive && 'bst:text-destructive',
+            )}
+          >
             {name}
           </span>
           {description ? (
-            <span className="text-muted-foreground mt-0.5 block text-xs leading-snug">
+            <span className="bst:mt-0.5 bst:block bst:text-xs bst:leading-snug bst:text-muted-foreground">
               {description}
             </span>
           ) : null}

@@ -48,7 +48,7 @@ export function TitleField() {
       onKeyDown={(event) => {
         if (event.key === 'Enter') event.preventDefault();
       }}
-      className="text-foreground placeholder:text-muted-foreground/60 mb-8 block w-full resize-none overflow-hidden bg-transparent text-3xl leading-tight font-semibold tracking-tight text-balance outline-none sm:text-4xl"
+      className="bst:mb-8 bst:block bst:w-full bst:resize-none bst:overflow-hidden bst:bg-transparent bst:text-3xl bst:leading-tight bst:font-semibold bst:tracking-tight bst:text-balance bst:text-foreground bst:outline-none bst:placeholder:text-muted-foreground/60 bst:sm:text-4xl"
     />
   );
 }

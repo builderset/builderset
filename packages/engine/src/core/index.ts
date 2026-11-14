@@ -118,6 +118,13 @@ export {
 } from './style';
 export { countWords, plainText, readingMinutes } from './text-stats';
 export {
+  themeVariables,
+  TOKEN_NAMES,
+  type ThemeMode,
+  type ThemeTokens,
+  type TokenName,
+} from './theme';
+export {
   ancestors,
   contains,
   depthOf,
@@ -134,6 +141,7 @@ export {
 } from './tree';
 export { isAnchor, isExternalUrl, isSafeUrl, slugifyAnchor } from './url';
 export { hasErrors, structuralIssues, translationIssues } from './validate';
+export { ENGINE_VERSION } from './version';
 
 /**
  * The zod the engine validates with. A project's own elements declare their

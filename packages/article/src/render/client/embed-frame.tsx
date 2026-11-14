@@ -30,14 +30,14 @@ export function EmbedFrame({
 
   return (
     <div
-      className="bg-muted border-border relative w-full overflow-hidden rounded-[var(--radius-card,0.625rem)] border"
+      className="bst:relative bst:w-full bst:overflow-hidden bst:rounded-card bst:border bst:border-border bst:bg-muted"
       style={{ aspectRatio: String(aspect) }}
     >
       {loaded && !inert ? (
         <iframe
           src={src}
           title={title || providerName}
-          className="absolute inset-0 size-full animate-[ui-fade-in_220ms_ease-out] border-0"
+          className="bst:absolute bst:inset-0 bst:size-full bst:animate-[bst-fade-in_220ms_ease-out] bst:border-0"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
@@ -45,20 +45,22 @@ export function EmbedFrame({
           allowFullScreen
         />
       ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+        <div className="bst:absolute bst:inset-0 bst:flex bst:flex-col bst:items-center bst:justify-center bst:gap-3 bst:p-6 bst:text-center">
           <button
             type="button"
             disabled={inert}
             onClick={() => {
               setLoaded(true);
             }}
-            className="group bg-primary text-primary-foreground grid size-14 cursor-pointer place-items-center rounded-full shadow-lg transition-transform duration-200 hover:scale-105 active:scale-95 disabled:cursor-default"
+            className="bst:group bst:grid bst:size-14 bst:cursor-pointer bst:place-items-center bst:rounded-full bst:bg-primary bst:text-primary-foreground bst:shadow-lg bst:transition-transform bst:duration-200 bst:hover:scale-105 bst:active:scale-95 bst:disabled:cursor-default"
             aria-label={`${loadLabel} — ${providerName}`}
           >
-            <Play className="size-6 translate-x-0.5" aria-hidden="true" />
+            <Play className="bst:size-6 bst:translate-x-0.5" aria-hidden="true" />
           </button>
-          <p className="text-foreground text-sm font-medium">{title || providerName}</p>
-          <p className="text-muted-foreground max-w-xs text-xs leading-relaxed">{notice}</p>
+          <p className="bst:text-sm bst:font-medium bst:text-foreground">{title || providerName}</p>
+          <p className="bst:max-w-xs bst:text-xs bst:leading-relaxed bst:text-muted-foreground">
+            {notice}
+          </p>
         </div>
       )}
     </div>

@@ -1,0 +1,18 @@
+/*
+ * @builderset/article/content.css — a rendered article on a site, with no
+ * editor: the theme, the scheme rules, the reset and the classes the renderer
+ * uses. The renderer's root carries `builderset builderset-content` and
+ * `data-builderset-theme` (default `auto`: an article follows the site).
+ *
+ * No `@layer`, and every selector inside `.builderset`, as in the editor's.
+ */
+@import 'tailwindcss/theme.css' prefix(bst);
+@import '../../engine/src/theme/theme.css';
+@import '../../engine/src/theme/defaults.css';
+@import '../../engine/src/theme/scheme.css';
+@import '../../engine/src/theme/reset.css';
+@import '../../engine/src/theme/base.css';
+@import '../../engine/src/theme/keyframes.css';
+@import 'tailwindcss/utilities.css' prefix(bst) source(none);
+
+@source './render';

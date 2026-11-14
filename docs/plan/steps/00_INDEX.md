@@ -126,7 +126,7 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 09 Build and package shape
 - [x] 10 Styles and theming
 - [x] 11 The all-in-one package
-- [x] 12 Example apps and the test matrix
+- [ ] 12 Example apps and the test matrix — done but for a green Examples run in Firefox and WebKit, after the local-image fix
 - [ ] 13 Publishing and releases
 - [ ] **M2 — installable**
 - [ ] 14 Adopt the packages in MotorsAL

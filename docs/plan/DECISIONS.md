@@ -26,4 +26,4 @@ Step 01 of the plan ([steps/01_DECISIONS_AND_ACCOUNTS.md](steps/01_DECISIONS_AND
 
 The account changed on 2026-11-14: GitHub Packages names every package after the repository's owner, so a personal account would have meant `@xhiti/email` until launch and a rename after it. A `builderset` organisation keeps the names.
 
-At the transfer: rewrite the commits' author email to the personal address (`git filter-repo --mailmap`, while the repository is private).
+Transferred on 2026-11-14. The same day every commit's author email was rewritten to the personal address (`git filter-repo --mailmap`) and the branches force-pushed; the files of every branch are byte-identical. Pull requests #1–#3 still hold GitHub's copies of the old commits: before the repository is made public, ask GitHub Support to remove them, or make the public repository a fresh push.

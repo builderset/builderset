@@ -181,7 +181,7 @@ In the Next example: one page imports `EmailEditor` from `builderset/email/edito
 - [x] `import 'builderset'` fails; every sub-path imports.
 - [x] `builderset/styles.css` contains each rule once and is smaller than the kit stylesheets added together.
 - [x] `publint` and `attw` pass.
-- [ ] The Next example builds with imports from `builderset/…`.
+- [x] The Next example builds with imports from `builderset/…`.
 
 ## Traps
 
@@ -204,4 +204,4 @@ On the branch `feat/11-all-in-one`, stacked on step 10's and the nested-list fix
 | —    | Trap: two engines                                          | `ENGINE_VERSION` in the engine's core, written from `package.json` at build (tsdown `define`, and Vitest's for its tests). Each editor records it on `globalThis` when it mounts — not at import, which the packages never do — and a second, different version gets one warning, in development | —                                                                                                                                                                               |
 | 7    | The README                                                 | As planned; every kit's README says it is also inside `builderset`, and to install one or the other                                                                                                                                                                                              | —                                                                                                                                                                               |
 
-**Checks.** `packages/builderset` builds; `check:packages` (publint, attw, check-dist) passes for it; all 21 doors import in plain Node, the client doors included; `import('builderset')` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. The Next example is step 12's, so the last box waits for it.
+**Checks.** `packages/builderset` builds; `check:packages` (publint, attw, check-dist) passes for it; all 21 doors import in plain Node, the client doors included; `import('builderset')` fails with `ERR_PACKAGE_PATH_NOT_EXPORTED`. The Next example (step 12) builds with the article editor from `builderset/article/editor` and the renderer from `builderset/article/render`.

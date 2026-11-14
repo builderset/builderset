@@ -37,6 +37,7 @@ import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
+import { registerEngine } from './one-engine';
 import {
   EditorProvider,
   useEditor,
@@ -180,6 +181,9 @@ export function BuilderEditor<
 >(props: BuilderEditorProps<TDoc, TRecord>) {
   const htmlLang = useHtmlLang();
   const locale = props.locale === 'auto' ? htmlLang : (props.locale ?? 'en');
+  useEffect(() => {
+    registerEngine();
+  }, []);
   // fontPreviews={false}: no font host is ever asked for a preview.
   const profile = useMemo(
     () =>

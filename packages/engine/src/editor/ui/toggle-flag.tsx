@@ -71,22 +71,27 @@ export function ToggleFlag({
       htmlFor={switchId}
       data-state={checked ? 'checked' : 'unchecked'}
       className={cn(
-        'group/flag rounded-card flex cursor-pointer items-center gap-4 border px-4 py-3.5',
-        'ease-enter transition-[border-color,background-color,box-shadow] duration-(--bst-dur-2)',
+        'bst:group/flag bst:flex bst:cursor-pointer bst:items-center bst:gap-4 bst:rounded-card bst:border bst:px-4 bst:py-3.5',
+        'bst:transition-[border-color,background-color,box-shadow] bst:duration-(--bst-dur-2) bst:ease-enter',
         checked
-          ? 'border-primary bg-primary/[0.04] shadow-[0_0_0_3px_color-mix(in_oklch,var(--builderset-primary,var(--bst-d-primary))_8%,transparent)] hover:border-dashed'
-          : 'border-border bg-card hover:border-border-strong hover:border-dashed',
-        disabled && 'pointer-events-none cursor-not-allowed opacity-60',
+          ? 'bst:border-primary bst:bg-primary/[0.04] bst:shadow-[0_0_0_3px_color-mix(in_oklch,var(--builderset-primary,var(--bst-d-primary))_8%,transparent)] bst:hover:border-dashed'
+          : 'bst:border-border bst:bg-card bst:hover:border-dashed bst:hover:border-border-strong',
+        disabled && 'bst:pointer-events-none bst:cursor-not-allowed bst:opacity-60',
         className,
       )}
     >
       {/* The value, in both states — see the note above. */}
       {name ? <input type="hidden" name={name} value={checked ? 'true' : 'false'} /> : null}
 
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-foreground text-sm leading-snug font-medium">{title}</span>
+      <span className="bst:flex bst:min-w-0 bst:flex-1 bst:flex-col bst:gap-0.5">
+        <span className="bst:text-sm bst:leading-snug bst:font-medium bst:text-foreground">
+          {title}
+        </span>
         {description ? (
-          <span id={descriptionId} className="text-muted-foreground text-xs leading-relaxed">
+          <span
+            id={descriptionId}
+            className="bst:text-xs bst:leading-relaxed bst:text-muted-foreground"
+          >
             {description}
           </span>
         ) : null}

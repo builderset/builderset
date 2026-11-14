@@ -24,21 +24,21 @@ export function Switch({ className, ...props }: ComponentProps<typeof SwitchPrim
     <SwitchPrimitive.Root
       data-slot="switch"
       className={cn(
-        'bld-focus peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center',
-        'rounded-full border border-transparent transition-colors duration-(--bst-dur-2)',
+        'bld-focus bst:peer bst:inline-flex bst:h-5 bst:w-9 bst:shrink-0 bst:cursor-pointer bst:items-center',
+        'bst:rounded-full bst:border bst:border-transparent bst:transition-colors bst:duration-(--bst-dur-2)',
         // The OFF track is `--input`, the same grey as a field: a switch that is
         // off is a control waiting for input, not a disabled one.
-        'bg-input data-[state=checked]:bg-primary',
-        'disabled:cursor-not-allowed',
+        'bst:bg-input bst:data-[state=checked]:bg-primary',
+        'bst:disabled:cursor-not-allowed',
         className,
       )}
       {...props}
     >
       <SwitchPrimitive.Thumb
         className={cn(
-          'bg-background shadow-pop pointer-events-none block size-4 rounded-full ring-0',
-          'ease-both transition-transform duration-(--bst-dur-2)',
-          'translate-x-0.5 data-[state=checked]:translate-x-4',
+          'bst:pointer-events-none bst:block bst:size-4 bst:rounded-full bst:bg-background bst:shadow-pop bst:ring-0',
+          'bst:transition-transform bst:duration-(--bst-dur-2) bst:ease-both',
+          'bst:translate-x-0.5 bst:data-[state=checked]:translate-x-4',
         )}
       />
     </SwitchPrimitive.Root>
@@ -93,8 +93,8 @@ export function SegmentedControl<T extends string>({
       }}
       data-slot="segmented-control"
       className={cn(
-        'rounded-control inline-flex h-9 items-center gap-0.5',
-        'border-border bg-input border p-0.5',
+        'bst:inline-flex bst:h-9 bst:items-center bst:gap-0.5 bst:rounded-control',
+        'bst:border bst:border-border bst:bg-input bst:p-0.5',
         className,
       )}
       {...aria}
@@ -106,13 +106,13 @@ export function SegmentedControl<T extends string>({
           disabled={option.disabled}
           aria-label={option.ariaLabel}
           className={cn(
-            'bld-focus inline-flex h-full flex-1 cursor-pointer items-center justify-center gap-1.5',
-            'rounded-[calc(var(--builderset-radius,0.625rem)*0.7-2px)] px-3 text-[13px] font-medium whitespace-nowrap',
-            'text-muted-foreground transition-colors duration-(--bst-dur-1)',
-            'hover:text-foreground',
-            'data-[state=on]:bg-card data-[state=on]:text-foreground data-[state=on]:shadow-pop',
-            'disabled:cursor-not-allowed',
-            "[&_svg:not([class*='size-'])]:size-4",
+            'bld-focus bst:inline-flex bst:h-full bst:flex-1 bst:cursor-pointer bst:items-center bst:justify-center bst:gap-1.5',
+            'bst:rounded-[calc(var(--builderset-radius,0.625rem)*0.7-2px)] bst:px-3 bst:text-[13px] bst:font-medium bst:whitespace-nowrap',
+            'bst:text-muted-foreground bst:transition-colors bst:duration-(--bst-dur-1)',
+            'bst:hover:text-foreground',
+            'bst:data-[state=on]:bg-card bst:data-[state=on]:text-foreground bst:data-[state=on]:shadow-pop',
+            'bst:disabled:cursor-not-allowed',
+            "bst:[&_svg:not([class*='size-'])]:size-4",
           )}
         >
           {option.label}

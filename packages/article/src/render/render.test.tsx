@@ -172,12 +172,12 @@ describe('visibility', () => {
   });
 
   it('turns per-breakpoint styles into range classes', () => {
-    expect(styleClasses({ desktop: { paddingY: 'lg' } })).toBe('py-10');
+    expect(styleClasses({ desktop: { paddingY: 'lg' } })).toBe('bst:py-10');
     expect(
       styleClasses({ desktop: { hidden: true }, mobile: { hidden: false } })
         .split(' ')
         .sort(),
-    ).toEqual(['lg:hidden', 'sm:max-lg:hidden']);
+    ).toEqual(['bst:lg:hidden', 'bst:sm:max-lg:hidden']);
   });
 });
 

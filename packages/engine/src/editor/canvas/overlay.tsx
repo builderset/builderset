@@ -129,7 +129,7 @@ export function Overlay({
   const hoverNode = hoverId ? doc.nodes[hoverId] : undefined;
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-10">
+    <div className="bst:pointer-events-none bst:absolute bst:inset-0 bst:z-10">
       {/* The hover outline: ONE element that glides from block to block,
           rather than a new one popping up on each. */}
       <AnimatePresence>
@@ -140,7 +140,7 @@ export function Overlay({
             animate={{ opacity: 1, ...hoverBox }}
             exit={{ opacity: 0, transition: FADE }}
             transition={{ ...FOLLOW, opacity: FADE }}
-            className="border-primary/45 bg-primary/[0.025] absolute rounded-[4px] border border-dashed"
+            className="bst:absolute bst:rounded-[4px] bst:border bst:border-dashed bst:border-primary/45 bst:bg-primary/[0.025]"
           >
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
@@ -149,7 +149,7 @@ export function Overlay({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -3 }}
                 transition={{ duration: 0.12 }}
-                className="bg-primary text-primary-foreground absolute -top-[19px] left-0 rounded-t-[4px] px-1.5 py-[3px] text-[10px] leading-none font-medium whitespace-nowrap shadow-sm"
+                className="bst:absolute bst:-top-[19px] bst:left-0 bst:rounded-t-[4px] bst:bg-primary bst:px-1.5 bst:py-[3px] bst:text-[10px] bst:leading-none bst:font-medium bst:whitespace-nowrap bst:text-primary-foreground bst:shadow-sm"
               >
                 {hoverNode.name ?? messages.elements[hoverNode.type]?.name ?? hoverNode.type}
               </motion.span>
@@ -168,7 +168,7 @@ export function Overlay({
             animate={{ opacity: 1, ...grow(primaryBox, 2) }}
             exit={{ opacity: 0, transition: FADE }}
             transition={{ ...FOLLOW, opacity: FADE }}
-            className="border-primary absolute rounded-[5px] border-2 shadow-[0_0_0_4px_color-mix(in_oklab,var(--builderset-primary,var(--bst-d-primary))_12%,transparent)]"
+            className="bst:absolute bst:rounded-[5px] bst:border-2 bst:border-primary bst:shadow-[0_0_0_4px_color-mix(in_oklab,var(--builderset-primary,var(--bst-d-primary))_12%,transparent)]"
           />
         ) : null}
       </AnimatePresence>
@@ -182,7 +182,7 @@ export function Overlay({
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={FADE}
-                className="border-primary absolute rounded-[5px] border-2"
+                className="bst:absolute bst:rounded-[5px] bst:border-2 bst:border-primary"
                 style={grow(box, 2)}
               />
             );
@@ -243,14 +243,16 @@ function DropIndicator({ drop, boxes }: { drop: DropTarget; boxes: Record<NodeId
       exit={{ opacity: 0, transition: FADE }}
       transition={{ ...FOLLOW, opacity: FADE }}
       className={cn(
-        'absolute',
-        inside ? 'border-primary bg-primary/[0.06] border-2 border-dashed' : 'bg-primary',
+        'bst:absolute',
+        inside
+          ? 'bst:border-2 bst:border-dashed bst:border-primary bst:bg-primary/[0.06]'
+          : 'bst:bg-primary',
       )}
     >
       {inside ? null : (
         <>
-          <span className="bg-primary ring-background absolute -top-[4px] -left-[5px] size-[11px] rounded-full ring-2" />
-          <span className="bg-primary ring-background absolute -top-[4px] -right-[5px] size-[11px] rounded-full ring-2" />
+          <span className="bst:absolute bst:-top-[4px] bst:-left-[5px] bst:size-[11px] bst:rounded-full bst:bg-primary bst:ring-2 bst:ring-background" />
+          <span className="bst:absolute bst:-top-[4px] bst:-right-[5px] bst:size-[11px] bst:rounded-full bst:bg-primary bst:ring-2 bst:ring-background" />
         </>
       )}
     </motion.div>
@@ -284,8 +286,10 @@ function ToolbarButton({
         onClick?.();
       }}
       className={cn(
-        'flex size-7 items-center justify-center rounded-md transition-[transform,background-color] active:scale-95 disabled:opacity-40 [&_svg]:size-3.5',
-        danger ? 'hover:bg-destructive hover:text-destructive-foreground' : 'hover:bg-white/15',
+        'bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:transition-[transform,background-color] bst:active:scale-95 bst:disabled:opacity-40 bst:[&_svg]:size-3.5',
+        danger
+          ? 'bst:hover:bg-destructive bst:hover:text-destructive-foreground'
+          : 'bst:hover:bg-white/15',
       )}
     >
       {children}
@@ -317,7 +321,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.14 }}
-      className="bg-foreground text-background pointer-events-auto absolute z-20 flex items-center gap-0.5 rounded-lg p-0.5 shadow-lg"
+      className="bst:pointer-events-auto bst:absolute bst:z-20 bst:flex bst:items-center bst:gap-0.5 bst:rounded-lg bst:bg-foreground bst:p-0.5 bst:text-background bst:shadow-lg"
       style={{
         left: box.left,
         top: above ? box.top - 38 : box.top + box.height + 6,
@@ -346,16 +350,16 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
         onDragEnd={() => {
           setActiveDrag(null);
         }}
-        className="flex h-7 cursor-grab items-center gap-1.5 rounded-md px-1.5 text-xs font-medium active:cursor-grabbing"
+        className="bst:flex bst:h-7 bst:cursor-grab bst:items-center bst:gap-1.5 bst:rounded-md bst:px-1.5 bst:text-xs bst:font-medium bst:active:cursor-grabbing"
         title={messages.dragToMove}
       >
-        <GripVertical className="size-3.5 opacity-70" aria-hidden="true" />
-        <ElementIcon name={definition?.icon ?? 'box'} className="size-3.5" />
+        <GripVertical className="bst:size-3.5 bst:opacity-70" aria-hidden="true" />
+        <ElementIcon name={definition?.icon ?? 'box'} className="bst:size-3.5" />
         {node.name ?? messages.elements[node.type]?.name ?? node.type}
-        {node.locked ? <Lock className="size-3" aria-hidden="true" /> : null}
-        {node.hidden ? <EyeOff className="size-3" aria-hidden="true" /> : null}
+        {node.locked ? <Lock className="bst:size-3" aria-hidden="true" /> : null}
+        {node.hidden ? <EyeOff className="bst:size-3" aria-hidden="true" /> : null}
       </span>
-      <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
       <ToolbarButton
         label={messages.moveUp}
         disabled={index <= 0 || !!node.locked}
@@ -370,7 +374,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
       >
         <ArrowDown />
       </ToolbarButton>
-      <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
       <ToolbarButton label={messages.duplicate} onClick={() => state().duplicateNodes([id])}>
         <Copy />
       </ToolbarButton>
@@ -384,10 +388,10 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
           <ArrowUpLeft />
         </ToolbarButton>
       ) : null}
-      <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
       {alignOptions.length && !node.locked ? (
         <>
-          <span className="mx-0.5 h-4 w-px bg-white/20" aria-hidden="true" />
+          <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
           <AlignButtons
             tone="toolbar"
             label={messages.align}
@@ -408,21 +412,21 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
             onMouseDown={(event) => {
               event.preventDefault();
             }}
-            className="flex size-7 items-center justify-center rounded-md hover:bg-white/15 [&_svg]:size-3.5"
+            className="bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:hover:bg-white/15 bst:[&_svg]:size-3.5"
           >
             <MoreHorizontal />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-52">
+        <DropdownMenuContent align="start" className="bst:w-52">
           {turnInto.length ? (
             <>
-              <DropdownMenuLabel className="flex items-center gap-2">
-                <Repeat2 className="size-3.5" aria-hidden="true" />
+              <DropdownMenuLabel className="bst:flex bst:items-center bst:gap-2">
+                <Repeat2 className="bst:size-3.5" aria-hidden="true" />
                 {messages.turnInto}
               </DropdownMenuLabel>
               {turnInto.map((type) => (
                 <DropdownMenuItem key={type} onSelect={() => state().turnInto(id, type)}>
-                  <ElementIcon name={registry.get(type)?.icon ?? 'box'} className="size-4" />
+                  <ElementIcon name={registry.get(type)?.icon ?? 'box'} className="bst:size-4" />
                   {messages.elements[type]?.name ?? type}
                 </DropdownMenuItem>
               ))}
@@ -434,7 +438,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
               state().updateNode(id, { hidden: !node.hidden }, node.hidden ? 'Show' : 'Hide')
             }
           >
-            <EyeOff className="size-4" aria-hidden="true" />
+            <EyeOff className="bst:size-4" aria-hidden="true" />
             {node.hidden ? messages.show : messages.hide}
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -442,7 +446,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
               state().updateNode(id, { locked: !node.locked }, node.locked ? 'Unlock' : 'Lock')
             }
           >
-            <Lock className="size-4" aria-hidden="true" />
+            <Lock className="bst:size-4" aria-hidden="true" />
             {node.locked ? messages.unlock : messages.lock}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -468,7 +472,7 @@ function InsertAfter({ id, box }: { id: NodeId; box: Box }) {
   }, [id]);
   return (
     <div
-      className="pointer-events-auto absolute z-20 -translate-x-1/2"
+      className="bst:pointer-events-auto bst:absolute bst:z-20 bst:-translate-x-1/2"
       style={{ left: box.left + box.width / 2, top: box.top + box.height - 10 }}
       onClick={(event) => {
         event.stopPropagation();
@@ -492,9 +496,9 @@ function InsertAfter({ id, box }: { id: NodeId; box: Box }) {
           type="button"
           aria-label={messages.insertAfter}
           title={messages.insertAfter}
-          className="bg-primary text-primary-foreground ring-background flex size-5 items-center justify-center rounded-full shadow ring-2 transition-transform hover:scale-110 active:scale-95"
+          className="bst:flex bst:size-5 bst:items-center bst:justify-center bst:rounded-full bst:bg-primary bst:text-primary-foreground bst:shadow bst:ring-2 bst:ring-background bst:transition-transform bst:hover:scale-110 bst:active:scale-95"
         >
-          <Plus className="size-3.5" aria-hidden="true" />
+          <Plus className="bst:size-3.5" aria-hidden="true" />
         </button>
       </InsertMenu>
     </div>

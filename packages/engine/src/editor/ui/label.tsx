@@ -22,15 +22,15 @@ export function Label({ className, ...props }: ComponentProps<typeof LabelPrimit
     <LabelPrimitive.Root
       data-slot="label"
       className={cn(
-        'flex items-center gap-1.5 text-[13px] leading-none font-semibold select-none',
+        'bst:flex bst:items-center bst:gap-1.5 bst:text-[13px] bst:leading-none bst:font-semibold bst:select-none',
         // Full-strength ink, not `foreground/80`. The dimmed version was there
         // to keep the label quieter than the value the reader types — but every
         // field now carries a muted hint underneath as well, and a label sitting
         // between two greys stopped reading as the heading of its own group.
         // The contrast it needs is against the HINT, not against the input.
-        'text-foreground transition-colors duration-(--bst-dur-1)',
-        'group-has-disabled/field:text-muted-foreground',
-        'group-data-[invalid=true]/field:text-destructive',
+        'bst:text-foreground bst:transition-colors bst:duration-(--bst-dur-1)',
+        'bst:group-has-disabled/field:text-muted-foreground',
+        'bst:group-data-[invalid=true]/field:text-destructive',
         className,
       )}
       {...props}

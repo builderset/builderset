@@ -44,7 +44,7 @@ export function NewsletterForm({
     return (
       <p
         role="status"
-        className="text-foreground animate-[bst-rise_220ms_ease-out] text-sm font-medium"
+        className="bst:animate-[bst-rise_220ms_ease-out] bst:text-sm bst:font-medium bst:text-foreground"
       >
         {done}
       </p>
@@ -54,12 +54,12 @@ export function NewsletterForm({
   return (
     <form
       onSubmit={(event) => void submit(event)}
-      className="flex w-full max-w-md flex-col gap-2 sm:flex-row"
+      className="bst:flex bst:w-full bst:max-w-md bst:flex-col bst:gap-2 bst:sm:flex-row"
     >
-      <label className="relative flex-1">
-        <span className="sr-only">{placeholder}</span>
+      <label className="bst:relative bst:flex-1">
+        <span className="bst:sr-only">{placeholder}</span>
         <Mail
-          className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2"
+          className="bst:absolute bst:top-1/2 bst:left-3 bst:size-4 bst:-translate-y-1/2 bst:text-muted-foreground"
           aria-hidden="true"
         />
         <input
@@ -67,21 +67,21 @@ export function NewsletterForm({
           name="email"
           required
           placeholder={placeholder}
-          className="border-border bg-background focus:border-border-strong rounded-control h-11 w-full border pr-3 pl-9 text-sm outline-none"
+          className="bst:h-11 bst:w-full bst:rounded-control bst:border bst:border-border bst:bg-background bst:pr-3 bst:pl-9 bst:text-sm bst:outline-none bst:focus:border-border-strong"
         />
       </label>
       <button
         type="submit"
         disabled={state === 'sending'}
-        className="bg-primary text-primary-foreground hover:bg-primary/85 rounded-control inline-flex h-11 cursor-pointer items-center justify-center gap-2 px-5 text-sm font-semibold transition-colors disabled:opacity-70"
+        className="bst:inline-flex bst:h-11 bst:cursor-pointer bst:items-center bst:justify-center bst:gap-2 bst:rounded-control bst:bg-primary bst:px-5 bst:text-sm bst:font-semibold bst:text-primary-foreground bst:transition-colors bst:hover:bg-primary/85 bst:disabled:opacity-70"
       >
         {state === 'sending' ? (
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          <Loader2 className="bst:size-4 bst:animate-spin" aria-hidden="true" />
         ) : null}
         {button}
       </button>
       {state === 'failed' ? (
-        <p role="alert" className="text-destructive text-xs sm:basis-full">
+        <p role="alert" className="bst:text-xs bst:text-destructive bst:sm:basis-full">
           {failed}
         </p>
       ) : null}

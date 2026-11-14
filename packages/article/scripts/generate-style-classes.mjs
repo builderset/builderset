@@ -62,7 +62,8 @@ const prefix = (p, cls) =>
   cls
     ? cls
         .split(' ')
-        .map((c) => p + c)
+        // The product's class prefix comes before the breakpoint: bst:lg:mt-4.
+        .map((c) => `bst:${p}${c}`)
         .join(' ')
     : '';
 const key = (k) => (/^[A-Za-z_$][\w$]*$/.test(k) ? k : `'${k}'`);

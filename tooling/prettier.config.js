@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 /**
  * One formatter for the whole workspace.
  *
@@ -20,7 +22,12 @@ export default {
    * (`.gitattributes`).
    */
   endOfLine: 'auto',
-  // The editor's classes are Tailwind's until step 10 compiles them; the
-  // plugin keeps them in one order so diffs show real changes.
+  // The classes are Tailwind's, under the product's prefix (bst:flex). The
+  // plugin keeps them in one order so diffs show real changes; it learns the
+  // prefix and the theme's names from the engine's stylesheet.
   plugins: ['prettier-plugin-tailwindcss'],
+  tailwindStylesheet: fileURLToPath(
+    new URL('../packages/engine/src/theme/index.css', import.meta.url),
+  ),
+  tailwindFunctions: ['cn', 'clsx', 'cx', 'cva', 'twMerge'],
 };

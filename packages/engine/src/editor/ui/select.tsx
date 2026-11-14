@@ -102,11 +102,11 @@ export function Select({
         aria-invalid={invalid ? true : undefined}
         className={cn(
           controlClass,
-          'justify-between gap-2 text-left',
+          'bst:justify-between bst:gap-2 bst:text-left',
           // The placeholder is rendered by Radix inside the value slot, so it
           // cannot be reached with `placeholder:` — this is the hook it exposes.
-          'data-[placeholder]:text-muted-foreground/60',
-          '[&>span]:min-w-0 [&>span]:truncate',
+          'bst:data-[placeholder]:text-muted-foreground/60',
+          'bst:[&>span]:min-w-0 bst:[&>span]:truncate',
           invalid && 'bld-invalid',
           className,
         )}
@@ -114,7 +114,10 @@ export function Select({
       >
         <SelectPrimitive.Value placeholder={placeholder} />
         <SelectPrimitive.Icon asChild>
-          <ChevronDown className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
+          <ChevronDown
+            className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+            aria-hidden="true"
+          />
         </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
 
@@ -125,42 +128,42 @@ export function Select({
           position="popper"
           sideOffset={4}
           className={cn(
-            'z-50 max-h-72 min-w-(--radix-select-trigger-width) overflow-hidden',
-            'border-border bg-popover text-popover-foreground shadow-pop rounded-control border',
-            'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
-            'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
+            'bst:z-50 bst:max-h-72 bst:min-w-(--radix-select-trigger-width) bst:overflow-hidden',
+            'bst:rounded-control bst:border bst:border-border bst:bg-popover bst:text-popover-foreground bst:shadow-pop',
+            'bst:data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+            'bst:data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
           )}
         >
-          <SelectPrimitive.ScrollUpButton className="text-muted-foreground flex h-6 items-center justify-center">
-            <ChevronUp className="size-4" aria-hidden="true" />
+          <SelectPrimitive.ScrollUpButton className="bst:flex bst:h-6 bst:items-center bst:justify-center bst:text-muted-foreground">
+            <ChevronUp className="bst:size-4" aria-hidden="true" />
           </SelectPrimitive.ScrollUpButton>
 
-          <SelectPrimitive.Viewport className="p-1">
+          <SelectPrimitive.Viewport className="bst:p-1">
             {options.map((option) => (
               <SelectPrimitive.Item
                 key={option.value || EMPTY}
                 value={toRadix(option.value)}
                 {...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
                 className={cn(
-                  'rounded-control relative flex cursor-pointer items-center gap-2',
-                  'py-1.5 pr-8 pl-2.5 text-sm outline-none select-none',
+                  'bst:relative bst:flex bst:cursor-pointer bst:items-center bst:gap-2 bst:rounded-control',
+                  'bst:py-1.5 bst:pr-8 bst:pl-2.5 bst:text-sm bst:outline-none bst:select-none',
                   // `highlighted` covers both the pointer and the keyboard, so
                   // arrowing through the list looks like hovering it.
-                  'data-highlighted:bg-accent data-highlighted:text-accent-foreground',
-                  'data-[state=checked]:font-medium',
-                  'data-disabled:text-muted-foreground data-disabled:pointer-events-none',
+                  'bst:data-highlighted:bg-accent bst:data-highlighted:text-accent-foreground',
+                  'bst:data-[state=checked]:font-medium',
+                  'bst:data-disabled:pointer-events-none bst:data-disabled:text-muted-foreground',
                 )}
               >
                 <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
-                <SelectPrimitive.ItemIndicator className="absolute right-2 flex items-center">
-                  <Check className="text-primary size-4" aria-hidden="true" />
+                <SelectPrimitive.ItemIndicator className="bst:absolute bst:right-2 bst:flex bst:items-center">
+                  <Check className="bst:size-4 bst:text-primary" aria-hidden="true" />
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Viewport>
 
-          <SelectPrimitive.ScrollDownButton className="text-muted-foreground flex h-6 items-center justify-center">
-            <ChevronDown className="size-4" aria-hidden="true" />
+          <SelectPrimitive.ScrollDownButton className="bst:flex bst:h-6 bst:items-center bst:justify-center bst:text-muted-foreground">
+            <ChevronDown className="bst:size-4" aria-hidden="true" />
           </SelectPrimitive.ScrollDownButton>
         </SelectPrimitive.Content>
       </SelectPrimitive.Portal>

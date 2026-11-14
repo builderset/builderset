@@ -26,7 +26,7 @@ export const VariableMark = Mark.create({
       mergeAttributes(HTMLAttributes, {
         'data-variable': '',
         class:
-          'rounded bg-blue-500/12 px-1 font-medium text-[light-dark(var(--bst-color-blue-700),var(--bst-color-blue-300))] whitespace-nowrap',
+          'bst:rounded bst:bg-blue-500/12 bst:px-1 bst:font-medium bst:text-[light-dark(var(--bst-color-blue-700),var(--bst-color-blue-300))] bst:whitespace-nowrap',
       }),
       0,
     ];

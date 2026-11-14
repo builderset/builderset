@@ -21,7 +21,7 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
       return <em key={key}>{node}</em>;
     case 'underline':
       return (
-        <span key={key} className="underline underline-offset-2">
+        <span key={key} className="bst:underline bst:underline-offset-2">
           {node}
         </span>
       );
@@ -29,13 +29,16 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
       return <s key={key}>{node}</s>;
     case 'code':
       return (
-        <code key={key} className="bg-muted rounded-control px-1.5 py-0.5 font-mono text-[0.9em]">
+        <code
+          key={key}
+          className="bst:rounded-control bst:bg-muted bst:px-1.5 bst:py-0.5 bst:font-mono bst:text-[0.9em]"
+        >
           {node}
         </code>
       );
     case 'highlight':
       return (
-        <mark key={key} className="bg-primary/15 text-foreground rounded-sm px-0.5">
+        <mark key={key} className="bst:rounded-sm bst:bg-primary/15 bst:px-0.5 bst:text-foreground">
           {node}
         </mark>
       );
@@ -54,7 +57,7 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
         <Link
           key={key}
           href={context.options.editing ? '#' : mark.href}
-          className="text-primary decoration-primary/40 hover:decoration-primary font-medium underline underline-offset-2 transition-colors"
+          className="bst:font-medium bst:text-primary bst:underline bst:decoration-primary/40 bst:underline-offset-2 bst:transition-colors bst:hover:decoration-primary"
           {...(mark.newTab || external ? { target: '_blank' } : {})}
           {...(external ? { rel: 'noopener noreferrer' } : {})}
         >
@@ -66,11 +69,11 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
       const number = context.footnotes.get(mark.ref);
       if (number === undefined) return node;
       return (
-        <sup key={key} className="ml-0.5">
+        <sup key={key} className="bst:ml-0.5">
           <a
             href={`#fn-${mark.ref}`}
             id={`fnref-${mark.ref}`}
-            className="text-primary font-semibold no-underline"
+            className="bst:font-semibold bst:text-primary bst:no-underline"
             aria-describedby="footnotes-heading"
           >
             {number}

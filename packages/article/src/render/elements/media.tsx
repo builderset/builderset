@@ -33,24 +33,24 @@ import { RichTextView } from '../rich-text';
 
 const ASPECT = {
   original: '',
-  '16:9': 'aspect-video object-cover',
-  '4:3': 'aspect-[4/3] object-cover',
-  '1:1': 'aspect-square object-cover',
-  '3:4': 'aspect-[3/4] object-cover',
+  '16:9': 'bst:aspect-video bst:object-cover',
+  '4:3': 'bst:aspect-[4/3] bst:object-cover',
+  '1:1': 'bst:aspect-square bst:object-cover',
+  '3:4': 'bst:aspect-[3/4] bst:object-cover',
 } as const;
 
 const SIZE = {
-  prose: 'max-w-measure',
-  wide: 'max-w-5xl',
-  full: 'max-w-none',
+  prose: 'bst:max-w-measure',
+  wide: 'bst:max-w-5xl',
+  full: 'bst:max-w-none',
 } as const;
 
 /** What the editor shows where a picture would be. The site shows nothing. */
 function MediaPlaceholder({ label }: { label: string }) {
   return (
-    <div className="bg-muted text-muted-foreground border-border rounded-card flex aspect-video w-full flex-col items-center justify-center gap-2 border border-dashed text-sm">
-      <ImageOff className="size-6" aria-hidden="true" />
-      <span className="max-w-xs truncate px-4">{label}</span>
+    <div className="bst:flex bst:aspect-video bst:w-full bst:flex-col bst:items-center bst:justify-center bst:gap-2 bst:rounded-card bst:border bst:border-dashed bst:border-border bst:bg-muted bst:text-sm bst:text-muted-foreground">
+      <ImageOff className="bst:size-6" aria-hidden="true" />
+      <span className="bst:max-w-xs bst:truncate bst:px-4">{label}</span>
     </div>
   );
 }
@@ -64,7 +64,7 @@ export function ImageView({
     // A pasted picture not yet uploaded is never loaded from its origin on the
     // site — only the editor shows that one is waiting.
     return context.options.editing ? (
-      <figure {...frameProps(frame, cn('mx-auto my-9 w-full', SIZE[props.size]))}>
+      <figure {...frameProps(frame, cn('bst:mx-auto bst:my-9 bst:w-full', SIZE[props.size]))}>
         <MediaPlaceholder label={props.pendingUrl ?? ''} />
       </figure>
     ) : null;
@@ -76,8 +76,8 @@ export function ImageView({
       context={context}
       sizes="(min-width: 1024px) 68ch, 100vw"
       className={cn(
-        'bg-muted h-auto w-full',
-        props.rounded && props.size !== 'full' && 'rounded-card',
+        'bst:h-auto bst:w-full bst:bg-muted',
+        props.rounded && props.size !== 'full' && 'bst:rounded-card',
         ASPECT[props.aspect],
       )}
       style={{ objectPosition: `${String(props.focalX)}% ${String(props.focalY)}%` }}
@@ -107,14 +107,14 @@ export function ImageView({
   }
   const hasCaption = !isRichTextEmpty(props.caption) || props.credit;
   return (
-    <figure {...frameProps(frame, cn('mx-auto my-9 w-full', SIZE[props.size]))}>
+    <figure {...frameProps(frame, cn('bst:mx-auto bst:my-9 bst:w-full', SIZE[props.size]))}>
       {body}
       {hasCaption ? (
-        <figcaption className="text-muted-foreground mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-sm leading-relaxed">
+        <figcaption className="bst:mt-3 bst:flex bst:flex-wrap bst:justify-between bst:gap-x-4 bst:gap-y-1 bst:text-sm bst:leading-relaxed bst:text-muted-foreground">
           <span>
             <RichTextView value={props.caption} context={context} />
           </span>
-          {props.credit ? <span className="text-xs">{props.credit}</span> : null}
+          {props.credit ? <span className="bst:text-xs">{props.credit}</span> : null}
         </figcaption>
       ) : null}
     </figure>
@@ -122,14 +122,14 @@ export function ImageView({
 }
 
 const GRID = {
-  2: 'grid-cols-2',
-  3: 'grid-cols-2 sm:grid-cols-3',
-  4: 'grid-cols-2 sm:grid-cols-4',
+  2: 'bst:grid-cols-2',
+  3: 'bst:grid-cols-2 bst:sm:grid-cols-3',
+  4: 'bst:grid-cols-2 bst:sm:grid-cols-4',
 } as const;
 const MASONRY = {
-  2: 'columns-2',
-  3: 'columns-2 sm:columns-3',
-  4: 'columns-2 sm:columns-4',
+  2: 'bst:columns-2',
+  3: 'bst:columns-2 bst:sm:columns-3',
+  4: 'bst:columns-2 bst:sm:columns-4',
 } as const;
 
 function galleryItem(
@@ -162,32 +162,37 @@ export function GalleryView({
   const images = props.images.filter((image) => image.media);
   if (images.length === 0) {
     return context.options.editing ? (
-      <div {...frameProps(frame, 'my-9')}>
+      <div {...frameProps(frame, 'bst:my-9')}>
         <MediaPlaceholder label="" />
       </div>
     ) : null;
   }
   const figures = images.map((image, index) => (
-    <figure key={index} className={cn(props.layout === 'masonry' && 'mb-3 break-inside-avoid')}>
-      <div className="rounded-card overflow-hidden">
+    <figure
+      key={index}
+      className={cn(props.layout === 'masonry' && 'bst:mb-3 bst:break-inside-avoid')}
+    >
+      <div className="bst:overflow-hidden bst:rounded-card">
         {galleryItem(
           image,
           context,
           props.lightbox,
           cn(
-            'bg-muted w-full',
-            props.layout === 'masonry' ? 'h-auto' : 'aspect-[4/3] object-cover',
+            'bst:w-full bst:bg-muted',
+            props.layout === 'masonry' ? 'bst:h-auto' : 'bst:aspect-[4/3] bst:object-cover',
           ),
         )}
       </div>
       {image.caption ? (
-        <figcaption className="text-muted-foreground mt-2 text-xs">{image.caption}</figcaption>
+        <figcaption className="bst:mt-2 bst:text-xs bst:text-muted-foreground">
+          {image.caption}
+        </figcaption>
       ) : null}
     </figure>
   ));
   if (props.layout === 'carousel') {
     return (
-      <div {...frameProps(frame, 'my-9')}>
+      <div {...frameProps(frame, 'bst:my-9')}>
         <Carousel
           slides={figures}
           previous={context.messages.previous}
@@ -201,10 +206,10 @@ export function GalleryView({
       {...frameProps(
         frame,
         cn(
-          'my-9',
+          'bst:my-9',
           props.layout === 'masonry'
             ? MASONRY[props.columns]
-            : cn('grid gap-3', GRID[props.columns]),
+            : cn('bst:grid bst:gap-3', GRID[props.columns]),
         ),
       )}
       style={props.layout === 'masonry' ? { columnGap: '0.75rem', ...frame.style } : frame.style}
@@ -221,13 +226,13 @@ export function BeforeAfterView({
 }: ElementRenderProps<PropsOf<typeof beforeAfterElement>>) {
   if (!props.before.media || !props.after.media) {
     return context.options.editing ? (
-      <div {...frameProps(frame, 'my-9')}>
+      <div {...frameProps(frame, 'bst:my-9')}>
         <MediaPlaceholder label="" />
       </div>
     ) : null;
   }
   return (
-    <figure {...frameProps(frame, 'my-9')}>
+    <figure {...frameProps(frame, 'bst:my-9')}>
       <BeforeAfter
         before={<Picture media={props.before.media} alt={props.before.alt} context={context} />}
         after={<Picture media={props.after.media} alt={props.after.alt} context={context} />}
@@ -237,16 +242,18 @@ export function BeforeAfterView({
         start={props.start}
       />
       {props.caption ? (
-        <figcaption className="text-muted-foreground mt-3 text-sm">{props.caption}</figcaption>
+        <figcaption className="bst:mt-3 bst:text-sm bst:text-muted-foreground">
+          {props.caption}
+        </figcaption>
       ) : null}
     </figure>
   );
 }
 
 const RATIO = {
-  '1-1': 'sm:grid-cols-2',
-  '1-2': 'sm:grid-cols-[1fr_2fr]',
-  '2-1': 'sm:grid-cols-[2fr_1fr]',
+  '1-1': 'bst:sm:grid-cols-2',
+  '1-2': 'bst:sm:grid-cols-[1fr_2fr]',
+  '2-1': 'bst:sm:grid-cols-[2fr_1fr]',
 } as const;
 
 export function MediaTextView({
@@ -259,29 +266,31 @@ export function MediaTextView({
       {...frameProps(
         frame,
         cn(
-          'my-10 grid grid-cols-1 gap-6 sm:gap-10',
+          'bst:my-10 bst:grid bst:grid-cols-1 bst:gap-6 bst:sm:gap-10',
           RATIO[props.ratio],
-          props.verticalAlign === 'center' ? 'items-center' : 'items-start',
+          props.verticalAlign === 'center' ? 'bst:items-center' : 'bst:items-start',
         ),
       )}
     >
-      <div className={cn(props.side === 'end' && 'sm:order-last')}>
+      <div className={cn(props.side === 'end' && 'bst:sm:order-last')}>
         {props.media ? (
           <Picture
             media={props.media}
             alt={props.alt}
             context={context}
-            className="bg-muted rounded-card w-full object-cover"
+            className="bst:w-full bst:rounded-card bst:bg-muted bst:object-cover"
           />
         ) : context.options.editing ? (
           <MediaPlaceholder label="" />
         ) : null}
       </div>
-      <div className="min-w-0">
+      <div className="bst:min-w-0">
         {props.title ? (
-          <h3 className="mb-3 text-lg font-semibold tracking-tight">{props.title}</h3>
+          <h3 className="bst:mb-3 bst:text-lg bst:font-semibold bst:tracking-tight">
+            {props.title}
+          </h3>
         ) : null}
-        <p className="text-muted-foreground leading-[1.75]">
+        <p className="bst:leading-[1.75] bst:text-muted-foreground">
           <RichTextView value={props.text} context={context} />
         </p>
       </div>
@@ -296,19 +305,19 @@ export function VideoView({
 }: ElementRenderProps<PropsOf<typeof videoElement>>) {
   if (!props.media)
     return context.options.editing ? (
-      <div {...frameProps(frame, 'my-9')}>
+      <div {...frameProps(frame, 'bst:my-9')}>
         <MediaPlaceholder label="" />
       </div>
     ) : null;
   return (
-    <figure {...frameProps(frame, 'my-9')}>
+    <figure {...frameProps(frame, 'bst:my-9')}>
       <video
         controls
         preload="metadata"
         loop={props.loop}
         muted={props.muted}
         {...(props.poster ? { poster: context.options.resolveMedia(props.poster.key) } : {})}
-        className="bg-foreground rounded-card aspect-video w-full"
+        className="bst:aspect-video bst:w-full bst:rounded-card bst:bg-foreground"
         aria-label={props.title || context.messages.video}
       >
         <source
@@ -317,7 +326,9 @@ export function VideoView({
         />
       </video>
       {props.caption ? (
-        <figcaption className="text-muted-foreground mt-3 text-sm">{props.caption}</figcaption>
+        <figcaption className="bst:mt-3 bst:text-sm bst:text-muted-foreground">
+          {props.caption}
+        </figcaption>
       ) : null}
     </figure>
   );
@@ -330,14 +341,19 @@ export function AudioView({
 }: ElementRenderProps<PropsOf<typeof audioElement>>) {
   if (!props.media) return null;
   return (
-    <figure {...frameProps(frame, 'border-border bg-card my-8 rounded-card border p-4')}>
+    <figure
+      {...frameProps(
+        frame,
+        'bst:border-border bst:bg-card bst:my-8 bst:rounded-card bst:border bst:p-4',
+      )}
+    >
       {props.title ? (
-        <p className="text-foreground mb-3 text-sm font-semibold">{props.title}</p>
+        <p className="bst:mb-3 bst:text-sm bst:font-semibold bst:text-foreground">{props.title}</p>
       ) : null}
       <audio
         controls
         preload="metadata"
-        className="w-full"
+        className="bst:w-full"
         aria-label={props.title || context.messages.audio}
       >
         <source
@@ -346,7 +362,9 @@ export function AudioView({
         />
       </audio>
       {props.caption ? (
-        <figcaption className="text-muted-foreground mt-2 text-xs">{props.caption}</figcaption>
+        <figcaption className="bst:mt-2 bst:text-xs bst:text-muted-foreground">
+          {props.caption}
+        </figcaption>
       ) : null}
     </figure>
   );
@@ -364,12 +382,12 @@ export function EmbedView({
     // plain link to it is the honest fallback.
     if (!props.provider || !props.url) return null;
     return (
-      <p {...frameProps(frame, 'my-6')}>
+      <p {...frameProps(frame, 'bst:my-6')}>
         <Link
           href={context.options.editing ? '#' : props.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary font-medium underline underline-offset-2"
+          className="bst:font-medium bst:text-primary bst:underline bst:underline-offset-2"
         >
           {props.title || PROVIDER_NAMES[props.provider]}
         </Link>
@@ -378,7 +396,7 @@ export function EmbedView({
   }
   const providerName = PROVIDER_NAMES[source.provider];
   return (
-    <figure {...frameProps(frame, 'my-9')}>
+    <figure {...frameProps(frame, 'bst:my-9')}>
       <EmbedFrame
         src={source.src}
         title={props.title}
@@ -389,7 +407,9 @@ export function EmbedView({
         inert={context.options.editing}
       />
       {props.caption ? (
-        <figcaption className="text-muted-foreground mt-3 text-sm">{props.caption}</figcaption>
+        <figcaption className="bst:mt-3 bst:text-sm bst:text-muted-foreground">
+          {props.caption}
+        </figcaption>
       ) : null}
     </figure>
   );
@@ -419,26 +439,26 @@ export function FileView({
       download={props.media.name ?? true}
       {...frameProps(
         frame,
-        'group border-border bg-card hover:border-border-strong my-6 flex items-center gap-4 rounded-card border p-4 transition-colors',
+        'bst:group bst:border-border bst:bg-card bst:hover:border-border-strong bst:my-6 bst:flex bst:items-center bst:gap-4 bst:rounded-card bst:border bst:p-4 bst:transition-colors',
       )}
     >
-      <span className="bg-primary/10 text-primary rounded-control grid size-11 shrink-0 place-items-center">
-        <Icon className="size-5" aria-hidden="true" />
+      <span className="bst:grid bst:size-11 bst:shrink-0 bst:place-items-center bst:rounded-control bst:bg-primary/10 bst:text-primary">
+        <Icon className="bst:size-5" aria-hidden="true" />
       </span>
-      <span className="min-w-0 flex-1">
-        <span className="text-foreground block truncate font-medium">
+      <span className="bst:min-w-0 bst:flex-1">
+        <span className="bst:block bst:truncate bst:font-medium bst:text-foreground">
           {props.label || props.media.name}
         </span>
-        <span className="text-muted-foreground block truncate text-xs">
+        <span className="bst:block bst:truncate bst:text-xs bst:text-muted-foreground">
           {[props.description, size].filter(Boolean).join(' · ')}
         </span>
       </span>
-      <span className="text-foreground inline-flex items-center gap-1.5 text-sm font-medium">
+      <span className="bst:inline-flex bst:items-center bst:gap-1.5 bst:text-sm bst:font-medium bst:text-foreground">
         <Download
-          className="size-4 transition-transform group-hover:translate-y-0.5"
+          className="bst:size-4 bst:transition-transform bst:group-hover:translate-y-0.5"
           aria-hidden="true"
         />
-        <span className="hidden sm:inline">{context.messages.download}</span>
+        <span className="bst:hidden bst:sm:inline">{context.messages.download}</span>
       </span>
     </a>
   );

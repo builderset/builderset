@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    name: Lint, types, format, secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The whole history, for the secret scan.
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      # --frozen-lockfile: fail on a lockfile that does not match the
+      # manifests, rather than silently resolving something else.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm format:check
+      # While the repository is private, GitHub's own secret scanning is not
+      # available on the free plan (docs/plan/steps/08_NEW_REPOSITORY.md, part 6).
+      - name: Secret scan
+        run: >
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.24.3
+          git /repo --redact --no-banner
+
+  test:
+    name: Tests on Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every version on main; one on a pull request, to save the private
+        # repository's Actions minutes.
+        node: ${{ fromJSON(github.event_name == 'push' && '[20, 22, 24]' || '[24]') }}
+    steps:
+      - uses: actions/checkout@v5
+      # Standalone: pnpm 11 runs on its own Node, so the tests can use Node 20,
+      # which pnpm itself no longer supports.
+      - uses: pnpm/action-setup@v4
+        with:
+          standalone: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Every test
+        if: matrix.node != 20
+        run: pnpm test
+      # On Node 20 only what a server imports: the `core`, `render` and `host`
+      # entries are promised to Node 20 and newer, and the `*.node.test.ts`
+      # suites load them with no DOM. The rest of the suites need jsdom, which
+      # needs Node 22.
+      - name: Server entries only
+        if: matrix.node == 20
+        run: pnpm --filter "./packages/*" exec vitest run --project node

@@ -54,6 +54,8 @@
     "./fixtures/*": "./fixtures/*",
     "./styles.css": "./dist/styles.css",
     "./content.css": "./dist/content.css",
+    "./theme/shadcn.css": "./dist/theme/shadcn.css",
+    "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
     "./package.json": "./package.json"
   },
   "engines": {
@@ -61,7 +63,7 @@
   },
   "scripts": {
     "build": "tsdown && pnpm build:css",
-    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && tailwindcss -i src/content.css -o dist/content.css --minify && node ../../tooling/finish-css.mjs dist/styles.css dist/content.css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && tailwindcss -i src/content.css -o dist/content.css --minify && node ../../tooling/finish-css.mjs dist/styles.css dist/content.css && node ../../tooling/copy-theme-files.mjs dist/theme",
     "dev": "tsdown --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",

@@ -2,31 +2,85 @@
   "name": "@builderset/email",
   "version": "0.0.0",
   "private": true,
+  "description": "Email template builder: a block editor, a typed document, and HTML that every mail client shows.",
+  "license": "MIT",
+  "keywords": [
+    "email",
+    "email-builder",
+    "email-editor",
+    "newsletter",
+    "drag-and-drop",
+    "react"
+  ],
+  "homepage": "https://github.com/mkurtii/builderset/tree/development/packages/email#readme",
+  "bugs": "https://github.com/mkurtii/builderset/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkurtii/builderset.git",
+    "directory": "packages/email"
+  },
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "schema",
+    "fixtures",
+    "icons"
+  ],
   "exports": {
-    ".": "./src/core/index.ts",
-    "./render": "./src/render/index.ts",
-    "./editor": "./src/editor/index.ts",
-    "./host": "./src/host.ts",
+    ".": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./render": {
+      "types": "./dist/render/index.d.ts",
+      "default": "./dist/render/index.js"
+    },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "default": "./dist/editor/index.js"
+    },
+    "./host": {
+      "types": "./dist/host.d.ts",
+      "default": "./dist/host.js"
+    },
+    "./locales/*": {
+      "types": "./dist/locales/*.d.ts",
+      "default": "./dist/locales/*.js"
+    },
     "./schema.json": "./schema/email.schema.json",
     "./fixtures/*": "./fixtures/*",
-    "./locales/*": "./src/locales/*.ts"
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
     "@builderset/engine": "workspace:*",
-    "lucide-react": "1.32.0",
-    "motion": "13.1.0",
-    "zod": "4.4.3"
+    "lucide-react": "^1.32.0",
+    "motion": "^13.1.0",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "react": "^19",
-    "react-dom": "^19"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
@@ -45,5 +99,8 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0",
     "vitest": "4.1.11"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

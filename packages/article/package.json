@@ -52,13 +52,16 @@
     },
     "./schema.json": "./schema/article.schema.json",
     "./fixtures/*": "./fixtures/*",
+    "./styles.css": "./dist/styles.css",
+    "./content.css": "./dist/content.css",
     "./package.json": "./package.json"
   },
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && tailwindcss -i src/content.css -o dist/content.css --minify && node ../../tooling/finish-css.mjs dist/styles.css dist/content.css",
     "dev": "tsdown --watch",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",

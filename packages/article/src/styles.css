@@ -1,0 +1,9 @@
+/*
+ * @builderset/article/styles.css — everything the article editor needs, in one
+ * file: the engine's stylesheet (theme, reset, the editor's UI), this kit's
+ * editor, and the renderer, which draws the canvas.
+ */
+@import '../../engine/src/theme/index.css';
+
+@source './editor';
+@source './render';

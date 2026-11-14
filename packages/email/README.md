@@ -2,7 +2,7 @@
 
 The email builder: a block editor for email templates, a typed JSON document, and a renderer that writes the HTML and plain text every mail client shows — tables, inline styles, dark-mode hints, Outlook's conditional comments. The renderer is plain TypeScript, so a mailer on a server sends with it and needs no React.
 
-> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/mkurtii/builderset).
+> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/builderset/builderset).
 
 ## Install
 
@@ -190,5 +190,5 @@ The same normalised tree as every Builderset document (a flat `nodes` record, th
 
 ## Links
 
-- [The repository](https://github.com/mkurtii/builderset) · [what a backend must do](../engine/src/host/BACKEND.md) · [the engine](../engine/README.md)
+- [The repository](https://github.com/builderset/builderset) · [what a backend must do](../engine/src/host/BACKEND.md) · [the engine](../engine/README.md)
 - [Licence: MIT](LICENSE). The changelog starts with the first release.

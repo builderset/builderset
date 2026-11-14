@@ -2,7 +2,7 @@
 
 What every Builderset kit is built on: a typed node tree, an element registry, every editing operation with undo, the structural and translation checks, reading stored documents with migrations — and the editor's workspace, generic over the document. A project usually installs a kit ([`@builderset/article`](../article/README.md), [`@builderset/email`](../email/README.md)), which brings this package with it.
 
-> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/mkurtii/builderset).
+> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/builderset/builderset).
 
 ## Install
 
@@ -560,5 +560,5 @@ const host = createRestHost({
 
 ## Links
 
-- [The repository](https://github.com/mkurtii/builderset) · [what a backend must do](src/host/BACKEND.md) · [the article kit](../article/README.md) · [the email kit](../email/README.md)
+- [The repository](https://github.com/builderset/builderset) · [what a backend must do](src/host/BACKEND.md) · [the article kit](../article/README.md) · [the email kit](../email/README.md)
 - [Changelog](CHANGELOG.md) · [Licence: MIT](LICENSE)

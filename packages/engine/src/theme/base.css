@@ -30,6 +30,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* What Tailwind 4's preflight no longer resets and a page's `button { … }` can
+   still reach: a control's letters stay as written. */
+.builderset :where(button, select) {
+  text-transform: none;
+}
+
 /* Lines take the theme's border colour unless a class says otherwise. */
 .builderset :where(*, ::before, ::after) {
   border-color: var(--builderset-border, var(--bst-d-border));

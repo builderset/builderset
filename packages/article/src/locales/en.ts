@@ -1,4 +1,4 @@
-import { en as engine } from '@motors/engine/locales/en';
+import { en as engine } from '@builderset/engine/locales/en';
 
 import { RENDER_EN } from '../render/messages';
 import type { ArticleLocale } from '../editor/words';

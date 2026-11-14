@@ -15,7 +15,7 @@ import {
   type NodeTree,
   type RichText,
   unknownLocaleIssues,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { z } from 'zod';
 
 import { DOCUMENT_SCHEMA, articleMetaSchema, type ArticleDocument } from './document';

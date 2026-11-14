@@ -6,15 +6,14 @@ of it. This page is what the other side of that line must do: what it
 stores, what it checks, what it renders, and how it stays safe. It is the
 source of the docs site's backend page (step 16 of the plan).
 
-A project either writes its own host adapter (MotorsAL's admin does, against
-its own API) or builds its API in the shape below and uses `createRestHost`
-from `@motors/engine/host` (re-exported as `@motors/article/host` and
-`@motors/email/host`).
+A project either writes its own host adapter, against the API it already
+has, or builds its API in the shape below and uses `createRestHost`
+from `@builderset/engine/host` (re-exported as `@builderset/article/host` and
+`@builderset/email/host`).
 
 ## 1. What to store
 
-Any database with a JSON column works. The reference is MotorsAL's email
-templates table (`api/app/db/models/emails.py`).
+Any database with a JSON column works. One row per document, with:
 
 | Column            | Why                                                                                        |
 | ----------------- | ------------------------------------------------------------------------------------------ |
@@ -38,7 +37,7 @@ This is code, not a judgement each backend makes. Each kit exports the rule
 and the list of codes a draft may still carry:
 
 ```ts
-import { checkEmail, isDraftBlocking, isPublishBlocking, parseEmail } from '@motors/email';
+import { checkEmail, isDraftBlocking, isPublishBlocking, parseEmail } from '@builderset/email';
 
 const document = parseEmail(body.document, registry); // null: not an email at all
 const issues = checkEmail(document, registry, type, { locales });
@@ -59,8 +58,8 @@ revision, exactly as if the editor did not exist.
   email at all), then `checkEmail(document, registry, type, { locales })`; or
   `parseArticle(body.document, registry)` (which also runs migrations), then
   `checkArticle(result.doc, registry, { locales })`.
-- **Python**: MotorsAL's API does it today (`app/domains/email_builder/document.py`,
-  `app/domains/content/document.py`); step 15 makes it a package.
+- **Python**: a port of both kits' checks exists and becomes the `builderset`
+  package on PyPI in step 15 of the plan; until then, follow the next point.
 - **Any other language**: validate against the kit's `schema.json` (JSON
   Schema, draft 2020-12), then apply the structural rules. The invalid
   fixtures (`fixtures/invalid/`) are one broken document each, and

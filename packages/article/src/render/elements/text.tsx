@@ -1,4 +1,4 @@
-import type { PropsOf, RichText } from '@motors/engine';
+import type { PropsOf, RichText } from '@builderset/engine';
 import type {
   calloutElement,
   codeElement,

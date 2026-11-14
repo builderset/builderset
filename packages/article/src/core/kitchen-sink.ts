@@ -5,7 +5,7 @@ import {
   type ElementRegistry,
   rt,
   type RichText,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { createArticleDocument, type ArticleDocument } from './document';
 
 /**

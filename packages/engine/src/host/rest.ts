@@ -11,7 +11,7 @@ import type {
 /**
  * A host for an API of the shape in `BACKEND.md`: the document at one address,
  * its draft, publishing and versions beside it. For a project that has no API
- * yet; one that has its own writes its own adapter (MotorsAL's admin does).
+ * yet; one that has its own writes its own adapter.
  *
  * Field names are snake_case on the wire and camelCase here; only the fields
  * this adapter reads and writes are converted, never the document. Every

@@ -1,4 +1,4 @@
-import { isExternalUrl, isSafeUrl, type Mark, type RichText } from '@motors/engine';
+import { isExternalUrl, isSafeUrl, type Mark, type RichText } from '@builderset/engine';
 import type { ReactNode } from 'react';
 
 import type { RenderContext } from './context';

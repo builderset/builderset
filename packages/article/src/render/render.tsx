@@ -1,4 +1,4 @@
-import { localize, walk, type ElementRegistry, type RichText } from '@motors/engine';
+import { localize, walk, type ElementRegistry, type RichText } from '@builderset/engine';
 import type { ArticleDocument } from '../core/document';
 import { outline as buildOutline } from '../core/outline';
 import { Fragment, type ReactNode } from 'react';

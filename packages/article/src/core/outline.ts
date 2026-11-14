@@ -5,7 +5,7 @@ import {
   type NodeId,
   type NodeTree,
   type RichText,
-} from '@motors/engine';
+} from '@builderset/engine';
 
 /** The headings an article's table of contents lists. Hidden headings are skipped. */
 

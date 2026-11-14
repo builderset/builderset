@@ -1,5 +1,5 @@
 /**
- * @motors/engine/ui — the editor's own UI kit.
+ * @builderset/engine/ui — the editor's own UI kit.
  *
  * Copied from the first host app's UI kit on 2026-11-11 (Builderset plan, step 04)
  * with only their imports changed, so the editors look and behave as before

@@ -40,7 +40,7 @@ import {
  * The bottom sheet IS the drawer's phone shape — `DrawerPanel` already goes to
  * `side="bottom"` below `sm`. Reusing it means one focus trap, one scroll lock,
  * one Escape handler and one set of exit animations, and it inherits the staged
- * content entrance in `@motors/tokens` for free. The public site draws its own
+ * content entrance in the theme stylesheet for free. A site without Radix draws its own
  * with `motion` because it has no Radix; this does not need a dependency to
  * arrive at the same panel.
  */

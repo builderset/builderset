@@ -8,7 +8,7 @@ import {
   richTextToPlain,
   type RichText,
   isSafeUrl,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { ARTICLE_LIMITS } from '../limits';
 import { z } from 'zod';
 

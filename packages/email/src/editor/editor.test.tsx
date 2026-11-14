@@ -1,4 +1,4 @@
-import type { RecordFacts } from '@motors/engine/editor';
+import type { RecordFacts } from '@builderset/engine/editor';
 import { createMemoryHost, type BuilderHost } from '../host';
 import {
   createEmailDocument,

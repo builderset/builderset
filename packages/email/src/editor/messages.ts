@@ -1,4 +1,4 @@
-import type { DeepPartial, EditorMessages, ElementText } from '@motors/engine/editor';
+import type { DeepPartial, EditorMessages, ElementText } from '@builderset/engine/editor';
 
 /**
  * The email editor's words: its blocks and categories, and the article
@@ -14,11 +14,11 @@ export interface EmailWords {
 
 /**
  * Everything the email kit says in one language — what a locale file
- * (`@motors/email/locales/sq`) exports and `locales` takes.
+ * (`@builderset/email/locales/sq`) exports and `locales` takes.
  */
 export interface EmailLocale {
   code: string;
-  /** The workspace's words (`@motors/engine/locales/…`). */
+  /** The workspace's words (`@builderset/engine/locales/…`). */
   engine: EditorMessages;
   /** Workspace words an email says its own way: "Activate", not "Publish". */
   workspace: Partial<EditorMessages>;

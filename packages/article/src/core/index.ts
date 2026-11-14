@@ -1,7 +1,7 @@
 /**
- * @motors/article — the article kit's model.
+ * @builderset/article — the article kit's model.
  *
- * Pure TypeScript on top of `@motors/engine`: the article document and its
+ * Pure TypeScript on top of `@builderset/engine`: the article document and its
  * meta, the standard element library, the article's checks, parsing with
  * migrations, the JSON Schema the server validates with, the outline, and
  * import from HTML and Markdown.

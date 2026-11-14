@@ -1,4 +1,4 @@
-import { elementRules, LIMITS, toDraft2020, type ElementRegistry } from '@motors/engine';
+import { elementRules, LIMITS, toDraft2020, type ElementRegistry } from '@builderset/engine';
 
 import { articleSchema } from './check';
 import { EMBED_PATTERNS } from './embeds';

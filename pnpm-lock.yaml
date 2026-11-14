@@ -32,7 +32,7 @@ importers:
 
   packages/article:
     dependencies:
-      '@motors/engine':
+      '@builderset/engine':
         specifier: workspace:*
         version: link:../engine
       clsx:
@@ -102,7 +102,7 @@ importers:
 
   packages/email:
     dependencies:
-      '@motors/engine':
+      '@builderset/engine':
         specifier: workspace:*
         version: link:../engine
       lucide-react:

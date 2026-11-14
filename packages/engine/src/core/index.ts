@@ -1,11 +1,11 @@
 /**
- * @motors/engine — what every builder shares.
+ * @builderset/engine — what every builder shares.
  *
  * Pure TypeScript: the node tree, the element registry, every editing
  * operation with undo, the structural and translation checks, reading stored
  * documents with element migrations, rich text, styles, media references and
- * languages. No React and no elements of its own — each kit (`@motors/article`,
- * `@motors/email`) brings its document type, its elements and its checks.
+ * languages. No React and no elements of its own — each kit (`@builderset/article`,
+ * `@builderset/email`) brings its document type, its elements and its checks.
  */
 
 export * from './clipboard';

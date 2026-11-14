@@ -1,4 +1,4 @@
-import type { Issue } from '@motors/engine';
+import type { Issue } from '@builderset/engine';
 import { describe, expect, it } from 'vitest';
 
 import { createEmailRegistry } from './blocks';

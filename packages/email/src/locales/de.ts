@@ -1,4 +1,4 @@
-import { de as engine } from '@motors/engine/locales/de';
+import { de as engine } from '@builderset/engine/locales/de';
 
 import type { EmailLocale } from '../editor/messages';
 import { en } from './en';

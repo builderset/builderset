@@ -1,4 +1,4 @@
-import { type MediaRef, isExternalUrl } from '@motors/engine';
+import { type MediaRef, isExternalUrl } from '@builderset/engine';
 import type { ButtonSpec } from '../core/elements/fields';
 import {
   ArrowRight,
@@ -40,7 +40,7 @@ export const BUTTON_ICON: Record<NonNullable<ButtonSpec['icon']>, LucideIcon> = 
   check: Check,
 };
 
-/** The same shapes as `@motors/ui`'s Button, drawn from the same tokens. */
+/** The same shapes as the editor's `Button` (`@builderset/engine/ui`), drawn from the same tokens. */
 const VARIANT: Record<ButtonSpec['variant'], string> = {
   primary: 'bg-primary text-primary-foreground hover:bg-primary/85',
   secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',

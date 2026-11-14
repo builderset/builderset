@@ -9,7 +9,7 @@ import { cn } from '../cn';
  * the same object visually and differ only in what they do. Six components
  * restating this string is six components that drift apart one class at a time.
  *
- * `ui-focus` is the shared glow from `@motors/tokens`; `ui-invalid` is the error
+ * `ui-focus` is the shared glow from the theme stylesheet; `ui-invalid` is the error
  * treatment, and it is UNLAYERED there so it beats the glow when a field is both
  * focused and invalid — which is the state a reader is in immediately after a
  * failed submit, and the one that must read as invalid first.

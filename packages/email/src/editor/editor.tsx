@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementRegistry } from '@motors/engine';
+import type { ElementRegistry } from '@builderset/engine';
 import {
   BuilderEditor,
   resolveMessages,
@@ -8,7 +8,7 @@ import {
   type BuilderHost,
   type EditorMessages,
   type RecordFacts,
-} from '@motors/engine/editor';
+} from '@builderset/engine/editor';
 import type { EmailDocument, EmailType } from '../core';
 import type { BrandKit } from '../render';
 import { useMemo } from 'react';
@@ -35,7 +35,7 @@ export interface EmailEditorProps {
   onDelete?: (() => Promise<boolean>) | undefined;
   /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
   locale?: string | undefined;
-  /** Other languages, by code: `{ sq }` from `@motors/email/locales/sq`. English is built in. */
+  /** Other languages, by code: `{ sq }` from `@builderset/email/locales/sq`. English is built in. */
   locales?: Readonly<Record<string, EmailLocale | undefined>> | undefined;
   /** Replace single words, in whatever language is active. */
   messages?: EmailMessages | undefined;

@@ -1,4 +1,4 @@
-import { i18nSchema, nodeShapeSchema, type EngineDocument } from '@motors/engine';
+import { i18nSchema, nodeShapeSchema, type EngineDocument } from '@builderset/engine';
 import { z } from 'zod';
 
 import { color, fontSchema, px } from './fields';

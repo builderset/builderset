@@ -1,4 +1,4 @@
-import type { PropsOf } from '@motors/engine';
+import type { PropsOf } from '@builderset/engine';
 import type {
   authorElement,
   faqElement,

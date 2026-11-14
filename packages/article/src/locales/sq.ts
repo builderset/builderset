@@ -1,4 +1,4 @@
-import { sq as engine } from '@motors/engine/locales/sq';
+import { sq as engine } from '@builderset/engine/locales/sq';
 
 import type { ArticleLocale } from '../editor/words';
 import { en } from './en';

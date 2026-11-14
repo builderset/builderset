@@ -1,4 +1,4 @@
-import { ElementRegistry, type ElementDefinition } from '@motors/engine';
+import { ElementRegistry, type ElementDefinition } from '@builderset/engine';
 import { mediaElements } from './media';
 import { articleElements } from './article';
 import { engagementElements } from './engagement';

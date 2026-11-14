@@ -4,7 +4,7 @@ import {
   walk,
   type ElementRegistry,
   type RichText,
-} from '@motors/engine';
+} from '@builderset/engine';
 import type { ArticleDocument } from '../core/document';
 
 /**

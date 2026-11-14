@@ -1,5 +1,5 @@
-import { rt } from '@motors/engine';
-import type { TemplateSpec } from '@motors/engine/editor';
+import { rt } from '@builderset/engine';
+import type { TemplateSpec } from '@builderset/engine/editor';
 
 /** The article's starting layouts: the left rail's templates, above the saved sections. */
 export const ARTICLE_TEMPLATES: readonly TemplateSpec[] = [

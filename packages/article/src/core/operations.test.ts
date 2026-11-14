@@ -15,7 +15,7 @@ import {
   rt,
   parentOf,
   LIMITS,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { createArticleDocument, type ArticleDocument } from './document';
 import { describe, expect, it } from 'vitest';
 

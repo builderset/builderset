@@ -8,7 +8,7 @@ import {
   readingMinutes,
   hasErrors,
   structuralIssues,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { checkArticle, articleSchema } from './check';
 import { createArticleDocument, type ArticleDocument } from './document';
 import { outline } from './outline';

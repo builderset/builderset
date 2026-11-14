@@ -1,6 +1,6 @@
 {
-  "name": "@motors/email",
-  "version": "0.1.0",
+  "name": "@builderset/email",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "sideEffects": false,
@@ -19,7 +19,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@motors/engine": "workspace:*",
+    "@builderset/engine": "workspace:*",
     "lucide-react": "1.32.0",
     "motion": "13.1.0",
     "zod": "4.4.3"

@@ -30,7 +30,7 @@ export type SettingsField = (typeof SETTINGS_FIELDS)[SettingsTab][number];
  * has beyond the document: a category, a "featured" flag, an author.
  *
  * `render` runs inside the editor: read and change the row's facts with
- * `useRecord()` from `@motors/engine/editor` (a change marks the work unsaved),
+ * `useRecord()` from `@builderset/engine/editor` (a change marks the work unsaved),
  * and use `SettingsFieldRow` for the label so the field looks like the others.
  */
 export interface SettingsSection {

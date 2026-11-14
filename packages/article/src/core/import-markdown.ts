@@ -5,7 +5,7 @@ import {
   type Mark,
   type RichText,
   isSafeUrl,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { ARTICLE_LIMITS } from './limits';
 import { fragmentFromBlocks, type ImportedBlock } from './import-html';
 

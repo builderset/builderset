@@ -53,7 +53,7 @@ const button = cva(
     // cosmetic: every input and select in the product draws a 3px glow, and an
     // outline-plus-gap here meant a keyboard reader crossing from a field to the
     // button beside it watched the indicator change SHAPE. One treatment, stated
-    // once in `@motors/tokens`, is the whole reason that class exists.
+    // once in the theme stylesheet, is the whole reason that class exists.
     //
     // It also carries the transition, which is why there is no `transition-*`
     // utility here any more: `.ui-focus` is UNLAYERED and would have overridden
@@ -67,7 +67,7 @@ const button = cva(
     '[&:active:not([aria-haspopup])]:translate-y-px',
     // `pointer-events-none` so a disabled button fires no hover styles and does
     // not swallow a click meant for what is behind it. Its COLOURS come from the
-    // global disabled rule in `@motors/tokens` — a surface, never an opacity
+    // global disabled rule in the theme stylesheet — a surface, never an opacity
     // cascade that drags the label and the border below threshold with it.
     'disabled:pointer-events-none',
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

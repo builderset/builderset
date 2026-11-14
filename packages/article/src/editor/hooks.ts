@@ -6,7 +6,7 @@ import {
   type EditorActions,
   type EditorState,
   type RecordFacts,
-} from '@motors/engine/editor';
+} from '@builderset/engine/editor';
 
 import type { ArticleDocument } from '../core';
 

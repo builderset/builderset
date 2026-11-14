@@ -10,7 +10,7 @@ import {
   type RichText,
   isSafeUrl,
   LIMITS,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { ARTICLE_LIMITS } from './limits';
 
 /**

@@ -4,7 +4,7 @@ import {
   isSafeUrl,
   type BuilderNode,
   type ElementRegistry,
-} from '@motors/engine';
+} from '@builderset/engine';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';
 import { createEmailDocument, type EmailDocument, type EmailMeta } from './document';

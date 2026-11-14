@@ -13,7 +13,7 @@ import {
   type Localizable,
   type NodeTree,
   unknownLocaleIssues,
-} from '@motors/engine';
+} from '@builderset/engine';
 import { z } from 'zod';
 
 import { ROW_LAYOUTS, type RowLayout } from './blocks/structure';

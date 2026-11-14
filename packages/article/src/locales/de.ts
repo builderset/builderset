@@ -1,4 +1,4 @@
-import { de as engine } from '@motors/engine/locales/de';
+import { de as engine } from '@builderset/engine/locales/de';
 
 import type { ArticleLocale } from '../editor/words';
 import { en } from './en';

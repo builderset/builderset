@@ -1,4 +1,4 @@
-import { sq as engine } from '@motors/engine/locales/sq';
+import { sq as engine } from '@builderset/engine/locales/sq';
 
 import type { EmailLocale } from '../editor/messages';
 import { en } from './en';

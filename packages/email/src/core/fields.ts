@@ -1,4 +1,4 @@
-import { isSafeUrl, mediaRefSchema } from '@motors/engine';
+import { isSafeUrl, mediaRefSchema } from '@builderset/engine';
 import { z } from 'zod';
 
 import { EMAIL_FONTS, FONT_KEYS, type FontKey } from './fonts';

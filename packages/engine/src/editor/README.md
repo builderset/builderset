@@ -1,15 +1,15 @@
-# @motors/engine/editor
+# @builderset/engine/editor
 
 The workspace every builder shares: a full-screen editor for any
 `EngineDocument`. A kit supplies an `EditorProfile` — how the canvas draws
 the document, its settings panel, what blocks publishing, its categories —
 and wraps the workspace in its own component: `ArticleEditor` in
-`@motors/article/editor`, `EmailEditor` in `@motors/email/editor`. The article
+`@builderset/article/editor`, `EmailEditor` in `@builderset/email/editor`. The article
 kit draws its canvas with the public site's renderer, so the canvas looks
 exactly like the published page.
 
 ```tsx
-import { ArticleEditor } from '@motors/article/editor';
+import { ArticleEditor } from '@builderset/article/editor';
 
 <ArticleEditor
   document={doc}
@@ -32,7 +32,7 @@ The editor speaks English unless it is told otherwise. Another language is a
 file a project imports and passes; nothing else ships:
 
 ```tsx
-import { sq } from '@motors/article/locales/sq'; // or @motors/email/locales/sq
+import { sq } from '@builderset/article/locales/sq'; // or @builderset/email/locales/sq
 
 <ArticleEditor
   locale="sq" // the editor's own language; 'auto' follows <html lang>
@@ -94,7 +94,7 @@ are not mirrored yet.
   (`RichText` runs); `text/convert.ts` is the only place TipTap JSON exists.
 - **motion**: panel, toolbar and indicator animations.
 - **zod**: `z.toJSONSchema` turns an element's schema into its inspector.
-- **Radix UI** under the editor's own kit, `src/editor/ui` (`@motors/engine/ui`):
+- **Radix UI** under the editor's own kit, `src/editor/ui` (`@builderset/engine/ui`):
   buttons, fields, toggles, tabs, menus, popovers, tooltips, dialogs and
   sheets, copied from the host app's own UI kit and now separate from it. The
   kits use it too. Everything that floats is portalled into an element the

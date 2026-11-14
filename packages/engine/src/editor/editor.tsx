@@ -66,7 +66,7 @@ export interface BuilderEditorProps<
   onDelete?: (() => Promise<boolean>) | undefined;
   /** The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`. */
   locale?: string | undefined;
-  /** Other languages for the editor's words, by code (`@motors/engine/locales/sq`). English is built in. */
+  /** Other languages for the editor's words, by code (`@builderset/engine/locales/sq`). English is built in. */
   locales?: Readonly<Record<string, DeepPartial<EditorMessages> | undefined>> | undefined;
   /** Replace single words, in whatever language is active. */
   messages?: DeepPartial<EditorMessages> | undefined;

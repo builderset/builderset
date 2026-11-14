@@ -159,40 +159,40 @@ export function ListView({
   // Only top-level items are edited in place (`prefix` is set for them);
   // nested ones are edited in the inspector.
   const renderItems = (items: readonly ListItem[] | ListItem['children'], prefix?: string) =>
-    (items ?? []).map((item, index) => (
-      <li key={index} className={itemClass}>
-        {props.style === 'number' ? (
-          <RichTextView
-            value={item.text}
-            context={context}
-            field={prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined}
-          />
-        ) : (
-          <div className="bst:flex bst:min-w-0 bst:flex-1 bst:flex-col bst:gap-2.5">
-            <div className="bst:flex bst:gap-3">
-              <ItemBody
-                item={item}
-                style={props.style}
-                context={context}
-                field={
-                  prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined
-                }
-              />
-            </div>
-          </div>
-        )}
-        {'children' in item && item.children?.length ? (
+    (items ?? []).map((item, index) => {
+      const field = prefix ? { node: node.id, path: `${prefix}.${String(index)}.text` } : undefined;
+      // An item's own list goes UNDER its text. In a bullet or check item that
+      // means inside the item's column — a sibling of the column would sit in
+      // the item's flex row, to the right of the text.
+      const nested =
+        'children' in item && item.children?.length ? (
           <Tag
             className={cn(
-              'bst:mt-2.5 bst:space-y-2',
-              props.style === 'number' ? 'bst:list-[lower-alpha] bst:pl-5' : 'bst:pl-5',
+              'bst:space-y-2 bst:pl-5',
+              props.style === 'number' && 'bst:mt-2.5 bst:list-[lower-alpha]',
             )}
           >
             {renderItems(item.children)}
           </Tag>
-        ) : null}
-      </li>
-    ));
+        ) : null;
+      return (
+        <li key={index} className={itemClass}>
+          {props.style === 'number' ? (
+            <>
+              <RichTextView value={item.text} context={context} field={field} />
+              {nested}
+            </>
+          ) : (
+            <div className="bst:flex bst:min-w-0 bst:flex-1 bst:flex-col bst:gap-2.5">
+              <div className="bst:flex bst:gap-3">
+                <ItemBody item={item} style={props.style} context={context} field={field} />
+              </div>
+              {nested}
+            </div>
+          )}
+        </li>
+      );
+    });
   return (
     <Tag
       {...frameProps(

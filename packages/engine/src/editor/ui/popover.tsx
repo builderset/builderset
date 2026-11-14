@@ -25,11 +25,11 @@ import { usePortalContainer } from './portal';
 
 /** The floating surface, shared by all three. */
 const panelClass = cn(
-  'z-50 rounded-[var(--radius-card)] border border-border bg-popover text-popover-foreground shadow-pop',
+  'z-50 rounded-card border border-border bg-popover text-popover-foreground shadow-pop',
   // Direction-aware, so a menu that had to flip above its trigger animates from
   // below rather than sliding the wrong way out of it.
-  'data-[state=open]:animate-[ui-zoom-in_var(--dur-2)_var(--ease-enter)]',
-  'data-[state=closed]:animate-[ui-zoom-out_var(--dur-1)_var(--ease-exit)]',
+  'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+  'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
 );
 
 // ── Popover ──────────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ export function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-destructive={destructive ? true : undefined}
       className={cn(
-        'relative flex cursor-pointer items-center gap-2 rounded-[var(--radius-control)]',
+        'rounded-control relative flex cursor-pointer items-center gap-2',
         'px-2.5 py-1.5 text-sm outline-none select-none',
         // `highlighted` covers pointer and keyboard together, so arrowing
         // through a menu looks the same as hovering it.

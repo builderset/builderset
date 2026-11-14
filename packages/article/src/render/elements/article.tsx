@@ -39,7 +39,7 @@ export function TocView({ props, frame, context }: ElementRenderProps<PropsOf<ty
       {...frameProps(
         frame,
         cn(
-          'border-border bg-card my-8 rounded-[var(--radius-card,0.625rem)] border px-5 py-4',
+          'border-border bg-card my-8 rounded-card border px-5 py-4',
           props.sticky && 'lg:sticky lg:top-24',
         ),
       )}
@@ -79,7 +79,7 @@ export function FaqView({
       {props.title ? (
         <h2 className="mb-4 text-xl font-semibold tracking-tight sm:text-2xl">{props.title}</h2>
       ) : null}
-      <div className="divide-border border-border divide-y rounded-[var(--radius-card,0.625rem)] border">
+      <div className="divide-border border-border rounded-card divide-y border">
         {props.items.map((item, index) => (
           <details
             key={index}
@@ -94,7 +94,7 @@ export function FaqView({
                 aria-hidden="true"
               />
             </summary>
-            <div className="text-muted-foreground animate-[ui-rise_220ms_ease-out] pb-4 leading-relaxed">
+            <div className="text-muted-foreground animate-[bst-rise_220ms_ease-out] pb-4 leading-relaxed">
               <RichTextView value={item.answer} context={context} />
             </div>
           </details>
@@ -147,7 +147,7 @@ export function HowToView({
                   media={step.media}
                   alt={step.alt}
                   context={context}
-                  className="bg-muted mt-4 w-full rounded-[var(--radius-card,0.625rem)]"
+                  className="bg-muted rounded-card mt-4 w-full"
                 />
               ) : null}
             </div>
@@ -210,7 +210,7 @@ export function ProsConsView({
   return (
     <div {...frameProps(frame, 'my-9 grid gap-4 sm:grid-cols-2')}>
       {columns.map(({ title, lines, Icon, tone, box }) => (
-        <div key={title} className={cn('rounded-[var(--radius-card,0.625rem)] border p-5', box)}>
+        <div key={title} className={cn('rounded-card border p-5', box)}>
           <p className={cn('mb-3 flex items-center gap-2 font-semibold', tone)}>
             <Icon className="size-4" aria-hidden="true" />
             {title}
@@ -249,10 +249,7 @@ export function StatsView({ props, frame }: ElementRenderProps<PropsOf<typeof st
         const Trend =
           item.trend === 'up' ? TrendingUp : item.trend === 'down' ? TrendingDown : Minus;
         return (
-          <div
-            key={index}
-            className="border-border bg-card rounded-[var(--radius-card,0.625rem)] border p-5"
-          >
+          <div key={index} className="border-border bg-card rounded-card border p-5">
             <p className="flex items-baseline gap-2 text-3xl font-semibold tracking-tight tabular-nums">
               {item.value}
               {item.trend !== 'none' ? (
@@ -303,12 +300,7 @@ export function RatingView({
   const locale = context.options.locale ?? 'en';
   const score = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(props.score);
   return (
-    <section
-      {...frameProps(
-        frame,
-        'border-border bg-card my-10 rounded-[var(--radius-card,0.625rem)] border p-6',
-      )}
-    >
+    <section {...frameProps(frame, 'border-border bg-card my-10 rounded-card border p-6')}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           {props.title ? (
@@ -375,7 +367,7 @@ export function AuthorView({
     <aside
       {...frameProps(
         frame,
-        'border-border bg-card my-10 flex gap-4 rounded-[var(--radius-card,0.625rem)] border p-5 sm:gap-5',
+        'border-border bg-card my-10 flex gap-4 rounded-card border p-5 sm:gap-5',
       )}
     >
       {props.avatar ? (

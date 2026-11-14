@@ -9,7 +9,7 @@ import { cn } from '../cn';
  * the same object visually and differ only in what they do. Six components
  * restating this string is six components that drift apart one class at a time.
  *
- * `ui-focus` is the shared glow from the theme stylesheet; `ui-invalid` is the error
+ * `bld-focus` is the shared glow from the theme stylesheet; `bld-invalid` is the error
  * treatment, and it is UNLAYERED there so it beats the glow when a field is both
  * focused and invalid — which is the state a reader is in immediately after a
  * failed submit, and the one that must read as invalid first.
@@ -20,7 +20,7 @@ export const controlClass = cn(
   // where the 36px a BUTTON is read as the smallest part of its own group. A
   // container that wants them denser — the filter toolbar — sets the token once
   // and every control inside comes down together, still equal to each other.
-  'ui-focus flex h-(--field-h) w-full min-w-0 items-center rounded-[var(--radius-control)]',
+  'bld-focus flex h-(--bst-field-h) w-full min-w-0 items-center rounded-control',
   'border border-border bg-input px-3 text-sm text-foreground',
   'placeholder:text-muted-foreground/60',
   'disabled:cursor-not-allowed',
@@ -29,7 +29,7 @@ export const controlClass = cn(
   // the errors reach `Field`, which is the wrapper — without this the message
   // appeared under a control that still looked perfectly fine.
   'group-data-[invalid=true]/field:border-destructive/55',
-  'group-data-[invalid=true]/field:bg-[color-mix(in_oklch,var(--destructive)_4%,var(--input))]',
+  'group-data-[invalid=true]/field:bg-[color-mix(in_oklab,var(--builderset-danger,var(--bst-d-danger))_4%,var(--builderset-surface,var(--bst-d-surface)))]',
 );
 
 export interface InputProps extends Omit<ComponentProps<'input'>, 'size'> {
@@ -56,7 +56,7 @@ export function Input({ className, invalid, type = 'text', ...props }: InputProp
         // keyboard and a validation rule instead.
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
         '[-moz-appearance:textfield]',
-        invalid && 'ui-invalid',
+        invalid && 'bld-invalid',
         className,
       )}
       {...props}
@@ -91,7 +91,7 @@ export function Textarea({ className, invalid, rows, ...props }: TextareaProps) 
         // height is the same five lines in `lh` (plus the padding and the
         // border), so dragging the resize handle cannot shrink it below them.
         'h-auto min-h-[calc(5lh+1rem+2px)] py-2 leading-relaxed',
-        invalid && 'ui-invalid',
+        invalid && 'bld-invalid',
         className,
       )}
       {...props}

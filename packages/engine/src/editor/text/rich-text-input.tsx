@@ -83,7 +83,7 @@ export function RichTextInput({
       attributes: {
         ...(id ? { id } : {}),
         class:
-          'border-input bg-background focus:ring-ring/40 min-h-9 w-full rounded-[var(--radius-control)] border px-3 py-1.5 text-sm outline-none focus:ring-2 [&_p]:m-0',
+          'border-input bg-background focus:ring-ring/40 min-h-9 w-full rounded-control border px-3 py-1.5 text-sm outline-none focus:ring-2 [&_p]:m-0',
       },
     },
     onUpdate({ editor: instance }) {
@@ -102,7 +102,7 @@ export function RichTextInput({
 
   if (!editor) {
     return (
-      <div className="border-input bg-background min-h-9 rounded-[var(--radius-control)] border px-3 py-1.5 text-sm">
+      <div className="border-input bg-background rounded-control min-h-9 border px-3 py-1.5 text-sm">
         {value.map((run) => run.text).join('')}
       </div>
     );

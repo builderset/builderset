@@ -28,7 +28,7 @@ export function Label({ className, ...props }: ComponentProps<typeof LabelPrimit
         // field now carries a muted hint underneath as well, and a label sitting
         // between two greys stopped reading as the heading of its own group.
         // The contrast it needs is against the HINT, not against the input.
-        'text-foreground transition-colors duration-(--dur-1)',
+        'text-foreground transition-colors duration-(--bst-dur-1)',
         'group-has-disabled/field:text-muted-foreground',
         'group-data-[invalid=true]/field:text-destructive',
         className,

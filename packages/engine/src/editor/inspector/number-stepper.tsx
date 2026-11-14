@@ -208,7 +208,7 @@ export function NumberStepper({
     <div
       data-slot="number-stepper"
       className={cn(
-        'border-input bg-background focus-within:ring-ring/40 flex w-full min-w-0 items-stretch overflow-hidden rounded-[var(--radius-control)] border focus-within:ring-2',
+        'border-input bg-background focus-within:ring-ring/40 rounded-control flex w-full min-w-0 items-stretch overflow-hidden border focus-within:ring-2',
         height,
         className,
       )}

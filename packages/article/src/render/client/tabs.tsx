@@ -84,7 +84,7 @@ export function TabsIsland({
           aria-labelledby={`${base}-tab-${String(index)}`}
           hidden={index !== active}
           tabIndex={0}
-          className="animate-[ui-fade-in_200ms_ease-out] pt-5 outline-none"
+          className="animate-[bst-fade-in_200ms_ease-out] pt-5 outline-none"
         >
           {panel}
         </div>

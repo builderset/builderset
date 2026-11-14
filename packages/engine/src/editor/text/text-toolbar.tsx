@@ -131,7 +131,7 @@ export function TextToolbar({ editor }: { editor: Editor }) {
             // Keep the selection: a click on the bar must not blur the text.
             if (!(event.target instanceof HTMLInputElement)) event.preventDefault();
           }}
-          className="border-border bg-popover text-popover-foreground fixed z-[80] flex items-center gap-0.5 rounded-[var(--radius-control)] border p-1 shadow-lg"
+          className="border-border bg-popover text-popover-foreground rounded-control fixed z-[80] flex items-center gap-0.5 border p-1 shadow-lg"
           style={{ left: position.left, top: position.top }}
         >
           {choosingFont ? (

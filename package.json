@@ -19,6 +19,7 @@
     "@arethetypeswrong/cli": "0.18.5",
     "@eslint/js": "9.39.5",
     "@tailwindcss/cli": "4.3.3",
+    "@tailwindcss/node": "4.3.3",
     "eslint": "9.39.5",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",

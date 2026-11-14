@@ -26,10 +26,10 @@ export function Skeleton({ className, ...props }: ComponentProps<'div'>) {
       data-slot="skeleton"
       aria-hidden="true"
       className={cn(
-        'bg-muted relative overflow-hidden rounded-[var(--radius-control)]',
+        'bg-muted rounded-control relative overflow-hidden',
         'after:absolute after:inset-y-0 after:left-0 after:w-1/3',
         'after:via-foreground/6 after:bg-gradient-to-r after:from-transparent after:to-transparent',
-        'after:animate-[ui-shimmer_1.4s_ease-in-out_infinite] after:content-[""]',
+        'after:animate-[bst-shimmer_1.4s_ease-in-out_infinite] after:content-[""]',
         className,
       )}
       {...props}
@@ -71,10 +71,10 @@ export function Progress({ className, value, label, ...props }: ProgressProps) {
     >
       <div
         className={cn(
-          'bg-primary h-full w-full transition-transform duration-(--dur-3) ease-(--ease-both)',
+          'bg-primary ease-both h-full w-full transition-transform duration-(--bst-dur-3)',
           // With no value there is nothing to point at, so the bar sweeps
           // instead of sitting at zero — which reads as "stuck", not "working".
-          clamped === undefined && 'animate-[ui-shimmer_1.4s_ease-in-out_infinite]',
+          clamped === undefined && 'animate-[bst-shimmer_1.4s_ease-in-out_infinite]',
         )}
         style={
           clamped === undefined

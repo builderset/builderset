@@ -168,7 +168,7 @@ export function Overlay({
             animate={{ opacity: 1, ...grow(primaryBox, 2) }}
             exit={{ opacity: 0, transition: FADE }}
             transition={{ ...FOLLOW, opacity: FADE }}
-            className="border-primary absolute rounded-[5px] border-2 shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_12%,transparent)]"
+            className="border-primary absolute rounded-[5px] border-2 shadow-[0_0_0_4px_color-mix(in_oklab,var(--builderset-primary,var(--bst-d-primary))_12%,transparent)]"
           />
         ) : null}
       </AnimatePresence>

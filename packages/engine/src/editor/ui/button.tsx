@@ -40,27 +40,27 @@ import { cn } from '../cn';
  * motion is handled once, globally, in the base layer.
  */
 export const ICON_MOTION = cn(
-  '[&_svg]:transition-[scale,rotate] [&_svg]:duration-(--dur-3) [&_svg]:ease-(--ease-enter)',
+  '[&_svg]:transition-[scale,rotate] [&_svg]:duration-(--bst-dur-3) [&_svg]:ease-enter',
   'hover:[&_svg:not(.animate-spin)]:scale-115 hover:[&_svg:not(.animate-spin)]:-rotate-8',
 );
 
 const button = cva(
   cn(
     'group/button relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2',
-    'rounded-[var(--radius-control)] border border-transparent bg-clip-padding',
+    'rounded-control border border-transparent bg-clip-padding',
     'text-sm font-medium whitespace-nowrap select-none outline-none',
-    // `ui-focus` rather than an offset outline, and the difference is not
+    // `bld-focus` rather than an offset outline, and the difference is not
     // cosmetic: every input and select in the product draws a 3px glow, and an
     // outline-plus-gap here meant a keyboard reader crossing from a field to the
     // button beside it watched the indicator change SHAPE. One treatment, stated
     // once in the theme stylesheet, is the whole reason that class exists.
     //
     // It also carries the transition, which is why there is no `transition-*`
-    // utility here any more: `.ui-focus` is UNLAYERED and would have overridden
+    // utility here any more: `.bld-focus` is UNLAYERED and would have overridden
     // one anyway, so a utility beside it was a declaration that never applied.
     // The four properties it animates are the four this button changes; the
     // press nudge below is deliberately left instant.
-    'ui-focus',
+    'bld-focus',
     // A press pushes the button down a pixel — except on a menu trigger, where
     // the surface stays put while its menu is open and a nudge would read as the
     // panel having moved rather than the button.

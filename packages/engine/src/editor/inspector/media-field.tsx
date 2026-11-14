@@ -86,7 +86,7 @@ export function MediaField({
         }}
       />
       {value ? (
-        <div className="border-border bg-muted/30 overflow-hidden rounded-[var(--radius-control)] border">
+        <div className="border-border bg-muted/30 rounded-control overflow-hidden border">
           {kind === 'image' && url ? (
             <img src={url} alt="" className="aspect-video w-full object-cover" />
           ) : (

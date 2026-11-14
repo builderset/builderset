@@ -40,7 +40,7 @@ const ASPECT = {
 } as const;
 
 const SIZE = {
-  prose: 'max-w-[var(--maxw-prose,68ch)]',
+  prose: 'max-w-measure',
   wide: 'max-w-5xl',
   full: 'max-w-none',
 } as const;
@@ -48,7 +48,7 @@ const SIZE = {
 /** What the editor shows where a picture would be. The site shows nothing. */
 function MediaPlaceholder({ label }: { label: string }) {
   return (
-    <div className="bg-muted text-muted-foreground border-border flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-[var(--radius-card,0.625rem)] border border-dashed text-sm">
+    <div className="bg-muted text-muted-foreground border-border rounded-card flex aspect-video w-full flex-col items-center justify-center gap-2 border border-dashed text-sm">
       <ImageOff className="size-6" aria-hidden="true" />
       <span className="max-w-xs truncate px-4">{label}</span>
     </div>
@@ -77,7 +77,7 @@ export function ImageView({
       sizes="(min-width: 1024px) 68ch, 100vw"
       className={cn(
         'bg-muted h-auto w-full',
-        props.rounded && props.size !== 'full' && 'rounded-[var(--radius-card,0.625rem)]',
+        props.rounded && props.size !== 'full' && 'rounded-card',
         ASPECT[props.aspect],
       )}
       style={{ objectPosition: `${String(props.focalX)}% ${String(props.focalY)}%` }}
@@ -169,7 +169,7 @@ export function GalleryView({
   }
   const figures = images.map((image, index) => (
     <figure key={index} className={cn(props.layout === 'masonry' && 'mb-3 break-inside-avoid')}>
-      <div className="overflow-hidden rounded-[var(--radius-card,0.625rem)]">
+      <div className="rounded-card overflow-hidden">
         {galleryItem(
           image,
           context,
@@ -271,7 +271,7 @@ export function MediaTextView({
             media={props.media}
             alt={props.alt}
             context={context}
-            className="bg-muted w-full rounded-[var(--radius-card,0.625rem)] object-cover"
+            className="bg-muted rounded-card w-full object-cover"
           />
         ) : context.options.editing ? (
           <MediaPlaceholder label="" />
@@ -308,7 +308,7 @@ export function VideoView({
         loop={props.loop}
         muted={props.muted}
         {...(props.poster ? { poster: context.options.resolveMedia(props.poster.key) } : {})}
-        className="bg-foreground aspect-video w-full rounded-[var(--radius-card,0.625rem)]"
+        className="bg-foreground rounded-card aspect-video w-full"
         aria-label={props.title || context.messages.video}
       >
         <source
@@ -330,12 +330,7 @@ export function AudioView({
 }: ElementRenderProps<PropsOf<typeof audioElement>>) {
   if (!props.media) return null;
   return (
-    <figure
-      {...frameProps(
-        frame,
-        'border-border bg-card my-8 rounded-[var(--radius-card,0.625rem)] border p-4',
-      )}
-    >
+    <figure {...frameProps(frame, 'border-border bg-card my-8 rounded-card border p-4')}>
       {props.title ? (
         <p className="text-foreground mb-3 text-sm font-semibold">{props.title}</p>
       ) : null}
@@ -424,10 +419,10 @@ export function FileView({
       download={props.media.name ?? true}
       {...frameProps(
         frame,
-        'group border-border bg-card hover:border-border-strong my-6 flex items-center gap-4 rounded-[var(--radius-card,0.625rem)] border p-4 transition-colors',
+        'group border-border bg-card hover:border-border-strong my-6 flex items-center gap-4 rounded-card border p-4 transition-colors',
       )}
     >
-      <span className="bg-primary/10 text-primary grid size-11 shrink-0 place-items-center rounded-[var(--radius-control,0.4rem)]">
+      <span className="bg-primary/10 text-primary rounded-control grid size-11 shrink-0 place-items-center">
         <Icon className="size-5" aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">

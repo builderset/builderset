@@ -195,7 +195,6 @@ export function Canvas() {
         if (event.target === event.currentTarget) store.getState().select([]);
       }}
     >
-      <style>{CANVAS_CSS}</style>
       {lang ? (
         <p
           role="status"
@@ -214,8 +213,8 @@ export function Canvas() {
           style={{ width: pageWidth, zoom: scale }}
           className={
             bare
-              ? 'border-border min-h-[70vh] overflow-hidden rounded-[var(--radius-card)] border shadow-sm'
-              : 'bg-background border-border min-h-[70vh] rounded-[var(--radius-card)] border shadow-sm'
+              ? 'border-border rounded-card min-h-[70vh] overflow-hidden border shadow-sm'
+              : 'bg-background border-border rounded-card min-h-[70vh] border shadow-sm'
           }
         >
           <div
@@ -236,7 +235,7 @@ export function Canvas() {
             }}
             onDrop={onDrop}
           >
-            <article className={bare ? 'min-h-[70vh]' : 'mx-auto max-w-[var(--maxw-prose,68ch)]'}>
+            <article className={bare ? 'min-h-[70vh]' : 'max-w-measure mx-auto'}>
               {Header ? <Header /> : null}
               {empty ? (
                 <EmptyState
@@ -247,7 +246,7 @@ export function Canvas() {
                   action={
                     <button
                       type="button"
-                      className="bg-primary text-primary-foreground inline-flex h-9 items-center gap-2 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-transform active:scale-95"
+                      className="bg-primary text-primary-foreground rounded-control inline-flex h-9 items-center gap-2 px-3 text-sm font-medium transition-transform active:scale-95"
                       onClick={() => {
                         const state = store.getState();
                         // Through `insertElement`, so a host whose text must sit
@@ -275,19 +274,3 @@ export function Canvas() {
     </div>
   );
 }
-
-/**
- * Editor-only rules for the rendered article: an empty container still has a
- * body to drop into, hidden blocks are dimmed rather than gone, and a text
- * field shows its placeholder.
- */
-const CANVAS_CSS = `
-.bld-canvas [data-node]:empty { min-height: 3rem; border: 1px dashed var(--border); border-radius: var(--radius-control, 0.4rem); }
-.bld-canvas [data-hidden-node] { opacity: 0.45; }
-.bld-canvas [data-node] { transition: opacity 160ms ease; }
-.bld-canvas [data-dragging] { opacity: 0.3; filter: saturate(0.6); }
-.bld-canvas .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: var(--muted-foreground); opacity: 0.7; pointer-events: none; float: left; height: 0; }
-.bld-canvas .ProseMirror { white-space: pre-wrap; word-break: break-word; }
-.bld-canvas [data-node] { cursor: default; }
-.bld-canvas [data-inline-text] { cursor: text; }
-`;

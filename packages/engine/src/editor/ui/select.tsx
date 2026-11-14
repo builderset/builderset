@@ -107,7 +107,7 @@ export function Select({
           // cannot be reached with `placeholder:` — this is the hook it exposes.
           'data-[placeholder]:text-muted-foreground/60',
           '[&>span]:min-w-0 [&>span]:truncate',
-          invalid && 'ui-invalid',
+          invalid && 'bld-invalid',
           className,
         )}
         {...aria}
@@ -126,9 +126,9 @@ export function Select({
           sideOffset={4}
           className={cn(
             'z-50 max-h-72 min-w-(--radix-select-trigger-width) overflow-hidden',
-            'border-border bg-popover text-popover-foreground shadow-pop rounded-[var(--radius-control)] border',
-            'data-[state=open]:animate-[ui-zoom-in_var(--dur-2)_var(--ease-enter)]',
-            'data-[state=closed]:animate-[ui-zoom-out_var(--dur-1)_var(--ease-exit)]',
+            'border-border bg-popover text-popover-foreground shadow-pop rounded-control border',
+            'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-2)_var(--bst-ease-enter)]',
+            'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-1)_var(--bst-ease-exit)]',
           )}
         >
           <SelectPrimitive.ScrollUpButton className="text-muted-foreground flex h-6 items-center justify-center">
@@ -142,7 +142,7 @@ export function Select({
                 value={toRadix(option.value)}
                 {...(option.disabled !== undefined ? { disabled: option.disabled } : {})}
                 className={cn(
-                  'relative flex cursor-pointer items-center gap-2 rounded-[var(--radius-control)]',
+                  'rounded-control relative flex cursor-pointer items-center gap-2',
                   'py-1.5 pr-8 pl-2.5 text-sm outline-none select-none',
                   // `highlighted` covers both the pointer and the keyboard, so
                   // arrowing through the list looks like hovering it.

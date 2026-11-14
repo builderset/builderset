@@ -256,10 +256,7 @@ export function DisplayField({
       <div className="space-y-2">
         <Label className="text-xs font-medium">{messages.showWhen}</Label>
         {value.when.map((condition, index) => (
-          <div
-            key={index}
-            className="border-border space-y-1.5 rounded-[var(--radius-control)] border p-2"
-          >
+          <div key={index} className="border-border rounded-control space-y-1.5 border p-2">
             <Select
               value={condition.var}
               placeholder={messages.variable}

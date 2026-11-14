@@ -40,11 +40,10 @@ const badge = cva(
         ok: 'border-ok/20 bg-ok/10 text-ok',
         warn: 'border-warn/20 bg-warn/10 text-warn',
         danger: 'border-no/20 bg-no/10 text-no',
-        pending: 'border-status-pending/25 bg-status-pending/12 text-status-pending',
-        valuated: 'border-status-valuated/25 bg-status-valuated/12 text-status-valuated',
-        scheduled: 'border-status-scheduled/25 bg-status-scheduled/12 text-status-scheduled',
-        finalized: 'border-status-finalized/25 bg-status-finalized/12 text-status-finalized',
-        refused: 'border-status-refused/25 bg-status-refused/12 text-status-refused',
+        // A document's state, on the top bar's status chip.
+        draft: 'border-state-draft/25 bg-state-draft/12 text-state-draft',
+        scheduled: 'border-state-scheduled/25 bg-state-scheduled/12 text-state-scheduled',
+        published: 'border-state-published/25 bg-state-published/12 text-state-published',
       },
     },
     defaultVariants: { tone: 'neutral', size: 'default' },
@@ -55,8 +54,8 @@ export type BadgeTone = NonNullable<VariantProps<typeof badge>['tone']>;
 
 export interface BadgeProps extends ComponentProps<'span'> {
   /**
-   * The colour: `neutral`, `brand`, `ok`, `warn`, `danger`, or one of the
-   * status tones the top bar's status chip uses. Default: `'neutral'`.
+   * The colour: `neutral`, `brand`, `ok`, `warn`, `danger`, or a document's
+   * state: `draft`, `scheduled`, `published`. Default: `'neutral'`.
    */
   tone?: VariantProps<typeof badge>['tone'];
   /** `dense`: 9px bold capitals, for a status in a table row. Default: `'default'`. */

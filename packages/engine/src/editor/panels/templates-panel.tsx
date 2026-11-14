@@ -83,7 +83,7 @@ export function TemplatesPanel() {
               onClick={() => {
                 insert(templateFragment(registry, template), template.name.en ?? template.id);
               }}
-              className="border-border bg-card hover:border-primary/50 flex w-full items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
+              className="border-border bg-card hover:border-primary/50 rounded-control flex w-full items-center gap-3 border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
             >
               <LayoutTemplate
                 className="text-muted-foreground size-4 shrink-0"
@@ -153,7 +153,7 @@ export function TemplatesPanel() {
                 onClick={() => {
                   insert(reidFragment(section.fragment), section.name);
                 }}
-                className="border-border bg-card hover:border-primary/50 flex w-full items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-colors"
+                className="border-border bg-card hover:border-primary/50 rounded-control flex w-full items-center gap-3 border px-3 py-2.5 text-left transition-colors"
               >
                 <BookmarkPlus
                   className="text-muted-foreground size-4 shrink-0"

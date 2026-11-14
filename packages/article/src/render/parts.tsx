@@ -77,7 +77,7 @@ export function ButtonLink({
     <Link
       href={context.options.editing ? '#' : button.href}
       className={cn(
-        'group inline-flex items-center justify-center gap-2 rounded-[var(--radius-control,0.4rem)] font-medium whitespace-nowrap transition-colors',
+        'group rounded-control inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap transition-colors',
         VARIANT[button.variant],
         SIZE[size],
         className,

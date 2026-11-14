@@ -99,7 +99,7 @@ export function EmailSettingsPanel() {
           type="button"
           aria-label={w.insertVariable}
           title={w.insertVariable}
-          className="border-input hover:bg-accent flex size-9 shrink-0 items-center justify-center rounded-[var(--radius-control)] border [&_svg]:size-4"
+          className="border-input hover:bg-accent rounded-control flex size-9 shrink-0 items-center justify-center border [&_svg]:size-4"
         >
           <Braces aria-hidden="true" />
         </button>
@@ -163,7 +163,7 @@ export function EmailSettingsPanel() {
           <TabsContent value="general" className="space-y-4 p-4">
             <MultilingualToggle />
             {/* What the reader sees before opening it. */}
-            <div className="border-border bg-card rounded-[var(--radius-control)] border p-3">
+            <div className="border-border bg-card rounded-control border p-3">
               <p className="text-muted-foreground mb-2 text-[11px] font-semibold tracking-wider uppercase">
                 {w.inboxPreview}
               </p>
@@ -240,7 +240,7 @@ export function EmailSettingsPanel() {
                     <code
                       key={variable.path}
                       title={variable.label}
-                      className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[11px] text-blue-700 dark:text-blue-300"
+                      className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[11px] text-[light-dark(var(--bst-color-blue-700),var(--bst-color-blue-300))]"
                     >
                       {variable.path}
                     </code>

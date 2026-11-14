@@ -167,7 +167,7 @@ function General() {
         {(id) => (
           <div
             id={id}
-            className="border-border bg-muted/40 text-muted-foreground truncate rounded-[var(--radius-control)] border px-3 py-2 font-mono text-xs"
+            className="border-border bg-muted/40 text-muted-foreground rounded-control truncate border px-3 py-2 font-mono text-xs"
           >
             {pathOf(siteUrl)}/{article.slug}
           </div>
@@ -282,11 +282,11 @@ function Seo() {
     <>
       {at('preview')}
       {/* The result as a search engine would list it. */}
-      <div className="border-border bg-card space-y-0.5 rounded-[var(--radius-control)] border p-3">
+      <div className="border-border bg-card rounded-control space-y-0.5 border p-3">
         <p className="text-muted-foreground truncate text-xs">
           {[...breadcrumbOf(siteUrl), article.slug].join(' › ')}
         </p>
-        <p className="line-clamp-1 text-[15px] font-medium text-[#1a0dab] dark:text-[#8ab4f8]">
+        <p className="line-clamp-1 text-[15px] font-medium text-[light-dark(#1a0dab,#8ab4f8)]">
           {title || messages.untitled}
         </p>
         <p className="text-muted-foreground line-clamp-2 text-xs">{description}</p>

@@ -18,6 +18,7 @@
 @import './keyframes.css';
 @import 'tailwindcss/utilities.css' prefix(bst) source(none);
 @import './rules.css';
+@import './canvas.css';
 @import './panel.css';
 
 @source '../editor';

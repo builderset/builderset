@@ -301,7 +301,7 @@ export function SchemaField(props: FieldProps) {
         );
       }
       return (
-        <fieldset className="border-border space-y-3 rounded-[var(--radius-control)] border p-3">
+        <fieldset className="border-border rounded-control space-y-3 border p-3">
           <legend className="px-1 text-xs font-semibold">{label}</legend>
           <ObjectFields
             schema={schema}
@@ -406,7 +406,7 @@ function ArrayField({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.16 }}
-              className="border-border bg-card overflow-hidden rounded-[var(--radius-control)] border"
+              className="border-border bg-card rounded-control overflow-hidden border"
             >
               {simple ? (
                 <div className="flex items-start gap-2 p-2">

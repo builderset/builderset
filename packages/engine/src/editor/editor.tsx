@@ -26,7 +26,6 @@ import {
 import { Canvas } from './canvas/canvas';
 import { PortalProvider } from './ui/portal';
 import { HistorySheet } from './chrome/history-sheet';
-import { PANEL_CSS } from './chrome/panel-css';
 import { SideDrawer } from './chrome/side-drawer';
 import { StatusBar } from './chrome/status-bar';
 import { TopBar } from './chrome/top-bar';
@@ -222,7 +221,6 @@ export function BuilderEditor<
     <EditorProvider value={value}>
       <PortalProvider>
         <TooltipProvider>
-          <style>{PANEL_CSS}</style>
           <Workspace {...props} store={store} messages={messages} />
         </TooltipProvider>
       </PortalProvider>

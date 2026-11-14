@@ -27,7 +27,7 @@ export function BeforeAfter({
   const [position, setPosition] = useState(start);
 
   return (
-    <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-[var(--radius-card,0.625rem)] select-none">
+    <div className="bg-muted rounded-card relative aspect-[16/10] w-full overflow-hidden select-none">
       <div className="absolute inset-0 [&>*]:size-full [&>*]:object-cover">{after}</div>
       <div
         className="absolute inset-0 [&>*]:size-full [&>*]:object-cover"

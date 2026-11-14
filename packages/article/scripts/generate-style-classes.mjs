@@ -16,7 +16,7 @@ const PROPS = {
   paddingY: scale('py'),
   width: {
     auto: '',
-    prose: 'max-w-[var(--maxw-prose,68ch)]',
+    prose: 'max-w-measure',
     wide: 'max-w-5xl',
     full: 'w-full max-w-none',
   },
@@ -49,8 +49,8 @@ const PROPS = {
   },
   radius: {
     none: 'rounded-none',
-    sm: 'rounded-[var(--radius-control,0.4rem)]',
-    md: 'rounded-[var(--radius-card,0.625rem)]',
+    sm: 'rounded-control',
+    md: 'rounded-card',
     lg: 'rounded-2xl',
     full: 'rounded-full',
   },

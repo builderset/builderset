@@ -104,7 +104,7 @@ export function HistorySheet({ open, onClose }: { open: boolean; onClose: () => 
           {revisions.map((revision) => (
             <li
               key={revision.id}
-              className="border-border bg-card flex items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2"
+              className="border-border bg-card rounded-control flex items-center gap-3 border px-3 py-2"
             >
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">

@@ -211,7 +211,7 @@ export function QuoteView({
   return (
     <figure {...frameProps(frame, 'my-8')}>
       <blockquote
-        className="border-primary bg-muted/50 rounded-r-[var(--radius-card,0.625rem)] border-l-2 px-6 py-5 text-lg leading-relaxed font-medium"
+        className="border-primary bg-muted/50 rounded-r-card border-l-2 px-6 py-5 text-lg leading-relaxed font-medium"
         {...(props.source ? { cite: props.source } : {})}
       >
         <RichTextView
@@ -284,10 +284,7 @@ export function CalloutView({
   return (
     <aside
       role="note"
-      {...frameProps(
-        frame,
-        cn('my-8 flex gap-3.5 rounded-[var(--radius-card,0.625rem)] border px-5 py-4', tone.box),
-      )}
+      {...frameProps(frame, cn('my-8 flex gap-3.5 rounded-card border px-5 py-4', tone.box))}
     >
       {props.showIcon ? (
         <tone.Icon className={cn('mt-0.5 size-5 shrink-0', tone.icon)} aria-hidden="true" />
@@ -310,19 +307,19 @@ export function CalloutView({
 const TOKEN_CLASS: Record<string, string> = {
   comment: 'text-muted-foreground italic',
   prolog: 'text-muted-foreground',
-  keyword: 'text-violet-600 dark:text-violet-400',
-  builtin: 'text-violet-600 dark:text-violet-400',
-  string: 'text-emerald-700 dark:text-emerald-400',
-  char: 'text-emerald-700 dark:text-emerald-400',
-  'attr-value': 'text-emerald-700 dark:text-emerald-400',
-  number: 'text-amber-700 dark:text-amber-400',
-  boolean: 'text-amber-700 dark:text-amber-400',
-  constant: 'text-amber-700 dark:text-amber-400',
-  function: 'text-sky-700 dark:text-sky-400',
-  'class-name': 'text-sky-700 dark:text-sky-400',
-  tag: 'text-rose-700 dark:text-rose-400',
-  'attr-name': 'text-sky-700 dark:text-sky-400',
-  property: 'text-sky-700 dark:text-sky-400',
+  keyword: 'text-[light-dark(var(--bst-color-violet-600),var(--bst-color-violet-400))]',
+  builtin: 'text-[light-dark(var(--bst-color-violet-600),var(--bst-color-violet-400))]',
+  string: 'text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  char: 'text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  'attr-value': 'text-[light-dark(var(--bst-color-emerald-700),var(--bst-color-emerald-400))]',
+  number: 'text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  boolean: 'text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  constant: 'text-[light-dark(var(--bst-color-amber-700),var(--bst-color-amber-400))]',
+  function: 'text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  'class-name': 'text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  tag: 'text-[light-dark(var(--bst-color-rose-700),var(--bst-color-rose-400))]',
+  'attr-name': 'text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
+  property: 'text-[light-dark(var(--bst-color-sky-700),var(--bst-color-sky-400))]',
   operator: 'text-foreground/70',
   punctuation: 'text-foreground/60',
 };
@@ -368,10 +365,7 @@ export function CodeView({
   const highlighted = parseLineSpec(props.highlight);
   return (
     <figure
-      {...frameProps(
-        frame,
-        'border-border bg-card my-8 overflow-hidden rounded-[var(--radius-card,0.625rem)] border',
-      )}
+      {...frameProps(frame, 'border-border bg-card my-8 overflow-hidden rounded-card border')}
     >
       <figcaption className="border-border bg-muted/50 flex items-center justify-between gap-3 border-b py-1.5 pr-1.5 pl-4">
         <span className="text-muted-foreground truncate font-mono text-xs">
@@ -390,7 +384,8 @@ export function CodeView({
               key={index}
               className={cn(
                 'px-4',
-                highlighted.has(index + 1) && 'bg-primary/10 shadow-[inset_2px_0_0_var(--primary)]',
+                highlighted.has(index + 1) &&
+                  'bg-primary/10 shadow-[inset_2px_0_0_var(--builderset-primary,var(--bst-d-primary))]',
               )}
             >
               {props.lineNumbers ? (
@@ -427,7 +422,7 @@ export function TableView({
   const rows = props.headerRow ? body : props.rows;
   return (
     <figure {...frameProps(frame, 'my-8')}>
-      <div className="border-border overflow-x-auto rounded-[var(--radius-card,0.625rem)] border">
+      <div className="border-border rounded-card overflow-x-auto border">
         <table className="w-full border-collapse text-sm">
           {props.headerRow && head ? (
             <thead className="bg-muted/60">
@@ -512,10 +507,7 @@ export function TakeawaysView({
 }: ElementRenderProps<PropsOf<typeof takeawaysElement>>) {
   return (
     <aside
-      {...frameProps(
-        frame,
-        'border-primary/25 bg-primary/5 my-8 rounded-[var(--radius-card,0.625rem)] border px-6 py-5',
-      )}
+      {...frameProps(frame, 'border-primary/25 bg-primary/5 my-8 rounded-card border px-6 py-5')}
     >
       {props.title ? (
         <p className="text-foreground mb-3 text-sm font-semibold tracking-wide uppercase">

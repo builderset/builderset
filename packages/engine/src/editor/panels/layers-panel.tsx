@@ -212,7 +212,7 @@ function Row({
         onKeyDown={onKeyDown}
         style={{ paddingLeft: 6 + depth * 14 }}
         className={cn(
-          'group relative flex h-8 cursor-pointer items-center gap-1.5 rounded-[var(--radius-control)] pr-1 transition-[background-color,opacity] duration-150 outline-none data-[dragging]:opacity-40',
+          'group rounded-control relative flex h-8 cursor-pointer items-center gap-1.5 pr-1 transition-[background-color,opacity] duration-150 outline-none data-[dragging]:opacity-40',
           selected ? 'bg-primary/10 text-foreground' : 'hover:bg-accent/60',
           'focus-visible:ring-ring/50 focus-visible:ring-2',
           showDrop === 'inside' && 'ring-primary ring-2',

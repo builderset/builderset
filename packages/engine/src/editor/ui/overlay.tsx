@@ -43,9 +43,9 @@ function Backdrop({ className, ...props }: ComponentProps<typeof DialogPrimitive
   return (
     <DialogPrimitive.Overlay
       className={cn(
-        'fixed inset-0 z-50 bg-[var(--scrim)] backdrop-blur-sm',
-        'data-[state=open]:animate-[ui-fade-in_var(--dur-overlay-in)_var(--ease-enter)]',
-        'data-[state=closed]:animate-[ui-fade-out_var(--dur-overlay)_var(--ease-exit)]',
+        'fixed inset-0 z-50 bg-(--bst-scrim) backdrop-blur-sm',
+        'data-[state=open]:animate-[bst-fade-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+        'data-[state=closed]:animate-[bst-fade-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
         className,
       )}
       {...props}
@@ -104,8 +104,8 @@ function CloseButton({ label }: { label: string }) {
     <DialogPrimitive.Close
       aria-label={label}
       className={cn(
-        'ui-focus absolute top-3 right-3 z-10 rounded-[var(--radius-control)] p-1.5',
-        'text-muted-foreground transition-colors duration-(--dur-1)',
+        'bld-focus rounded-control absolute top-3 right-3 z-10 p-1.5',
+        'text-muted-foreground transition-colors duration-(--bst-dur-1)',
         'hover:bg-accent hover:text-foreground',
         ICON_MOTION,
       )}
@@ -141,15 +141,15 @@ export function DialogPanel({
           // of that is separating it from something that has nothing left to be
           // separated from, and in dark mode an outward bloom on a dark panel
           // over a dark scrim just smudges its edge.
-          'bg-background flex-col rounded-[var(--radius-card)] outline-none',
+          'bg-background rounded-card flex-col outline-none',
           // The panel is capped at the viewport and its BODY scrolls, not the
           // page behind it — otherwise a tall dialog on a short window puts its
           // footer somewhere unreachable.
           'max-h-[calc(100dvh-2rem)]',
           pad === 'md' && 'p-6',
           pad === 'lg' && 'p-8',
-          'data-[state=open]:animate-[ui-zoom-in_var(--dur-overlay-in)_var(--ease-enter)]',
-          'data-[state=closed]:animate-[ui-zoom-out_var(--dur-overlay)_var(--ease-exit)]',
+          'data-[state=open]:animate-[bst-zoom-in_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+          'data-[state=closed]:animate-[bst-zoom-out_var(--bst-dur-overlay)_var(--bst-ease-exit)]',
           className,
         )}
         {...props}
@@ -204,18 +204,18 @@ export function DrawerPanel({
                 // Below `sm` it is a bottom sheet whichever side was asked for:
                 // a panel inset from the right on a 360px screen leaves a
                 // 40px strip of page nobody can use.
-                'inset-x-0 bottom-0 max-h-[92dvh] rounded-t-[var(--radius-card)]',
+                'rounded-t-card inset-x-0 bottom-0 max-h-[92dvh]',
                 'sm:inset-y-4 sm:right-4 sm:left-auto sm:max-h-none sm:w-[min(35rem,calc(100vw-2rem))]',
-                'sm:rounded-[var(--radius-card)]',
-                'data-[state=open]:animate-[ui-slide-in-bottom_var(--dur-overlay-in)_var(--ease-enter)]',
-                'data-[state=closed]:animate-[ui-slide-out-bottom_var(--dur-3)_var(--ease-exit)]',
-                'sm:data-[state=open]:animate-[ui-slide-in-right_var(--dur-overlay-in)_var(--ease-enter)]',
-                'sm:data-[state=closed]:animate-[ui-slide-out-right_var(--dur-3)_var(--ease-exit)]',
+                'sm:rounded-card',
+                'data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
+                'sm:data-[state=open]:animate-[bst-slide-in-right_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'sm:data-[state=closed]:animate-[bst-slide-out-right_var(--bst-dur-3)_var(--bst-ease-exit)]',
               )
             : cn(
-                'inset-x-0 bottom-0 max-h-[92dvh] rounded-t-[var(--radius-card)]',
-                'data-[state=open]:animate-[ui-slide-in-bottom_var(--dur-overlay-in)_var(--ease-enter)]',
-                'data-[state=closed]:animate-[ui-slide-out-bottom_var(--dur-3)_var(--ease-exit)]',
+                'rounded-t-card inset-x-0 bottom-0 max-h-[92dvh]',
+                'data-[state=open]:animate-[bst-slide-in-bottom_var(--bst-dur-overlay-in)_var(--bst-ease-enter)]',
+                'data-[state=closed]:animate-[bst-slide-out-bottom_var(--bst-dur-3)_var(--bst-ease-exit)]',
               ),
           className,
         )}

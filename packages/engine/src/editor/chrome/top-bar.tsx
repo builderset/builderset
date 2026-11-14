@@ -194,7 +194,7 @@ export function TopBar(actions: TopBarActions) {
         <div className="ml-1 flex min-w-0 items-center gap-2">
           <span className="truncate text-sm font-semibold">{title || messages.untitled}</span>
           <Badge
-            tone={published ? 'finalized' : scheduled ? 'scheduled' : 'pending'}
+            tone={published ? 'published' : scheduled ? 'scheduled' : 'draft'}
             className="hidden shrink-0 sm:inline-flex"
           >
             {messages[statusKey]}
@@ -203,7 +203,7 @@ export function TopBar(actions: TopBarActions) {
       </div>
 
       {/* ── Center: view controls, one group ── */}
-      <div className="border-border bg-background/70 flex items-center gap-0.5 rounded-[var(--radius-control)] border p-0.5 shadow-xs">
+      <div className="border-border bg-background/70 rounded-control flex items-center gap-0.5 border p-0.5 shadow-xs">
         <Tooltip
           content={canUndo ? `${messages.undo}: ${undoLabel ?? ''}` : messages.nothingToUndo}
         >

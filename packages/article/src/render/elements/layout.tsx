@@ -39,7 +39,7 @@ const SECTION_PADDING = {
 } as const;
 
 const WIDTH = {
-  prose: 'max-w-[var(--maxw-prose,68ch)]',
+  prose: 'max-w-measure',
   wide: 'max-w-5xl',
   full: 'max-w-none',
 } as const;
@@ -59,7 +59,7 @@ export function SectionView({
   const merged = frameProps(
     frame,
     cn(
-      'my-10 rounded-[var(--radius-card,0.625rem)] px-5 sm:px-8',
+      'my-10 rounded-card px-5 sm:px-8',
       SECTION_BACKGROUND[props.background],
       SECTION_PADDING[props.paddingY],
     ),

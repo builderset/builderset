@@ -89,7 +89,7 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
 
       {/* The orbit — dashed, and turning slowly with one dot riding it. */}
       <span className="border-border absolute inset-2 rounded-full border border-dashed" />
-      <span className="absolute inset-2 animate-[ui-spin_14s_linear_infinite] rounded-full">
+      <span className="absolute inset-2 animate-[bst-spin_14s_linear_infinite] rounded-full">
         <span className="bg-primary ring-card absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2" />
       </span>
       <span
@@ -103,7 +103,7 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
         <span
           key={`${String(dot.x)}-${String(dot.y)}`}
           className={cn(
-            'absolute animate-[ui-particle_3.2s_ease-in-out_infinite] rounded-full',
+            'absolute animate-[bst-particle_3.2s_ease-in-out_infinite] rounded-full',
             dot.primary ? 'bg-primary/70' : 'bg-muted-foreground/50',
           )}
           style={{
@@ -119,7 +119,7 @@ function EmptyArt({ icon, compact }: { icon: ReactNode; compact: boolean }) {
         <svg
           key={`${String(star.x)}-${String(star.y)}`}
           viewBox="0 0 10 10"
-          className="text-primary/80 absolute animate-[ui-particle_3.6s_ease-in-out_infinite]"
+          className="text-primary/80 absolute animate-[bst-particle_3.6s_ease-in-out_infinite]"
           style={{
             left: `${String(star.x)}%`,
             top: `${String(star.y)}%`,
@@ -181,11 +181,11 @@ export function EmptyState({
     <div
       className={cn(
         'flex flex-1 flex-col items-center justify-center text-center',
-        'animate-[ui-rise_var(--dur-4)_var(--ease-enter)]',
+        'animate-[bst-rise_var(--bst-dur-4)_var(--bst-ease-enter)]',
         // The same floor the other two states hold, so a table does not change
         // height as it moves between loading, empty and broken.
         compact ? 'min-h-72 px-5 py-8' : 'min-h-80 px-6 py-12',
-        bordered && 'border-border bg-muted/20 rounded-[var(--radius-card)] border border-dashed',
+        bordered && 'border-border bg-muted/20 rounded-card border border-dashed',
         className,
       )}
     >

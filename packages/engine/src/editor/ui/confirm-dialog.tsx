@@ -192,7 +192,7 @@ export function ConfirmDialog({
                 // job is one question, and at 48 it read as an icon beside the
                 // title rather than as the thing the title explains.
                 'flex size-14 items-center justify-center rounded-full',
-                'animate-[ui-zoom-in_var(--dur-3)_var(--ease-enter)]',
+                'animate-[bst-zoom-in_var(--bst-dur-3)_var(--bst-ease-enter)]',
                 palette.badge,
               )}
             >
@@ -212,7 +212,7 @@ export function ConfirmDialog({
         {error ? (
           <p
             role="alert"
-            className="border-destructive/30 bg-destructive/10 text-destructive mx-8 mb-6 rounded-[var(--radius-control)] border px-3 py-2 text-sm"
+            className="border-destructive/30 bg-destructive/10 text-destructive rounded-control mx-8 mb-6 border px-3 py-2 text-sm"
           >
             {error}
           </p>

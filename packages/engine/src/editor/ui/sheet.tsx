@@ -113,8 +113,8 @@ export function Sheet({ open, onClose, title, description, children, className }
           <OverlayClose
             aria-label={messages.close}
             className={cn(
-              'ui-focus text-muted-foreground hover:text-foreground hover:bg-accent border-border grid size-9 shrink-0 cursor-pointer place-items-center rounded-[var(--radius-control)] border',
-              'transition-[background-color,color,scale] duration-(--dur-2) active:scale-90',
+              'bld-focus text-muted-foreground hover:text-foreground hover:bg-accent border-border rounded-control grid size-9 shrink-0 cursor-pointer place-items-center border',
+              'transition-[background-color,color,scale] duration-(--bst-dur-2) active:scale-90',
               ICON_MOTION,
             )}
           >
@@ -159,8 +159,8 @@ export function SheetOption({ icon, name, description, selected, onSelect }: She
         onClick={onSelect}
         aria-current={selected}
         className={cn(
-          'ui-focus flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-card)] border p-3 text-left',
-          'transition-colors duration-(--dur-2)',
+          'bld-focus rounded-card flex w-full cursor-pointer items-center gap-3 border p-3 text-left',
+          'transition-colors duration-(--bst-dur-2)',
           selected
             ? 'border-primary/50 bg-primary/8'
             : 'border-border bg-background active:bg-accent',
@@ -233,8 +233,8 @@ export function SheetAction({
         type="button"
         onClick={onSelect}
         className={cn(
-          'ui-focus flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-card)] border p-3 text-left',
-          'transition-colors duration-(--dur-2)',
+          'bld-focus rounded-card flex w-full cursor-pointer items-center gap-3 border p-3 text-left',
+          'transition-colors duration-(--bst-dur-2)',
           destructive
             ? 'border-destructive/30 bg-destructive/5 active:bg-destructive/10'
             : 'border-border bg-background active:bg-accent',

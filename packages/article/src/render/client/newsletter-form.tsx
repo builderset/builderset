@@ -44,7 +44,7 @@ export function NewsletterForm({
     return (
       <p
         role="status"
-        className="text-foreground animate-[ui-rise_220ms_ease-out] text-sm font-medium"
+        className="text-foreground animate-[bst-rise_220ms_ease-out] text-sm font-medium"
       >
         {done}
       </p>
@@ -67,13 +67,13 @@ export function NewsletterForm({
           name="email"
           required
           placeholder={placeholder}
-          className="border-border bg-background focus:border-border-strong h-11 w-full rounded-[var(--radius-control,0.4rem)] border pr-3 pl-9 text-sm outline-none"
+          className="border-border bg-background focus:border-border-strong rounded-control h-11 w-full border pr-3 pl-9 text-sm outline-none"
         />
       </label>
       <button
         type="submit"
         disabled={state === 'sending'}
-        className="bg-primary text-primary-foreground hover:bg-primary/85 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-[var(--radius-control,0.4rem)] px-5 text-sm font-semibold transition-colors disabled:opacity-70"
+        className="bg-primary text-primary-foreground hover:bg-primary/85 rounded-control inline-flex h-11 cursor-pointer items-center justify-center gap-2 px-5 text-sm font-semibold transition-colors disabled:opacity-70"
       >
         {state === 'sending' ? (
           <Loader2 className="size-4 animate-spin" aria-hidden="true" />

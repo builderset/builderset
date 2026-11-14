@@ -79,7 +79,7 @@ export function InsertMenu({
                   onChoose(choice.type);
                 }}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-[var(--radius-control)] px-2 py-1.5 text-left',
+                  'rounded-control flex w-full items-center gap-3 px-2 py-1.5 text-left',
                   index === active ? 'bg-accent' : '',
                 )}
               >

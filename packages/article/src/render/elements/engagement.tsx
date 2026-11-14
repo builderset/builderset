@@ -34,7 +34,7 @@ export function CtaView({ props, frame, context }: ElementRenderProps<PropsOf<ty
         frame,
         cn(
           'my-12 px-6 py-10 sm:px-10',
-          props.layout === 'card' ? 'rounded-[var(--radius-card,0.625rem)]' : '-mx-4 sm:-mx-8',
+          props.layout === 'card' ? 'rounded-card' : '-mx-4 sm:-mx-8',
           CTA_TONE[props.tone],
           center ? 'text-center' : 'text-start',
         ),
@@ -105,7 +105,7 @@ function RelatedCard({
   return (
     <Link
       href={editing ? '#' : item.href}
-      className="group border-border bg-card hover:border-border-strong flex flex-col overflow-hidden rounded-[var(--radius-card,0.625rem)] border transition-colors"
+      className="group border-border bg-card hover:border-border-strong rounded-card flex flex-col overflow-hidden border transition-colors"
     >
       {item.cover ? (
         <img
@@ -167,7 +167,7 @@ export function NewsletterView({
     <section
       {...frameProps(
         frame,
-        'border-border bg-muted/40 my-12 rounded-[var(--radius-card,0.625rem)] border px-6 py-8 sm:px-8',
+        'border-border bg-muted/40 my-12 rounded-card border px-6 py-8 sm:px-8',
       )}
     >
       {props.title ? <h2 className="text-xl font-semibold tracking-tight">{props.title}</h2> : null}
@@ -194,12 +194,7 @@ export function AccordionView({
   children,
 }: ElementRenderProps<PropsOf<typeof accordionElement>>) {
   return (
-    <div
-      {...frameProps(
-        frame,
-        'divide-border border-border my-8 divide-y rounded-[var(--radius-card,0.625rem)] border',
-      )}
-    >
+    <div {...frameProps(frame, 'divide-border border-border my-8 divide-y rounded-card border')}>
       {children}
     </div>
   );
@@ -230,7 +225,9 @@ export function AccordionItemView({
           aria-hidden="true"
         />
       </summary>
-      <div className="animate-[ui-rise_220ms_ease-out] pb-4 [&>*:first-child]:mt-0">{children}</div>
+      <div className="animate-[bst-rise_220ms_ease-out] pb-4 [&>*:first-child]:mt-0">
+        {children}
+      </div>
     </details>
   );
 }

@@ -90,8 +90,7 @@ export function AlignButtons({
       aria-label={label}
       className={cn(
         'flex gap-0.5',
-        tone === 'panel' &&
-          'border-border bg-muted/40 w-full rounded-[var(--radius-control)] border p-0.5',
+        tone === 'panel' && 'border-border bg-muted/40 rounded-control w-full border p-0.5',
       )}
     >
       {options.map((option) => {
@@ -172,7 +171,7 @@ export function FontField({
           <button
             id={id}
             type="button"
-            className="border-input bg-background hover:bg-accent/40 flex h-9 w-full items-center justify-between gap-2 rounded-[var(--radius-control)] border px-3 text-left text-sm"
+            className="border-input bg-background hover:bg-accent/40 rounded-control flex h-9 w-full items-center justify-between gap-2 border px-3 text-left text-sm"
           >
             <span className="truncate" style={current ? { fontFamily: current.stack } : undefined}>
               {current?.label ?? messages.inheritFont}
@@ -252,7 +251,7 @@ function FontOption({
       type="button"
       onClick={onSelect}
       className={cn(
-        'flex w-full cursor-pointer items-center gap-2 rounded-[var(--radius-control)] px-2 py-1.5 text-left',
+        'rounded-control flex w-full cursor-pointer items-center gap-2 px-2 py-1.5 text-left',
         active ? 'bg-accent' : 'hover:bg-accent/60',
       )}
     >

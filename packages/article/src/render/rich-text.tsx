@@ -29,10 +29,7 @@ function wrap(node: ReactNode, mark: Mark, context: RenderContext, key: string):
       return <s key={key}>{node}</s>;
     case 'code':
       return (
-        <code
-          key={key}
-          className="bg-muted rounded-[var(--radius-control,0.4rem)] px-1.5 py-0.5 font-mono text-[0.9em]"
-        >
+        <code key={key} className="bg-muted rounded-control px-1.5 py-0.5 font-mono text-[0.9em]">
           {node}
         </code>
       );

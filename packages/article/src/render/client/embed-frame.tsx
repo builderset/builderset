@@ -30,14 +30,14 @@ export function EmbedFrame({
 
   return (
     <div
-      className="bg-muted border-border relative w-full overflow-hidden rounded-[var(--radius-card,0.625rem)] border"
+      className="bg-muted border-border rounded-card relative w-full overflow-hidden border"
       style={{ aspectRatio: String(aspect) }}
     >
       {loaded && !inert ? (
         <iframe
           src={src}
           title={title || providerName}
-          className="absolute inset-0 size-full animate-[ui-fade-in_220ms_ease-out] border-0"
+          className="absolute inset-0 size-full animate-[bst-fade-in_220ms_ease-out] border-0"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"

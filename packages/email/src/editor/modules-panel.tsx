@@ -89,7 +89,7 @@ export function ModulesPanel() {
         onClick={() => {
           window.dispatchEvent(new CustomEvent(OPEN_IMPORT_HTML));
         }}
-        className="border-primary/40 bg-primary/5 hover:bg-primary/10 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border border-dashed px-3 py-3 text-left transition-[colors,transform] active:scale-[0.98]"
+        className="border-primary/40 bg-primary/5 hover:bg-primary/10 rounded-control flex w-full cursor-pointer items-center gap-3 border border-dashed px-3 py-3 text-left transition-[colors,transform] active:scale-[0.98]"
       >
         <FileCode2 className="text-primary size-5 shrink-0" aria-hidden="true" />
         <span className="min-w-0 flex-1">
@@ -146,7 +146,7 @@ export function ModulesPanel() {
               onClick={() => {
                 insert(module.fragment, module.name);
               }}
-              className="border-border bg-card hover:border-primary/50 flex w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
+              className="border-border bg-card hover:border-primary/50 rounded-control flex w-full cursor-pointer items-center gap-3 border px-3 py-2.5 text-left transition-[colors,transform] active:scale-[0.98]"
             >
               <Boxes className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
               <span className="min-w-0 flex-1 truncate text-sm">{module.name}</span>

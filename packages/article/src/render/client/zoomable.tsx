@@ -37,7 +37,7 @@ export function Zoomable({
           // A press on the backdrop (the dialog itself, not its content) closes.
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
-        className="m-auto max-h-[92vh] max-w-[94vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm open:animate-[ui-zoom-in_220ms_ease-out]"
+        className="m-auto max-h-[92vh] max-w-[94vw] overflow-visible bg-transparent p-0 backdrop:bg-black/80 backdrop:backdrop-blur-sm open:animate-[bst-zoom-in_220ms_ease-out]"
       >
         <div className="relative [&_img]:max-h-[88vh] [&_img]:w-auto [&_img]:rounded-lg">
           {full}

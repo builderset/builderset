@@ -46,7 +46,7 @@ export function AddPanel() {
   return (
     <div className="flex h-full flex-col">
       <div className="p-3">
-        <label className="border-input bg-background focus-within:ring-ring/40 flex h-9 items-center gap-2 rounded-[var(--radius-control)] border px-2.5 focus-within:ring-2">
+        <label className="border-input bg-background focus-within:ring-ring/40 rounded-control flex h-9 items-center gap-2 border px-2.5 focus-within:ring-2">
           <Search className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
           <input
             value={query}
@@ -105,7 +105,7 @@ export function AddPanel() {
                       onClick={() => {
                         insertStructure(structure.build);
                       }}
-                      className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 flex cursor-grab flex-col items-center gap-2 rounded-[var(--radius-control)] border px-2 py-3 transition-[colors,transform] active:scale-95 active:cursor-grabbing"
+                      className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 rounded-control flex cursor-grab flex-col items-center gap-2 border px-2 py-3 transition-[colors,transform] active:scale-95 active:cursor-grabbing"
                     >
                       {structure.icon}
                       <span className="text-xs font-medium">{structure.label}</span>
@@ -165,7 +165,7 @@ function Grid({
           key={choice.type}
           type="button"
           style={{
-            animation: 'ui-rise var(--dur-3, 220ms) var(--ease-enter, ease-out) both',
+            animation: 'bst-rise var(--bst-dur-3, 220ms) cubic-bezier(0.22, 1, 0.36, 1) both',
             animationDelay: `${String(Math.min(index, 10) * 12)}ms`,
           }}
           draggable
@@ -182,7 +182,7 @@ function Grid({
             onInsert(choice.type);
           }}
           title={choice.description}
-          className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 flex cursor-grab flex-col items-center gap-1.5 rounded-[var(--radius-control)] border px-2 py-3 text-center transition-[colors,transform] active:scale-95 active:cursor-grabbing"
+          className="group border-border bg-card hover:border-primary/50 hover:bg-accent/40 rounded-control flex cursor-grab flex-col items-center gap-1.5 border px-2 py-3 text-center transition-[colors,transform] active:scale-95 active:cursor-grabbing"
         >
           <ElementIcon
             name={choice.icon}

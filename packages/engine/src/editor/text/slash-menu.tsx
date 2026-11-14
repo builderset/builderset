@@ -113,7 +113,7 @@ export function SlashMenu({
       initial={{ opacity: 0, y: -4, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.14 }}
-      className="border-border bg-popover text-popover-foreground fixed z-[80] max-h-72 w-72 overflow-y-auto rounded-[var(--radius-card)] border p-1 shadow-lg"
+      className="border-border bg-popover text-popover-foreground rounded-card fixed z-[80] max-h-72 w-72 overflow-y-auto border p-1 shadow-lg"
       style={{ left: coords.left, top: coords.bottom + 6 }}
     >
       {matches.length === 0 ? (
@@ -134,7 +134,7 @@ export function SlashMenu({
               onChoose(choice.type);
             }}
             className={cn(
-              'flex w-full items-center gap-3 rounded-[var(--radius-control)] px-2 py-1.5 text-left',
+              'rounded-control flex w-full items-center gap-3 px-2 py-1.5 text-left',
               index === activeIndex ? 'bg-accent' : 'hover:bg-accent/60',
             )}
           >

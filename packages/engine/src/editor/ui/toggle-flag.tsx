@@ -71,10 +71,10 @@ export function ToggleFlag({
       htmlFor={switchId}
       data-state={checked ? 'checked' : 'unchecked'}
       className={cn(
-        'group/flag flex cursor-pointer items-center gap-4 rounded-[var(--radius-card)] border px-4 py-3.5',
-        'transition-[border-color,background-color,box-shadow] duration-(--dur-2) ease-(--ease-enter)',
+        'group/flag rounded-card flex cursor-pointer items-center gap-4 border px-4 py-3.5',
+        'ease-enter transition-[border-color,background-color,box-shadow] duration-(--bst-dur-2)',
         checked
-          ? 'border-primary bg-primary/[0.04] shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary)_8%,transparent)] hover:border-dashed'
+          ? 'border-primary bg-primary/[0.04] shadow-[0_0_0_3px_color-mix(in_oklch,var(--builderset-primary,var(--bst-d-primary))_8%,transparent)] hover:border-dashed'
           : 'border-border bg-card hover:border-border-strong hover:border-dashed',
         disabled && 'pointer-events-none cursor-not-allowed opacity-60',
         className,

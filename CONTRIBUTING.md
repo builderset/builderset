@@ -22,6 +22,18 @@ pnpm format:check
 
 CI runs the same, and the tests on Node 20, 22 and 24 once merged.
 
+## Branches
+
+| Branch        | What it is                                                          |
+| ------------- | ------------------------------------------------------------------- |
+| `development` | Where work lands. The default branch; every pull request targets it |
+| `staging`     | Promoted from `development` by a merge; pre-releases come from here |
+| `production`  | Promoted from `staging` by a merge; releases come from here         |
+
+A change starts on a short branch from `development` (`feat/…`, `fix/…`,
+`chore/…`) and comes back through a pull request. Nothing is committed to
+`staging` or `production` directly.
+
 ## Rules
 
 1. **One change, one pull request.** A refactor and a feature in one pull

@@ -10,6 +10,8 @@ The article builder: a block editor for long-form writing, a typed JSON document
 npm install @builderset/article
 ```
 
+Also inside [`builderset`](../builderset/README.md), with every other kit, as `builderset/article/…`. Install one or the other: both at different versions put two engines in the page.
+
 `react` and `react-dom` 19 for the editor and the renderer. The `core` and `host` entries need neither and run on Node 20 or newer.
 
 ## The smallest working example

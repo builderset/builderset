@@ -1,0 +1,136 @@
+{
+  "name": "builderset",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Block builders for React: email and article editors on one engine, with a typed JSON document any backend can validate and render.",
+  "license": "MIT",
+  "keywords": [
+    "block-editor",
+    "email-builder",
+    "article-editor",
+    "page-builder",
+    "drag-and-drop",
+    "react",
+    "json-schema"
+  ],
+  "homepage": "https://github.com/mkurtii/builderset/tree/development/packages/builderset#readme",
+  "bugs": "https://github.com/mkurtii/builderset/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkurtii/builderset.git",
+    "directory": "packages/builderset"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "default": "./dist/engine/index.js"
+    },
+    "./engine/host": {
+      "types": "./dist/engine/host.d.ts",
+      "default": "./dist/engine/host.js"
+    },
+    "./engine/editor": {
+      "types": "./dist/engine/editor.d.ts",
+      "default": "./dist/engine/editor.js"
+    },
+    "./engine/ui": {
+      "types": "./dist/engine/ui.d.ts",
+      "default": "./dist/engine/ui.js"
+    },
+    "./engine/locales/*": {
+      "types": "./dist/engine/locales/*.d.ts",
+      "default": "./dist/engine/locales/*.js"
+    },
+    "./email": {
+      "types": "./dist/email/index.d.ts",
+      "default": "./dist/email/index.js"
+    },
+    "./email/render": {
+      "types": "./dist/email/render.d.ts",
+      "default": "./dist/email/render.js"
+    },
+    "./email/host": {
+      "types": "./dist/email/host.d.ts",
+      "default": "./dist/email/host.js"
+    },
+    "./email/editor": {
+      "types": "./dist/email/editor.d.ts",
+      "default": "./dist/email/editor.js"
+    },
+    "./email/locales/*": {
+      "types": "./dist/email/locales/*.d.ts",
+      "default": "./dist/email/locales/*.js"
+    },
+    "./article": {
+      "types": "./dist/article/index.d.ts",
+      "default": "./dist/article/index.js"
+    },
+    "./article/render": {
+      "types": "./dist/article/render.d.ts",
+      "default": "./dist/article/render.js"
+    },
+    "./article/host": {
+      "types": "./dist/article/host.d.ts",
+      "default": "./dist/article/host.js"
+    },
+    "./article/editor": {
+      "types": "./dist/article/editor.d.ts",
+      "default": "./dist/article/editor.js"
+    },
+    "./article/locales/*": {
+      "types": "./dist/article/locales/*.d.ts",
+      "default": "./dist/article/locales/*.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./article/content.css": "./dist/article/content.css",
+    "./theme/shadcn.css": "./dist/theme/shadcn.css",
+    "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/generate.mjs && tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && node ../../tooling/finish-css.mjs dist/styles.css && node scripts/copy-css.mjs",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@builderset/article": "workspace:*",
+    "@builderset/email": "workspace:*",
+    "@builderset/engine": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

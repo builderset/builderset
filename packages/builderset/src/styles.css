@@ -1,0 +1,13 @@
+/*
+ * builderset/styles.css — every editor and the rendered article, from one
+ * file: the engine's stylesheet once, with every kit's classes. Two kit
+ * stylesheets imported side by side would each repeat the engine's rules.
+ *
+ * A site that only shows articles imports builderset/article/content.css,
+ * which is much smaller.
+ */
+@import '../../engine/src/theme/index.css';
+
+@source '../../email/src/editor';
+@source '../../article/src/editor';
+@source '../../article/src/render';

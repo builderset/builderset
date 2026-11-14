@@ -17,7 +17,12 @@ export function useBaseLocale(): ContentLocale {
  * SQ | EN | DE in the top bar, once the document is multi-language: which
  * language the canvas shows and the typing goes to. The base comes first.
  */
-export function LanguageSwitch({ className }: { className?: string }) {
+export function LanguageSwitch({
+  className,
+}: {
+  /** Applied to the segmented control. */
+  className?: string;
+}) {
   const { store, messages, contentLocales } = useEditorContext();
   const doc = useEditor((state) => state.doc);
   const lang = useEditor((state) => state.lang);

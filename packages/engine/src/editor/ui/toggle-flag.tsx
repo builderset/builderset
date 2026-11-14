@@ -39,10 +39,13 @@ export interface ToggleFlagProps {
   defaultChecked?: boolean | undefined;
   /** Controlled, for a surface that owns the value itself. */
   checked?: boolean | undefined;
+  /** Called with the new state each time it is switched. */
   onCheckedChange?: ((checked: boolean) => void) | undefined;
   /** The switch's id, so a validation message or a `Field` can point at it. */
   id?: string | undefined;
+  /** Dims the card and stops it being switched. */
   disabled?: boolean | undefined;
+  /** Applied to the card. */
   className?: string | undefined;
 }
 

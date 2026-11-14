@@ -65,6 +65,7 @@ export function Input({ className, invalid, type = 'text', ...props }: InputProp
 }
 
 export interface TextareaProps extends ComponentProps<'textarea'> {
+  /** Sets `aria-invalid` and the error look together, as on `Input`. */
   invalid?: boolean | undefined;
 }
 

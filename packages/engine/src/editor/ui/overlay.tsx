@@ -54,7 +54,9 @@ function Backdrop({ className, ...props }: ComponentProps<typeof DialogPrimitive
 }
 
 interface PanelProps extends ComponentProps<typeof DialogPrimitive.Content> {
+  /** Leaves out the ✕ in the top corner, for a panel that draws its own close. */
   hideClose?: boolean;
+  /** The ✕ button's accessible name. */
   closeLabel: string;
   /** Cancels the panel's own padding for the flush bands. See the CSS. */
   pad?: '0' | 'md' | 'lg';

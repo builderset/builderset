@@ -22,8 +22,11 @@ import { cn } from '../cn';
  */
 
 export interface EmptyStateProps {
+  /** The heading, naming what is missing. Default: the editor's "No results". */
   title?: string | undefined;
+  /** One sentence under the title on what would go here. Default: the editor's hint for no results. */
   description?: string | undefined;
+  /** Shown in the tile at the centre. Default: an inbox. */
   icon?: ReactNode;
   /** The way out of the empty state — "Add the first line", "Create". */
   action?: ReactNode;
@@ -40,6 +43,7 @@ export interface EmptyStateProps {
    * which already has one.
    */
   bordered?: boolean | undefined;
+  /** Applied to the outer block. */
   className?: string | undefined;
 }
 

@@ -46,13 +46,17 @@ import {
  */
 
 export interface SheetProps {
+  /** Whether the sheet is shown. */
   open: boolean;
+  /** Called when the reader closes it: the ✕, Escape or the backdrop. */
   onClose: () => void;
   /** What is being chosen. Also the panel's accessible name. */
   title: string;
   /** One sentence on what the choice actually changes. */
   description?: string;
+  /** The sheet's body, under the heading; it scrolls when it is taller than the sheet. */
   children: ReactNode;
+  /** Applied to the panel. */
   className?: string;
 }
 
@@ -127,10 +131,15 @@ export function Sheet({ open, onClose, title, description, children, className }
 }
 
 export interface SheetOptionProps {
+  /** Shown in a disc before the name. */
   icon?: ReactNode;
+  /** The choice, as the row's heading. */
   name: string;
+  /** One line on what the choice changes. */
   description?: string;
+  /** Marks the current choice: a filled dot and `aria-current`. */
   selected: boolean;
+  /** Called when the row is pressed. */
   onSelect: () => void;
 }
 
@@ -207,10 +216,15 @@ export function SheetAction({
   destructive,
   onSelect,
 }: {
+  /** Shown in a disc before the name. */
   icon?: ReactNode;
+  /** The action, as the row's heading. */
   name: string;
+  /** One line under the name. */
   description?: string;
+  /** Draws the row in the destructive colour — for signing out or deleting. */
   destructive?: boolean;
+  /** Called when the row is pressed. */
   onSelect: () => void;
 }) {
   return (

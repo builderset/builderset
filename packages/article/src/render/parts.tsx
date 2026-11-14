@@ -61,9 +61,13 @@ export function ButtonLink({
   size = 'md',
   className,
 }: {
+  /** The button as stored: its label, link, look and icon. An external link opens in a new tab. */
   button: ButtonSpec;
+  /** The render context, for the host's link component; in the editor the link goes nowhere. */
   context: RenderContext;
+  /** Its height and text size. Default: `'md'`. */
   size?: keyof typeof SIZE;
+  /** Added to the link's own classes. */
   className?: string;
 }) {
   const Icon = button.icon ? BUTTON_ICON[button.icon] : null;
@@ -102,12 +106,19 @@ export function Picture({
   sizes,
   eager,
 }: {
+  /** The stored media; without it nothing is drawn. */
   media: MediaRef | null | undefined;
+  /** The image's alternative text; `''` for a decorative one. */
   alt: string;
+  /** The render context, for the host's image component and the media's URL. */
   context: RenderContext;
+  /** Passed to the image. */
   className?: string;
+  /** Inline style, passed to the image. */
   style?: React.CSSProperties;
+  /** The image's `sizes` attribute, for picking a responsive source. */
   sizes?: string;
+  /** Loads the image straight away rather than lazily — for a picture at the top of the page. */
   eager?: boolean;
 }): ReactNode {
   if (!media) return null;

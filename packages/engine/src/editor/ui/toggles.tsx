@@ -53,10 +53,15 @@ export interface SegmentedOption<T extends string> {
 }
 
 export interface SegmentedControlProps<T extends string> {
+  /** The selected option's value. */
   value: T;
+  /** Called with the option the reader picks; pressing the selected one again does not call it. */
   onValueChange: (value: T) => void;
+  /** The choices, in order. */
   options: readonly SegmentedOption<T>[];
+  /** Applied to the group. */
   className?: string;
+  /** The accessible name, when there is no visible label. */
   'aria-label'?: string;
 }
 

@@ -37,18 +37,31 @@ export interface SelectOption {
 }
 
 export interface SelectProps {
+  /** The selected value, for a controlled select. `''` is a value like any other (an "All" option). */
   value?: string | undefined;
+  /** The value it starts with, for an uncontrolled select; ignored when `value` is set. */
   defaultValue?: string | undefined;
+  /** Called with the value of the option the reader picks. */
   onValueChange?: ((value: string) => void) | undefined;
+  /** The choices, in order; a `disabled` one is shown but cannot be picked. */
   options: readonly SelectOption[];
+  /** Shown while nothing is selected. */
   placeholder?: string | undefined;
+  /** The trigger's id, so a label can point at it. */
   id?: string | undefined;
+  /** The form field the value is submitted under. */
   name?: string | undefined;
+  /** Marks the form field as required. */
   required?: boolean | undefined;
+  /** Stops the select being opened. */
   disabled?: boolean | undefined;
+  /** Sets `aria-invalid` and the error look on the trigger together. */
   invalid?: boolean | undefined;
+  /** Applied to the trigger. */
   className?: string | undefined;
+  /** The id of the hint or error message that describes the field. */
   'aria-describedby'?: string | undefined;
+  /** The accessible name, when there is no visible label. */
   'aria-label'?: string | undefined;
 }
 

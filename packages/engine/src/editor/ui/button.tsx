@@ -126,9 +126,23 @@ const button = cva(
   },
 );
 
-export interface ButtonProps extends ComponentProps<'button'>, VariantProps<typeof button> {
+type ButtonVariants = VariantProps<typeof button>;
+
+export interface ButtonProps extends ComponentProps<'button'> {
+  /**
+   * The look: `primary`, `secondary`, `outline`, `ghost`, `destructive`,
+   * `warning`, `danger` or `link`. Default: `'primary'`.
+   */
+  variant?: ButtonVariants['variant'];
+  /**
+   * The height: `default` (36px, every control's), `sm`, `xs` (inside another
+   * object), `md` and `lg` (a site's scale), or a square `icon`, `icon-xs`,
+   * `icon-sm`, `icon-lg`. Default: `'default'`.
+   */
+  size?: ButtonVariants['size'];
   /** Render as the child element — for a link that looks like a button. */
   asChild?: boolean;
+  /** Shows a spinner in the icon's place, marks the button busy and disables it; the label stays. */
   loading?: boolean;
   /** Rendered before the label, and replaced by the spinner while loading. */
   icon?: ReactNode;

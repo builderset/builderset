@@ -141,6 +141,7 @@ export {
 } from './tree';
 export { isAnchor, isExternalUrl, isSafeUrl, slugifyAnchor } from './url';
 export { hasErrors, structuralIssues, translationIssues } from './validate';
+export { ENGINE_VERSION } from './version';
 
 /**
  * The zod the engine validates with. A project's own elements declare their

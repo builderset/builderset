@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'tsdown';
+
+const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string };
 
 export default defineConfig({
   entry: [
@@ -21,4 +24,6 @@ export default defineConfig({
   // One output file per source file. This is what keeps every 'use client'
   // line at the top of the file it belongs to.
   unbundle: true,
+  // The engine knows its own version: ENGINE_VERSION, and the two-engines warning.
+  define: { __BUILDERSET_ENGINE_VERSION__: JSON.stringify(version) },
 });

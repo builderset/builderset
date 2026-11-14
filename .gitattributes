@@ -1,0 +1,5 @@
+# Every text file is stored and checked out with LF, Windows included: the
+# fixture and golden-file tests compare bytes, and CI runs on Linux.
+* text=auto eol=lf
+
+*.png binary

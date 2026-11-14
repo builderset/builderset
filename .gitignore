@@ -1,0 +1,22 @@
+# Node
+node_modules/
+.pnpm-store/
+*.tsbuildinfo
+
+# Build output
+dist/
+.turbo/
+coverage/
+*.tgz
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editors and systems
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db

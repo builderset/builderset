@@ -2,7 +2,7 @@
 
 Block editors for React, on one engine: an email builder and an article builder today, popups, pages and forms later. Each saves a typed JSON document that any backend can validate, and renders it on the server — email HTML, or semantic React for a site.
 
-> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/mkurtii/builderset).
+> **Not released yet.** Nothing is on npm; see the [repository](https://github.com/builderset/builderset).
 
 ## Install
 
@@ -56,5 +56,5 @@ The kits' READMEs have the props, the theme and the backend contract. The JSON S
 
 ## Links
 
-- [The repository](https://github.com/mkurtii/builderset) · [what a backend must do](../engine/src/host/BACKEND.md)
+- [The repository](https://github.com/builderset/builderset) · [what a backend must do](../engine/src/host/BACKEND.md)
 - [Licence: MIT](LICENSE). The changelog starts with the first release.

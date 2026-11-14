@@ -1,7 +1,6 @@
 {
   "name": "@builderset/article",
   "version": "0.0.0",
-  "private": true,
   "description": "Article builder: a block editor, a typed document, and semantic, server-rendered React for the web.",
   "license": "MIT",
   "keywords": [
@@ -13,11 +12,11 @@
     "react",
     "server-components"
   ],
-  "homepage": "https://github.com/mkurtii/builderset/tree/development/packages/article#readme",
-  "bugs": "https://github.com/mkurtii/builderset/issues",
+  "homepage": "https://github.com/builderset/builderset/tree/development/packages/article#readme",
+  "bugs": "https://github.com/builderset/builderset/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mkurtii/builderset.git",
+    "url": "git+https://github.com/builderset/builderset.git",
     "directory": "packages/article"
   },
   "type": "module",
@@ -109,6 +108,6 @@
     "vitest": "4.1.11"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   }
 }

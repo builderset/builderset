@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [development, staging, production]
 
 permissions:
   contents: read
@@ -45,8 +45,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Every version on main; one on a pull request, to save the private
-        # repository's Actions minutes.
+        # Every version on a push to development, staging or production; one
+        # on a pull request, to save the private repository's Actions minutes.
         node: ${{ fromJSON(github.event_name == 'push' && '[20, 22, 24]' || '[24]') }}
     steps:
       - uses: actions/checkout@v5

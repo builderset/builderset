@@ -10,6 +10,8 @@ What every Builderset kit is built on: a typed node tree, an element registry, e
 npm install @builderset/engine
 ```
 
+Also inside [`builderset`](../builderset/README.md), with every other kit, as `builderset/engine/…`. Install one or the other: both at different versions put two engines in the page.
+
 Installed directly to write a project's own elements, or a new kit. `react` and `react-dom` 19 for the editor; the core and `host` entries need neither and run on Node 20 or newer.
 
 ## The smallest working example

@@ -10,6 +10,8 @@ The email builder: a block editor for email templates, a typed JSON document, an
 npm install @builderset/email
 ```
 
+Also inside [`builderset`](../builderset/README.md), with every other kit, as `builderset/email/…`. Install one or the other: both at different versions put two engines in the page.
+
 `react` and `react-dom` 19 for the editor only. The `core`, `render` and `host` entries need neither and run on Node 20 or newer.
 
 ## The smallest working example

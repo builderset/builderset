@@ -20,7 +20,7 @@ describe('themeVariables', () => {
     expect(themeVariables(undefined)).toEqual({});
   });
 
-  it('has the sixteen public variables', () => {
-    expect(TOKEN_NAMES).toHaveLength(16);
+  it('has the twenty public variables', () => {
+    expect(TOKEN_NAMES).toHaveLength(20);
   });
 });

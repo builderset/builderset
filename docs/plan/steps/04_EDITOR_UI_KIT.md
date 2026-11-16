@@ -177,7 +177,7 @@ On screen, compare against the screenshots, light and dark:
 - [x] The editor tests pass with no `I18nProvider`.
 - [x] The lint rule forbids those imports and was seen to fail on one.
 - [x] Every floating element renders inside the editor's portal container.
-- [ ] The screenshots match, light and dark, apart from the date and time field. (2026-11-11: not done as screenshots. The rendered DOM of both editors was compared instead; see below.)
+- [x] The screenshots match, light and dark, apart from the date and time field. (Compared at milestone M1, 2026-11-11: 52 screens of both editors, from before step 02 and after step 07, differ only where steps 05 and 06 meant them to — [ROADMAP.md](../ROADMAP.md). The rendered DOM had been compared at the time of this step; see below.)
 
 ## Traps
 

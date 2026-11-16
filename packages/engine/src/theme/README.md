@@ -1,6 +1,6 @@
 # The theme
 
-The editor's classes use internal names (`bst:bg-card`, `bst:text-muted-foreground`, `bst:rounded-control`). Each one reads one of twenty public variables, or a mix of them, with a built-in light and dark default. The public variables are the promise; the internal names can change.
+The editor's classes use internal names (`bst:bg-card`, `bst:text-muted-foreground`, `bst:rounded-control`). Each one reads one of twenty-one public variables, or a mix of them, with a built-in light and dark default. The public variables are the promise; the internal names can change.
 
 ## Internal name → public variable
 
@@ -13,7 +13,7 @@ The editor's classes use internal names (`bst:bg-card`, `bst:text-muted-foregrou
 | `muted-foreground`                                  | `--builderset-muted-foreground`                                                      |
 | `secondary`                                         | `muted` with 6% (light) or 12% (dark) of `foreground`                                |
 | `accent` (hover)                                    | `foreground` at 6% (light) or 10% (dark)                                             |
-| `input`                                             | `surface` with 5% (light) or 4% (dark) of `foreground`                               |
+| `input`                                             | `--builderset-input`, else `surface` with 5% (light) or 4% (dark) of `foreground`    |
 | `sidebar`                                           | `--builderset-sidebar`, else `surface` 85%, `background` 15%                         |
 | `border`                                            | `--builderset-border`                                                                |
 | `border-strong`                                     | `border` with 45% of `foreground`                                                    |

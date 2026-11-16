@@ -5,4 +5,4 @@
 'builderset': minor
 ---
 
-Four new theme variables: `--builderset-sidebar`, the rail beside the canvas and the top bar (`theme/shadcn.css` maps shadcn's `--sidebar`), and `--builderset-state-draft`, `--builderset-state-scheduled` and `--builderset-state-published`, the status chip's colours. Left unset, the editor looks as it did.
+Five new theme variables: `--builderset-sidebar`, the rail beside the canvas and the top bar; `--builderset-input`, a field's edge and fill; and `--builderset-state-draft`, `--builderset-state-scheduled` and `--builderset-state-published`, the status chip's colours. `theme/shadcn.css` maps shadcn's `--sidebar` and `--input`. Left unset, the editor looks as it did.

@@ -1,6 +1,6 @@
 {
   "name": "@builderset/article",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Article builder: a block editor, a typed document, and semantic, server-rendered React for the web.",
   "license": "MIT",
   "keywords": [

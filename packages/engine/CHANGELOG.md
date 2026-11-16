@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0
+
+### Minor Changes
+
+- ae906f6: The first release: the engine, the email and article kits — editors, renderers, hosts, the theme and the stylesheets — and the all-in-one package.
+
 Nothing is published yet. The entries below are from before the packages had
 this name, when the engine was three private packages: `builder-core` (now
 `src/core`), `builder-render` (now `src/render`) and `builder-react` (now

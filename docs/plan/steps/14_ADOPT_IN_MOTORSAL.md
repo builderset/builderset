@@ -204,15 +204,15 @@ Compare the size of the admin's builder routes before and after (`next build` pr
 
 ## Done when
 
-- [ ] `packages/` has no `engine`, `article` or `email` folder.
-- [ ] No file outside `docs/` names `@motors/engine`, `@motors/article` or `@motors/email`.
-- [ ] `transpilePackages` and the `@source` lines no longer list the builders.
-- [ ] The admin and the site import the compiled stylesheets and map MotorsAL's tokens.
-- [ ] The sync script reads from the installed packages and its check runs in CI.
-- [ ] Lint, type check, tests, both builds and the API's contract tests pass.
+- [x] `packages/` has no `engine`, `article` or `email` folder.
+- [x] No file outside `docs/` names `@motors/engine`, `@motors/article` or `@motors/email`.
+- [x] `transpilePackages` and the `@source` lines no longer list the builders.
+- [x] The admin and the site import the compiled stylesheets and map MotorsAL's tokens.
+- [x] The sync script reads from the installed packages and its check runs in CI.
+- [x] Lint, type check, tests, both builds and the API's contract tests pass.
 - [ ] Staging matches the screenshots in all eight rows.
 - [ ] Production is deployed from this branch.
-- [ ] The documents and the ADR are updated.
+- [x] The documents and the ADR are updated.
 
 ## Traps
 

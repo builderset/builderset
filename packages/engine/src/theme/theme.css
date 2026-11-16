@@ -50,17 +50,20 @@
       var(--builderset-background, var(--bst-d-background))
     )
   );
-  /* A field sits a step off the surface it is on. */
-  --color-input: light-dark(
-    color-mix(
-      in oklab,
-      var(--builderset-surface, var(--bst-d-surface)),
-      var(--builderset-foreground, var(--bst-d-foreground)) 5%
-    ),
-    color-mix(
-      in oklab,
-      var(--builderset-surface, var(--bst-d-surface)),
-      var(--builderset-foreground, var(--bst-d-foreground)) 4%
+  /* A field's edge: the project's own, else a step off the surface it is on. */
+  --color-input: var(
+    --builderset-input,
+    light-dark(
+      color-mix(
+        in oklab,
+        var(--builderset-surface, var(--bst-d-surface)),
+        var(--builderset-foreground, var(--bst-d-foreground)) 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--builderset-surface, var(--bst-d-surface)),
+        var(--builderset-foreground, var(--bst-d-foreground)) 4%
+      )
     )
   );
 

@@ -43,7 +43,7 @@ The editor is used through a kit: `ArticleEditor`, `EmailEditor`. A kit is `Buil
 
 A project imports its kit's stylesheet once — `@builderset/email/styles.css` or `@builderset/article/styles.css` — and needs nothing else: no Tailwind, no configuration. This package's own, `@builderset/engine/styles.css`, is for a kit being written. Every class is prefixed (`bst:flex`), every rule is inside `.builderset`, and nothing is in a `@layer`, so the page's styles and the editor's do not touch each other.
 
-The look is twenty CSS variables, each with a light and a dark default; [src/theme/README.md](src/theme/README.md) lists them. Three ways to set them, from least to most work:
+The look is twenty-one CSS variables, each with a light and a dark default; [src/theme/README.md](src/theme/README.md) lists them. Three ways to set them, from least to most work:
 
 1. **Nothing.** The built-in look: neutral greys and a blue accent.
 2. **One import, in a project themed the shadcn way:** `@builderset/<kit>/theme/shadcn.css` maps `--background`, `--primary`, `--radius` and the rest; `theme/shadcn-hsl.css` is for tokens kept as bare HSL numbers.

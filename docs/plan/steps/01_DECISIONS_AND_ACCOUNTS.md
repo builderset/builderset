@@ -139,7 +139,7 @@ Run the six checks in part 1 for the new name before replacing anything.
 - [ ] The three open checks in part 1 are done: the npm organisation, the domain, the trademark search.
 - [ ] D1–D8 are decided and written in `DECISIONS.md`.
 - [ ] The npm organisation exists and requires two-factor authentication.
-- [ ] The repository `xhiti/builderset` exists.
+- [x] The repository `xhiti/builderset` exists. _(As `builderset/builderset`, in the `builderset` organisation: GitHub Packages names a package after its owner — D3.)_
 - [ ] The PyPI account exists, with a pending trusted publisher registered.
 - [x] These documents use the chosen name.
 

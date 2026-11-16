@@ -127,9 +127,9 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 10 Styles and theming
 - [x] 11 The all-in-one package
 - [x] 12 Example apps and the test matrix
-- [ ] 13 Publishing and releases — `0.1.0-alpha` is on GitHub Packages and the examples pass against it; the "Version packages" pull request for `0.1.0` is open on `production` — merging it ends the step
-- [ ] **M2 — installable**
-- [ ] 14 Adopt the packages in MotorsAL — 7 of 9 boxes, on MotorsAL's branch `feat/14-adopt-packages` (not pushed yet); left: staging matches the screenshots, production
+- [x] 13 Publishing and releases — `0.1.0` and `0.2.0` are on GitHub Packages under `latest`
+- [x] **M2 — installable**
+- [x] 14 Adopt the packages in MotorsAL — on Builderset `0.2.0`, in production since 2026-11-16
 - [ ] 15 The Python package
 - [ ] **M3 — MotorsAL runs on it**
 - [ ] 16 Docs site and playground

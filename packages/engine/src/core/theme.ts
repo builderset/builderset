@@ -1,5 +1,5 @@
 /**
- * The public theme: sixteen CSS variables, `--builderset-<name>`, each with a
+ * The public theme: twenty-one CSS variables, `--builderset-<name>`, each with a
  * light and a dark default in the stylesheet. Set them in CSS, or pass them
  * to an editor as `tokens`; nothing has to be set.
  */
@@ -22,6 +22,11 @@ export const TOKEN_NAMES = [
   'font',
   'font-mono',
   'prose-width',
+  'sidebar',
+  'input',
+  'state-draft',
+  'state-scheduled',
+  'state-published',
 ] as const;
 
 export type TokenName = (typeof TOKEN_NAMES)[number];

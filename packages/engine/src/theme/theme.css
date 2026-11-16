@@ -40,23 +40,30 @@
     color-mix(in oklab, var(--builderset-foreground, var(--bst-d-foreground)) 10%, transparent)
   );
   --color-accent-foreground: var(--builderset-foreground, var(--bst-d-foreground));
-  /* The rail beside the canvas: between the surface and the ground. */
-  --color-sidebar: color-mix(
-    in oklab,
-    var(--builderset-surface, var(--bst-d-surface)) 85%,
-    var(--builderset-background, var(--bst-d-background))
+  /* The rail beside the canvas: the project's own, else between the surface
+     and the ground. */
+  --color-sidebar: var(
+    --builderset-sidebar,
+    color-mix(
+      in oklab,
+      var(--builderset-surface, var(--bst-d-surface)) 85%,
+      var(--builderset-background, var(--bst-d-background))
+    )
   );
-  /* A field sits a step off the surface it is on. */
-  --color-input: light-dark(
-    color-mix(
-      in oklab,
-      var(--builderset-surface, var(--bst-d-surface)),
-      var(--builderset-foreground, var(--bst-d-foreground)) 5%
-    ),
-    color-mix(
-      in oklab,
-      var(--builderset-surface, var(--bst-d-surface)),
-      var(--builderset-foreground, var(--bst-d-foreground)) 4%
+  /* A field's edge: the project's own, else a step off the surface it is on. */
+  --color-input: var(
+    --builderset-input,
+    light-dark(
+      color-mix(
+        in oklab,
+        var(--builderset-surface, var(--bst-d-surface)),
+        var(--builderset-foreground, var(--bst-d-foreground)) 5%
+      ),
+      color-mix(
+        in oklab,
+        var(--builderset-surface, var(--bst-d-surface)),
+        var(--builderset-foreground, var(--bst-d-foreground)) 4%
+      )
     )
   );
 
@@ -78,10 +85,11 @@
   --color-no: var(--builderset-danger, var(--bst-d-danger));
   --color-ok: var(--builderset-success, var(--bst-d-success));
   --color-warn: var(--builderset-warning, var(--bst-d-warning));
-  /* Not public: a document's state, and one accent in the article's callouts. */
-  --color-state-draft: var(--bst-d-state-draft);
-  --color-state-scheduled: var(--bst-d-state-scheduled);
-  --color-state-published: var(--bst-d-state-published);
+  /* A document's state, on the top bar's status chip. */
+  --color-state-draft: var(--builderset-state-draft, var(--bst-d-state-draft));
+  --color-state-scheduled: var(--builderset-state-scheduled, var(--bst-d-state-scheduled));
+  --color-state-published: var(--builderset-state-published, var(--bst-d-state-published));
+  /* Not public: one accent in the article's callouts. */
   --color-chart-1: var(--bst-d-chart-1);
 
   /* ── Shape ──────────────────────────────────────────────────────────────── */

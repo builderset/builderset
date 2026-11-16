@@ -1,35 +1,35 @@
 # The theme
 
-The editor's classes use internal names (`bst:bg-card`, `bst:text-muted-foreground`, `bst:rounded-control`). Each one reads one of sixteen public variables, or a mix of them, with a built-in light and dark default. The public variables are the promise; the internal names can change.
+The editor's classes use internal names (`bst:bg-card`, `bst:text-muted-foreground`, `bst:rounded-control`). Each one reads one of twenty-one public variables, or a mix of them, with a built-in light and dark default. The public variables are the promise; the internal names can change.
 
 ## Internal name → public variable
 
-| Internal name (in classes)                          | Comes from                                                     |
-| --------------------------------------------------- | -------------------------------------------------------------- |
-| `background`                                        | `--builderset-background`                                      |
-| `card`, `popover`                                   | `--builderset-surface`                                         |
-| `foreground`, `*-foreground` of the surfaces        | `--builderset-foreground`                                      |
-| `muted`                                             | `--builderset-muted`                                           |
-| `muted-foreground`                                  | `--builderset-muted-foreground`                                |
-| `secondary`                                         | `muted` with 6% (light) or 12% (dark) of `foreground`          |
-| `accent` (hover)                                    | `foreground` at 6% (light) or 10% (dark)                       |
-| `input`                                             | `surface` with 5% (light) or 4% (dark) of `foreground`         |
-| `sidebar`                                           | `surface` 85%, `background` 15%                                |
-| `border`                                            | `--builderset-border`                                          |
-| `border-strong`                                     | `border` with 45% of `foreground`                              |
-| `ring`                                              | `--builderset-ring`, else `foreground`                         |
-| `primary`, `primary-foreground`                     | `--builderset-primary`, `--builderset-primary-foreground`      |
-| `destructive`, `no`                                 | `--builderset-danger`                                          |
-| `ok`                                                | `--builderset-success`                                         |
-| `warn`                                              | `--builderset-warning`                                         |
-| `radius-card`, `radius-lg` … `radius-4xl`           | `--builderset-radius`                                          |
-| `radius-control`, `radius-sm`, `radius-md`          | `--builderset-radius` × 0.7                                    |
-| `shadow-pop`, `shadow-modal`                        | `foreground` at 7–22%: a shadow in light, a soft bloom in dark |
-| `font-sans`, `font-mono`                            | `--builderset-font`, `--builderset-font-mono`                  |
-| `max-w-measure`                                     | `--builderset-prose-width`                                     |
-| `destructive-foreground`                            | Not public: near-white in light, near-black in dark            |
-| `state-draft`, `state-scheduled`, `state-published` | Not public: the status chip's three hues                       |
-| `chart-1`                                           | Not public: one accent in the article's callouts               |
+| Internal name (in classes)                          | Comes from                                                                           |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `background`                                        | `--builderset-background`                                                            |
+| `card`, `popover`                                   | `--builderset-surface`                                                               |
+| `foreground`, `*-foreground` of the surfaces        | `--builderset-foreground`                                                            |
+| `muted`                                             | `--builderset-muted`                                                                 |
+| `muted-foreground`                                  | `--builderset-muted-foreground`                                                      |
+| `secondary`                                         | `muted` with 6% (light) or 12% (dark) of `foreground`                                |
+| `accent` (hover)                                    | `foreground` at 6% (light) or 10% (dark)                                             |
+| `input`                                             | `--builderset-input`, else `surface` with 5% (light) or 4% (dark) of `foreground`    |
+| `sidebar`                                           | `--builderset-sidebar`, else `surface` 85%, `background` 15%                         |
+| `border`                                            | `--builderset-border`                                                                |
+| `border-strong`                                     | `border` with 45% of `foreground`                                                    |
+| `ring`                                              | `--builderset-ring`, else `foreground`                                               |
+| `primary`, `primary-foreground`                     | `--builderset-primary`, `--builderset-primary-foreground`                            |
+| `destructive`, `no`                                 | `--builderset-danger`                                                                |
+| `ok`                                                | `--builderset-success`                                                               |
+| `warn`                                              | `--builderset-warning`                                                               |
+| `radius-card`, `radius-lg` … `radius-4xl`           | `--builderset-radius`                                                                |
+| `radius-control`, `radius-sm`, `radius-md`          | `--builderset-radius` × 0.7                                                          |
+| `shadow-pop`, `shadow-modal`                        | `foreground` at 7–22%: a shadow in light, a soft bloom in dark                       |
+| `font-sans`, `font-mono`                            | `--builderset-font`, `--builderset-font-mono`                                        |
+| `max-w-measure`                                     | `--builderset-prose-width`                                                           |
+| `destructive-foreground`                            | Not public: near-white in light, near-black in dark                                  |
+| `state-draft`, `state-scheduled`, `state-published` | `--builderset-state-draft`, `-scheduled`, `-published`: the status chip's three hues |
+| `chart-1`                                           | Not public: one accent in the article's callouts                                     |
 
 `--builderset-radius` is a card's corner, like shadcn's `--radius`; a control's is 0.7 of it, so `shadcn.css` gives the editor the project's own corners. Defaults: 0.625rem and 0.4375rem.
 

@@ -21,6 +21,7 @@
   --builderset-primary-foreground: var(--primary-foreground);
   --builderset-danger: var(--destructive);
   --builderset-ring: var(--ring);
+  --builderset-sidebar: var(--sidebar);
   --builderset-radius: var(--radius);
   --builderset-font: var(--font-sans);
   --builderset-font-mono: var(--font-mono);

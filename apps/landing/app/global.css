@@ -1,0 +1,514 @@
+@import 'tailwindcss';
+
+/*
+ * The docs site's look, on one page: cool neutrals, one accent — electric
+ * indigo — and building blocks as the motif. The page follows the system's
+ * light or dark setting, and so does the live editor (theme="auto"). No motion
+ * runs for a reader who asks the system for less.
+ */
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  color-scheme: light dark;
+  --bs-bg: #fafbfe;
+  --bs-fg: #0d1020;
+  --bs-muted: #f0f1f7;
+  --bs-muted-fg: #5b6075;
+  --bs-card: #ffffff;
+  --bs-border: rgb(15 20 45 / 0.09);
+  --bs-primary: #5b4bff;
+  --bs-primary-fg: #ffffff;
+  --bs-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --bs-lift: 0 1px 2px rgb(15 20 45 / 0.06), 0 10px 28px -8px rgb(15 20 45 / 0.12);
+  --bs-block-1: #5b4bff;
+  --bs-block-2: #22c3d6;
+  --bs-block-3: #ff6b8b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bs-bg: #0a0b12;
+    --bs-fg: #e9eaf3;
+    --bs-muted: #141622;
+    --bs-muted-fg: #9a9fb6;
+    --bs-card: #0f111a;
+    --bs-border: rgb(255 255 255 / 0.08);
+    --bs-primary: #8b7dff;
+    --bs-primary-fg: #0a0b12;
+    --bs-lift: 0 1px 2px rgb(0 0 0 / 0.4), 0 14px 34px -10px rgb(0 0 0 / 0.6);
+    --bs-block-1: #8b7dff;
+    --bs-block-2: #3fd7e8;
+    --bs-block-3: #ff8aa4;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--bs-bg);
+  color: var(--bs-fg);
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: rgb(91 75 255 / 0.22);
+}
+/* A soft wash of the three tints at the top of the page. */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 720px;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(
+      50% 70% at 15% 0%,
+      color-mix(in srgb, var(--bs-block-1) 13%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 60% at 85% 10%,
+      color-mix(in srgb, var(--bs-block-2) 10%, transparent),
+      transparent 70%
+    );
+}
+
+a {
+  color: inherit;
+}
+.bs-link {
+  color: var(--bs-primary);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--bs-ease);
+}
+.bs-link:hover {
+  background-size: 100% 1.5px;
+}
+.bs-muted {
+  color: var(--bs-muted-fg);
+}
+
+/* ── the mark ────────────────────────────────────────────────────────────── */
+
+.bs-mark rect {
+  transition: transform 0.45s var(--bs-ease);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bs-mark .b1 {
+  fill: var(--bs-block-1);
+}
+.bs-mark .b2 {
+  fill: var(--bs-block-2);
+}
+.bs-mark .b3 {
+  fill: var(--bs-block-3);
+}
+.bs-brand:hover .bs-mark .b1 {
+  transform: translate(-1.5px, -1.5px) rotate(-8deg);
+}
+.bs-brand:hover .bs-mark .b2 {
+  transform: translate(1.5px, -1.5px) rotate(8deg);
+}
+.bs-brand:hover .bs-mark .b3 {
+  transform: translateY(1.5px);
+}
+
+/* ── type ────────────────────────────────────────────────────────────────── */
+
+.bs-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bs-primary);
+}
+.bs-title {
+  font-size: clamp(34px, 6vw, 60px);
+  line-height: 1.04;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.bs-h2 {
+  font-size: clamp(24px, 3.4vw, 34px);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.bs-lead {
+  color: var(--bs-muted-fg);
+  font-size: clamp(16px, 1.6vw, 19px);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.bs-gradient {
+  background: linear-gradient(90deg, var(--bs-block-1), var(--bs-block-2) 60%, var(--bs-block-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── buttons ─────────────────────────────────────────────────────────────── */
+
+.bs-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--bs-primary);
+  color: var(--bs-primary-fg);
+  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--bs-primary) 70%, transparent);
+  transition:
+    transform 0.25s var(--bs-ease),
+    box-shadow 0.25s var(--bs-ease);
+}
+.bs-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--bs-primary) 80%, transparent);
+}
+.bs-button .arrow {
+  transition: transform 0.3s var(--bs-ease);
+}
+.bs-button:hover .arrow {
+  transform: translateX(3px);
+}
+.bs-button.ghost {
+  background: color-mix(in srgb, var(--bs-card) 70%, transparent);
+  color: var(--bs-fg);
+  box-shadow: inset 0 0 0 1px var(--bs-border);
+}
+.bs-button.ghost:hover {
+  box-shadow: inset 0 0 0 1px var(--bs-primary);
+}
+
+/* ── cards ───────────────────────────────────────────────────────────────── */
+
+.bs-card {
+  border: 1px solid var(--bs-border);
+  border-radius: 18px;
+  background: var(--bs-card);
+  box-shadow: var(--bs-lift);
+  transition:
+    transform 0.3s var(--bs-ease),
+    border-color 0.3s;
+}
+.bs-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--bs-primary) 35%, var(--bs-border));
+}
+.bs-tile {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--tint, var(--bs-primary));
+  background: color-mix(in srgb, var(--tint, var(--bs-primary)) 13%, transparent);
+  transition: transform 0.35s var(--bs-ease);
+}
+.bs-card:hover .bs-tile {
+  transform: rotate(-6deg) scale(1.06);
+}
+.bs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--bs-border);
+  color: var(--bs-muted-fg);
+}
+.bs-badge.on {
+  color: color-mix(in srgb, #16a34a 80%, var(--bs-fg));
+  border-color: color-mix(in srgb, #16a34a 35%, transparent);
+  background: color-mix(in srgb, #16a34a 9%, transparent);
+}
+.bs-badge.on::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #22c55e 25%, transparent);
+}
+
+/* ── the live editor's window ────────────────────────────────────────────── */
+
+/* No transform or filter on the window or above it: the editor's menus are
+   placed against the viewport (the engine README's known limits). */
+.bs-window {
+  border: 1px solid var(--bs-border);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bs-card);
+  box-shadow:
+    var(--bs-lift),
+    0 40px 80px -40px color-mix(in srgb, var(--bs-block-1) 45%, transparent);
+}
+.bs-window-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--bs-border);
+  background: var(--bs-muted);
+}
+.bs-window-bar span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bs-block-3);
+}
+.bs-window-bar span:nth-child(2) {
+  background: #f5b84b;
+}
+.bs-window-bar span:nth-child(3) {
+  background: #3ecf8e;
+}
+.bs-window-bar p {
+  margin: 0 auto;
+  padding: 3px 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--bs-muted-fg);
+  background: var(--bs-card);
+}
+/* The editor is position: fixed and fills the window; `contain: layout` makes
+   this frame its window instead. */
+.bs-frame {
+  position: relative;
+  height: min(680px, 78vh);
+  contain: layout;
+}
+@media (max-width: 767px) {
+  .bs-frame {
+    height: auto;
+  }
+}
+.bs-narrow {
+  display: grid;
+  gap: 18px;
+  padding: 28px 20px;
+  text-align: center;
+  font-size: 15px;
+}
+.bs-narrow a {
+  color: var(--bs-primary);
+  font-weight: 600;
+}
+
+/* While the editor loads: a document builds itself, block by block. */
+.bs-assembling {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 260px;
+  perspective: 900px;
+}
+.bs-doc {
+  width: min(100%, 260px);
+  display: grid;
+  gap: 9px;
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--bs-bg);
+  border: 1px solid var(--bs-border);
+  box-shadow: var(--bs-lift);
+  transform: rotateX(8deg) rotateY(-14deg);
+  animation: bs-float 6s ease-in-out 1.6s infinite;
+}
+.bs-doc > span,
+.bs-doc .cell {
+  display: block;
+  border-radius: 6px;
+  animation: bs-drop 0.7s var(--bs-ease) both;
+}
+.bs-doc .r1 {
+  height: 14px;
+  width: 55%;
+  background: var(--bs-fg);
+  opacity: 0.85;
+  animation-delay: 0.1s;
+}
+.bs-doc .r2 {
+  height: 8px;
+  background: var(--bs-muted);
+  animation-delay: 0.25s;
+}
+.bs-doc .split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  border-radius: 0;
+  animation-delay: 0.4s;
+}
+.bs-doc .c1 {
+  height: 56px;
+  background: color-mix(in srgb, var(--bs-block-1) 75%, transparent);
+  animation-delay: 0.45s;
+}
+.bs-doc .c2 {
+  height: 56px;
+  background: color-mix(in srgb, var(--bs-block-2) 75%, transparent);
+  animation-delay: 0.6s;
+}
+.bs-doc .r3 {
+  height: 8px;
+  width: 80%;
+  background: var(--bs-muted);
+  animation-delay: 0.75s;
+}
+.bs-doc .btn {
+  height: 20px;
+  width: 42%;
+  border-radius: 999px;
+  background: var(--bs-block-3);
+  animation-delay: 0.95s;
+}
+
+/* ── code ────────────────────────────────────────────────────────────────── */
+
+.bs-code {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--bs-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bs-card);
+  box-shadow: var(--bs-lift);
+}
+.bs-code figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 10px 0 16px;
+  border-bottom: 1px solid var(--bs-border);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--bs-muted-fg);
+  background: var(--bs-muted);
+}
+.bs-code pre {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  background: transparent !important;
+}
+.bs-code .shiki span {
+  color: var(--shiki-light);
+}
+@media (prefers-color-scheme: dark) {
+  .bs-code .shiki span {
+    color: var(--shiki-dark);
+  }
+}
+.bs-copy {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--bs-muted-fg);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+.bs-copy:hover {
+  color: var(--bs-fg);
+  background: color-mix(in srgb, var(--bs-fg) 8%, transparent);
+}
+.bs-copy.floating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* ── motion ──────────────────────────────────────────────────────────────── */
+
+@keyframes bs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bs-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes bs-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bs-float {
+  0%,
+  100% {
+    transform: rotateX(8deg) rotateY(-14deg) translateY(0);
+  }
+  50% {
+    transform: rotateX(6deg) rotateY(-10deg) translateY(-6px);
+  }
+}
+
+/* The opening arrives in steps. */
+.bs-in {
+  animation: bs-rise 0.6s var(--bs-ease) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+/* The window only fades: a transform on it would move the editor's menus. */
+.bs-in-fade {
+  animation: bs-fade 0.8s var(--bs-ease) 0.35s both;
+}
+/* Sections rise in as they scroll into view; browsers without scroll-driven
+   animations simply show them. */
+@supports (animation-timeline: view()) {
+  .bs-reveal {
+    animation: bs-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

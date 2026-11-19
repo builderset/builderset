@@ -1,0 +1,55 @@
+---
+title: 'FastAPI and SQLAlchemy'
+description: The email editor's backend in Python — FastAPI routes over Postgres with SQLAlchemy and Alembic, checked and rendered by the builderset package. About 20 minutes.
+---
+
+At the end a Python server stores the templates, refuses what the editor would
+refuse — with the same issue codes — and renders the email to send, byte for byte
+as the Node renderer does. Every file is from
+[`examples/backends/fastapi-sqlalchemy`](https://github.com/builderset/builderset/tree/development/examples/backends/fastapi-sqlalchemy),
+tested against a real Postgres on each change. The Python package's install is in
+[Python](/docs/reference/python).
+
+_This page describes Builderset 0.3.0._
+
+## The table
+
+<include cwd lang="python" meta='title="app/models.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/models.py
+</include>
+
+`alembic revision --autogenerate` wrote the migration:
+
+<include cwd lang="python" meta='title="migrations/versions/0001_email_templates.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/migrations/versions/0001_email_templates.py
+</include>
+
+## The check
+
+`check_email` returns the TypeScript codes; a draft lets through the ones in
+`DRAFT_TOLERATES`, the same list the editor uses:
+
+<include cwd lang="python" meta='title="app/emails.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/emails.py
+</include>
+
+## The routes
+
+Every route of the REST shape, with the conditional write for the conflict check and
+`render_email` for sending:
+
+<include cwd lang="python" meta='title="app/main.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/main.py
+</include>
+
+## The tests
+
+<include cwd lang="python" meta='title="tests/test_emails.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/tests/test_emails.py
+</include>
+
+`uv run pytest` needs Docker (Testcontainers starts a Postgres), or a database in
+`TEST_DATABASE_URL`.
+
+The editor's host is the same as for the Node backends:
+[the editor's side](/docs/guides/backend/next-drizzle#the-editors-side).

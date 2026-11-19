@@ -1,0 +1,120 @@
+---
+title: 'Next.js and Drizzle'
+description: The email editor's backend as Next.js route handlers over Postgres with Drizzle — the table, the checks, the conflict rule, sending. About 20 minutes.
+---
+
+At the end your Next.js app stores email templates in Postgres, refuses an unsafe or
+stale save, and renders a published template to send. Every file below is from
+[`examples/backends/next-drizzle`](https://github.com/builderset/builderset/tree/development/examples/backends/next-drizzle),
+whose tests run every route against a real Postgres on each change. The same routes
+are in [Prisma](/docs/guides/backend/next-prisma) and in
+[FastAPI](/docs/guides/backend/fastapi-sqlalchemy).
+
+_This page describes Builderset 0.3.0._
+
+<Steps>
+<Step>
+
+### The table
+
+One row per template: the live document, the working draft, and `saved_at`, which
+changes on every write and catches two people saving the same template:
+
+<include cwd lang="ts" meta='title="db/schema.ts"'>
+  ../../examples/backends/next-drizzle/db/schema.ts
+</include>
+
+`drizzle-kit generate` writes the migration from it:
+
+<include cwd lang="sql" meta='title="drizzle/0000_email_template.sql"'>
+  ../../examples/backends/next-drizzle/drizzle/0000_email_template.sql
+</include>
+
+</Step>
+<Step>
+
+### The check
+
+Every document is checked before it is stored, with the editor's own rules: a draft
+may be unfinished but never unsafe, and publishing refuses every error. A refusal
+carries the issue codes, so the editor shows the problem on its block:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-drizzle/lib/emails.ts
+</include>
+
+</Step>
+<Step>
+
+### Saving a draft
+
+The editor sends back the `saved_at` it last saw. A different one on the row means
+someone else saved in between: `409`, and the editor offers to reload or keep its
+own. The update is conditional, so two saves at the same instant cannot both win:
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/draft/route.ts"'>
+  ../../examples/backends/next-drizzle/app/api/emails/[id]/draft/route.ts
+</include>
+
+</Step>
+<Step>
+
+### Publishing
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/publish/route.ts"'>
+  ../../examples/backends/next-drizzle/app/api/emails/[id]/publish/route.ts
+</include>
+
+Reading, unpublishing and creating follow the same pattern, in
+[`app/api/emails`](https://github.com/builderset/builderset/tree/development/examples/backends/next-drizzle/app/api/emails).
+
+</Step>
+<Step>
+
+### Uploads
+
+Images are known by their first bytes, never by their name, and capped in size. The
+example keeps them on the local disk; for S3 or similar, only this file changes — a
+document holds a file's key, never its URL:
+
+<include cwd lang="ts" meta='title="lib/uploads.ts"'>
+  ../../examples/backends/next-drizzle/lib/uploads.ts
+</include>
+
+</Step>
+<Step>
+
+### Sending
+
+Only a published template is sent, rendered on the server from the live document:
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/send/route.ts"'>
+  ../../examples/backends/next-drizzle/app/api/emails/[id]/send/route.ts
+</include>
+
+</Step>
+<Step>
+
+### The editor's side
+
+The host for this API:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/guides/backend-host.ts
+</include>
+
+</Step>
+</Steps>
+
+## The tests
+
+Create, save, a stale save (`409`), publish, send, every invalid document of the
+email kit's fixtures (`422` with its code), an unfinished draft that saves but cannot
+publish, and uploads:
+
+<include cwd lang="ts" meta='title="tests/emails.test.ts"'>
+  ../../examples/backends/next-drizzle/tests/emails.test.ts
+</include>
+
+They need Docker (Testcontainers starts a Postgres), or a database in
+`TEST_DATABASE_URL`. They never read `DATABASE_URL`, which may be one you care about.

@@ -28,6 +28,22 @@ In Python, the same check before a render ([Python](/docs/reference/python) has 
 
 More on each line in [Security](/docs/guides/security).
 
+## Three complete backends
+
+The same routes, each tested against a real Postgres on every change:
+
+<Cards>
+  <Card title="Next.js and Drizzle" href="/docs/guides/backend/next-drizzle">
+    Route handlers, a Drizzle schema and its migration. Every step explained.
+  </Card>
+  <Card title="Next.js and Prisma" href="/docs/guides/backend/next-prisma">
+    The same, with Prisma and the pg driver adapter.
+  </Card>
+  <Card title="FastAPI and SQLAlchemy" href="/docs/guides/backend/fastapi-sqlalchemy">
+    Python: SQLAlchemy, Alembic, and the builderset package.
+  </Card>
+</Cards>
+
 <include cwd>
   ../../packages/engine/src/host/BACKEND.md#the-rest-shape-createresthost-speaks
 </include>

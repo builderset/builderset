@@ -1,45 +1,53 @@
 ---
-title: What it is
-description: Visual editors for emails and articles that fit into your project — your theme, your language, your database.
+title: Introduction
+description: Builderset puts visual editors for emails and articles inside your own React app. Each kit is an editor, a renderer and a checker for one kind of document; you supply the storage, the theme and the language.
 ---
 
-import { Blocks, BookOpen, Mail, Newspaper, ShieldCheck } from 'lucide-react';
-
-<Hero />
-
-Builderset is a set of visual editors — **kits** — for documents your users design:
-an **email** kit and an **article** kit today. Each kit is an editor, a renderer and a
-checker for one kind of document, built on one shared **engine**.
-
-## What you get
+## Start here
 
 <Cards>
-  <Card icon={<Blocks />} title="The editor" href="/playground">
-    A React component in your colours and your language, light or dark. Try it now in the
-    playground.
+  <Card label="10 min · Next.js" title="Quick start: email" href="/docs/quick-start/email">
+    An email editor on a page of your app, saving through your own routes, and the HTML a recipient
+    gets, rendered on your server.
   </Card>
-  <Card icon={<BookOpen />} title="The renderer" href="/docs/quick-start/email#send-it">
-    An email to HTML and plain text, an article to a page of your site — on your server.
+  <Card label="10 min · Next.js" title="Quick start: article" href="/docs/quick-start/article">
+    An article editor, and the published article as a page of your site, from a Server Component.
   </Card>
-  <Card icon={<ShieldCheck />} title="The checker" href="/docs/reference/python">
-    The same rules in the browser and on your server, in TypeScript and in Python.
+  <Card label="in the browser" title="Playground" href="/playground">
+    Both editors with every setting: theme, language, templates. Copy the code for what you see.
+  </Card>
+</Cards>
+
+## What a kit gives you
+
+<Cards>
+  <Card label="@builderset/email/editor" title="The editor">
+    A React component that fits your app: your colours, your language, light or dark. It saves
+    through an adapter you give it and owns nothing else.
+  </Card>
+  <Card label="@builderset/email/render" title="The renderer">
+    A document to email HTML and plain text, or an article to a page of your site. It runs on your
+    server, with no browser.
+  </Card>
+  <Card label="checkEmail · check_email" title="The checker">
+    The same rules in the editor and on your server, in TypeScript and in Python, with the same
+    issue codes.
   </Card>
 </Cards>
 
 ## What your project supplies
 
-- **Storage.** A document is JSON. You keep it in your own database, behind your own API.
-- **Uploads.** Pictures go wherever your files go.
-- **Sending.** You render an email on your server and send it with your own provider.
+- **Storage.** A document is JSON. You keep it in your own database, behind your own API
+  ([Backend setup](/docs/guides/backend)).
+- **Uploads.** Pictures go wherever your files already go.
+- **Sending.** You render an email on your server and send it with your own provider
+  ([Sending email](/docs/guides/email)).
 
-## Start here
+## How these pages work
 
-<Cards>
-  <Card icon={<Mail />} title="Quick start: email" href="/docs/quick-start/email">
-    An email editor in a Next.js app, saving to your routes and sending from your server. About 10
-    minutes.
-  </Card>
-  <Card icon={<Newspaper />} title="Quick start: article" href="/docs/quick-start/article">
-    An article editor, and the article on your site from a Server Component.
-  </Card>
-</Cards>
+- Every code block is a file from the repository, built and type-checked on each change. Its
+  path is above it.
+- Each page says which version of Builderset it describes. The version in the top bar is the
+  one these pages were built from.
+- Press <kbd>/</kbd> to search, from any page.
+- Every page is also available as Markdown: **Copy as Markdown**, under "On this page".

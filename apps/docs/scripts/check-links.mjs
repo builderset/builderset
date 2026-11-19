@@ -50,7 +50,12 @@ const byUrl = new Map(files.map((file) => [urlOf(file), readFileSync(file, 'utf8
 const problems = [];
 for (const file of files) {
   const source = byUrl.get(urlOf(file));
-  for (const [, href] of source.matchAll(/\]\((\/docs[^)\s]*)\)/g)) {
+  // Markdown links, and the href of a component such as <Card>.
+  const links = [
+    ...source.matchAll(/\]\((\/docs[^)\s]*)\)/g),
+    ...source.matchAll(/href="(\/docs[^"]*)"/g),
+  ];
+  for (const [, href] of links) {
     const [path, hash] = href.split('#');
     const target = byUrl.get(path.replace(/\/$/, ''));
     if (target === undefined) problems.push(`${relative(CONTENT, file)}: ${href} — no such page`);

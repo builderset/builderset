@@ -29,7 +29,10 @@ import { de as emailDe } from '@builderset/email/locales/de';
 import { sq as emailSq } from '@builderset/email/locales/sq';
 import { DEFAULT_BRAND, renderEmail } from '@builderset/email/render';
 import emptyEmail from '@builderset/email/fixtures/valid/empty.json';
+import Link from 'next/link';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
+
+import { Logo } from '@/components/logo';
 
 import {
   cssFor,
@@ -246,9 +249,10 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 const input =
-  'h-8 rounded-md border bg-fd-background px-2 text-sm text-fd-foreground focus-visible:outline-2 focus-visible:outline-fd-primary';
+  'h-9 rounded-lg border bg-fd-background px-2.5 text-sm text-fd-foreground transition-[border-color,box-shadow] hover:border-fd-primary/40 focus-visible:border-fd-primary focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-fd-primary)_16%,transparent)]';
 const button =
-  'h-8 rounded-md border bg-fd-secondary px-3 text-sm text-fd-secondary-foreground hover:bg-fd-accent';
+  'h-9 rounded-lg border bg-fd-background px-3.5 text-sm font-medium text-fd-foreground transition-[border-color,transform] hover:-translate-y-px hover:border-fd-primary/50 active:translate-y-0';
+const primaryButton = 'bs-button !h-9 text-sm';
 
 function Controls({
   settings,
@@ -265,174 +269,184 @@ function Controls({
 }) {
   const { kit } = settings;
   return (
-    <div className="flex flex-wrap items-end gap-3 border-b bg-fd-card px-4 py-3">
-      <Field label="Kit">
-        <select
-          className={input}
-          value={kit}
-          onChange={(event) => {
-            set({ kit: event.target.value as Kit });
-          }}
-        >
-          <option value="email">Email</option>
-          <option value="article">Article</option>
-        </select>
-      </Field>
-      <Field label="Template">
-        <select
-          className={input}
-          value={settings.template[kit]}
-          onChange={(event) => {
-            set({ template: { ...settings.template, [kit]: event.target.value } });
-          }}
-        >
-          {TEMPLATES[kit].map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Theme">
-        <select
-          className={input}
-          value={settings.theme}
-          onChange={(event) => {
-            set({ theme: event.target.value as Settings['theme'] });
-          }}
-        >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="auto">Auto — follows the page</option>
-        </select>
-      </Field>
-      <label className="flex h-8 items-center gap-2 self-end text-sm">
-        <input
-          type="checkbox"
-          checked={settings.pageDark}
-          onChange={(event) => {
-            set({ pageDark: event.target.checked });
-          }}
-        />
-        Page is dark
-      </label>
-      <Field label="Brand colour">
-        <span className="flex items-center gap-1">
-          <input
-            type="color"
-            className="h-8 w-10 cursor-pointer rounded-md border bg-fd-background"
-            value={settings.primary || '#2563eb'}
+    <div className="border-b bg-fd-card">
+      <div className="flex flex-wrap items-center gap-3 px-4 pt-3">
+        <Link href="/docs" className="bs-brand flex items-center gap-2.5" title="Back to the docs">
+          <Logo />
+          <span className="text-[15px] font-semibold tracking-tight">Builderset</span>
+        </Link>
+        <span className="rounded-full bg-fd-accent px-2.5 py-0.5 text-xs font-semibold text-fd-accent-foreground">
+          Playground
+        </span>
+        <p className="hidden text-xs text-fd-muted-foreground lg:block">
+          Everything stays in this browser; pictures you upload live only in this tab.
+          {copied && copied !== 'JSX' && copied !== 'CSS' ? ` ${copied}.` : ''}
+        </p>
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            className={primaryButton}
+            onClick={() => {
+              void onCopy('JSX');
+            }}
+          >
+            {copied === 'JSX' ? 'Copied ✓' : 'Copy JSX'}
+          </button>
+          <button
+            type="button"
+            className={button}
+            onClick={() => {
+              void onCopy('CSS');
+            }}
+          >
+            {copied === 'CSS' ? 'Copied ✓' : 'Copy CSS'}
+          </button>
+          <button type="button" className={button} onClick={onReset}>
+            Reset
+          </button>
+          <button
+            type="button"
+            className={button}
+            aria-pressed={settings.showOutput}
+            onClick={() => {
+              set({ showOutput: !settings.showOutput });
+            }}
+          >
+            {settings.showOutput ? 'Hide output' : 'Show output'}
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-end gap-3 px-4 pt-3 pb-3">
+        <Field label="Kit">
+          <select
+            className={input}
+            value={kit}
             onChange={(event) => {
-              set({ primary: event.target.value });
+              set({ kit: event.target.value as Kit });
+            }}
+          >
+            <option value="email">Email</option>
+            <option value="article">Article</option>
+          </select>
+        </Field>
+        <Field label="Template">
+          <select
+            className={input}
+            value={settings.template[kit]}
+            onChange={(event) => {
+              set({ template: { ...settings.template, [kit]: event.target.value } });
+            }}
+          >
+            {TEMPLATES[kit].map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Theme">
+          <select
+            className={input}
+            value={settings.theme}
+            onChange={(event) => {
+              set({ theme: event.target.value as Settings['theme'] });
+            }}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="auto">Auto — follows the page</option>
+          </select>
+        </Field>
+        <label className="flex h-8 items-center gap-2 self-end text-sm">
+          <input
+            type="checkbox"
+            checked={settings.pageDark}
+            onChange={(event) => {
+              set({ pageDark: event.target.checked });
             }}
           />
-          {settings.primary ? (
-            <button
-              type="button"
-              className="text-xs underline"
-              onClick={() => {
-                set({ primary: '' });
+          Page is dark
+        </label>
+        <Field label="Brand colour">
+          <span className="flex items-center gap-1">
+            <input
+              type="color"
+              className="h-8 w-10 cursor-pointer rounded-md border bg-fd-background"
+              value={settings.primary || '#2563eb'}
+              onChange={(event) => {
+                set({ primary: event.target.value });
               }}
-            >
-              clear
-            </button>
-          ) : null}
-        </span>
-      </Field>
-      <Field label="Radius">
-        <select
-          className={input}
-          value={settings.radius}
-          onChange={(event) => {
-            set({ radius: event.target.value });
-          }}
-        >
-          <option value="">The editor’s own</option>
-          <option value="0rem">Square</option>
-          <option value="0.375rem">Small</option>
-          <option value="1rem">Large</option>
-        </select>
-      </Field>
-      <Field label="Font">
-        <select
-          className={input}
-          value={settings.font}
-          onChange={(event) => {
-            set({ font: event.target.value });
-          }}
-        >
-          {FONTS.map((font) => (
-            <option key={font.label} value={font.value}>
-              {font.label}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Editor language">
-        <select
-          className={input}
-          value={settings.language}
-          onChange={(event) => {
-            set({ language: event.target.value as Settings['language'] });
-          }}
-        >
-          {EDITOR_LANGUAGES.map((language) => (
-            <option key={language.code} value={language.code}>
-              {language.label}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Content languages">
-        <select
-          className={input}
-          value={settings.severalContentLanguages ? 'several' : 'one'}
-          onChange={(event) => {
-            set({ severalContentLanguages: event.target.value === 'several' });
-          }}
-        >
-          <option value="one">One (English)</option>
-          <option value="several">Several (English, German, French)</option>
-        </select>
-      </Field>
-      <div className="ml-auto flex items-end gap-2">
-        <button
-          type="button"
-          className={button}
-          onClick={() => {
-            void onCopy('JSX');
-          }}
-        >
-          {copied === 'JSX' ? 'Copied' : 'Copy JSX'}
-        </button>
-        <button
-          type="button"
-          className={button}
-          onClick={() => {
-            void onCopy('CSS');
-          }}
-        >
-          {copied === 'CSS' ? 'Copied' : 'Copy CSS'}
-        </button>
-        <button type="button" className={button} onClick={onReset}>
-          Reset
-        </button>
-        <button
-          type="button"
-          className={button}
-          aria-pressed={settings.showOutput}
-          onClick={() => {
-            set({ showOutput: !settings.showOutput });
-          }}
-        >
-          {settings.showOutput ? 'Hide output' : 'Show output'}
-        </button>
+            />
+            {settings.primary ? (
+              <button
+                type="button"
+                className="text-xs underline"
+                onClick={() => {
+                  set({ primary: '' });
+                }}
+              >
+                clear
+              </button>
+            ) : null}
+          </span>
+        </Field>
+        <Field label="Radius">
+          <select
+            className={input}
+            value={settings.radius}
+            onChange={(event) => {
+              set({ radius: event.target.value });
+            }}
+          >
+            <option value="">The editor’s own</option>
+            <option value="0rem">Square</option>
+            <option value="0.375rem">Small</option>
+            <option value="1rem">Large</option>
+          </select>
+        </Field>
+        <Field label="Font">
+          <select
+            className={input}
+            value={settings.font}
+            onChange={(event) => {
+              set({ font: event.target.value });
+            }}
+          >
+            {FONTS.map((font) => (
+              <option key={font.label} value={font.value}>
+                {font.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Editor language">
+          <select
+            className={input}
+            value={settings.language}
+            onChange={(event) => {
+              set({ language: event.target.value as Settings['language'] });
+            }}
+          >
+            {EDITOR_LANGUAGES.map((language) => (
+              <option key={language.code} value={language.code}>
+                {language.label}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Content languages">
+          <select
+            className={input}
+            value={settings.severalContentLanguages ? 'several' : 'one'}
+            onChange={(event) => {
+              set({ severalContentLanguages: event.target.value === 'several' });
+            }}
+          >
+            <option value="one">One (English)</option>
+            <option value="several">Several (English, German, French)</option>
+          </select>
+        </Field>
       </div>
-      <p className="w-full text-xs text-fd-muted-foreground">
-        Everything stays in this browser: the document is kept between visits, and pictures you
-        upload live only in this tab.
-        {copied && copied !== 'JSX' && copied !== 'CSS' ? ` ${copied}.` : ''}
-      </p>
     </div>
   );
 }

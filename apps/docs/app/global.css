@@ -1,12 +1,462 @@
 @import 'tailwindcss';
+/* Fumadocs' defaults underneath (its diff and callout colours); Builderset's own below. */
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
+/*
+ * Builderset's look for its docs: cool neutrals, one accent — electric indigo,
+ * used for what is active, chosen or clickable — and building blocks as the
+ * motif. Motion is short and soft (--bs-ease), and none of it runs for a reader
+ * who asks the system for less.
+ */
+
+@theme {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-fd-background: #fafbfe;
+  --color-fd-foreground: #0d1020;
+  --color-fd-muted: #f0f1f7;
+  --color-fd-muted-foreground: #5b6075;
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #0d1020;
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #0d1020;
+  --color-fd-border: rgb(15 20 45 / 0.09);
+  --color-fd-primary: #5b4bff;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-secondary: #f1f2f8;
+  --color-fd-secondary-foreground: #0d1020;
+  --color-fd-accent: rgb(91 75 255 / 0.08);
+  --color-fd-accent-foreground: #2c2380;
+  --color-fd-ring: #5b4bff;
+  --color-fd-overlay: rgb(10 12 25 / 0.35);
+}
+
+.dark {
+  --color-fd-background: #0a0b12;
+  --color-fd-foreground: #e9eaf3;
+  --color-fd-muted: #141622;
+  --color-fd-muted-foreground: #9a9fb6;
+  --color-fd-popover: #11131d;
+  --color-fd-popover-foreground: #e9eaf3;
+  --color-fd-card: #0f111a;
+  --color-fd-card-foreground: #e9eaf3;
+  --color-fd-border: rgb(255 255 255 / 0.08);
+  --color-fd-primary: #8b7dff;
+  --color-fd-primary-foreground: #0a0b12;
+  --color-fd-secondary: #161926;
+  --color-fd-secondary-foreground: #e9eaf3;
+  --color-fd-accent: rgb(139 125 255 / 0.14);
+  --color-fd-accent-foreground: #dcd7ff;
+  --color-fd-ring: #8b7dff;
+  --color-fd-overlay: rgb(0 0 0 / 0.5);
+}
+
+:root {
+  --bs-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --bs-glow: 0 0 0 4px rgb(91 75 255 / 0.14);
+  --bs-lift: 0 1px 2px rgb(15 20 45 / 0.06), 0 10px 28px -8px rgb(15 20 45 / 0.12);
+  /* The block motif's three tints. */
+  --bs-block-1: #5b4bff;
+  --bs-block-2: #22c3d6;
+  --bs-block-3: #ff6b8b;
+}
+.dark {
+  --bs-glow: 0 0 0 4px rgb(139 125 255 / 0.2);
+  --bs-lift: 0 1px 2px rgb(0 0 0 / 0.4), 0 14px 34px -10px rgb(0 0 0 / 0.6);
+  --bs-block-1: #8b7dff;
+  --bs-block-2: #3fd7e8;
+  --bs-block-3: #ff8aa4;
+}
+
 html {
   scrollbar-gutter: stable;
+  scroll-behavior: smooth;
 }
 
 html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgb(91 75 255 / 0.22);
+}
+
+/* A soft wash of the accent at the top of every page. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: 420px;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    60% 100% at 20% 0%,
+    color-mix(in srgb, var(--color-fd-primary) 9%, transparent),
+    transparent 70%
+  );
+}
+
+/* ── headings and text ───────────────────────────────────────────────────── */
+
+.prose :where(h1, h2, h3, h4) {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.prose :where(p, li) {
+  text-wrap: pretty;
+}
+
+/* Links grow their underline instead of jumping to one. */
+.prose a:not([data-card]):not(.not-prose a) {
+  color: var(--color-fd-primary);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--bs-ease);
+}
+.prose a:not([data-card]):not(.not-prose a):hover {
+  background-size: 100% 1.5px;
+}
+
+.prose :not(pre) > code {
+  border-radius: 6px;
+  padding: 0.1em 0.38em;
+  background: var(--color-fd-muted);
+  border: 1px solid var(--color-fd-border);
+  font-size: 0.86em;
+}
+
+/* ── code blocks ─────────────────────────────────────────────────────────── */
+
+figure.shiki {
+  border-radius: 14px;
+  box-shadow: var(--bs-lift);
+  transition:
+    border-color 0.25s,
+    box-shadow 0.35s var(--bs-ease);
+}
+figure.shiki:hover {
+  border-color: color-mix(in srgb, var(--color-fd-primary) 40%, var(--color-fd-border));
+}
+
+/* ── cards ───────────────────────────────────────────────────────────────── */
+
+[data-card='true'] {
+  border-radius: 14px;
+  transition:
+    transform 0.3s var(--bs-ease),
+    box-shadow 0.3s var(--bs-ease),
+    border-color 0.25s;
+}
+a[data-card='true']:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-fd-primary) 45%, var(--color-fd-border));
+  box-shadow: var(--bs-lift), var(--bs-glow);
+}
+
+.dark #nd-sidebar {
+  --color-fd-muted: #141622;
+  --color-fd-secondary: #161926;
+  --color-fd-muted-foreground: #9a9fb6;
+}
+
+/* ── the sidebar ─────────────────────────────────────────────────────────── */
+
+#nd-sidebar a {
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    padding-left 0.25s var(--bs-ease);
+}
+#nd-sidebar a:hover:not([data-active='true']) {
+  padding-left: calc(var(--spacing) * 3);
+}
+#nd-sidebar a[data-active='true'] {
+  font-weight: 600;
+}
+
+/* ── motion ──────────────────────────────────────────────────────────────── */
+
+@keyframes bs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A page arrives; its blocks rise in as they scroll into view. Browsers
+   without scroll-driven animations simply show them. */
+#nd-page article {
+  animation: bs-rise 0.5s var(--bs-ease) both;
+}
+@supports (animation-timeline: view()) {
+  #nd-page .prose > :is(h2, h3, p, ul, ol, figure, table, blockquote, [data-card='true'], div) {
+    animation: bs-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 28%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── the mark ────────────────────────────────────────────────────────────── */
+
+.bs-mark rect {
+  transition: transform 0.45s var(--bs-ease);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bs-mark .b1 {
+  fill: var(--bs-block-1);
+}
+.bs-mark .b2 {
+  fill: var(--bs-block-2);
+}
+.bs-mark .b3 {
+  fill: var(--bs-block-3);
+}
+.bs-brand:hover .bs-mark .b1 {
+  transform: translate(-1.5px, -1.5px) rotate(-8deg);
+}
+.bs-brand:hover .bs-mark .b2 {
+  transform: translate(1.5px, -1.5px) rotate(8deg);
+}
+.bs-brand:hover .bs-mark .b3 {
+  transform: translateY(1.5px);
+}
+
+/* ── the hero ────────────────────────────────────────────────────────────── */
+
+.bs-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: center;
+  margin: 8px 0 40px;
+  padding: 32px;
+  border: 1px solid var(--color-fd-border);
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      80% 120% at 100% 0%,
+      color-mix(in srgb, var(--bs-block-2) 10%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      70% 100% at 0% 100%,
+      color-mix(in srgb, var(--bs-block-1) 10%, transparent),
+      transparent 60%
+    ),
+    var(--color-fd-card);
+  box-shadow: var(--bs-lift);
+}
+.bs-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fd-primary);
+}
+.bs-hero-title {
+  margin-top: 10px;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.bs-gradient {
+  background: linear-gradient(90deg, var(--bs-block-1), var(--bs-block-2) 60%, var(--bs-block-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bs-hero-lead {
+  margin-top: 12px;
+  color: var(--color-fd-muted-foreground);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.bs-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+.bs-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+  box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--color-fd-primary) 70%, transparent);
+  transition:
+    transform 0.25s var(--bs-ease),
+    box-shadow 0.25s var(--bs-ease),
+    background-color 0.2s;
+}
+.bs-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--color-fd-primary) 80%, transparent);
+}
+.bs-button span {
+  transition: transform 0.3s var(--bs-ease);
+}
+.bs-button:hover span {
+  transform: translateX(3px);
+}
+.bs-button.ghost {
+  background: transparent;
+  color: var(--color-fd-foreground);
+  box-shadow: inset 0 0 0 1px var(--color-fd-border);
+}
+.bs-button.ghost:hover {
+  box-shadow: inset 0 0 0 1px var(--color-fd-primary);
+}
+
+/* A document builds itself: each block drops into place, then the page breathes. */
+.bs-stack {
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+}
+.bs-doc {
+  width: min(100%, 240px);
+  display: grid;
+  gap: 9px;
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--color-fd-background);
+  border: 1px solid var(--color-fd-border);
+  box-shadow: var(--bs-lift);
+  transform: rotateX(8deg) rotateY(-14deg);
+  animation: bs-float 6s ease-in-out 1.6s infinite;
+}
+.bs-doc > span,
+.bs-doc .cell {
+  display: block;
+  border-radius: 6px;
+  animation: bs-drop 0.7s var(--bs-ease) both;
+}
+.bs-doc .r1 {
+  height: 14px;
+  width: 55%;
+  background: var(--color-fd-foreground);
+  opacity: 0.85;
+  animation-delay: 0.1s;
+}
+.bs-doc .r2 {
+  height: 8px;
+  background: var(--color-fd-muted);
+  animation-delay: 0.25s;
+}
+.bs-doc .split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  border-radius: 0;
+  animation-delay: 0.4s;
+}
+.bs-doc .c1 {
+  height: 56px;
+  background: color-mix(in srgb, var(--bs-block-1) 75%, transparent);
+  animation-delay: 0.45s;
+}
+.bs-doc .c2 {
+  height: 56px;
+  background: color-mix(in srgb, var(--bs-block-2) 75%, transparent);
+  animation-delay: 0.6s;
+}
+.bs-doc .r3 {
+  height: 8px;
+  width: 80%;
+  background: var(--color-fd-muted);
+  animation-delay: 0.75s;
+}
+.bs-doc .btn {
+  height: 20px;
+  width: 42%;
+  border-radius: 999px;
+  background: var(--bs-block-3);
+  animation-delay: 0.95s;
+}
+@keyframes bs-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bs-float {
+  0%,
+  100% {
+    transform: rotateX(8deg) rotateY(-14deg) translateY(0);
+  }
+  50% {
+    transform: rotateX(6deg) rotateY(-10deg) translateY(-6px);
+  }
+}
+@media (max-width: 720px) {
+  .bs-hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 24px;
+  }
+  .bs-stack {
+    display: none;
+  }
+}
+
+/* ── steps ───────────────────────────────────────────────────────────────── */
+
+.fd-step::before {
+  background-color: var(--color-fd-primary) !important;
+  color: var(--color-fd-primary-foreground) !important;
+  font-weight: 700;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-fd-primary) 16%, transparent);
+}
+.fd-steps {
+  border-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-fd-primary) 50%, transparent),
+      var(--color-fd-border) 40%
+    )
+    1;
+}
+
+/* A card's icon sits in a tinted tile, and turns with the card. */
+[data-card='true'] svg {
+  color: var(--color-fd-primary);
+  transition: transform 0.35s var(--bs-ease);
+}
+a[data-card='true']:hover svg {
+  transform: rotate(-6deg) scale(1.08);
 }

@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://builderset.vercel.app'),
+  metadataBase: new URL('https://docs-builderset.vercel.app'),
   title: { default: 'Builderset', template: '%s — Builderset' },
   description: 'Visual editors for emails and articles that fit into your project.',
 };

@@ -58,8 +58,9 @@ revision, exactly as if the editor did not exist.
   email at all), then `checkEmail(document, registry, type, { locales })`; or
   `parseArticle(body.document, registry)` (which also runs migrations), then
   `checkArticle(result.doc, registry, { locales })`.
-- **Python**: a port of both kits' checks exists and becomes the `builderset`
-  package on PyPI in step 15 of the plan; until then, follow the next point.
+- **Python**: the `builderset` package. `check_email` (`builderset.email`)
+  and `check_article` (`builderset.article`) give the same answers, with the
+  same issue codes, as the Node kits.
 - **Any other language**: validate against the kit's `schema.json` (JSON
   Schema, draft 2020-12), then apply the structural rules. The invalid
   fixtures (`fixtures/invalid/`) are one broken document each, and
@@ -89,8 +90,9 @@ editor and the email that is sent come from the same function.
 
 ## 6. Examples
 
-Two complete examples come with the docs site (step 16): Next.js route
-handlers, and a FastAPI router.
+Three complete backends, each tested against a real Postgres, are in
+`examples/backends/`: Next.js route handlers with Drizzle, the same with
+Prisma, and a FastAPI router with SQLAlchemy.
 
 ## The REST shape `createRestHost` speaks
 

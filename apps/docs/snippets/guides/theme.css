@@ -1,0 +1,11 @@
+/* Your own tokens, mapped once: the editor reads only these variables. */
+.builderset {
+  --builderset-background: var(--my-page);
+  --builderset-surface: var(--my-panel);
+  --builderset-foreground: var(--my-text);
+  --builderset-border: var(--my-line);
+  --builderset-primary: var(--my-brand);
+  --builderset-primary-foreground: var(--my-on-brand);
+  --builderset-radius: 8px;
+  --builderset-font: var(--my-font);
+}

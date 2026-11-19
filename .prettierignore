@@ -21,3 +21,11 @@ python/.venv/
 python/.*_cache/
 python/dist/
 python/src/builderset/**/*.json
+
+# The backend examples: what their tools write (drizzle-kit's snapshots, the
+# Prisma client), their uploads, and the Python example's environment.
+examples/backends/next-drizzle/drizzle/meta/
+examples/backends/next-prisma/generated/
+examples/backends/*/uploads/
+examples/backends/fastapi-sqlalchemy/.venv/
+examples/backends/fastapi-sqlalchemy/.*_cache/

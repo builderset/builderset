@@ -1,0 +1,72 @@
+---
+title: Security
+description: What your server must check, the Content-Security-Policy the editor and the renderers need, and what Builderset already does for you.
+---
+
+Builderset assumes the browser is hostile. The editor's checks are for the writer's
+comfort; your server's checks are the ones that count.
+
+_This page describes Builderset 0.3.0._
+
+## What your server checks
+
+<include cwd>../../packages/engine/src/host/BACKEND.md#5-security-checklist</include>
+
+**Media keys.** A document references its pictures by storage key, and a key is a
+path into your storage. Check every key in a document against the folders this user
+may use. The Python checks take your rule as `check_media_key`; in Node, check the
+keys your upload route issued for this tenant.
+
+## Permissions and tenants
+
+The editor has no idea who the user is. Your server decides everything:
+
+| Decide on the server                               | Where                                                                                                            |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Who may open the editor                            | The page that loads the row                                                                                      |
+| Who may save                                       | The draft route                                                                                                  |
+| Who may publish                                    | A permission of its own. Leave `publish` out of the host and the button is not shown — the route still checks it |
+| Who may delete, restore a version, manage sections | Each of those routes                                                                                             |
+
+With several tenants:
+
+- Every table has a tenant column, and every query filters by it.
+- Storage keys start with the tenant (`t/17/emails/42/…`), and the check refuses a
+  key from another tenant.
+- The brand kit is per tenant.
+- The editor's `storageKey` — where it keeps a crash-safety copy in the browser —
+  includes the tenant and the user, so two accounts in one browser never see each
+  other's unsaved work.
+
+## Content-Security-Policy
+
+What each part loads, for a page with a policy:
+
+| Part                          | Loads                                          | Directive                                                                                  |
+| ----------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| The email editor's canvas     | Fonts the email uses, from Google Fonts        | `style-src fonts.googleapis.com`, `font-src fonts.gstatic.com` — or `fontPreviews={false}` |
+| Any editor, any renderer      | Your media, through `resolveMedia`             | `img-src` your storage or CDN                                                              |
+| The article renderer's embeds | The provider's player, after the reader clicks | `frame-src` the providers you allow (below)                                                |
+
+The embed frames come from `www.youtube-nocookie.com`, `player.vimeo.com`,
+`platform.twitter.com`, `www.instagram.com`, `www.tiktok.com`, `open.spotify.com` and
+`maps.google.com`. Leave a provider out of `frame-src` and its embeds do not load.
+
+## What Builderset does for you
+
+- **No HTML from the browser.** Documents are JSON; text is runs with marks, never
+  HTML. Pasted HTML is converted to elements, never stored.
+- **Links are checked twice**: when saved (`isSafeUrl` refuses `javascript:` and
+  its relatives) and again when rendered. External links get
+  `rel="noopener noreferrer"`.
+- **The article renderer** has no `dangerouslySetInnerHTML` (a test enforces it),
+  renders a node only if its props pass its schema, and sandboxes embeds.
+- **`jsonLdString`** escapes `<`, `>` and `&`, so an article's text cannot close
+  its script tag.
+- **Limits.** A document has a ceiling on its number of nodes and its depth, and
+  each kit on its text lengths and list sizes. The schemas carry them
+  (`x-limits`), and the checks enforce them.
+
+## Reporting a vulnerability
+
+See [SECURITY.md](https://github.com/builderset/builderset/blob/development/SECURITY.md).

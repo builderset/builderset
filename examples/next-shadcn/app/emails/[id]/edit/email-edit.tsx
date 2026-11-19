@@ -1,7 +1,10 @@
 'use client';
 
+// #region styles
 import '@builderset/email/styles.css';
+// Your shadcn tokens, mapped to the editor's variables. Leave it out without shadcn.
 import '@builderset/email/theme/shadcn.css';
+// #endregion styles
 
 import { createEmailRegistry, type EmailDocument } from '@builderset/email';
 import { createRestHost } from '@builderset/email/host';

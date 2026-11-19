@@ -1,0 +1,61 @@
+---
+title: Theme
+description: Give the editor your project's colours, radius and font, in CSS or from JavaScript, and follow your dark mode. About 5 minutes.
+---
+
+At the end the editor looks like part of your app. Nothing on this page is needed:
+with no theme at all, the editor has its own neutral look, in light and dark.
+
+_This page describes Builderset 0.3.0._
+
+## In CSS
+
+The editor reads a small set of public variables, all named `--builderset-*`. Set
+them on `.builderset` or on any ancestor, usually by pointing them at your own
+tokens:
+
+<include cwd lang="css" meta='title="globals.css"'>
+  ./snippets/guides/theme.css
+</include>
+
+Every variable, its default and what it paints is in
+[CSS variables](/docs/reference/css-variables). The internal variables the editor
+uses underneath may change in any release; the public ones will not.
+
+## shadcn/ui
+
+If your project uses shadcn's tokens (`--primary`, `--sidebar`, `--input`, …), one
+import maps them all:
+
+<include cwd lang="tsx" meta='title="email-edit.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/email-edit.tsx#styles
+</include>
+
+Use `theme/shadcn-hsl.css` instead if your tokens are bare HSL numbers
+(`--primary: 222 47% 11%`), as in shadcn's older themes.
+
+## From JavaScript
+
+The `tokens` prop takes the same names without the prefix, for a colour that comes
+from data — a tenant's own brand, a user's choice. `theme` is `'light'`, `'dark'` or
+`'auto'` (the operating system's setting):
+
+<include cwd lang="tsx" meta='title="tenant-email-editor.tsx"'>
+  ./snippets/guides/theme-tokens.tsx
+</include>
+
+## Dark mode
+
+`theme="auto"` follows the operating system. If your app has its own switch, pass
+its value as `'light'` or `'dark'`. The defaults use CSS `light-dark()`, which needs
+a browser from 2024 or later.
+
+The document is not the editor: an email on a dark editor still looks as a light
+inbox shows it, unless the email's own dark-mode settings say otherwise.
+
+## Fonts
+
+The editor uses `--builderset-font` for its own interface. The fonts of the
+content — an email's fonts, chosen by the writer — are loaded from Google Fonts on
+the canvas. Pass `fontPreviews={false}` if your page may not load them (see
+[Security](/docs/guides/security#content-security-policy)).

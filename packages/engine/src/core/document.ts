@@ -16,6 +16,7 @@ import { isAnchor } from './url';
  * re-render the other nine hundred.
  */
 
+// #region shape
 export interface BuilderNode {
   id: NodeId;
   /** The element's registry key. */
@@ -58,6 +59,7 @@ export interface EngineDocument<Meta extends object = object> extends NodeTree {
   /** The words in other languages, when the writer switched multi-language on. */
   i18n?: DocumentI18n | undefined;
 }
+// #endregion shape
 
 /**
  * The SHAPE of a node, without knowing which elements exist. Element props are

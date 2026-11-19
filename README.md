@@ -1,23 +1,33 @@
 # Builderset
 
-One engine for block editors, and one kit per kind of document: emails and
-articles today, popups, pages and forms later.
+[![CI](https://github.com/builderset/builderset/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/builderset/builderset/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/@builderset/email?label=%40builderset%2Femail)](https://www.npmjs.com/package/@builderset/email)
+[![License: MIT](https://img.shields.io/badge/license-MIT-5b4bff)](LICENSE)
 
-A developer installs the kit they need, places one editor component in their
-React back office, and renders the saved document on their server or their
-site. The editor never talks to a backend by itself: the project hands it a
-small adapter for saving and uploading.
+**Let your users design emails and articles — inside your own app.**
 
-- **One engine for every kind of document.** The same workspace, undo, drag and
-  drop, inspector and multi-language writing for each kit.
-- **A typed document, not HTML.** Documents are JSON checked by a JSON Schema,
-  so any backend in any language can validate and store them.
-- **It belongs to the project it runs in.** No iframe and no hosted account:
-  the project's storage, theme and language.
+Builderset is the editor, the renderer and the checker, as React components and a
+server library. You bring the theme, the language and the database.
 
-> **Status: not released.** Nothing is on npm yet. The packages work, but the
-> build, the stylesheet and the published shape are still being made. The plan
-> and its progress are in [docs/plan](docs/plan/README.md).
+[![The email editor](docs/assets/email-editor.png)](https://builderset.vercel.app)
+
+- **One engine for every kind of content.** Emails and articles today, on the same
+  workspace: drag and drop, undo, an inspector, saved sections, several languages
+  in one document.
+- **Takes your theme and your language.** A small set of CSS variables, or your
+  shadcn tokens in one import; light and dark. The editor speaks English, Albanian
+  and German.
+- **Your database, your API.** No iframe, no hosted account. Documents are typed
+  JSON you store where you like; your server checks and renders them, in Node or
+  in Python.
+
+**[Website](https://builderset.vercel.app)** ·
+**[Documentation](https://docs-builderset.vercel.app/docs)** ·
+**[Playground](https://docs-builderset.vercel.app/playground)**
+
+> **Status: 0.3.0, on GitHub Packages.** The packages are used in production, but
+> they are not on npm yet and the API may change before 1.0. Installing needs a
+> token until then — see [Install](https://docs-builderset.vercel.app/docs/install).
 
 ## Packages
 

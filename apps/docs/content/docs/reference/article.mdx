@@ -1,0 +1,37 @@
+---
+title: Article
+description: The article document's shape, and where to find every element and the renderer's options.
+---
+
+_This page describes Builderset 0.3.0. Every element, with its props, is in
+[Article elements](/docs/reference/article-elements)._
+
+## The document
+
+The engine's node tree (see [Email](/docs/reference/email#the-document) for
+`BuilderNode`), with an article's meta — title, excerpt, cover, SEO:
+
+<include cwd lang="ts" meta='title="@builderset/article — ArticleDocument"'>
+  ../../packages/article/src/core/document.ts#shape
+</include>
+
+An empty article, as stored:
+
+<include cwd lang="json" meta='title="fixtures/valid/empty.json"'>
+  ../../packages/article/fixtures/valid/empty.json
+</include>
+
+The kit's JSON Schema is `@builderset/article/schema.json`.
+
+## Reading a stored article
+
+`parseArticle(raw, registry)` checks the shape, runs the element migrations and
+returns `{ ok, doc, issues, migrated }`; `checkArticle(doc, registry, { locales })`
+returns every issue ([Issues](/docs/reference/issues)).
+
+## The renderer
+
+`ArticleRenderer`, `structuredData` and `jsonLdString` are in
+`@builderset/article/render`. Every prop of the renderer is in
+[Props](/docs/reference/props); how to use them is in
+[Showing articles](/docs/guides/articles).

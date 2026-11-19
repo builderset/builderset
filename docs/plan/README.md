@@ -24,13 +24,13 @@ The article builder and the email builder in this repository are good enough to 
 
 ## Read in this order
 
-| Document                                         | What it is                                                                                                                                                |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **[BLUEPRINT.md](BLUEPRINT.md)**                 | The target: repository layout, packages and entry points, public API, theme and language, backend, styles, build, publishing                              |
-| **[ROADMAP.md](ROADMAP.md)**                     | The order of work: four phases, six milestones, sizes, risks, version plan                                                                                |
-| **[FEATURES.md](FEATURES.md)**                   | What each builder does today and what can be added later: the feature catalogue, with priority and size                                                   |
-| **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** | For a developer who installs a builder: frontend setup, the host adapter, which tables and fields to store, the routes, validation, sending and rendering |
-| **[steps/](steps/00_INDEX.md)**                  | Nineteen step files with exact instructions, one per piece of work. Start at [00_INDEX.md](steps/00_INDEX.md)                                             |
+| Document                                         | What it is                                                                                                                   |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| **[BLUEPRINT.md](BLUEPRINT.md)**                 | The target: repository layout, packages and entry points, public API, theme and language, backend, styles, build, publishing |
+| **[ROADMAP.md](ROADMAP.md)**                     | The order of work: four phases, six milestones, sizes, risks, version plan                                                   |
+| **[FEATURES.md](FEATURES.md)**                   | What each builder does today and what can be added later: the feature catalogue, with priority and size                      |
+| **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** | Moved to the docs site's guides (step 16); the file maps each old section to its page                                        |
+| **[steps/](steps/00_INDEX.md)**                  | Nineteen step files with exact instructions, one per piece of work. Start at [00_INDEX.md](steps/00_INDEX.md)                |
 
 **What is done now and what is later.** Steps 01–16 are the product: extraction, packaging, publishing, adoption, documentation. Steps 17–19 and everything in [FEATURES.md](FEATURES.md) are later work, in the order [ROADMAP.md](ROADMAP.md#after-10) gives.
 

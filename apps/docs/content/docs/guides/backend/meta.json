@@ -1,0 +1,4 @@
+{
+  "title": "Backend setup",
+  "pages": ["next-drizzle", "next-prisma", "fastapi-sqlalchemy"]
+}

@@ -7,4 +7,4 @@ renders an email to the same HTML and text, byte for byte.
 
 #: Written by ``tooling/sync-python-version.mjs`` from the npm packages' version:
 #: one version for the whole product.
-__version__ = "0.2.0"
+__version__ = "0.3.0"

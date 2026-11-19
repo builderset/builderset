@@ -1,5 +1,18 @@
 # builderset
 
+## 0.3.0
+
+### Minor Changes
+
+- 7554288: The Python package, `builderset`, at the same version: `check_article`, `check_email` and `render_email` — the email rendered byte for byte as `renderEmail` writes it. Its wheel is attached to the GitHub release.
+
+### Patch Changes
+
+- Updated dependencies [7554288]
+  - @builderset/engine@0.3.0
+  - @builderset/email@0.3.0
+  - @builderset/article@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes

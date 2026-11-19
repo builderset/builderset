@@ -3,20 +3,43 @@ title: What it is
 description: Visual editors for emails and articles that fit into your project — your theme, your language, your database.
 ---
 
+import { Blocks, BookOpen, Mail, Newspaper, ShieldCheck } from 'lucide-react';
+
+<Hero />
+
 Builderset is a set of visual editors — **kits** — for documents your users design:
 an **email** kit and an **article** kit today. Each kit is an editor, a renderer and a
 checker for one kind of document, built on one shared **engine**.
 
-What Builderset does:
+## What you get
 
-- **The editor**, a React component, with your colours and your language.
-- **The renderer**: an email to HTML and plain text, an article to a page.
-- **The checker**: the same rules in the browser and on your server, in TypeScript and in Python.
+<Cards>
+  <Card icon={<Blocks />} title="The editor" href="/playground">
+    A React component in your colours and your language, light or dark. Try it now in the
+    playground.
+  </Card>
+  <Card icon={<BookOpen />} title="The renderer" href="/docs/quick-start/email#send-it">
+    An email to HTML and plain text, an article to a page of your site — on your server.
+  </Card>
+  <Card icon={<ShieldCheck />} title="The checker" href="/docs/reference/python">
+    The same rules in the browser and on your server, in TypeScript and in Python.
+  </Card>
+</Cards>
 
-What your project supplies:
+## What your project supplies
 
 - **Storage.** A document is JSON. You keep it in your own database, behind your own API.
 - **Uploads.** Pictures go wherever your files go.
 - **Sending.** You render an email on your server and send it with your own provider.
 
-Start with a quick start: [an email editor in a Next.js app](/docs/quick-start/email).
+## Start here
+
+<Cards>
+  <Card icon={<Mail />} title="Quick start: email" href="/docs/quick-start/email">
+    An email editor in a Next.js app, saving to your routes and sending from your server. About 10
+    minutes.
+  </Card>
+  <Card icon={<Newspaper />} title="Quick start: article" href="/docs/quick-start/article">
+    An article editor, and the article on your site from a Server Component.
+  </Card>
+</Cards>

@@ -11,7 +11,10 @@ which is built and tested on every change.
 
 _This page describes Builderset 0.3.0._
 
-## 1. Install
+<Steps>
+<Step>
+
+### Install
 
 Until Builderset is public, its packages are on GitHub Packages, which needs a token
 even to read. Create a classic token with only the `read:packages` scope, set it as
@@ -28,7 +31,10 @@ Then install the email kit:
   ./snippets/install-email.sh
 </include>
 
-## 2. The editor page
+</Step>
+<Step>
+
+### The editor page
 
 The page is a Server Component: it reads the email from your storage and hands it to
 the editor.
@@ -46,7 +52,10 @@ otherwise). `createRestHost` connects the editor to your routes:
   ../../examples/next-shadcn/app/emails/[id]/edit/email-edit.tsx
 </include>
 
-## 3. Your routes
+</Step>
+<Step>
+
+### Your routes
 
 The editor asks your API for the email and saves it back. The example keeps each
 email in a JSON file; in your project these are rows in your database, with these
@@ -72,7 +81,10 @@ refused with `409` if someone else saved in the meantime:
 Publishing is the same pattern, in
 [`publish/route.ts`](https://github.com/builderset/builderset/blob/development/examples/next-shadcn/app/api/emails/%5Bid%5D/publish/route.ts).
 
-## 4. Send it
+</Step>
+<Step>
+
+### Send it
 
 On the server, `renderEmail` turns the document into HTML and plain text — no React,
 no browser. Fill the variables with `data`, and hand the result to your mail
@@ -81,6 +93,9 @@ provider:
 <include cwd lang="ts" meta='title="app/api/emails/[id]/send/route.ts"'>
   ../../examples/next-shadcn/app/api/emails/[id]/send/route.ts
 </include>
+
+</Step>
+</Steps>
 
 ## Done
 

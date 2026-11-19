@@ -130,8 +130,8 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 13 Publishing and releases — `0.1.0` and `0.2.0` are on GitHub Packages under `latest`
 - [x] **M2 — installable**
 - [x] 14 Adopt the packages in MotorsAL — on Builderset `0.2.0`, in production since 2026-11-16
-- [ ] 15 The Python package
-- [ ] **M3 — MotorsAL runs on it**
+- [x] 15 The Python package — `builderset` 0.3.0, the wheel on the GitHub release (D9); MotorsAL's API runs on it
+- [x] **M3 — MotorsAL runs on it** — 2026-11-19: the editors on `@builderset/*` and the API on `builderset`, both 0.3.0, in production
 - [ ] 16 Docs site and playground
 - [ ] **M4 — public**
 - [ ] 17 The popup builder

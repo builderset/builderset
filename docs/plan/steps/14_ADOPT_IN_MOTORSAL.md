@@ -210,8 +210,8 @@ Compare the size of the admin's builder routes before and after (`next build` pr
 - [x] The admin and the site import the compiled stylesheets and map MotorsAL's tokens.
 - [x] The sync script reads from the installed packages and its check runs in CI.
 - [x] Lint, type check, tests, both builds and the API's contract tests pass.
-- [ ] Staging matches the screenshots in all eight rows.
-- [ ] Production is deployed from this branch.
+- [x] Staging matches the screenshots in all eight rows. _(How, row by row: MotorsAL's copy of this step.)_
+- [x] Production is deployed from this branch. _(2026-11-16.)_
 - [x] The documents and the ADR are updated.
 
 ## Traps

@@ -14,3 +14,10 @@ pnpm-lock.yaml
 .next/
 next-env.d.ts
 .data/
+
+# The Python package: its environment, caches, build output and the contract
+# files copied in from packages/ (python/hatch_build.py).
+python/.venv/
+python/.*_cache/
+python/dist/
+python/src/builderset/**/*.json

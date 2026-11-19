@@ -1,5 +1,7 @@
 [build-system]
-requires = ["hatchling>=1.27"]
+# Exact: the wheel a project vendors must be byte-identical to the one the
+# release attaches, and a different hatchling could write it differently.
+requires = ["hatchling==1.33.0"]
 build-backend = "hatchling.build"
 
 [project]

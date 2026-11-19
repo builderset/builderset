@@ -1,0 +1,73 @@
+name: Docs
+
+# The docs site (apps/docs) on Vercel. Until the launch it is a PREVIEW
+# deployment: Vercel shows previews only to the project's members, so the site
+# stays as private as the packages (decision D4). At M4 this deploys with
+# --prod, to builderset.vercel.app.
+#
+# Built here and uploaded with Vercel's CLI (`vercel build`, then `deploy
+# --prebuilt`): Vercel's free plan cannot read a private repository owned by a
+# GitHub organisation, and this way it never needs to.
+#
+# Needs three secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID. Without
+# them the job says so and stops, green.
+on:
+  push:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: docs-${{ github.ref }}
+
+env:
+  VERCEL_CLI: vercel@65.11.0
+
+jobs:
+  deploy:
+    if: github.repository_owner == 'builderset'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      - name: The Vercel secrets
+        id: secrets
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::warning::VERCEL_TOKEN, VERCEL_ORG_ID or VERCEL_PROJECT_ID is not set: the docs site is not deployed."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v5
+        if: steps.secrets.outputs.ready == 'true'
+      - uses: pnpm/action-setup@v4
+        if: steps.secrets.outputs.ready == 'true'
+      - uses: actions/setup-node@v5
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          node-version: 24
+          cache: pnpm
+      - if: steps.secrets.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+      # The kits the site imports, from this commit (workspace links).
+      - if: steps.secrets.outputs.ready == 'true'
+        run: pnpm turbo build --filter=docs^...
+
+      - name: Build for Vercel
+        if: steps.secrets.outputs.ready == 'true'
+        working-directory: apps/docs
+        run: |
+          npx --yes "$VERCEL_CLI" pull --yes --environment=preview --token="$VERCEL_TOKEN"
+          npx --yes "$VERCEL_CLI" build --token="$VERCEL_TOKEN"
+      - name: Deploy the preview
+        if: steps.secrets.outputs.ready == 'true'
+        working-directory: apps/docs
+        run: |
+          url=$(npx --yes "$VERCEL_CLI" deploy --prebuilt --token="$VERCEL_TOKEN")
+          echo "Docs preview: $url" >> "$GITHUB_STEP_SUMMARY"
+          echo "Docs preview: $url"

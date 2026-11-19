@@ -1,0 +1,72 @@
+---
+title: Sending email
+description: Your brand, the kinds of email your code sends and the variables they fill, and the render that turns a template into what a recipient gets. About 15 minutes.
+---
+
+At the end your server sends a template a writer designed, filled with one
+recipient's data, in your brand. Rendering needs no React and no browser: it is one
+function, on Node (or Python, with the same output).
+
+_This page describes Builderset 0.3.0._
+
+## The brand kit
+
+A mail client cannot read your CSS, so an email is painted with real values. A
+template stores names — `brand.primary` — and the brand kit holds the values. Pass
+the same object to the editor's `brand` prop and to `renderEmail`; change it once
+and every template follows.
+
+<include cwd lang="ts" meta='title="brand.ts"'>
+  ./snippets/guides/brand.ts
+</include>
+
+## Email types and their variables
+
+An email type is one kind of email your code sends — order shipped, password reset
+— and the data it has at that moment. The writer sees its variables in the editor
+and puts them in the text; the checks make sure a template uses the ones it must.
+
+<include cwd lang="ts" meta='title="email-types.ts"'>
+  ./snippets/guides/email-type.ts
+</include>
+
+- Pass the type as the editor's `type` prop, and to `checkEmail(document, registry,
+type)` on your server. `type={null}` is a free email with no variables.
+- `samples` fill the editor's preview, so the writer sees real-looking text.
+- A variable's `type` decides how it is printed: `money` and `date` are
+  formatted for the email's language, and a `list` is what a Repeat block goes
+  through, once per item. `children` group variables under one
+  name (`order.number`).
+
+## Render and send
+
+`renderEmail` returns the subject, the HTML and a plain-text version. Hand the
+three to your mail provider:
+
+<include cwd lang="ts" meta='title="send.ts"'>
+  ./snippets/guides/send.ts
+</include>
+
+Render at send time from the stored, published document — never from HTML the
+browser sends. The preview in the editor comes from the same function, so what the
+writer saw is what is sent.
+
+## Fonts
+
+A writer can pick a web font for an email. Mail clients that load web fonts get it;
+the others show the fallback the design names. In the editor the canvas loads the
+fonts from Google Fonts — see [Security](/docs/guides/security#content-security-policy)
+for the policy, or pass `fontPreviews={false}`.
+
+## Social icons
+
+The social block draws icons only when you tell `renderEmail` where they are; without
+`socialIcon` it is a row of text links. The icons ship in the package's
+`icons/social/` folder, as 96px PNGs because Gmail and Outlook show no SVG. Copy the
+folder somewhere public and point `socialIconsAt` at it, as above.
+
+## Dates and numbers
+
+Formatted for `sq`, `en` and `de`, in the `Europe/Tirane` time zone, today — the
+same in Node and Python. Other languages and your own time zone are planned before
+1.0.

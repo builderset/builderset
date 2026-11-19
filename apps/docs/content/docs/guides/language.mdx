@@ -1,0 +1,47 @@
+---
+title: Language
+description: Show the editor in your user's language, and let writers write a document in several languages. About 5 minutes.
+---
+
+Two different things are called language here:
+
+- **The editor's language** — its buttons, menus and messages. English is built in;
+  Albanian (`sq`) and German (`de`) come with each kit.
+- **The content's languages** — the languages a document itself is written in. An
+  email can carry its text in several; a reader gets theirs.
+
+_This page describes Builderset 0.3.0._
+
+## Both, on one editor
+
+<include cwd lang="tsx" meta='title="localised-email-editor.tsx"'>
+  ./snippets/guides/language.tsx
+</include>
+
+- `locale` picks the editor's words; `locales` holds the ones you import. Each is
+  its own entry point (`@builderset/email/locales/de`), so a project downloads
+  only the languages it uses.
+- `contentLocales` lists the languages a document may be written in. With more than
+  one, the editor shows a language switch. The document is written once — blocks,
+  layout, images and links are shared — and only its words are written again for
+  each language.
+- On the server, pass the same list to the checks (`checkEmail(…, { locales })`): a
+  document in a language your project does not publish is refused with
+  `i18n.locale.unknown`.
+
+## Rendering a language
+
+`renderEmail(document, { locale: 'de' })` and `<ArticleRenderer locale="de" />`
+pick the content's language. Words not yet translated read in the document's base
+language rather than disappearing.
+
+Dates and numbers inside an email are formatted for `sq`, `en` and `de` today, in
+the `Europe/Tirane` time zone. More languages and a time zone of your own are
+planned before 1.0.
+
+## Adding a language
+
+The editor's words are plain objects, one per entry point, with English as the
+shape. A word a language leaves out falls back to English, and a regional code
+(`de-AT`) reads as its language. To add one to Builderset itself, see
+[CONTRIBUTING](https://github.com/builderset/builderset/blob/development/CONTRIBUTING.md#adding-a-language).

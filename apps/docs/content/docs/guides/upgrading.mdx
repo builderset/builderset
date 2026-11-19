@@ -1,0 +1,38 @@
+---
+title: Upgrading
+description: How versions work, what happens to stored documents when an element changes, and how to move to a new release.
+---
+
+_This page describes Builderset 0.3.0._
+
+## One version for everything
+
+Every `@builderset/*` package and the Python `builderset` package share one version
+number and are released together. Install the same version of each: a project on
+`@builderset/email@0.3.0` uses `builderset==0.3.0` on its Python server.
+
+Before 1.0, a minor release (`0.3` → `0.4`) may change the API. Each change is in
+the [CHANGELOG](https://github.com/builderset/builderset/blob/development/packages/engine/CHANGELOG.md),
+with what to do.
+
+## Stored documents
+
+You never migrate your database by hand. Every node in a document carries the
+version of its element (`v`). When an element's props change shape, the element
+gets a `migrate` that brings old props forward one version at a time:
+
+- `parseArticle` runs the migrations and says whether anything changed
+  (`migrated`). Save the document back once it has, or not at all — it is
+  migrated again on every read.
+- An element that is behind and has no migration is refused with
+  `element.cannotMigrate`, not guessed at.
+- The Python package checks and renders documents; it does not migrate them. Run
+  it at the same version as your Node packages.
+
+## The steps
+
+1. Read the CHANGELOG entries between your version and the new one.
+2. Update every `@builderset/*` package to the same version, and the Python
+   package if you have one.
+3. Run your type-check: renamed props and options show up there.
+4. Run your tests against a few real documents from your database.

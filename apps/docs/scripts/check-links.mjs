@@ -4,12 +4,23 @@
  * `#anchor` on it a heading of that page. Run by `pnpm test` (and CI).
  *
  * Included code files are checked by the build itself: a missing one fails it.
+ * An included Markdown file's headings count as the page's own.
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTENT = join(dirname(fileURLToPath(import.meta.url)), '..', 'content', 'docs');
+const DOCS = join(dirname(fileURLToPath(import.meta.url)), '..');
+const CONTENT = join(DOCS, 'content', 'docs');
+
+/** The page's source, with every included Markdown file appended (`<include cwd>` paths start at apps/docs). */
+function withIncludes(source) {
+  const paths = [
+    ...source.matchAll(/<include cwd>\s*([^\s<#]+\.mdx?)(?:#[^\s<]*)?\s*<\/include>/g),
+  ];
+  const files = [...new Set(paths.map(([, path]) => path))];
+  return [source, ...files.map((path) => readFileSync(join(DOCS, path), 'utf8'))].join('\n');
+}
 
 function pages(folder) {
   return readdirSync(folder).flatMap((name) => {
@@ -46,7 +57,7 @@ function anchors(source) {
 }
 
 const files = pages(CONTENT);
-const byUrl = new Map(files.map((file) => [urlOf(file), readFileSync(file, 'utf8')]));
+const byUrl = new Map(files.map((file) => [urlOf(file), withIncludes(readFileSync(file, 'utf8'))]));
 const problems = [];
 for (const file of files) {
   const source = byUrl.get(urlOf(file));

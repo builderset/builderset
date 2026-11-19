@@ -8,3 +8,6 @@ packages:
 # one from source when none fits, so it is reviewed and left off.
 allowBuilds:
   '@parcel/watcher': false
+  # The docs site's MDX compiler (fumadocs-mdx). Its script only checks the native
+  # binary that its platform package (@esbuild/<os>-<arch>) already installed.
+  esbuild: false

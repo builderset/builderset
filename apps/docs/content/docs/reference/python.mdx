@@ -1,0 +1,51 @@
+---
+title: Python
+description: builderset for Python — check documents and render emails on a Python server, byte for byte as the TypeScript does.
+---
+
+_This page describes Builderset 0.3.0._
+
+`builderset` is the server side of the kits in Python. It checks an article or an
+email with the same rules and the same issue codes as the TypeScript packages, and
+renders an email to the same HTML and text, byte for byte: the email you send is the
+one the editor showed. Python 3.11 or newer.
+
+## Install
+
+Until Builderset is public, the wheel is attached to each GitHub release
+(`v0.3.0`, beside its SHA-256). Download it and install the file:
+
+<include cwd lang="bash">
+  ./snippets/python/install.sh
+</include>
+
+## Check and render an email
+
+<include cwd lang="python" meta='title="send_email.py"'>
+  ./snippets/python/send_email.py
+</include>
+
+- `check_email(document, spec, *, locales, check_media_key)` — every reason the
+  template cannot be stored. `spec` is the template's email type: its variables, the
+  ones it must use, and whether it is marketing (then it needs an unsubscribe link).
+- `render_email(document, *, asset_url, brand, data, locale, currency)` — the subject,
+  preheader, HTML and plain text.
+
+## Articles
+
+`builderset.article.check_article(document, *, locales, check_media_key)` checks an
+article. There is no article renderer in Python: it is React. A Python site serves
+the document to a JavaScript front end, or renders it with its own templates.
+
+## Media keys are your rule
+
+Which storage keys exist, and which a document may use, is your application's
+business. Pass `check_media_key`: a function that returns `None` for an allowed key
+and an issue code (`media.invalidKey`, `media.wrongFolder`) otherwise. Without one,
+keys are checked for their shape only.
+
+## Dates and numbers
+
+`{{ value | date }}`, `| money` and `| number` are formatted in `sq`, `en` and `de`;
+any other language is formatted as English, in the `Europe/Tirane` time zone — as in
+the TypeScript renderer, so both still agree byte for byte.

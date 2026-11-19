@@ -21,12 +21,13 @@ small adapter for saving and uploading.
 
 ## Packages
 
-| Package                                   | What                                                                                                             |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| [`@builderset/engine`](packages/engine)   | The node tree, operations with undo, the host contract, the generic editor and its UI kit                        |
-| [`@builderset/article`](packages/article) | Articles: elements, renderer for the web, editor, schema and contract fixtures                                   |
-| [`@builderset/email`](packages/email)     | Emails: elements, renderer to email HTML and text, editor, schema and golden files                               |
-| [`builderset`](packages/builderset)       | Every kit in one install, under `builderset/email/…`, `builderset/article/…`, and one stylesheet for all of them |
+| Package                                   | What                                                                                                                           |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| [`@builderset/engine`](packages/engine)   | The node tree, operations with undo, the host contract, the generic editor and its UI kit                                      |
+| [`@builderset/article`](packages/article) | Articles: elements, renderer for the web, editor, schema and contract fixtures                                                 |
+| [`@builderset/email`](packages/email)     | Emails: elements, renderer to email HTML and text, editor, schema and golden files                                             |
+| [`builderset`](packages/builderset)       | Every kit in one install, under `builderset/email/…`, `builderset/article/…`, and one stylesheet for all of them               |
+| [`builderset` (Python)](python)           | The checks and the email renderer in Python, byte for byte with the TypeScript: `check_article`, `check_email`, `render_email` |
 
 Every kit has the same entries: `core` (the document, no React, runs on a
 server), `render`, `editor`, `host` and `locales/*`. What a backend must store,

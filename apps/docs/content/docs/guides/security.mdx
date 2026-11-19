@@ -17,6 +17,27 @@ path into your storage. Check every key in a document against the folders this u
 may use. The Python checks take your rule as `check_media_key`; in Node, check the
 keys your upload route issued for this tenant.
 
+## Permissions and tenants
+
+The editor has no idea who the user is. Your server decides everything:
+
+| Decide on the server                               | Where                                                                                                            |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Who may open the editor                            | The page that loads the row                                                                                      |
+| Who may save                                       | The draft route                                                                                                  |
+| Who may publish                                    | A permission of its own. Leave `publish` out of the host and the button is not shown — the route still checks it |
+| Who may delete, restore a version, manage sections | Each of those routes                                                                                             |
+
+With several tenants:
+
+- Every table has a tenant column, and every query filters by it.
+- Storage keys start with the tenant (`t/17/emails/42/…`), and the check refuses a
+  key from another tenant.
+- The brand kit is per tenant.
+- The editor's `storageKey` — where it keeps a crash-safety copy in the browser —
+  includes the tenant and the user, so two accounts in one browser never see each
+  other's unsaved work.
+
 ## Content-Security-Policy
 
 What each part loads, for a page with a policy:

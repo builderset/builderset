@@ -28,6 +28,36 @@ In Python, the same check before a render ([Python](/docs/reference/python) has 
 
 More on each line in [Security](/docs/guides/security).
 
+## Articles: the columns your site reads
+
+An article row has the same document columns, plus the ones your site lists and
+searches by. Lists, search and cards read these from columns, not from inside the
+JSON:
+
+| Column                   | What it is                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| `slug`                   | The address. Unique per language                                             |
+| `locale`                 | The language the article's tree is written in                                |
+| `scheduled_at`           | When a scheduled article goes live. A job of yours publishes it at that time |
+| `title`, `excerpt`       | Copies of `document.meta.title` and `document.meta.excerpt`                  |
+| `cover_key`, `cover_alt` | A copy of `document.meta.cover`                                              |
+| your own                 | Category, tags, author, featured — whatever your site needs                  |
+
+Write the copies from `document.meta` in the same transaction on every save and
+every publish, so the two never disagree: the document is the source, the columns an
+index of it.
+
+## Revisions, sections and the brand
+
+- **Revisions**: record one on every manual save and every publish. Keep few
+  autosaves — one every ten minutes, or the last twenty — or the table grows by a
+  whole document every few seconds of typing.
+- **Saved sections**: `name` and `fragment`, the piece of a document the editor
+  hands you. An email section can be `synced`: a change to it changes every
+  template that uses it.
+- **The brand kit**: one JSON value — `default`, or one per tenant or sender. See
+  [Sending email](/docs/guides/email#the-brand-kit).
+
 ## Three complete backends
 
 The same routes, each tested against a real Postgres on every change:

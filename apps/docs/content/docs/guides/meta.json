@@ -12,6 +12,7 @@
     "custom-elements",
     "content-types",
     "security",
-    "upgrading"
+    "upgrading",
+    "going-live"
   ]
 }

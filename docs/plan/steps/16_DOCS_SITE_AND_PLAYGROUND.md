@@ -116,7 +116,7 @@ Each is a complete, small project in `examples/backends/`, tested in CI against 
 
 Each test: create a template, save a draft, save again with a stale `expected_saved_at` and expect `409`, publish, render, and check an invalid document is refused with `422` and the right issue code.
 
-The table shapes come from [INTEGRATION_GUIDE.md](../INTEGRATION_GUIDE.md#3-what-to-store), which took them from MotorsAL's working tables.
+The table shapes came from the integration guide's "What to store" (now [Backend setup](https://docs-builderset.vercel.app/docs/guides/backend)), which took them from MotorsAL's working tables.
 
 ### 6. The landing page
 

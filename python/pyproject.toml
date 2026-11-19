@@ -1,0 +1,70 @@
+[build-system]
+# Exact: the wheel a project vendors must be byte-identical to the one the
+# release attaches, and a different hatchling could write it differently.
+requires = ["hatchling==1.33.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "builderset"
+dynamic = ["version"]
+description = "Validate builder documents and render emails. The Python side of the Builderset builders."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+# tzdata: the renderer formats dates in a named time zone, and Windows and slim
+# containers have no system time-zone database for `zoneinfo` to read.
+dependencies = ["jsonschema>=4.23", "tzdata>=2024.1"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.15", "mypy>=1.15"]
+
+[tool.hatch.version]
+path = "src/builderset/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/builderset"]
+
+# The contract's data files are copied from `packages/…` by the hook below and
+# ignored by git; `artifacts` puts them in the sdist and the wheel anyway.
+[tool.hatch.build]
+artifacts = ["src/builderset/**/*.json"]
+
+[tool.hatch.build.hooks.custom]
+path = "hatch_build.py"
+
+# ── Ruff: MotorsAL's API rules, where this code came from ─────────────────
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "DTZ", "T20", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["builderset"]
+
+# ── mypy ──────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.11"
+strict = true
+mypy_path = "src"
+packages = ["builderset"]
+
+[[tool.mypy.overrides]]
+module = ["jsonschema.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --strict-config"

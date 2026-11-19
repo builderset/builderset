@@ -1,6 +1,6 @@
 {
   "name": "builderset",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Block builders for React: email and article editors on one engine, with a typed JSON document any backend can validate and render.",
   "license": "MIT",

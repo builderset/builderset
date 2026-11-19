@@ -211,7 +211,7 @@ Add it as the pull request template the action uses:
 - [x] Trusted publishing is configured for each package; no publish token is stored anywhere; tokens are disallowed for the packages. _(GitHub Packages: no token is stored — the workflow publishes with its own. Trusted publishing comes with the move to npm.)_
 - [x] `CONTRIBUTING.md` has the registry rules.
 - [x] The examples pass against the real registry. _(Two of three: `next-shadcn` needs the all-in-one package.)_
-- [ ] The first release, `0.1.0`, through the "Version packages" pull request on `production`.
+- [x] The first release, `0.1.0`, through the "Version packages" pull request on `production`. _(2026-11-16; `0.2.0` followed the same day.)_
 
 **This is milestone M2.**
 
@@ -240,4 +240,4 @@ Decided on 2026-11-14 ([DECISIONS.md](../DECISIONS.md)): GitHub Packages, privat
 
 **Checks.** `npm view <package>@alpha version` prints `0.1.0-alpha.20261114204535` for the three kits, read with a `read:packages` token. GitHub Packages keeps no provenance statement; it comes with npm. `pnpm test:examples` takes `--from <tag>` now: instead of building and publishing to a local registry, it asks each package's own registry which version the tag names, then installs the examples outside the repository as before. With `--from alpha`, `node-render` passes 11/11 — it installs `@builderset/email@alpha` and imports `@builderset/email/render` in Node — and `vite-react` 10/10 in Chromium. `next-shadcn` is skipped by name: it needs the all-in-one `builderset`, which GitHub Packages cannot hold.
 
-**Still to do.** The first release, `0.1.0`. `staging` was merged into `production` on 2026-11-14 and the workflow opened "Version packages"; its CI failed the changeset check, which now skips the two release pull requests (`changeset-release/*` and `production` back into `development`). Merging it publishes `0.1.0` under `latest`; then `production` is merged back into `development`.
+**The first release (2026-11-16).** The "Version packages" pull request for `0.1.0` failed CI on the changeset check, which now skips the two release pull requests (`changeset-release/*`, and `production` back into `development`). Merged after the checks passed locally (lint, types, format, tests, package checks, README props; the examples job could not download its browsers here, and no package or example changed since step 12 was green in all three). The workflow published `0.1.0` under `latest` but pushed no git tags; they were made with `changeset tag` and pushed. `production` was merged back into `development`. `0.2.0` went the same way the same day — five theme variables MotorsAL needed in step 14 — and again the tags were pushed by hand: the release workflow's tagging needs a look.

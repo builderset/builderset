@@ -97,3 +97,36 @@ jobs:
       - name: examples/node-render
         if: matrix.node == 20
         run: pnpm --filter example-node-render test
+
+  python:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every supported version on a push to development, staging or
+        # production; the newest on a pull request, as the Node tests do.
+        python: ${{ fromJSON(github.event_name == 'push' && '["3.11", "3.12", "3.13", "3.14"]' || '["3.14"]') }}
+    defaults:
+      run:
+        working-directory: python
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    steps:
+      # The whole repository: the tests read packages/*/fixtures and the build
+      # copies packages/*/schema into the package.
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - name: One version for npm and Python
+        run: node ../tooling/sync-python-version.mjs --check
+      - run: uv run --frozen ruff check .
+      - run: uv run --frozen ruff format --check .
+      - run: uv run --frozen mypy
+      - run: uv run --frozen pytest
+      # The tests pass in the repository, where the JSON files sit beside the
+      # code. The wheel must carry them: build it and use it from a clean
+      # environment, outside the repository's import path.
+      - name: The built wheel, installed
+        run: |
+          uv build
+          uv run --isolated --no-project --with dist/*.whl python ../tooling/python-wheel-smoke.py ../packages

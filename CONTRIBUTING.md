@@ -66,7 +66,7 @@ The packages are published to GitHub Packages, private until launch, by `.github
 
 1. A pull request into `development` that changes a package adds a changeset: `pnpm changeset`, the packages, patch, minor or major, and one sentence for the changelog, written for a user. CI fails the pull request without one. Every package moves together, at one version.
 2. Merging `development` into `staging` publishes a pre-release of the waiting changesets under the `alpha` tag: `0.1.0-alpha.20261115093000`. It is not committed; the next one replaces it.
-3. Merging `staging` into `production` makes the workflow open a **Version packages** pull request into `production`: the versions bumped, the changelogs written. Merging that pull request publishes the release and tags it. Then merge `production` back into `development`, so the versions and changelogs are there too.
+3. Merging `staging` into `production` makes the workflow open a **Version packages** pull request into `production`: the versions bumped, the changelogs written. Merging that pull request publishes the release, tags it, and attaches the Python wheel (same version, `tooling/sync-python-version.mjs`) to a GitHub release `v<version>`. Then merge `production` back into `development`, so the versions and changelogs are there too.
 
 Before merging a **Version packages** pull request:
 

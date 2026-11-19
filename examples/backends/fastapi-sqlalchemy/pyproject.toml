@@ -1,0 +1,57 @@
+[project]
+name = "builderset-example-fastapi"
+version = "0.0.0"
+description = "Email templates for the Builderset editor: FastAPI, SQLAlchemy 2, Alembic and Postgres."
+requires-python = ">=3.11"
+dependencies = [
+    "alembic>=1.20",
+    "builderset",
+    "fastapi>=0.165",
+    "psycopg[binary]>=3.3",
+    # FastAPI reads multipart forms (the uploads) with it.
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.1",
+    "uvicorn>=0.54",
+]
+
+[dependency-groups]
+dev = [
+    # FastAPI's TestClient sends its requests with it.
+    "httpx2>=2.16",
+    "mypy>=2.4",
+    "pytest>=9.2",
+    "ruff>=0.17",
+    "testcontainers[postgres]>=4.15",
+]
+
+# An application, not a library: uv installs its dependencies and builds nothing.
+[tool.uv]
+package = false
+
+# The package from this repository, as it is today. A project of your own
+# depends on the released one instead: `builderset==0.3.0`.
+[tool.uv.sources]
+builderset = { path = "../../../python", editable = true }
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "DTZ", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["app", "migrations", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["testcontainers.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --strict-config"
+testpaths = ["tests"]

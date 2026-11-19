@@ -1,0 +1,29 @@
+{
+  "name": "example-backend-next-prisma",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 5302",
+    "build": "prisma generate && next build",
+    "start": "next start -p 5302",
+    "db:migrate": "prisma migrate deploy",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "test:db": "prisma generate && vitest run"
+  },
+  "dependencies": {
+    "@builderset/email": "workspace:*",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "12.2.1",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "prisma": "7.10.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}

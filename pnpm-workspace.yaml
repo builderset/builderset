@@ -1,6 +1,7 @@
 packages:
   - 'packages/*'
   - 'examples/*'
+  - 'examples/backends/*'
   - 'apps/*'
 
 # pnpm runs no dependency's install script unless it is listed here. The
@@ -11,3 +12,13 @@ allowBuilds:
   # The docs site's MDX compiler (fumadocs-mdx). Its script only checks the native
   # binary that its platform package (@esbuild/<os>-<arch>) already installed.
   esbuild: false
+  # Testcontainers' Docker client (the backend examples' tests). ssh2 and
+  # cpu-features only compile optional native speed-ups, and protobufjs's
+  # script checks its own version: none is needed to reach the local Docker.
+  cpu-features: false
+  protobufjs: false
+  ssh2: false
+  # The Prisma example. These scripts download Prisma's schema engine at install;
+  # the CLI fetches it itself on first use (`prisma migrate`), so it is left off.
+  '@prisma/engines': false
+  prisma: false

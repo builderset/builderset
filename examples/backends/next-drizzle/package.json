@@ -1,0 +1,31 @@
+{
+  "name": "example-backend-next-drizzle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 5301",
+    "build": "next build",
+    "start": "next start -p 5301",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "typecheck": "tsc --noEmit",
+    "test:db": "vitest run"
+  },
+  "dependencies": {
+    "@builderset/email": "workspace:*",
+    "drizzle-orm": "0.45.4",
+    "next": "16.3.1",
+    "pg": "8.23.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "12.2.1",
+    "@types/node": "26.2.0",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.2.18",
+    "drizzle-kit": "0.31.11",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}

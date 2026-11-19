@@ -74,6 +74,8 @@ Step 16 does not depend on 14 or 15 and can run beside them.
 
 **Milestone M3 — MotorsAL runs on it.** Staging and production build from the published packages; the API renders emails with the PyPI package; the golden tests pass in the new repository for both languages.
 
+**Before M4: dates and numbers in any language.** Both email renderers format `{{ x | date }}`, `| money` and `| number` in three languages — `sq`, `en`, `de`, every other one as English — and in the `Europe/Tirane` time zone: MotorsAL's settings, still built in. A public package needs the locale as given and a time-zone option, in both renderers in the same pull request, with golden cases in more languages and the differences between `Intl` and the Python side written down (found in step 15, part 3).
+
 **Milestone M4 — public.** The docs site is live, the playground works, the README of every package is complete, the licence is in place, and a developer who has never seen the code can add the email editor to a Next app by following the quick start. Release `0.5.0` under the `latest` tag.
 
 ## Phase D — Grow

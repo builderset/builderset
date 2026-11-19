@@ -1,31 +1,24 @@
 """The Python renderer against the TS one, byte for byte.
 
-The TS renderer the editor previews with renders each case, and the input
-and the output are here: the email kit's neutral cases in ``golden/kit/``
-(shipped by ``@builderset/email``, copied by ``scripts/sync-builder-contract.mjs``),
-MotorsAL's designs in ``golden/motors/`` (``packages/builder-presets/src/golden.test.ts``).
-This renders the same input with the port and compares. A failure means an
-email would be sent differently from how the editor showed it.
+``packages/email/src/render/golden.test.ts`` renders each case with the
+renderer the editor previews with and writes the input and the output to
+``packages/email/fixtures/golden/``. This renders the same input with the port
+and compares. A failure means an email would be sent differently from how the
+editor showed it.
 """
 
 from __future__ import annotations
 
 import json
-from pathlib import Path
 from typing import Any
 
 import pytest
 
-from app.domains.email_builder.render import render_email, social_icon_url
+from builderset.email import render_email, social_icon_url
+from conftest import EMAIL_FIXTURES
 
-GOLDEN = Path(__file__).resolve().parents[1] / "fixtures" / "email" / "golden"
-#: ``kit/<name>`` and ``motors/<name>``.
-CASES = sorted(
-    f"{folder}/{path.stem}"
-    for folder in ("kit", "motors")
-    for path in (GOLDEN / folder).glob("*.json")
-)
-DESIGNS = GOLDEN / "motors"
+GOLDEN = EMAIL_FIXTURES / "golden"
+CASES = sorted(path.stem for path in GOLDEN.glob("*.json"))
 
 
 def _first_difference(expected: str, actual: str) -> str:
@@ -41,11 +34,7 @@ def _first_difference(expected: str, actual: str) -> str:
 
 
 def test_there_are_fixtures() -> None:
-    kit = [case for case in CASES if case.startswith("kit/")]
-    assert len(kit) >= 5, "run node scripts/sync-builder-contract.mjs"
-    assert len(CASES) > len(kit), (
-        "run the @motors/builder-presets golden test with UPDATE_FIXTURES=1"
-    )
+    assert len(CASES) >= 5, "run the email golden test with UPDATE_FIXTURES=1"
 
 
 @pytest.mark.parametrize("name", CASES)
@@ -68,33 +57,3 @@ def test_renders_like_the_editor(name: str) -> None:
     assert rendered.preheader == case["expected"]["preheader"]
     assert rendered.html == html, _first_difference(html, rendered.html)
     assert rendered.text == text, _first_difference(text, rendered.text)
-
-
-@pytest.mark.parametrize(
-    ("name", "type_key"),
-    [
-        ("newsletter-welcome", "newsletter"),
-        ("newsletter-monthly", "newsletter"),
-        ("verification-code", "verification_code"),
-        ("member-invitation", "member_invitation"),
-        ("application-received", "application_received"),
-        ("valuation-offer", "application_approved"),
-        ("application-refused", "application_refused"),
-        ("application-refused-after-booking", "application_refused"),
-        ("job-application-received", "job_application_received"),
-        ("partner-application-received", "partner_application_received"),
-        ("partner-application-received-valuer", "partner_application_received"),
-        ("contact-received", "contact_received"),
-        ("contact-received-untitled", "contact_received"),
-        ("staff-notification", "staff_notification"),
-    ],
-)
-def test_the_ready_made_designs_pass_the_server_checks(name: str, type_key: str) -> None:
-    """The designs templates are seeded with must be activatable."""
-    from app.domains.email_builder.document import check_email
-    from app.domains.email_builder.types import email_type
-
-    case = json.loads((DESIGNS / f"{name}.json").read_text(encoding="utf-8"))
-    spec = email_type(type_key)
-    assert spec is not None
-    assert check_email(case["document"], spec) == []

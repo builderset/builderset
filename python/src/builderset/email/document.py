@@ -1,11 +1,11 @@
 """Email templates: validation against the @builderset/email contract.
 
-Like article documents (see ``app/domains/content/document.py``), an email
-template is checked against the JSON Schema that ``@builderset/email``
-generates — copied beside this file as ``email_schema.json`` by
-``scripts/sync-builder-contract.mjs``, never edited here — plus what a schema cannot say: the tree's shape and placement rules,
-row layouts matching their columns, URL safety, media folders, and the
-variables the template's EMAIL TYPE actually provides.
+Like article documents (see ``builderset.article``), an email template is
+checked against the JSON Schema that ``@builderset/email`` generates
+(``packages/email/schema/email.schema.json``, shipped inside this package as
+``schema.json``) plus what a schema cannot say: the tree's shape and placement
+rules, row layouts matching their columns, URL safety, the project's media
+rule, and the variables the template's EMAIL TYPE actually provides.
 
 Error codes are @builderset/email's own, so the builder shows the server's refusal in
 the words its own checker uses.
@@ -23,20 +23,16 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
-from app.core.content_i18n import document_locales, localize, unknown_locales
-from app.domains.content.document import DocumentIssue, is_safe_url
-from app.domains.email_builder.types import EmailTypeSpec, variable_paths
-from app.integrations import storage
+from builderset.email.types import EmailTypeSpec, variable_paths
+from builderset.i18n import document_locales, localize, unknown_locales
+from builderset.issues import DocumentIssue
+from builderset.urls import MediaKeyRule, is_safe_url, media_key_shape
 
-SCHEMA_PATH = Path(__file__).with_name("email_schema.json")
-
-#: Where an email's pictures may live: a public folder, because a mail client
-#: fetches them anonymously, and never another feature's files.
-EMAIL_FOLDERS = frozenset({"email-image"})
+SCHEMA_PATH = Path(__file__).with_name("schema.json")
 
 #: Codes an in-progress DRAFT may still carry; activation refuses them.
-#: ``EMAIL_DRAFT_TOLERATES`` in Builderset's ``packages/email/src/core/draft.ts``, held to it
-#: by the contract test through ``tests/fixtures/email/draft.json``.
+#: ``EMAIL_DRAFT_TOLERATES`` in ``packages/email/src/core/draft.ts``, held to it
+#: by the tests through ``packages/email/fixtures/draft.json``.
 DRAFT_TOLERATES = frozenset(
     {
         "meta.subjectMissing",
@@ -215,7 +211,7 @@ def media_keys(document: dict[str, Any]) -> list[str]:
     return keys
 
 
-def _security_issues(document: dict[str, Any]) -> list[DocumentIssue]:
+def _security_issues(document: dict[str, Any], media_rule: MediaKeyRule) -> list[DocumentIssue]:
     issues: list[DocumentIssue] = []
     for node_id, node in (document.get("nodes") or {}).items():
         props = node.get("props") or {}
@@ -228,13 +224,9 @@ def _security_issues(document: dict[str, Any]) -> list[DocumentIssue]:
             ):
                 issues.append(DocumentIssue("url.unsafe", node_id=node_id, path=path))
         for path, key in _media_refs(props):
-            try:
-                storage.validate_key(key)
-            except storage.InvalidKey:
-                issues.append(DocumentIssue("media.invalidKey", node_id=node_id, path=path))
-                continue
-            if key.split("/", 1)[0] not in EMAIL_FOLDERS:
-                issues.append(DocumentIssue("media.wrongFolder", node_id=node_id, path=path))
+            code = media_rule(key)
+            if code is not None:
+                issues.append(DocumentIssue(code, node_id=node_id, path=path))
     return issues
 
 
@@ -301,24 +293,42 @@ def check_email(
     spec: EmailTypeSpec | None = None,
     *,
     locales: Sequence[str] | None = None,
+    check_media_key: MediaKeyRule | None = None,
 ) -> list[DocumentIssue]:
     """Every reason this template cannot be stored (or, strictly, activated).
 
+    ``spec``: the template's email type — its variables, the ones it must use,
+    and whether it is marketing (which needs an unsubscribe link). Omitted,
+    variables are not checked.
+
     ``locales``: the languages the project writes in; a template holding another
     is ``i18n.locale.unknown``. Omitted, any language code is accepted.
+
+    ``check_media_key``: the project's rule for media keys (see
+    :data:`builderset.urls.MediaKeyRule`). Omitted, keys are checked for their
+    shape only.
     """
     if not isinstance(document, dict):
         return [DocumentIssue("document.notJson")]
     schema_issues = _schema_issues(document)
     if any(issue.code == "document.malformed" for issue in schema_issues):
         return schema_issues
-    issues = [*schema_issues, *_structural_issues(document), *_security_issues(document)]
+    media_rule = check_media_key or media_key_shape
+    issues = [
+        *schema_issues,
+        *_structural_issues(document),
+        *_security_issues(document, media_rule),
+    ]
     meta = document.get("meta") or {}
     if not str(meta.get("subject") or "").strip():
         issues.append(DocumentIssue("meta.subjectMissing", path="meta.subject"))
     if spec is not None:
         issues += type_issues(document, spec)
-    return issues + _language_issues(document, spec) + _unknown_locale_issues(document, locales)
+    return (
+        issues
+        + _language_issues(document, spec, media_rule)
+        + _unknown_locale_issues(document, locales)
+    )
 
 
 def _unknown_locale_issues(
@@ -337,7 +347,9 @@ def _key(issue: DocumentIssue) -> tuple[str, str | None, str | None, str]:
     return (issue.code, issue.node_id, issue.path, json.dumps(issue.params, sort_keys=True))
 
 
-def _language_issues(document: dict[str, Any], spec: EmailTypeSpec | None) -> list[DocumentIssue]:
+def _language_issues(
+    document: dict[str, Any], spec: EmailTypeSpec | None, media_rule: MediaKeyRule
+) -> list[DocumentIssue]:
     """Each language, read as an email of its own, must still be a valid one.
 
     ``checkEmail``'s ``languageIssues`` in TS: a translated value the schema
@@ -350,7 +362,7 @@ def _language_issues(document: dict[str, Any], spec: EmailTypeSpec | None) -> li
         _key(issue)
         for issue in [
             *_schema_issues(document),
-            *_security_issues(document),
+            *_security_issues(document, media_rule),
             *(type_issues(document, spec) if spec is not None else []),
         ]
     }
@@ -358,7 +370,7 @@ def _language_issues(document: dict[str, Any], spec: EmailTypeSpec | None) -> li
         view = localize(document, locale)
         if view is document:
             continue
-        found = [*_schema_issues(view), *_security_issues(view)]
+        found = [*_schema_issues(view), *_security_issues(view, media_rule)]
         if not str((view.get("meta") or {}).get("subject") or "").strip():
             found.append(DocumentIssue("meta.subjectMissing", path="meta.subject"))
         if spec is not None:
@@ -372,9 +384,9 @@ def _language_issues(document: dict[str, Any], spec: EmailTypeSpec | None) -> li
 
 __all__ = [
     "DRAFT_TOLERATES",
-    "EMAIL_FOLDERS",
     "check_email",
     "is_safe_template_url",
+    "limits",
     "media_keys",
     "type_issues",
     "variable_uses",

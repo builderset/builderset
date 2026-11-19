@@ -16,18 +16,18 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-from app.domains.email_builder.render.formats import format_value
-from app.domains.email_builder.render.js import (
+from builderset.email.render.formats import format_value
+from builderset.email.render.js import (
     UNDEFINED,
     primitive_text,
     to_number,
     to_string,
 )
 
-#: ``@builderset/email``'s ``fixtures/render_data.json``, copied by
-#: ``scripts/sync-builder-contract.mjs`` like the JSON Schema: the font stacks
-#: and row layouts are data in TS and must not be re-typed here.
-RENDER_DATA = Path(__file__).resolve().parent / "render_data.json"
+#: ``packages/email/fixtures/render_data.json``, shipped inside this package like
+#: the JSON Schema: the font stacks and row layouts are data in TS and must not
+#: be re-typed here.
+RENDER_DATA = Path(__file__).resolve().parent.parent / "render_data.json"
 
 DEFAULT_BRAND: dict[str, Any] = {
     "name": "Your company",

@@ -1,12 +1,11 @@
-"""Article builder documents: validation, legacy conversion, text and media.
+"""Article documents: validation, text and media.
 
 The editor, the renderer and this module all agree on one definition of a
 document — the JSON Schema that ``@builderset/article`` generates from its own
-element schemas, copied beside this file as ``builder_schema.json`` by
-``scripts/sync-builder-contract.mjs`` (the API's containers mount only
-``api/``, so the package itself is out of reach at runtime; never edit the copy). A contract test runs the package's
-committed fixtures through ``check_document`` and fails if the two sides ever
-disagree about a valid or an invalid document.
+element schemas (``packages/article/schema/article.schema.json``), shipped
+inside this package as ``schema.json``. The tests run the TypeScript package's
+fixtures through ``check_article`` and fail if the two sides ever disagree
+about a valid or an invalid document.
 
 ── Two layers ──────────────────────────────────────────────────────────────
 1. The schema: every node's props against its element, the style tokens, the
@@ -15,44 +14,39 @@ disagree about a valid or an invalid document.
    rather than restated here: one root, every child present and referenced
    once, placement (which element may sit in which), depth, size, unique
    anchors — plus the security rules: every URL on the allow-list of schemes,
-   embeds only from allowed providers, media only from the article folders,
-   and no picture still waiting to be uploaded.
+   embeds only from allowed providers, every media key passing the project's
+   rule (``check_media_key``), and no picture still waiting to be uploaded.
 
-Error codes are the core package's own, so the admin shows the server's refusal
-in the same words its own checker would have used.
+Error codes are the TypeScript package's own, so an editor shows the server's
+refusal in the same words its own checker would have used.
 """
 
 from __future__ import annotations
 
 import json
 import re
-import uuid as uuid_module
 from collections.abc import Iterator, Sequence
-from dataclasses import dataclass, field, replace
+from dataclasses import replace
 from functools import cache
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
 
 from jsonschema import Draft202012Validator
 
-from app.core.content_i18n import document_locales, localize, unknown_locales
-from app.integrations import storage
+from builderset.i18n import document_locales, localize, unknown_locales
+from builderset.issues import DocumentIssue
+from builderset.urls import MediaKeyRule, is_safe_url, media_key_shape
 
-SCHEMA_PATH = Path(__file__).with_name("builder_schema.json")
-
-#: Where an article's media may live. Anything else — a CV, a contract, a
-#: brand's mark — must never be linked from a public page.
-ARTICLE_FOLDERS = frozenset({"article-image", "article-media", "article-file"})
+SCHEMA_PATH = Path(__file__).with_name("schema.json")
 
 #: What an AUTOSAVE may still contain — ``ARTICLE_DRAFT_TOLERATES`` in
-#: Builderset's ``packages/article/src/core/draft.ts``, held to it by the contract test
-#: through ``tests/fixtures/builder/draft.json``. A draft is work in progress: a
+#: ``packages/article/src/core/draft.ts``, held to it by the tests through
+#: ``packages/article/fixtures/draft.json``. A draft is work in progress: a
 #: pasted picture not yet uploaded, an embed URL half-typed, a title not yet
-#: written. None of them can reach a reader — the site renders ``document``,
-#: never the draft — and publishing refuses them. What is NEVER tolerated, even
-#: in a draft, is anything unsafe to store: a malformed tree, an unsafe URL,
-#: media from outside the article folders.
+#: written. None of them can reach a reader — a site renders the published
+#: document, never the draft — and publishing refuses them. What is NEVER
+#: tolerated, even in a draft, is anything unsafe to store: a malformed tree,
+#: an unsafe URL, a media key the project's rule refuses.
 DRAFT_TOLERATES = frozenset(
     {
         "media.external",
@@ -68,24 +62,6 @@ DRAFT_TOLERATES = frozenset(
 _URL_KEYS = frozenset({"href", "source", "canonical"})
 
 _ANCHOR = re.compile(r"^[A-Za-z][\w-]{0,79}$")
-_SAFE_SCHEMES = frozenset({"http", "https", "mailto", "tel"})
-_CONTROL = re.compile(r"[\s\x00-\x1f\x7f]")
-
-
-@dataclass(frozen=True)
-class DocumentIssue:
-    code: str
-    node_id: str | None = None
-    path: str | None = None
-    params: dict[str, Any] = field(default_factory=dict)
-
-    def as_dict(self) -> dict[str, Any]:
-        return {
-            "code": self.code,
-            "node_id": self.node_id,
-            "path": self.path,
-            "params": self.params,
-        }
 
 
 @cache
@@ -119,22 +95,6 @@ def _embed_patterns() -> dict[str, list[re.Pattern[str]]]:
 
 
 # ── small rules mirrored from the core package ─────────────────
-
-
-def is_safe_url(value: str) -> bool:
-    """`isSafeUrl` in ``engine/src/core/url.ts``, rule for rule."""
-    url = value.strip()
-    if not url or len(url) > 2000 or _CONTROL.search(url):
-        return False
-    if url.startswith("#"):
-        return bool(re.fullmatch(r"#[A-Za-z][\w-]*", url))
-    if url.startswith("/"):
-        return not url.startswith("//")
-    try:
-        scheme = urlparse(url).scheme.lower()
-    except ValueError:
-        return False
-    return scheme in _SAFE_SCHEMES and url.lower().startswith(f"{scheme}:")
 
 
 def detect_embed_provider(url: str) -> str | None:
@@ -286,8 +246,8 @@ def _structural_issues(document: dict[str, Any]) -> list[DocumentIssue]:
     return issues
 
 
-def _security_issues(document: dict[str, Any]) -> list[DocumentIssue]:
-    """URLs, embeds, media folders and pending uploads — for every node."""
+def _security_issues(document: dict[str, Any], media_rule: MediaKeyRule) -> list[DocumentIssue]:
+    """URLs, embeds, media keys and pending uploads — for every node."""
     issues: list[DocumentIssue] = []
     footnotes = {
         node_id
@@ -297,13 +257,9 @@ def _security_issues(document: dict[str, Any]) -> list[DocumentIssue]:
 
     def check_media(node_id: str | None, value: Any) -> None:
         for path, key in _media_refs(value):
-            try:
-                storage.validate_key(key)
-            except storage.InvalidKey:
-                issues.append(DocumentIssue("media.invalidKey", node_id=node_id, path=path))
-                continue
-            if key.split("/", 1)[0] not in ARTICLE_FOLDERS:
-                issues.append(DocumentIssue("media.wrongFolder", node_id=node_id, path=path))
+            code = media_rule(key)
+            if code is not None:
+                issues.append(DocumentIssue(code, node_id=node_id, path=path))
 
     for node_id, node in (document.get("nodes") or {}).items():
         props = node.get("props") or {}
@@ -335,11 +291,23 @@ def _security_issues(document: dict[str, Any]) -> list[DocumentIssue]:
     return issues
 
 
-def check_document(document: Any, *, locales: Sequence[str] | None = None) -> list[DocumentIssue]:
-    """Every reason this document cannot be stored. Empty means it can.
+def check_article(
+    document: Any,
+    *,
+    locales: Sequence[str] | None = None,
+    check_media_key: MediaKeyRule | None = None,
+) -> list[DocumentIssue]:
+    """Every reason this article cannot be stored. Empty means it can.
 
     ``locales``: the languages the project writes in; a document holding another
     is ``i18n.locale.unknown``. Omitted, any language code is accepted.
+
+    ``check_media_key``: the project's rule for media keys (see
+    :data:`builderset.urls.MediaKeyRule`). Omitted, keys are checked for their
+    shape only.
+
+    A draft may still carry the codes in :data:`DRAFT_TOLERATES`; publishing
+    should refuse every issue.
     """
     if not isinstance(document, dict):
         return [DocumentIssue("document.notJson")]
@@ -348,8 +316,17 @@ def check_document(document: Any, *, locales: Sequence[str] | None = None) -> li
         # The envelope itself is wrong; walking a tree that is not a tree
         # would only add noise under the real problem.
         return schema_issues
-    issues = [*schema_issues, *_structural_issues(document), *_security_issues(document)]
-    return issues + _language_issues(document, issues) + _unknown_locale_issues(document, locales)
+    media_rule = check_media_key or media_key_shape
+    issues = [
+        *schema_issues,
+        *_structural_issues(document),
+        *_security_issues(document, media_rule),
+    ]
+    return (
+        issues
+        + _language_issues(document, issues, media_rule)
+        + _unknown_locale_issues(document, locales)
+    )
 
 
 def _unknown_locale_issues(
@@ -364,7 +341,9 @@ def _unknown_locale_issues(
     ]
 
 
-def _language_issues(document: dict[str, Any], base: list[DocumentIssue]) -> list[DocumentIssue]:
+def _language_issues(
+    document: dict[str, Any], base: list[DocumentIssue], media_rule: MediaKeyRule
+) -> list[DocumentIssue]:
     """Each language, read as an article of its own, must still be a valid one.
 
     A translated heading over its length or a link mark with an unsafe address
@@ -376,7 +355,7 @@ def _language_issues(document: dict[str, Any], base: list[DocumentIssue]) -> lis
         view = localize(document, locale)
         if view is document:
             continue
-        for issue in [*_schema_issues(view), *_security_issues(view)]:
+        for issue in [*_schema_issues(view), *_security_issues(view, media_rule)]:
             if (issue.code, issue.node_id, issue.path) in seen:
                 continue
             issues.append(replace(issue, params={**issue.params, "locale": locale}))
@@ -430,110 +409,10 @@ def reading_minutes_of(document: dict[str, Any], words_per_minute: int = 200) ->
     return max(1, -(-words // words_per_minute))
 
 
-# ── the legacy body ────────────────────────────────────────────
-
-
-def _new_id() -> str:
-    """A node id in the core package's format: a letter, then nine more."""
-    return "n" + uuid_module.uuid4().hex[:9]
-
-
-def _runs(text: str) -> list[dict[str, str]]:
-    return [{"text": text}] if text else []
-
-
-#: The standard element defaults these conversions need, as `defaults()` in
-#: ``article/src/core/elements`` returns them. The contract test checks every
-#: converted document against the schema, so a drifted default fails loudly.
-_DEFAULTS: dict[str, dict[str, Any]] = {
-    "paragraph": {"text": [], "dropCap": False, "lead": False},
-    "heading": {"level": 2, "text": []},
-    "list": {"style": "bullet", "items": []},
-    "quote": {"text": [], "cite": "", "source": ""},
-    "image": {
-        "media": None,
-        "pendingUrl": None,
-        "alt": "",
-        "caption": [],
-        "credit": "",
-        "aspect": "original",
-        "focalX": 50,
-        "focalY": 50,
-        "size": "prose",
-        "rounded": True,
-        "lightbox": True,
-        "link": None,
-    },
-}
-
-
-def document_from_legacy(
-    body: list[dict[str, Any]],
-    *,
-    title: str,
-    excerpt: str | None = None,
-    cover_key: str | None = None,
-    cover_alt: str | None = None,
-) -> dict[str, Any]:
-    """`fromLegacyBody` in ``packages/builder-presets/src/legacy.ts``: the five legacy
-    block kinds, mapped one to one onto their builder elements."""
-    nodes: dict[str, Any] = {}
-    order: list[str] = []
-
-    def add(element: str, props: dict[str, Any]) -> None:
-        node_id = _new_id()
-        nodes[node_id] = {
-            "id": node_id,
-            "type": element,
-            "v": 1,
-            "props": {**_DEFAULTS[element], **props},
-        }
-        order.append(node_id)
-
-    for block in body:
-        kind = block.get("kind")
-        if kind == "paragraph":
-            add("paragraph", {"text": _runs(str(block.get("text", "")))})
-        elif kind == "heading":
-            add("heading", {"level": 2, "text": _runs(str(block.get("text", "")))})
-        elif kind == "list":
-            items = [str(item) for item in block.get("items", []) if str(item).strip()]
-            add("list", {"items": [{"text": _runs(item)} for item in items]})
-        elif kind == "quote":
-            add("quote", {"text": _runs(str(block.get("text", "")))})
-        elif kind == "image" and block.get("key"):
-            add(
-                "image",
-                {
-                    "media": {"key": str(block["key"])},
-                    "alt": str(block.get("alt") or ""),
-                    "caption": _runs(str(block.get("caption") or "")),
-                },
-            )
-
-    nodes["root"] = {"id": "root", "type": "root", "v": 1, "props": {}, "children": order}
-    meta: dict[str, Any] = {"title": title}
-    if excerpt:
-        meta["excerpt"] = excerpt
-    if cover_key:
-        meta["cover"] = {"media": {"key": cover_key}, "alt": cover_alt or ""}
-    return {
-        "schema": "builder/document",
-        "version": 1,
-        "root": "root",
-        "nodes": nodes,
-        "meta": meta,
-    }
-
-
 __all__ = [
-    "ARTICLE_FOLDERS",
     "DRAFT_TOLERATES",
-    "DocumentIssue",
-    "check_document",
+    "check_article",
     "detect_embed_provider",
-    "document_from_legacy",
-    "is_safe_url",
     "limits",
     "media_keys",
     "plain_text",

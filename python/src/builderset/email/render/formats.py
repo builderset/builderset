@@ -30,7 +30,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from app.domains.email_builder.render.js import UNDEFINED, primitive_text, to_number
+from builderset.email.render.js import UNDEFINED, primitive_text, to_number
 
 TIRANE = ZoneInfo("Europe/Tirane")
 NBSP = chr(0xA0)

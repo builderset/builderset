@@ -1,0 +1,11 @@
+# Copied from packages/ by hatch_build.py at every build and test run.
+src/builderset/article/schema.json
+src/builderset/email/schema.json
+src/builderset/email/render_data.json
+
+.venv/
+dist/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

@@ -15,8 +15,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from app.core.content_i18n import localize
-from app.domains.email_builder.render.context import (
+from builderset.email.render.context import (
     TEMPLATE_TOKEN,
     RenderContext,
     color,
@@ -31,7 +30,7 @@ from app.domains.email_builder.render.context import (
     typography,
     variable_text,
 )
-from app.domains.email_builder.render.js import (
+from builderset.email.render.js import (
     JS_SPACE,
     UNDEFINED,
     capitalize_first,
@@ -43,6 +42,7 @@ from app.domains.email_builder.render.js import (
     to_string,
     trim,
 )
+from builderset.i18n import localize
 
 # ── escaping and urls ────────────────────────────────────────────────────────
 

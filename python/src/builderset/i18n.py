@@ -1,4 +1,4 @@
-"""One document, every language — the API's copy of ``engine/src/core/i18n.ts``.
+"""One document, every language — ``engine/src/core/i18n.ts`` in Python.
 
 An article or an email template is written once; when its writer turns
 multi-language on, the words for each other language are kept beside the tree
@@ -22,7 +22,7 @@ from typing import Any
 
 #: A BCP 47 tag, as far as we need it: ``en``, ``sq``, ``pt-BR``, ``zh-Hant``. Which
 #: languages a project allows is the project's choice, passed in by the callers
-#: (``app.core.site_locales.CONTENT_LOCALES`` for MotorsAL) — not a list here.
+#: (the ``locales`` argument of the checks) — not a list here.
 LOCALE_CODE = re.compile(r"^[a-z]{2,3}(-[A-Za-z0-9]{2,8}){0,2}$")
 
 #: Meta fields that are words; everything else in meta is shared.

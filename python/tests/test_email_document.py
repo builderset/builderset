@@ -1,9 +1,7 @@
-"""The email template check — the server half of the @builderset/email contract.
+"""``check_email`` against ``@builderset/email``'s own fixtures.
 
-``@builderset/email`` ships its JSON Schema and fixtures, copied into this tree
-from the installed version by ``scripts/sync-builder-contract.mjs``; every
-valid fixture must pass and every invalid one be refused with the code its
-manifest names, exactly as the core's own checker does.
+Every valid fixture must pass and every invalid one be refused with the code
+its manifest names, exactly as the TypeScript checker does.
 """
 
 from __future__ import annotations
@@ -14,25 +12,32 @@ from typing import Any
 
 import pytest
 
-from app.domains.email_builder.document import (
+from builderset.email import (
     DRAFT_TOLERATES,
+    EmailTypeSpec,
     check_email,
     is_safe_template_url,
     media_keys,
+    variable_paths,
     variable_uses,
 )
-from app.domains.email_builder.types import EMAIL_TYPES, email_type, variable_paths
+from conftest import EMAIL_FIXTURES
 
-FIXTURES = Path(__file__).parent.parent / "fixtures" / "email"
-VALID = sorted((FIXTURES / "valid").glob("*.json"))
+VALID = sorted((EMAIL_FIXTURES / "valid").glob("*.json"))
+MANIFEST: dict[str, str] = json.loads(
+    (EMAIL_FIXTURES / "invalid" / "manifest.json").read_text(encoding="utf-8")
+)
 
-
-def test_a_draft_is_lenient_on_the_kits_codes_exactly() -> None:
-    draft = json.loads((FIXTURES / "draft.json").read_text(encoding="utf-8"))
-    assert sorted(draft["tolerates"]) == sorted(DRAFT_TOLERATES)
-
-
-MANIFEST: dict[str, str] = json.loads((FIXTURES / "invalid" / "manifest.json").read_text())
+#: A transactional type of the kind an application declares.
+RESET: EmailTypeSpec = {
+    "key": "password_reset",
+    "kind": "transactional",
+    "variables": [{"name": "reset_url", "type": "url", "required": True}],
+    "mustUse": ["reset_url"],
+    "samples": {},
+}
+#: A marketing type: it must carry an unsubscribe link.
+NEWSLETTER: EmailTypeSpec = {"key": "newsletter", "kind": "marketing", "variables": []}
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -42,6 +47,11 @@ def _load(path: Path) -> dict[str, Any]:
 
 def _codes(document: Any, **kwargs: Any) -> set[str]:
     return {issue.code for issue in check_email(document, **kwargs)}
+
+
+def test_a_draft_is_lenient_on_the_kits_codes_exactly() -> None:
+    draft = _load(EMAIL_FIXTURES / "draft.json")
+    assert sorted(draft["tolerates"]) == sorted(DRAFT_TOLERATES)
 
 
 class TestContract:
@@ -55,53 +65,49 @@ class TestContract:
 
     @pytest.mark.parametrize("name", sorted(MANIFEST), ids=lambda n: n.removesuffix(".json"))
     def test_an_invalid_fixture_is_refused_with_its_code(self, name: str) -> None:
-        assert MANIFEST[name] in _codes(_load(FIXTURES / "invalid" / name))
+        assert MANIFEST[name] in _codes(_load(EMAIL_FIXTURES / "invalid" / name))
 
 
 class TestTypes:
-    def test_every_type_is_well_formed(self) -> None:
-        keys = [spec["key"] for spec in EMAIL_TYPES]
-        assert len(keys) == len(set(keys))
-        for spec in EMAIL_TYPES:
-            paths = variable_paths(spec)
-            for path in spec.get("mustUse") or []:
-                assert path in paths, (spec["key"], path)
-            for sample in spec["samples"].values():
-                assert isinstance(sample, dict)
-
-    def test_the_existing_templates_all_have_a_type(self) -> None:
-        from app.integrations.email.templates import ALL_TEMPLATES
-
-        for template in ALL_TEMPLATES:
-            assert email_type(template.value) is not None, template
+    def test_the_system_variables_are_always_known(self) -> None:
+        paths = variable_paths(RESET)
+        assert {"reset_url", "recipient.name", "links.unsubscribe", "now"} <= paths
 
     def test_unknown_variables_and_must_use(self) -> None:
-        spec = email_type("password_reset")
-        assert spec is not None
-        document = _load(FIXTURES / "valid" / "starter.json")
-        codes = _codes(document, spec=spec)
+        document = _load(EMAIL_FIXTURES / "valid" / "starter.json")
+        codes = _codes(document, spec=RESET)
         # The starter uses recipient.name (a system variable) but not reset_url.
         assert "variable.mustUse" in codes
         assert "variable.unknown" not in codes
 
     def test_marketing_needs_an_unsubscribe(self) -> None:
-        spec = email_type("newsletter")
-        assert spec is not None
-        document = _load(FIXTURES / "valid" / "starter.json")
-        assert "compliance.unsubscribeMissing" not in _codes(document, spec=spec)
+        document = _load(EMAIL_FIXTURES / "valid" / "starter.json")
+        assert "compliance.unsubscribeMissing" not in _codes(document, spec=NEWSLETTER)
         for node in document["nodes"].values():
             if node["type"] == "footer":
                 node["props"]["showUnsubscribe"] = False
-        assert "compliance.unsubscribeMissing" in _codes(document, spec=spec)
+        assert "compliance.unsubscribeMissing" in _codes(document, spec=NEWSLETTER)
+
+
+class TestMediaRule:
+    def test_the_projects_rule_decides(self) -> None:
+        document = _load(EMAIL_FIXTURES / "valid" / "kitchen-sink.json")
+        assert media_keys(document)
+
+        def rule(key: str) -> str | None:
+            return "media.wrongFolder"
+
+        assert "media.wrongFolder" in _codes(document, check_media_key=rule)
+        assert _codes(document) == set()
 
 
 class TestHelpers:
     @pytest.mark.parametrize(
         ("url", "safe"),
         [
-            ("https://marrimauto.com", True),
+            ("https://example.com", True),
             ("{{ reset_url }}", True),
-            ("https://marrimauto.com/o?ref={{ code }}", True),
+            ("https://example.com/o?ref={{ code }}", True),
             ("javascript:alert(1)", False),
             ("javascript:{{ code }}", False),
         ],
@@ -110,14 +116,14 @@ class TestHelpers:
         assert is_safe_template_url(url) is safe
 
     def test_variable_uses_count_runs_once(self) -> None:
-        document = _load(FIXTURES / "valid" / "kitchen-sink.json")
+        document = _load(EMAIL_FIXTURES / "valid" / "kitchen-sink.json")
         uses = variable_uses(document)
         assert uses.count("recipient.name") == 2  # subject + heading
         assert "email-image/2026/01/sample0000000000.jpg" in media_keys(document)
 
 
 def test_any_language_code_is_valid_and_the_project_decides() -> None:
-    document = _load(FIXTURES / "valid" / "empty.json")
+    document = _load(EMAIL_FIXTURES / "valid" / "empty.json")
     document["i18n"] = {
         "enabled": True,
         "base": "fr",

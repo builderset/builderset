@@ -68,29 +68,48 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Only on the push that releases a version — the merge of "Version
-      # packages", which changes it — never on a promotion from staging. The
-      # wheel is built from this commit: the code just published to npm, at the
-      # same version, and the file MotorsAL vendors (decision D9). The npm tags
-      # are pushed here as well: the action has not been pushing them.
+      # Makes sure the version npm has is complete: its git tags, and a GitHub
+      # release v<version> carrying the Python wheel (decision D9) — the file
+      # MotorsAL vendors. On every push to production, and a no-op once done, so
+      # a run that failed half-way is finished by the next push.
+      #
+      # It reads the commit that was pushed, never the working tree: when the
+      # action above opens "Version packages", it leaves that branch checked
+      # out, with the NEXT version in it. The wheel is built from the version's
+      # own tag, so a later push to production cannot put newer code in it.
       - name: Tags, and the Python wheel on a GitHub release
         if: github.ref_name == 'production'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git checkout --quiet --force "$GITHUB_SHA"
           version=$(node -p "require('./packages/engine/package.json').version")
-          before=$(git show HEAD^1:packages/engine/package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
-          if [ "$version" = "$before" ]; then
-            echo "No version released by this push (still $version)."
+          if ! npm view "@builderset/engine@$version" version >/dev/null 2>&1; then
+            echo "$version is not on the registry yet: nothing to release."
             exit 0
           fi
+
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           pnpm changeset tag
           git push origin --tags
-          node tooling/sync-python-version.mjs --check
-          tooling/build-python.sh "$GITHUB_SHA" python/dist
-          uv run --isolated --no-project --with python/dist/*.whl python tooling/python-wheel-smoke.py packages
+          release_commit=$(git rev-parse "@builderset/engine@$version^{commit}")
+          if ! git cat-file -e "$release_commit:python/pyproject.toml" 2>/dev/null; then
+            echo "$version has no Python package (it came in 0.3.0)."
+            exit 0
+          fi
+
+          python_version=$(node --input-type=module -e "import { toPython } from './tooling/sync-python-version.mjs'; console.log(toPython('$version'))")
+          wheel="builderset-$python_version-py3-none-any.whl"
+          if gh release view "v$version" --json assets --jq '.assets[].name' 2>/dev/null | grep -qx "$wheel"; then
+            echo "v$version already carries $wheel."
+            exit 0
+          fi
+
+          tooling/build-python.sh "$release_commit" python/dist
+          test -f "python/dist/$wheel"
+          uv run --isolated --no-project --with "python/dist/$wheel" python tooling/python-wheel-smoke.py packages
           {
             echo "The npm packages are on GitHub Packages at $version; the Python package is attached."
             echo
@@ -98,5 +117,18 @@ jobs:
             echo
             (cd python/dist && sha256sum -- *.whl *.tar.gz) | sed 's/^/    /'
           } > notes.md
-          gh release create "v$version" python/dist/*.whl python/dist/*.tar.gz \
-            --target "$GITHUB_SHA" --title "$version" --notes-file notes.md
+
+          if gh release view "v$version" >/dev/null 2>&1; then
+            # An earlier run left this release wrong: its files are replaced and
+            # its tag moved to the version's commit.
+            for asset in $(gh release view "v$version" --json assets --jq '.assets[].name'); do
+              gh release delete-asset "v$version" "$asset" --yes
+            done
+            git tag --force "v$version" "$release_commit"
+            git push --force origin "refs/tags/v$version"
+            gh release upload "v$version" python/dist/*.whl python/dist/*.tar.gz
+            gh release edit "v$version" --title "$version" --notes-file notes.md
+          else
+            gh release create "v$version" python/dist/*.whl python/dist/*.tar.gz \
+              --target "$release_commit" --title "$version" --notes-file notes.md
+          fi

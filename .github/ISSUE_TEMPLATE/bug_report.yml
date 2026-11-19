@@ -6,9 +6,25 @@ body:
     id: packages
     attributes:
       label: Packages and versions
-      placeholder: '@builderset/email 0.1.0, react 19.2'
+      placeholder: '@builderset/email 0.3.0, react 19.2'
     validations:
       required: true
+  - type: dropdown
+    id: kit
+    attributes:
+      label: Kit
+      options:
+        - email
+        - article
+        - engine (any kit)
+        - Python package
+    validations:
+      required: true
+  - type: input
+    id: framework
+    attributes:
+      label: Framework and browser
+      placeholder: 'Next.js 16, Chrome 142'
   - type: textarea
     id: what
     attributes:
@@ -22,3 +38,8 @@ body:
       description: The smallest document, code or steps that show it.
     validations:
       required: true
+  - type: input
+    id: link
+    attributes:
+      label: A reproduction
+      description: A fork of one of the examples (examples/next-shadcn or examples/vite-react) that shows it, or a playground document.

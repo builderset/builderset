@@ -2,7 +2,8 @@ name: Release
 
 # Publishes to GitHub Packages (decision D3), with the workflow's own token.
 #   staging     a pre-release of the waiting changesets, under the `alpha` tag
-#   production  a "Version packages" pull request; merging it publishes
+#   production  a "Version packages" pull request; merging it publishes, and
+#               attaches the Python wheel to a GitHub release (decision D9)
 on:
   push:
     branches: [staging, production]
@@ -35,6 +36,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm check:packages
+      - uses: astral-sh/setup-uv@v6
+        if: github.ref_name == 'production'
 
       # A snapshot: versions like 0.1.0-alpha.20261115093000, written in this
       # run only and never committed. Nothing is published when no changeset
@@ -55,10 +58,45 @@ jobs:
         if: github.ref_name == 'production'
         uses: changesets/action@v1
         with:
-          version: pnpm changeset version
+          # `changeset version`, then the same version into the Python package
+          # (the action runs no shell, so one script does both).
+          version: pnpm version-packages
           publish: pnpm changeset publish
           commit: 'chore: version packages'
           title: 'Version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Only on the push that releases a version — the merge of "Version
+      # packages", which changes it — never on a promotion from staging. The
+      # wheel is built from this commit: the code just published to npm, at the
+      # same version, and the file MotorsAL vendors (decision D9). The npm tags
+      # are pushed here as well: the action has not been pushing them.
+      - name: Tags, and the Python wheel on a GitHub release
+        if: github.ref_name == 'production'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(node -p "require('./packages/engine/package.json').version")
+          before=$(git show HEAD^1:packages/engine/package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
+          if [ "$version" = "$before" ]; then
+            echo "No version released by this push (still $version)."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          pnpm changeset tag
+          git push origin --tags
+          node tooling/sync-python-version.mjs --check
+          uv build python
+          uv run --isolated --no-project --with python/dist/*.whl python tooling/python-wheel-smoke.py packages
+          {
+            echo "The npm packages are on GitHub Packages at $version; the Python package is attached."
+            echo
+            echo "SHA-256:"
+            echo
+            (cd python/dist && sha256sum -- *.whl *.tar.gz) | sed 's/^/    /'
+          } > notes.md
+          gh release create "v$version" python/dist/*.whl python/dist/*.tar.gz \
+            --target "$GITHUB_SHA" --title "$version" --notes-file notes.md

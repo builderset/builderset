@@ -132,7 +132,7 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 14 Adopt the packages in MotorsAL — in production since 2026-11-16, now on `0.3.0`
 - [x] 15 The Python package — `builderset` 0.3.0, the wheel on the GitHub release (D9); MotorsAL's API runs on it
 - [x] **M3 — MotorsAL runs on it** — 2026-11-19: the editors on `@builderset/*` and the API on `builderset`, both 0.3.0, in production
-- [ ] 16 Docs site and playground — in progress: `apps/docs` (Fumadocs) with What it is, both quick starts, Install and Reference → Python; preview deploys to Vercel once its secrets are set. Next: the playground, the guides, the generated reference
+- [ ] 16 Docs site and playground — in progress: `apps/docs` (Fumadocs) with What it is, both quick starts, Install and Reference → Python; Vercel builds it from `development` (Git integration, `apps/docs/vercel.json`) at docs-builderset.vercel.app; the landing page will be its own site at builderset.vercel.app. Next: the playground, the guides, the generated reference
 - [ ] **M4 — public**
 - [ ] 17 The popup builder
 - [ ] **M5 — the engine is proven; release 1.0**

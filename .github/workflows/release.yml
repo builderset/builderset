@@ -89,7 +89,7 @@ jobs:
           pnpm changeset tag
           git push origin --tags
           node tooling/sync-python-version.mjs --check
-          uv build python
+          tooling/build-python.sh "$GITHUB_SHA" python/dist
           uv run --isolated --no-project --with python/dist/*.whl python tooling/python-wheel-smoke.py packages
           {
             echo "The npm packages are on GitHub Packages at $version; the Python package is attached."

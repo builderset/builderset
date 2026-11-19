@@ -41,6 +41,7 @@ export interface CheckContext {
   document: EngineDocument;
 }
 
+// #region element-definition
 export interface ElementDefinition<P extends Record<string, unknown> = Record<string, unknown>> {
   type: string;
   /** Bump when the props change incompatibly, and handle the old shape in `migrate`. */
@@ -69,6 +70,7 @@ export interface ElementDefinition<P extends Record<string, unknown> = Record<st
   /** Semantic issues — missing alt text, empty items. */
   check?: ((props: P, context: CheckContext) => Issue[]) | undefined;
 }
+// #endregion element-definition
 
 /** The props type of an element definition: `PropsOf<typeof headingElement>`. */
 export type PropsOf<D> = D extends ElementDefinition<infer P> ? P : never;

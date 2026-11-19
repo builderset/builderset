@@ -45,6 +45,7 @@ export const DEFAULT_BRAND: BrandKit = {
   social: [],
 };
 
+// #region render-options
 export interface RenderOptions {
   /**
    * The brand kit `brand.*` colours, the logo block and the footer's address
@@ -70,6 +71,7 @@ export interface RenderOptions {
   /** For the currency format. */
   currency?: string | undefined;
 }
+// #endregion render-options
 
 /**
  * The social icons in a folder at a public address:

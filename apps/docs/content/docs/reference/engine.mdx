@@ -1,0 +1,36 @@
+---
+title: Engine
+description: For people building a kit — an element's definition, the registry, the operations, and the editor profile a kit supplies.
+---
+
+_This page describes Builderset 0.3.0._
+
+A project uses a kit and rarely needs this page. A [custom element](/docs/guides/custom-elements)
+is an `ElementDefinition`; a new kit (popups, pages) is a set of them plus an
+`EditorProfile`.
+
+## An element
+
+<include cwd lang="ts" meta='title="@builderset/engine — ElementDefinition"'>
+  ../../packages/engine/src/core/registry.ts#element-definition
+</include>
+
+`defineElement(definition)` types one; `new ElementRegistry(definitions)` holds a
+set, and `registry.get(type)` and `registry.all()` read it.
+
+## The operations
+
+Every change to a document is an operation on its tree, from
+`@builderset/engine`: `insert`, `move`, `remove`, `duplicate`, `update`,
+`wrap`, `unwrap` and `replaceType`. Each checks the registry's placement rules. Run through `applyChange` or `History`,
+a change records the patches that undo it. A script that changes
+documents should use them rather than edit the JSON by hand.
+
+## A kit's editor
+
+The workspace — panels, undo, drag and drop, the inspector — is the same for every
+kind of document. A kit supplies the parts that are not:
+
+<include cwd lang="ts" meta='title="@builderset/engine/editor — EditorProfile"'>
+  ../../packages/engine/src/editor/profile.ts#profile
+</include>

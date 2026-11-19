@@ -1,4 +1,15 @@
 {
   "title": "Reference",
-  "pages": ["email-blocks", "article-elements", "issues", "css-variables", "props", "python"]
+  "pages": [
+    "email",
+    "email-blocks",
+    "article",
+    "article-elements",
+    "engine",
+    "host",
+    "props",
+    "css-variables",
+    "issues",
+    "python"
+  ]
 }

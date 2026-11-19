@@ -28,6 +28,7 @@ export interface TemplateSpec {
  * block publishing, which block a new line of text is. The engine has no
  * default kit, so those parts are required.
  */
+// #region profile
 export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   /** Draws the document on the canvas. */
   renderCanvas: (args: {
@@ -94,3 +95,4 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   structures?:
     readonly { id: string; label: string; icon?: ReactNode; build: () => Fragment }[] | undefined;
 }
+// #endregion profile

@@ -1,0 +1,39 @@
+---
+title: Install
+description: Which package to install for what, and how to reach them before the launch.
+---
+
+_This page describes Builderset 0.3.0._
+
+## The packages
+
+| Package               | Install it for                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `@builderset/email`   | Emails: the editor, the renderer to HTML and plain text, the checker                             |
+| `@builderset/article` | Articles: the editor, the renderer for your site, the checker                                    |
+| `@builderset/engine`  | What the kits share. The kits depend on it — install it yourself only to build a kit of your own |
+| `builderset` (Python) | The checker and the email renderer for a Python backend: see [Python](/docs/reference/python)    |
+
+Each kit has the same entry points: `@builderset/<kit>` (the document, no React — it
+runs on a server), `/render`, `/editor`, `/host`, `/locales/<language>`, and the
+stylesheets `/styles.css` and `/theme/shadcn.css`; the article kit also has
+`/content.css`, for the rendered page.
+
+## Before the launch
+
+Builderset is published on GitHub Packages until it is public. Reading a package
+there needs a classic GitHub token with the `read:packages` scope, even to install.
+Put the scope's registry and your token in an `.npmrc` beside your `package.json`:
+
+<include cwd lang="ini" meta='title=".npmrc"'>
+  ./snippets/npmrc
+</include>
+
+and set `GITHUB_PACKAGES_TOKEN` in your environment (and in your CI). Then:
+
+<include cwd lang="bash">
+  ./snippets/install-all.sh
+</include>
+
+The all-in-one package, `builderset` — every kit in one install, one stylesheet for
+all of them — comes with the move to npm: GitHub Packages holds scoped names only.

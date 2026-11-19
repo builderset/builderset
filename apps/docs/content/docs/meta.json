@@ -1,0 +1,11 @@
+{
+  "title": "Builderset",
+  "pages": [
+    "---Getting started---",
+    "index",
+    "quick-start",
+    "install",
+    "---Reference---",
+    "...reference"
+  ]
+}

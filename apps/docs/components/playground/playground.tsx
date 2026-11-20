@@ -29,6 +29,35 @@ import { de as emailDe } from '@builderset/email/locales/de';
 import { sq as emailSq } from '@builderset/email/locales/sq';
 import { DEFAULT_BRAND, renderEmail } from '@builderset/email/render';
 import emptyEmail from '@builderset/email/fixtures/valid/empty.json';
+import { themeVariables } from '@builderset/engine';
+import {
+  Badge,
+  Button,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  PortalProvider,
+  SegmentedControl,
+  Select,
+  Switch,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  Tooltip,
+  TooltipProvider,
+} from '@builderset/engine/ui';
+import {
+  ArrowLeft,
+  Check,
+  Code2,
+  Copy,
+  Mail,
+  Newspaper,
+  PanelRight,
+  Paintbrush,
+  RotateCcw,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
@@ -59,16 +88,16 @@ function startingEmail(template: string): EmailDocument {
   const kept = parseEmail(readDocument('email', template), emailRegistry);
   if (kept) return kept;
   if (template === 'kitchen-sink') return kitchenSinkEmail(emailRegistry);
-  if (template === 'empty') return parseEmail(emptyEmail, emailRegistry) as EmailDocument;
+  const empty = template === 'empty' ? parseEmail(emptyEmail, emailRegistry) : null;
+  if (empty) return empty;
   return starterEmail(emailRegistry, { name: 'Welcome', subject: 'Welcome aboard' });
 }
 
 function startingArticle(template: string): ArticleDocument {
   const kept = parseArticle(readDocument('article', template), articleRegistry);
   if (kept.ok && kept.doc) return kept.doc;
-  if (template === 'empty')
-    return parseArticle(emptyArticle, articleRegistry).doc as ArticleDocument;
-  return kitchenSinkDocument(articleRegistry);
+  const empty = template === 'empty' ? parseArticle(emptyArticle, articleRegistry).doc : null;
+  return empty ?? kitchenSinkDocument(articleRegistry);
 }
 
 /** A picture this tab uploaded, or the site's sample for the templates' made-up keys. */
@@ -91,6 +120,29 @@ const RECORD: { status: string; scheduledAt: string | null; publishedAt: string 
 };
 const SAMPLE_DATA = { recipient: { name: 'Ana', email: 'ana@example.com' } };
 
+/** Brand colours to try, besides the editor's own and a picker. */
+const BRAND_COLOURS = [
+  { value: '#2a5bd7', label: 'Cobalt' },
+  { value: '#da6c1e', label: 'Ember' },
+  { value: '#1f7a4d', label: 'Pine' },
+  { value: '#a3346b', label: 'Berry' },
+  { value: '#111827', label: 'Ink' },
+];
+
+const RADII = [
+  { value: '', label: 'Own' },
+  { value: '0rem', label: 'Square' },
+  { value: '0.375rem', label: 'Small' },
+  { value: '1rem', label: 'Large' },
+];
+
+/**
+ * The playground: both editors, with the props a project would pass set from
+ * the bar above them. The bar and the output are drawn with the editor's own
+ * UI kit (`@builderset/engine/ui`, shadcn on Radix) inside the same themed root,
+ * so they ARE the builders' design — and take the same theme, brand colour,
+ * radius and font as the editor beside them.
+ */
 export function Playground() {
   const [settings, setSettings] = useState<Settings>(readSettings);
   const [generation, setGeneration] = useState(0);
@@ -151,6 +203,12 @@ export function Playground() {
     setArticle(hosts.articleStart);
   }, [hosts]);
 
+  // One function per editor, so the rendered email is not redone on every render.
+  const resolveMedia = useMemo(() => {
+    const host = kit === 'email' ? hosts.email : hosts.article;
+    return (key: string) => host.resolveMedia(key);
+  }, [kit, hosts]);
+
   const tokens = tokensOf(settings);
   const common = {
     theme: settings.theme,
@@ -161,7 +219,7 @@ export function Playground() {
     // The editor fills its root; the root is as tall as the space it is given.
     className: 'h-full',
     onBack: () => {
-      window.scrollTo({ top: 0 });
+      window.location.assign('/docs');
     },
   };
   const editor: ReactNode =
@@ -193,16 +251,16 @@ export function Playground() {
       />
     );
 
-  const copy = async (what: 'JSX' | 'CSS') => {
+  const copy = async (what: string, text: string) => {
     try {
-      await navigator.clipboard.writeText(what === 'JSX' ? jsxFor(settings) : cssFor(settings));
+      await navigator.clipboard.writeText(text);
       setCopied(what);
-      setTimeout(() => {
-        setCopied(null);
-      }, 1500);
     } catch {
-      setCopied('Copy is blocked here');
+      setCopied('blocked');
     }
+    setTimeout(() => {
+      setCopied(null);
+    }, 1600);
   };
   const reset = () => {
     forgetDocument(kit, template);
@@ -210,248 +268,326 @@ export function Playground() {
   };
 
   return (
-    <div className="flex h-dvh flex-col">
-      <Controls settings={settings} set={set} onCopy={copy} copied={copied} onReset={reset} />
-      <div className="flex min-h-0 flex-1">
-        <div
-          // `theme="auto"` follows the nearest element marked dark or light. The
-          // editor fills the window (position: fixed); `contain: layout` makes this
-          // box the one it fills, beside the controls and the output.
-          className={`relative min-w-0 flex-1 [contain:layout] ${settings.pageDark ? 'dark' : 'light'}`}
-          data-playground-editor=""
-        >
-          {editor}
-        </div>
-        {settings.showOutput ? (
-          <Output
-            kit={kit}
-            email={email}
-            article={article}
-            settings={settings}
-            set={set}
-            resolveMedia={(kit === 'email' ? hosts.email : hosts.article).resolveMedia}
-          />
-        ) : null}
+    // `theme="auto"` follows the nearest element marked dark or light: this one.
+    <div className={settings.pageDark ? 'dark' : 'light'}>
+      <div
+        className="builderset pg"
+        data-builderset-theme={settings.theme}
+        style={themeVariables(tokens)}
+      >
+        <PortalProvider>
+          <TooltipProvider>
+            <div className="pg-shell">
+              <Bar settings={settings} set={set} copied={copied} onCopy={copy} onReset={reset} />
+              <div className="pg-body">
+                <div
+                  // The editor fills the window (position: fixed); `contain: layout`
+                  // makes this box the one it fills, beside the output.
+                  className="pg-editor"
+                  data-playground-editor=""
+                >
+                  {editor}
+                </div>
+                {settings.showOutput ? (
+                  <Output
+                    kit={kit}
+                    email={email}
+                    article={article}
+                    settings={settings}
+                    set={set}
+                    copied={copied}
+                    onCopy={copy}
+                    resolveMedia={resolveMedia}
+                  />
+                ) : null}
+              </div>
+            </div>
+          </TooltipProvider>
+        </PortalProvider>
       </div>
     </div>
   );
 }
 
-// ── the controls ──────────────────────────────────────────────────────────
+// ── the bar ───────────────────────────────────────────────────────────────
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <label className="flex flex-col gap-1 text-xs text-fd-muted-foreground">
-      {label}
-      {children}
-    </label>
-  );
-}
-
-const input =
-  'h-9 rounded-lg border bg-fd-background px-2.5 text-sm text-fd-foreground transition-[border-color,box-shadow] hover:border-fd-primary/40 focus-visible:border-fd-primary focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-fd-primary)_16%,transparent)]';
-const button =
-  'h-9 rounded-lg border bg-fd-background px-3.5 text-sm font-medium text-fd-foreground transition-[border-color,transform] hover:-translate-y-px hover:border-fd-primary/50 active:translate-y-0';
-const primaryButton = 'bs-button !h-9 text-sm';
-
-function Controls({
+function Bar({
   settings,
   set,
-  onCopy,
   copied,
+  onCopy,
   onReset,
 }: {
   settings: Settings;
   set: (patch: Partial<Settings>) => void;
-  onCopy: (what: 'JSX' | 'CSS') => Promise<void>;
   copied: string | null;
+  onCopy: (what: string, text: string) => Promise<void>;
   onReset: () => void;
 }) {
   const { kit } = settings;
   return (
-    <div className="border-b bg-fd-card">
-      <div className="flex flex-wrap items-center gap-3 px-4 pt-3">
-        <Link href="/docs" className="bs-brand flex items-center gap-2.5" title="Back to the docs">
-          <Logo />
-          <span className="text-[15px] font-semibold tracking-tight">Builderset</span>
+    <header className="pg-bar">
+      <div className="pg-bar-group">
+        <Tooltip content="Back to the docs" side="bottom">
+          <Button asChild variant="ghost" size="icon-sm" aria-label="Back to the docs">
+            <Link href="/docs">
+              <ArrowLeft />
+            </Link>
+          </Button>
+        </Tooltip>
+        <Link href="/docs" className="pg-brand" aria-label="Builderset docs">
+          <Logo size={22} />
+          <span>Playground</span>
         </Link>
-        <span className="rounded-full bg-fd-accent px-2.5 py-0.5 text-xs font-semibold text-fd-accent-foreground">
-          Playground
-        </span>
-        <p className="hidden text-xs text-fd-muted-foreground lg:block">
-          Everything stays in this browser; pictures you upload live only in this tab.
-          {copied && copied !== 'JSX' && copied !== 'CSS' ? ` ${copied}.` : ''}
-        </p>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            className={primaryButton}
-            onClick={() => {
-              void onCopy('JSX');
-            }}
-          >
-            {copied === 'JSX' ? 'Copied ✓' : 'Copy JSX'}
-          </button>
-          <button
-            type="button"
-            className={button}
-            onClick={() => {
-              void onCopy('CSS');
-            }}
-          >
-            {copied === 'CSS' ? 'Copied ✓' : 'Copy CSS'}
-          </button>
-          <button type="button" className={button} onClick={onReset}>
-            Reset
-          </button>
-          <button
-            type="button"
-            className={button}
+        <span className="pg-rule" aria-hidden="true" />
+        <SegmentedControl
+          aria-label="Kit"
+          value={kit}
+          onValueChange={(value) => {
+            set({ kit: value });
+          }}
+          options={[
+            {
+              value: 'email',
+              label: (
+                <span className="pg-seg">
+                  <Mail aria-hidden="true" />
+                  Email
+                </span>
+              ),
+            },
+            {
+              value: 'article',
+              label: (
+                <span className="pg-seg">
+                  <Newspaper aria-hidden="true" />
+                  Article
+                </span>
+              ),
+            },
+          ]}
+        />
+        <Select
+          aria-label="Template"
+          className="pg-select"
+          value={settings.template[kit]}
+          onValueChange={(value) => {
+            set({ template: { ...settings.template, [kit]: value } });
+          }}
+          options={TEMPLATES[kit].map((option) => ({ value: option.id, label: option.label }))}
+        />
+      </div>
+
+      <div className="pg-bar-group end">
+        <Select
+          aria-label="The editor's language"
+          className="pg-select narrow"
+          value={settings.language}
+          onValueChange={(value) => {
+            set({ language: value as Settings['language'] });
+          }}
+          options={EDITOR_LANGUAGES.map((language) => ({
+            value: language.code,
+            label: language.label,
+          }))}
+        />
+        <Customize settings={settings} set={set} />
+        <Tooltip content="Start the template again" side="bottom">
+          <Button variant="ghost" size="icon-sm" aria-label="Start again" onClick={onReset}>
+            <RotateCcw />
+          </Button>
+        </Tooltip>
+        <Tooltip
+          content={settings.showOutput ? 'Hide the output' : 'Show the output'}
+          side="bottom"
+        >
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Output"
             aria-pressed={settings.showOutput}
+            className={settings.showOutput ? 'pg-on' : undefined}
             onClick={() => {
               set({ showOutput: !settings.showOutput });
             }}
           >
-            {settings.showOutput ? 'Hide output' : 'Show output'}
-          </button>
-        </div>
+            <PanelRight />
+          </Button>
+        </Tooltip>
+        <span className="pg-rule" aria-hidden="true" />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            void onCopy('CSS', cssFor(settings));
+          }}
+        >
+          {copied === 'CSS' ? <Check /> : <Paintbrush />}
+          {copied === 'CSS' ? 'Copied' : 'Copy CSS'}
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => {
+            void onCopy('JSX', jsxFor(settings));
+          }}
+        >
+          {copied === 'JSX' ? <Check /> : <Code2 />}
+          {copied === 'JSX' ? 'Copied' : 'Copy JSX'}
+        </Button>
       </div>
-      <div className="flex flex-wrap items-end gap-3 px-4 pt-3 pb-3">
-        <Field label="Kit">
-          <select
-            className={input}
-            value={kit}
-            onChange={(event) => {
-              set({ kit: event.target.value as Kit });
+    </header>
+  );
+}
+
+/** The theme props, in one popover: what `theme` and `tokens` take. */
+function Customize({
+  settings,
+  set,
+}: {
+  settings: Settings;
+  set: (patch: Partial<Settings>) => void;
+}) {
+  const custom = settings.primary && !BRAND_COLOURS.some((c) => c.value === settings.primary);
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" aria-label="Theme and tokens">
+          <span
+            className="pg-dot"
+            style={{
+              background: settings.primary || 'var(--builderset-primary, var(--bst-d-primary))',
             }}
-          >
-            <option value="email">Email</option>
-            <option value="article">Article</option>
-          </select>
-        </Field>
-        <Field label="Template">
-          <select
-            className={input}
-            value={settings.template[kit]}
-            onChange={(event) => {
-              set({ template: { ...settings.template, [kit]: event.target.value } });
-            }}
-          >
-            {TEMPLATES[kit].map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Theme">
-          <select
-            className={input}
+            aria-hidden="true"
+          />
+          Theme
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="pg-pop">
+        <div className="pg-pop-h">
+          <strong>Theme and tokens</strong>
+          <span>The props your code passes.</span>
+        </div>
+
+        <div className="pg-field">
+          <Label>theme</Label>
+          <SegmentedControl
+            aria-label="theme"
             value={settings.theme}
-            onChange={(event) => {
-              set({ theme: event.target.value as Settings['theme'] });
+            onValueChange={(value) => {
+              set({ theme: value });
             }}
-          >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="auto">Auto — follows the page</option>
-          </select>
-        </Field>
-        <label className="flex h-8 items-center gap-2 self-end text-sm">
-          <input
-            type="checkbox"
+            options={[
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+              { value: 'auto', label: 'Auto' },
+            ]}
+          />
+        </div>
+
+        <div className="pg-field row">
+          <div>
+            <Label htmlFor="pg-page-dark">The page is dark</Label>
+            <p>What “Auto” follows.</p>
+          </div>
+          <Switch
+            id="pg-page-dark"
             checked={settings.pageDark}
-            onChange={(event) => {
-              set({ pageDark: event.target.checked });
+            onCheckedChange={(checked) => {
+              set({ pageDark: checked });
             }}
           />
-          Page is dark
-        </label>
-        <Field label="Brand colour">
-          <span className="flex items-center gap-1">
-            <input
-              type="color"
-              className="h-8 w-10 cursor-pointer rounded-md border bg-fd-background"
-              value={settings.primary || '#2563eb'}
-              onChange={(event) => {
-                set({ primary: event.target.value });
+        </div>
+
+        <div className="pg-field">
+          <Label>tokens.primary</Label>
+          <div className="pg-swatches">
+            <button
+              type="button"
+              className="pg-swatch own"
+              aria-pressed={!settings.primary}
+              title="The editor’s own"
+              aria-label="The editor’s own"
+              onClick={() => {
+                set({ primary: '' });
               }}
             />
-            {settings.primary ? (
+            {BRAND_COLOURS.map((colour) => (
               <button
+                key={colour.value}
                 type="button"
-                className="text-xs underline"
+                className="pg-swatch"
+                aria-pressed={settings.primary === colour.value}
+                title={`${colour.label} ${colour.value}`}
+                aria-label={colour.label}
+                style={{ background: colour.value }}
                 onClick={() => {
-                  set({ primary: '' });
+                  set({ primary: colour.value });
                 }}
-              >
-                clear
-              </button>
-            ) : null}
-          </span>
-        </Field>
-        <Field label="Radius">
-          <select
-            className={input}
+              />
+            ))}
+            <label
+              className="pg-swatch pick"
+              title="Any colour"
+              data-on={custom ? '' : undefined}
+              style={custom ? { background: settings.primary } : undefined}
+            >
+              <input
+                type="color"
+                aria-label="Any colour"
+                value={settings.primary || '#2563eb'}
+                onChange={(event) => {
+                  set({ primary: event.target.value });
+                }}
+              />
+            </label>
+          </div>
+        </div>
+
+        <div className="pg-field">
+          <Label>tokens.radius</Label>
+          <SegmentedControl
+            aria-label="tokens.radius"
             value={settings.radius}
-            onChange={(event) => {
-              set({ radius: event.target.value });
+            onValueChange={(value) => {
+              set({ radius: value });
             }}
-          >
-            <option value="">The editor’s own</option>
-            <option value="0rem">Square</option>
-            <option value="0.375rem">Small</option>
-            <option value="1rem">Large</option>
-          </select>
-        </Field>
-        <Field label="Font">
-          <select
-            className={input}
+            options={RADII}
+          />
+        </div>
+
+        <div className="pg-field">
+          <Label>tokens.font</Label>
+          <Select
+            aria-label="tokens.font"
             value={settings.font}
-            onChange={(event) => {
-              set({ font: event.target.value });
+            onValueChange={(value) => {
+              set({ font: value });
             }}
-          >
-            {FONTS.map((font) => (
-              <option key={font.label} value={font.value}>
-                {font.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Editor language">
-          <select
-            className={input}
-            value={settings.language}
-            onChange={(event) => {
-              set({ language: event.target.value as Settings['language'] });
+            options={FONTS.map((font) => ({ value: font.value, label: font.label }))}
+          />
+        </div>
+
+        <div className="pg-field row">
+          <div>
+            <Label htmlFor="pg-languages">contentLocales</Label>
+            <p>Write in English, German and French.</p>
+          </div>
+          <Switch
+            id="pg-languages"
+            checked={settings.severalContentLanguages}
+            onCheckedChange={(checked) => {
+              set({ severalContentLanguages: checked });
             }}
-          >
-            {EDITOR_LANGUAGES.map((language) => (
-              <option key={language.code} value={language.code}>
-                {language.label}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Content languages">
-          <select
-            className={input}
-            value={settings.severalContentLanguages ? 'several' : 'one'}
-            onChange={(event) => {
-              set({ severalContentLanguages: event.target.value === 'several' });
-            }}
-          >
-            <option value="one">One (English)</option>
-            <option value="several">Several (English, German, French)</option>
-          </select>
-        </Field>
-      </div>
-    </div>
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
 // ── the output ────────────────────────────────────────────────────────────
+
+const LABELS = { json: 'Document', html: 'Email', text: 'Plain text', page: 'Page' } as const;
 
 function Output({
   kit,
@@ -459,6 +595,8 @@ function Output({
   article,
   settings,
   set,
+  copied,
+  onCopy,
   resolveMedia,
 }: {
   kit: Kit;
@@ -466,6 +604,8 @@ function Output({
   article: ArticleDocument;
   settings: Settings;
   set: (patch: Partial<Settings>) => void;
+  copied: string | null;
+  onCopy: (what: string, text: string) => Promise<void>;
   resolveMedia: (key: string) => string;
 }) {
   const tabs = kit === 'email' ? (['json', 'html', 'text'] as const) : (['json', 'page'] as const);
@@ -477,54 +617,80 @@ function Output({
         : null,
     [kit, email, resolveMedia],
   );
+  const json = useMemo(
+    () => JSON.stringify(kit === 'email' ? email : article, null, 2),
+    [kit, email, article],
+  );
   const dark = settings.theme === 'dark' || (settings.theme === 'auto' && settings.pageDark);
-  const labels = {
-    json: 'Document (JSON)',
-    html: 'Email (HTML)',
-    text: 'Plain text',
-    page: 'Page',
-  };
+  const copyable =
+    active === 'json'
+      ? json
+      : active === 'html'
+        ? rendered?.html
+        : active === 'text'
+          ? rendered?.text
+          : null;
+
   return (
-    <aside
-      className="flex w-[440px] shrink-0 flex-col border-l bg-fd-card"
-      data-playground-output=""
-    >
-      <div className="flex gap-1 border-b px-2 py-2" role="tablist">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            role="tab"
-            aria-selected={active === tab}
-            className={`rounded-md px-3 py-1 text-sm ${active === tab ? 'bg-fd-accent text-fd-accent-foreground' : 'text-fd-muted-foreground'}`}
-            onClick={() => {
-              set({ output: tab });
-            }}
-          >
-            {labels[tab]}
-          </button>
-        ))}
-      </div>
-      <div className="min-h-0 flex-1 overflow-auto">
-        {active === 'json' ? (
-          <pre className="p-3 text-xs">
-            {JSON.stringify(kit === 'email' ? email : article, null, 2)}
-          </pre>
-        ) : null}
+    <aside className="pg-output" data-playground-output="" aria-label="Output">
+      <Tabs
+        value={active}
+        onValueChange={(value) => {
+          set({ output: value as Settings['output'] });
+        }}
+        className="pg-tabs"
+      >
+        <TabsList className="pg-tablist">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab} value={tab}>
+              {LABELS[tab]}
+            </TabsTrigger>
+          ))}
+          {copyable ? (
+            <span className="pg-tabs-end">
+              <Tooltip content={active === 'html' ? 'Copy the HTML' : 'Copy'} side="left">
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label="Copy"
+                  onClick={() => {
+                    void onCopy('output', copyable);
+                  }}
+                >
+                  {copied === 'output' ? <Check /> : <Copy />}
+                </Button>
+              </Tooltip>
+            </span>
+          ) : null}
+        </TabsList>
+      </Tabs>
+
+      <div className="pg-output-body">
+        {active === 'json' ? <pre className="pg-pre">{json}</pre> : null}
         {active === 'html' && rendered ? (
-          <iframe
-            title="The rendered email"
-            sandbox=""
-            srcDoc={rendered.html}
-            className="h-full w-full bg-white"
-          />
+          <div className="pg-mail">
+            <div className="pg-inbox">
+              <span className="pg-avatar" aria-hidden="true">
+                {DEFAULT_BRAND.name.slice(0, 1)}
+              </span>
+              <div>
+                <strong>{DEFAULT_BRAND.name}</strong>
+                <span>{rendered.subject || 'No subject yet'}</span>
+                {rendered.preheader ? <small>{rendered.preheader}</small> : null}
+              </div>
+            </div>
+            <iframe
+              title="The rendered email"
+              sandbox=""
+              srcDoc={rendered.html}
+              className="pg-frame"
+            />
+          </div>
         ) : null}
-        {active === 'text' && rendered ? (
-          <pre className="whitespace-pre-wrap p-3 text-xs">{rendered.text}</pre>
-        ) : null}
+        {active === 'text' && rendered ? <pre className="pg-pre wrap">{rendered.text}</pre> : null}
         {active === 'page' ? (
           // The page around the article, in the theme the article is shown in.
-          <div className={`min-h-full p-4 ${dark ? 'dark bg-neutral-950' : 'light bg-white'}`}>
+          <div className={dark ? 'pg-page dark' : 'pg-page light'}>
             <ArticleRenderer
               document={article}
               registry={articleRegistry}
@@ -535,6 +701,15 @@ function Output({
           </div>
         ) : null}
       </div>
+
+      <footer className="pg-output-foot">
+        <Badge tone="ok">Saved in this browser</Badge>
+        <span>
+          {copied === 'blocked'
+            ? 'This browser blocked the copy.'
+            : 'Nothing leaves this tab; uploaded pictures last until it closes.'}
+        </span>
+      </footer>
     </aside>
   );
 }

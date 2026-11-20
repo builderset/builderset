@@ -36,7 +36,8 @@ describe('the doors', () => {
     expect(typeof article.createArticleRegistry).toBe('function');
     expect(typeof host.createRestHost).toBe('function');
     expect(sq.default.code).toBe('sq');
-  });
+    // The first import of every kit; slow while the whole suite runs at once.
+  }, 30_000);
 
   it('has no root entry: the path says which side the code is for', async () => {
     // In a variable, so the test runner resolves it when it runs, as a project would.

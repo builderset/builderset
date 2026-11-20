@@ -1,0 +1,3546 @@
+{
+  "cases": [
+    {
+      "name": "everything right",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "nothing sent: every required field",
+      "form": "kitchen-sink",
+      "answers": {},
+      "expected": {
+        "ok": false,
+        "errors": {
+          "name": {
+            "code": "required"
+          },
+          "email": {
+            "code": "required",
+            "message": "We need an email we can answer."
+          },
+          "address": {
+            "code": "required"
+          },
+          "year": {
+            "code": "required"
+          },
+          "consent": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "blank strings and a blank name are no answer",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": " ",
+          "last": ""
+        },
+        "email": "   ",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "nickname": ""
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "name": {
+            "code": "required"
+          },
+          "email": {
+            "code": "required",
+            "message": "We need an email we can answer."
+          }
+        },
+        "values": {
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a name needs its first part",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "name": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "an address needs a street and a city",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga 1",
+          "city": "",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "address": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a name sent as text",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": "Ana Kurti",
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "name": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "email format, with the form’s own message",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "email": {
+            "code": "email",
+            "message": "We need an email we can answer."
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "an email is trimmed to check but kept as sent",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "  ana@example.com ",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "  ana@example.com ",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "phone formats",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "phone": "06x 123",
+        "call_time": "mornings"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "phone": {
+            "code": "phone"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "call_time": "mornings",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a phone number shows the question after it",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "phone": "+355 (69) 123-4567",
+        "call_time": "mornings"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "phone": "+355 (69) 123-4567",
+          "call_time": "mornings",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "no phone: its follow-up is hidden and dropped",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "call_time": "mornings"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "date and time formats",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "date": "2026/01/31",
+        "time": "9:30"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "date": {
+            "code": "date"
+          },
+          "time": {
+            "code": "time"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a date and a time in shape",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "date": "2026-01-31",
+        "time": "09:30"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "date": "2026-01-31",
+          "time": "09:30",
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "too short",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "nickname": "A",
+        "password": "short"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "nickname": {
+            "code": "tooShort",
+            "limit": 2
+          },
+          "password": {
+            "code": "tooShort",
+            "limit": 8
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "too long",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "nickname": "Bartholomew",
+        "accident": "yes",
+        "accident_details": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "nickname": {
+            "code": "tooLong",
+            "limit": 10
+          },
+          "accident_details": {
+            "code": "tooLong",
+            "limit": 40
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "accident": "yes",
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "length counts UTF-16 units, as the browser does",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "password": "😀😀😀😀",
+        "nickname": "Ëëë"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "nickname": "Ëëë",
+          "password": "😀😀😀😀",
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "letters: any alphabet, spaces, apostrophes and hyphens",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "nickname": "D'Ana-Çelë"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "nickname": "D'Ana-Çelë",
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "letters and digits refused",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "nickname": "Ana2",
+        "code": "12a"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "nickname": {
+            "code": "letters"
+          },
+          "code": {
+            "code": "digits"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "digits are ASCII digits",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "code": "١٢٣"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "code": {
+            "code": "digits"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a custom pattern, with the form’s own message",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "plate": "aa123bc"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "pattern",
+            "message": "Use the form AA123BC."
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a custom pattern matched",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "plate": " AA123BC "
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "plate": " AA123BC ",
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "numbers from strings, spaces removed",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": " 2 019 ",
+        "rating": "4",
+        "score": "9",
+        "consent": true,
+        "doors": "5",
+        "budget": "12500"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2019,
+          "doors": 5,
+          "rating": 4,
+          "score": 9,
+          "budget": 12500,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "numbers as JavaScript reads them: hex, exponent, leading dot",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": "0x7E2",
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "doors": "5e0",
+        "budget": ".5e4"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "doors": 5,
+          "rating": 4,
+          "score": 8,
+          "budget": 5000,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "not a number",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": "20x9",
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "doors": "Infinity",
+        "budget": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "year": {
+            "code": "number"
+          },
+          "doors": {
+            "code": "number"
+          },
+          "budget": {
+            "code": "number"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a number range",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 1985,
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "year": {
+            "code": "tooLow",
+            "limit": 1990
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a number range from above",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": "2030",
+        "rating": 4,
+        "score": 8,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "year": {
+            "code": "tooHigh",
+            "limit": 2026
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "rating, scale and slider bounds",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 6,
+        "score": -1,
+        "consent": true,
+        "budget": 60000
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "rating": {
+            "code": "tooHigh",
+            "limit": 5
+          },
+          "score": {
+            "code": "tooLow",
+            "limit": 0
+          },
+          "why_low": {
+            "code": "required"
+          },
+          "budget": {
+            "code": "tooHigh",
+            "limit": 50000
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "rating and slider from below",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 0,
+        "score": 8,
+        "consent": true,
+        "budget": "999.5"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "rating": {
+            "code": "tooLow",
+            "limit": 1
+          },
+          "why_low": {
+            "code": "required"
+          },
+          "budget": {
+            "code": "tooLow",
+            "limit": 1000
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a choice not in the options",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "fuel": "Hydrogen",
+        "gearbox": "manual"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "fuel": {
+            "code": "choice"
+          },
+          "gearbox": {
+            "code": "choice"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a choice in the options",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "fuel": "Diesel",
+        "gearbox": " Automatic"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "fuel": "Diesel",
+          "gearbox": " Automatic",
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a single choice sent as a list",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "fuel": [
+          "Diesel"
+        ],
+        "gearbox": [
+          "Manual"
+        ],
+        "accident": [
+          "no"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "fuel": {
+            "code": "choice"
+          },
+          "gearbox": {
+            "code": "choice"
+          },
+          "accident": {
+            "code": "choice"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "yes or no only",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "accident": "maybe"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "accident": {
+            "code": "choice"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "too few choices",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Sunroof"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "extras": {
+            "code": "tooFewChoices",
+            "limit": 2
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "too many choices",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Sunroof",
+          "Leather",
+          "Navigation",
+          "Towbar"
+        ],
+        "tow_weight": 900
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "extras": {
+            "code": "tooManyChoices",
+            "limit": 3
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "tow_weight": 900,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "choices not in the options, or not a list",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Sunroof",
+          "Spoiler"
+        ],
+        "gearbox": [
+          "Manual",
+          "Automatic"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "gearbox": {
+            "code": "choice"
+          },
+          "extras": {
+            "code": "choice"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "choices sent as text",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": "Sunroof"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "extras": {
+            "code": "choice"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a choice ticked shows its follow-up, which is required",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Towbar",
+          "Leather"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "tow_weight": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "extras": [
+            "Towbar",
+            "Leather"
+          ],
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a follow-up answered",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Towbar",
+          "Leather"
+        ],
+        "tow_weight": "1 500",
+        "leather_note": "Mint"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "extras": [
+            "Towbar",
+            "Leather"
+          ],
+          "tow_weight": 1500,
+          "rating": 4,
+          "score": 8,
+          "leather_note": "Mint",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "contains and gt: case-insensitive, on numbers",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2010,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Leather",
+          "Sunroof"
+        ],
+        "leather_note": "Worn"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2010,
+          "extras": [
+            "Leather",
+            "Sunroof"
+          ],
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a yes shows the details question",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "accident": "yes"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "accident_details": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "accident": "yes",
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a no hides the details and drops the stale answer",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "accident": "no",
+        "accident_details": "A dent"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "accident": "no",
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "any rule: a low score shows the why",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 5,
+        "score": 3,
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "why_low": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 5,
+          "score": 3,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "any rule: a high score and good rating hide it",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 9,
+        "consent": true,
+        "why_low": "stale"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 9,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "an empty answer matches neither lt nor gt",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": "  ",
+        "rating": 5,
+        "consent": true,
+        "why_low": "stale"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "year": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "rating": 5,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "an answer that is not a number matches neither lt nor gt",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": "unknown",
+        "rating": "great",
+        "score": "low",
+        "consent": true,
+        "why_low": "stale",
+        "extras": [
+          "Leather",
+          "Sunroof"
+        ],
+        "leather_note": "stale"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "year": {
+            "code": "number"
+          },
+          "rating": {
+            "code": "number"
+          },
+          "score": {
+            "code": "number"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "extras": [
+            "Leather",
+            "Sunroof"
+          ],
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "gt on a number given as text",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": " 2019 ",
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "extras": [
+          "Leather",
+          "Sunroof"
+        ],
+        "leather_note": "Mint"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2019,
+          "extras": [
+            "Leather",
+            "Sunroof"
+          ],
+          "rating": 4,
+          "score": 8,
+          "leather_note": "Mint",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "consent must be true",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": "yes"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "consent": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8
+        }
+      }
+    },
+    {
+      "name": "consent unticked",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": false
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "consent": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8
+        }
+      }
+    },
+    {
+      "name": "too many files",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          {
+            "name": "a.jpg"
+          },
+          {
+            "name": "b.jpg"
+          },
+          {
+            "name": "c.jpg"
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "tooManyFiles",
+            "limit": 2
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a file of the wrong type",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          {
+            "name": "a.JPG",
+            "size": 1000
+          },
+          {
+            "name": "b.gif"
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "fileType"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a file too big",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          {
+            "name": "a.png",
+            "size": 1048577
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "fileTooBig",
+            "limit": 1
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "files within bounds",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          {
+            "name": "a.png",
+            "size": 1048576
+          },
+          {
+            "name": "b.jpg"
+          }
+        ]
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "photos": [
+            {
+              "name": "a.png",
+              "size": 1048576
+            },
+            {
+              "name": "b.jpg"
+            }
+          ],
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "files not sent as a list",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": {
+          "name": "a.png"
+        }
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "required"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a file without a name, or not an object, is of no type",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          {
+            "size": 10
+          }
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "fileType"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a file given as text is of no type",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "photos": [
+          "a.jpg"
+        ]
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "photos": {
+            "code": "fileType"
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a hidden field is kept as sent; questions the form does not ask are dropped",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "source": "newsletter",
+        "utm_campaign": "spring",
+        "internal_ref": ""
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "source": "newsletter",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a field hidden from visitors is never required",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "address": {
+          "street": "Rruga e Kavajës 1",
+          "city": "Tirana",
+          "zip": "1001"
+        },
+        "year": 2018,
+        "rating": 4,
+        "score": 8,
+        "consent": true,
+        "internal_ref": "R-1"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "address": {
+            "street": "Rruga e Kavajës 1",
+            "city": "Tirana",
+            "zip": "1001"
+          },
+          "year": 2018,
+          "rating": 4,
+          "score": 8,
+          "internal_ref": "R-1",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "one step at a time: the first",
+      "form": "kitchen-sink",
+      "answers": {
+        "email": "nope"
+      },
+      "step": 0,
+      "expected": {
+        "ok": false,
+        "errors": {
+          "name": {
+            "code": "required"
+          },
+          "email": {
+            "code": "email",
+            "message": "We need an email we can answer."
+          },
+          "address": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "one step at a time: the last",
+      "form": "kitchen-sink",
+      "answers": {
+        "name": {
+          "first": "Ana"
+        }
+      },
+      "step": 2,
+      "expected": {
+        "ok": false,
+        "errors": {
+          "consent": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "a template: the topic shows the reference",
+      "form": "contact",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": "Kurti"
+        },
+        "email": "ana@example.com",
+        "topic": "Support",
+        "reference": "A-17",
+        "message": "Where is my order?",
+        "consent": true
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": "Kurti"
+          },
+          "email": "ana@example.com",
+          "topic": "Support",
+          "reference": "A-17",
+          "message": "Where is my order?",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a template: the message too short",
+      "form": "contact",
+      "answers": {
+        "name": {
+          "first": "Ana",
+          "last": ""
+        },
+        "email": "ana@example.com",
+        "topic": "Sales",
+        "reference": "dropped",
+        "message": "Hi",
+        "consent": true
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "message": {
+            "code": "tooShort",
+            "limit": 10
+          }
+        },
+        "values": {
+          "name": {
+            "first": "Ana",
+            "last": ""
+          },
+          "email": "ana@example.com",
+          "topic": "Sales",
+          "consent": true
+        }
+      }
+    },
+    {
+      "name": "a form given inline: negative and fractional bounds",
+      "form": {
+        "schema": "form/document",
+        "version": 1,
+        "root": "root",
+        "nodes": {
+          "root": {
+            "id": "root",
+            "type": "root",
+            "v": 1,
+            "props": {},
+            "children": [
+              "n4"
+            ]
+          },
+          "n1": {
+            "id": "n1",
+            "type": "slider",
+            "v": 1,
+            "props": {
+              "label": "Km",
+              "key": "km",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "min": -50,
+              "max": 50,
+              "step": 0.5,
+              "defaultValue": 0,
+              "unit": ""
+            }
+          },
+          "n2": {
+            "id": "n2",
+            "type": "rating",
+            "v": 1,
+            "props": {
+              "label": "Stars",
+              "key": "stars",
+              "help": "",
+              "required": true,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "stars": 3
+            }
+          },
+          "n3": {
+            "id": "n3",
+            "type": "scale",
+            "v": 1,
+            "props": {
+              "label": "Score",
+              "key": "score",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "from": 1,
+              "to": 5,
+              "lowLabel": "Not at all",
+              "highLabel": "Very likely"
+            }
+          },
+          "n4": {
+            "id": "n4",
+            "type": "step",
+            "v": 1,
+            "props": {
+              "title": "Only"
+            },
+            "children": [
+              "n1",
+              "n2",
+              "n3"
+            ]
+          }
+        },
+        "meta": {
+          "name": "",
+          "title": "Inline",
+          "intro": "",
+          "slug": ""
+        },
+        "settings": {
+          "progress": "bar",
+          "buttons": {
+            "submit": "Send",
+            "next": "Continue",
+            "back": "Back"
+          },
+          "marker": "asterisk",
+          "saveProgress": true,
+          "prefill": true,
+          "after": {
+            "mode": "message",
+            "title": "Thank you! We got it.",
+            "message": "We will get back to you soon.",
+            "redirectUrl": ""
+          },
+          "autoReply": {
+            "enabled": false,
+            "to": "email",
+            "fromName": "",
+            "replyTo": "",
+            "subject": "We got your message, {{name}}",
+            "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+          },
+          "notify": {
+            "enabled": false,
+            "recipients": []
+          },
+          "webhook": "",
+          "spam": {
+            "captcha": "invisible",
+            "honeypot": true,
+            "blockDisposable": false,
+            "rateLimit": true
+          },
+          "limits": {
+            "oncePer": "none",
+            "maxResponses": null,
+            "opensAt": null,
+            "closesAt": null,
+            "closedMessage": "This form no longer takes responses."
+          },
+          "privacy": {
+            "keepMonths": 12,
+            "storeIp": false
+          },
+          "style": {
+            "look": "light",
+            "width": 640,
+            "labels": "top",
+            "size": "m",
+            "radius": "m",
+            "accent": "#2f5cf0",
+            "font": "system",
+            "fullWidthButtons": false
+          }
+        }
+      },
+      "answers": {
+        "km": "-50.5",
+        "stars": 3,
+        "score": 0
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "km": {
+            "code": "tooLow",
+            "limit": -50
+          },
+          "score": {
+            "code": "tooLow",
+            "limit": 1
+          }
+        },
+        "values": {
+          "stars": 3
+        }
+      }
+    },
+    {
+      "name": "a form given inline: in bounds",
+      "form": {
+        "schema": "form/document",
+        "version": 1,
+        "root": "root",
+        "nodes": {
+          "root": {
+            "id": "root",
+            "type": "root",
+            "v": 1,
+            "props": {},
+            "children": [
+              "n4"
+            ]
+          },
+          "n1": {
+            "id": "n1",
+            "type": "slider",
+            "v": 1,
+            "props": {
+              "label": "Km",
+              "key": "km",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "min": -50,
+              "max": 50,
+              "step": 0.5,
+              "defaultValue": 0,
+              "unit": ""
+            }
+          },
+          "n2": {
+            "id": "n2",
+            "type": "rating",
+            "v": 1,
+            "props": {
+              "label": "Stars",
+              "key": "stars",
+              "help": "",
+              "required": true,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "stars": 3
+            }
+          },
+          "n3": {
+            "id": "n3",
+            "type": "scale",
+            "v": 1,
+            "props": {
+              "label": "Score",
+              "key": "score",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "from": 1,
+              "to": 5,
+              "lowLabel": "Not at all",
+              "highLabel": "Very likely"
+            }
+          },
+          "n4": {
+            "id": "n4",
+            "type": "step",
+            "v": 1,
+            "props": {
+              "title": "Only"
+            },
+            "children": [
+              "n1",
+              "n2",
+              "n3"
+            ]
+          }
+        },
+        "meta": {
+          "name": "",
+          "title": "Inline",
+          "intro": "",
+          "slug": ""
+        },
+        "settings": {
+          "progress": "bar",
+          "buttons": {
+            "submit": "Send",
+            "next": "Continue",
+            "back": "Back"
+          },
+          "marker": "asterisk",
+          "saveProgress": true,
+          "prefill": true,
+          "after": {
+            "mode": "message",
+            "title": "Thank you! We got it.",
+            "message": "We will get back to you soon.",
+            "redirectUrl": ""
+          },
+          "autoReply": {
+            "enabled": false,
+            "to": "email",
+            "fromName": "",
+            "replyTo": "",
+            "subject": "We got your message, {{name}}",
+            "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+          },
+          "notify": {
+            "enabled": false,
+            "recipients": []
+          },
+          "webhook": "",
+          "spam": {
+            "captcha": "invisible",
+            "honeypot": true,
+            "blockDisposable": false,
+            "rateLimit": true
+          },
+          "limits": {
+            "oncePer": "none",
+            "maxResponses": null,
+            "opensAt": null,
+            "closesAt": null,
+            "closedMessage": "This form no longer takes responses."
+          },
+          "privacy": {
+            "keepMonths": 12,
+            "storeIp": false
+          },
+          "style": {
+            "look": "light",
+            "width": 640,
+            "labels": "top",
+            "size": "m",
+            "radius": "m",
+            "accent": "#2f5cf0",
+            "font": "system",
+            "fullWidthButtons": false
+          }
+        }
+      },
+      "answers": {
+        "km": -0.5,
+        "stars": "2",
+        "score": 5
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "km": -0.5,
+          "stars": 2,
+          "score": 5
+        }
+      }
+    },
+    {
+      "name": "a key named like an Object member is an ordinary key: unanswered",
+      "form": {
+        "schema": "form/document",
+        "version": 1,
+        "root": "root",
+        "nodes": {
+          "root": {
+            "id": "root",
+            "type": "root",
+            "v": 1,
+            "props": {},
+            "children": [
+              "n3"
+            ]
+          },
+          "n1": {
+            "id": "n1",
+            "type": "text",
+            "v": 1,
+            "props": {
+              "label": "Builder",
+              "key": "constructor",
+              "help": "",
+              "required": true,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "placeholder": "",
+              "defaultValue": ""
+            }
+          },
+          "n2": {
+            "id": "n2",
+            "type": "text",
+            "v": 1,
+            "props": {
+              "label": "Follow-up",
+              "key": "follow_up",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": true,
+                "match": "all",
+                "rules": [
+                  {
+                    "key": "constructor",
+                    "op": "not_empty",
+                    "value": ""
+                  }
+                ]
+              },
+              "hideFromVisitors": false,
+              "placeholder": "",
+              "defaultValue": ""
+            }
+          },
+          "n3": {
+            "id": "n3",
+            "type": "step",
+            "v": 1,
+            "props": {
+              "title": "Only"
+            },
+            "children": [
+              "n1",
+              "n2"
+            ]
+          }
+        },
+        "meta": {
+          "name": "",
+          "title": "Inline",
+          "intro": "",
+          "slug": ""
+        },
+        "settings": {
+          "progress": "bar",
+          "buttons": {
+            "submit": "Send",
+            "next": "Continue",
+            "back": "Back"
+          },
+          "marker": "asterisk",
+          "saveProgress": true,
+          "prefill": true,
+          "after": {
+            "mode": "message",
+            "title": "Thank you! We got it.",
+            "message": "We will get back to you soon.",
+            "redirectUrl": ""
+          },
+          "autoReply": {
+            "enabled": false,
+            "to": "email",
+            "fromName": "",
+            "replyTo": "",
+            "subject": "We got your message, {{name}}",
+            "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+          },
+          "notify": {
+            "enabled": false,
+            "recipients": []
+          },
+          "webhook": "",
+          "spam": {
+            "captcha": "invisible",
+            "honeypot": true,
+            "blockDisposable": false,
+            "rateLimit": true
+          },
+          "limits": {
+            "oncePer": "none",
+            "maxResponses": null,
+            "opensAt": null,
+            "closesAt": null,
+            "closedMessage": "This form no longer takes responses."
+          },
+          "privacy": {
+            "keepMonths": 12,
+            "storeIp": false
+          },
+          "style": {
+            "look": "light",
+            "width": 640,
+            "labels": "top",
+            "size": "m",
+            "radius": "m",
+            "accent": "#2f5cf0",
+            "font": "system",
+            "fullWidthButtons": false
+          }
+        }
+      },
+      "answers": {
+        "follow_up": "stale"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "constructor": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "a key named like an Object member is an ordinary key: answered",
+      "form": {
+        "schema": "form/document",
+        "version": 1,
+        "root": "root",
+        "nodes": {
+          "root": {
+            "id": "root",
+            "type": "root",
+            "v": 1,
+            "props": {},
+            "children": [
+              "n3"
+            ]
+          },
+          "n1": {
+            "id": "n1",
+            "type": "text",
+            "v": 1,
+            "props": {
+              "label": "Builder",
+              "key": "constructor",
+              "help": "",
+              "required": true,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": false,
+                "match": "all",
+                "rules": []
+              },
+              "hideFromVisitors": false,
+              "placeholder": "",
+              "defaultValue": ""
+            }
+          },
+          "n2": {
+            "id": "n2",
+            "type": "text",
+            "v": 1,
+            "props": {
+              "label": "Follow-up",
+              "key": "follow_up",
+              "help": "",
+              "required": false,
+              "lock": "",
+              "protect": false,
+              "readonly": false,
+              "prefill": "",
+              "checks": {
+                "minLength": null,
+                "maxLength": null,
+                "min": null,
+                "max": null,
+                "pattern": "none",
+                "regex": "",
+                "message": ""
+              },
+              "width": "full",
+              "logic": {
+                "enabled": true,
+                "match": "all",
+                "rules": [
+                  {
+                    "key": "constructor",
+                    "op": "not_empty",
+                    "value": ""
+                  }
+                ]
+              },
+              "hideFromVisitors": false,
+              "placeholder": "",
+              "defaultValue": ""
+            }
+          },
+          "n3": {
+            "id": "n3",
+            "type": "step",
+            "v": 1,
+            "props": {
+              "title": "Only"
+            },
+            "children": [
+              "n1",
+              "n2"
+            ]
+          }
+        },
+        "meta": {
+          "name": "",
+          "title": "Inline",
+          "intro": "",
+          "slug": ""
+        },
+        "settings": {
+          "progress": "bar",
+          "buttons": {
+            "submit": "Send",
+            "next": "Continue",
+            "back": "Back"
+          },
+          "marker": "asterisk",
+          "saveProgress": true,
+          "prefill": true,
+          "after": {
+            "mode": "message",
+            "title": "Thank you! We got it.",
+            "message": "We will get back to you soon.",
+            "redirectUrl": ""
+          },
+          "autoReply": {
+            "enabled": false,
+            "to": "email",
+            "fromName": "",
+            "replyTo": "",
+            "subject": "We got your message, {{name}}",
+            "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+          },
+          "notify": {
+            "enabled": false,
+            "recipients": []
+          },
+          "webhook": "",
+          "spam": {
+            "captcha": "invisible",
+            "honeypot": true,
+            "blockDisposable": false,
+            "rateLimit": true
+          },
+          "limits": {
+            "oncePer": "none",
+            "maxResponses": null,
+            "opensAt": null,
+            "closesAt": null,
+            "closedMessage": "This form no longer takes responses."
+          },
+          "privacy": {
+            "keepMonths": 12,
+            "storeIp": false
+          },
+          "style": {
+            "look": "light",
+            "width": 640,
+            "labels": "top",
+            "size": "m",
+            "radius": "m",
+            "accent": "#2f5cf0",
+            "font": "system",
+            "fullWidthButtons": false
+          }
+        }
+      },
+      "answers": {
+        "constructor": "Ana",
+        "follow_up": "Yes"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "constructor": "Ana",
+          "follow_up": "Yes"
+        }
+      }
+    }
+  ]
+}

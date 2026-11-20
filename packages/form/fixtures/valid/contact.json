@@ -1,0 +1,316 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "Replies go to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What is it about?",
+        "key": "topic",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "A question",
+          "Sales",
+          "Support",
+          "Press",
+          "Something else"
+        ],
+        "layout": "buttons",
+        "defaultValue": ""
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Order or account number",
+        "key": "reference",
+        "help": "If it is about an order, we find it faster with the number.",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "topic",
+              "op": "is",
+              "value": "Support"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Your message",
+        "key": "message",
+        "help": "",
+        "required": true,
+        "lock": "A contact form needs the message",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": 10,
+          "maxLength": 3000,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "How can we help?",
+        "rows": 6
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to answer my message, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Contact"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Contact us",
+    "title": "Get in touch",
+    "intro": "Ask us anything. We read every message and reply within one working day.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send message",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you, {{name}}!",
+      "message": "We got your message and will reply to {{email}} within one working day.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us about “{{topic}}”. We read every message and will reply within one working day.\n\nBest wishes,\nThe team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

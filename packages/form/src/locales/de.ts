@@ -51,6 +51,8 @@ export const de: FormLocale = {
       'spam.none': 'Kein Spamschutz',
       'logic.unknownField': 'Eine Regel liest ein Feld, das nicht davor steht',
       'meta.titleMissing': 'Das Formular hat keinen Titel',
+      'meta.slugMissing': 'Das Formular hat noch keine Adresse (Slug)',
+      'meta.slugTaken': 'Ein anderes Formular hat diese Adresse schon',
       'step.empty': 'Ein leerer Schritt',
       'image.altMissing': 'Bild ohne Beschreibung',
       'url.unsafe': 'Unsicherer Link',

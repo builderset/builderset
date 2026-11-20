@@ -49,6 +49,8 @@ export const en: FormLocale = {
       'spam.none': 'No spam protection',
       'logic.unknownField': 'A rule reads a field that is not before it',
       'meta.titleMissing': 'The form has no title',
+      'meta.slugMissing': 'The form has no address (slug) yet',
+      'meta.slugTaken': 'Another form already has this address',
       'step.empty': 'An empty step',
       'image.altMissing': 'Image without a description',
       'url.unsafe': 'Unsafe link',

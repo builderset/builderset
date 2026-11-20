@@ -66,6 +66,52 @@ const FLOW: { icon: LucideIcon; title: string; code: string; text: string }[] = 
   },
 ];
 
+/** The stacks the backend guides cover: what a team already runs, not a new one to learn. */
+const STACKS: { mark: string; name: string; language: string; what: string; href: string }[] = [
+  {
+    mark: 'SQL',
+    name: 'PostgreSQL',
+    language: 'SQL',
+    what: 'One schema for every builder: documents, responses, revisions, media.',
+    href: LINKS.sql,
+  },
+  {
+    mark: 'Sb',
+    name: 'Supabase',
+    language: 'SQL · TypeScript',
+    what: 'The tables with row-level security, Storage, and Edge Functions for the checks.',
+    href: LINKS.supabase,
+  },
+  {
+    mark: 'Dj',
+    name: 'Django',
+    language: 'Python',
+    what: 'Models and REST framework views, checked by the builderset package.',
+    href: LINKS.django,
+  },
+  {
+    mark: 'Fa',
+    name: 'FastAPI',
+    language: 'Python',
+    what: 'SQLAlchemy models and one router for all three builders.',
+    href: LINKS.fastapiAll,
+  },
+  {
+    mark: 'Ex',
+    name: 'Node.js',
+    language: 'TypeScript',
+    what: 'Express and pg, with the kits’ own checks.',
+    href: LINKS.express,
+  },
+  {
+    mark: 'Nx',
+    name: 'Next.js',
+    language: 'TypeScript',
+    what: 'Route handlers with Drizzle or Prisma, tested against a real Postgres.',
+    href: LINKS.drizzle,
+  },
+];
+
 const KITS: {
   name: string;
   what: string;
@@ -85,8 +131,14 @@ const KITS: {
     href: LINKS.quickStartArticle,
   },
   {
+    name: '@builderset/form',
+    what: 'Multi-step forms with logic and checks: the editor, the working form, and the same checks on your server.',
+    status: 'Available',
+    href: LINKS.form,
+  },
+  {
     name: 'builderset',
-    what: 'For Python servers: the same checks and the same email HTML.',
+    what: 'For Python servers: the same checks for every kit, the same email HTML, form answers checked.',
     status: 'Available',
     href: LINKS.python,
   },
@@ -413,8 +465,46 @@ export default function Page() {
           </div>
         </section>
 
+        {/* ── Backends ────────────────────────────────────────────────────── */}
+        <section className="lp-section tint" id="backends">
+          <div className="lp-wrap">
+            <header className="lp-head split" data-reveal>
+              <div>
+                <p className="lp-eyebrow">
+                  <i aria-hidden="true" />
+                  Your backend
+                </p>
+                <h2 className="lp-h2">Your stack, your database.</h2>
+              </div>
+              <p className="lp-sub">
+                The editor talks to a small REST API you own. One data model for every builder, and
+                a guide for the stack you already run.{' '}
+                <a className="lp-inline" href={LINKS.dataModel}>
+                  The data model and API
+                </a>
+                .
+              </p>
+            </header>
+            <ul className="lp-stacks" data-reveal>
+              {STACKS.map((stack, index) => (
+                <li key={stack.name} style={delay(index)}>
+                  <a className="lp-stack" href={stack.href}>
+                    <span className="mark" aria-hidden="true">
+                      {stack.mark}
+                    </span>
+                    <span className="name">{stack.name}</span>
+                    <code className="lang">{stack.language}</code>
+                    <span className="what">{stack.what}</span>
+                    <ArrowUpRight className="go" size={16} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         {/* ── Kits ────────────────────────────────────────────────────────── */}
-        <section className="lp-section tint" id="kits">
+        <section className="lp-section" id="kits">
           <div className="lp-wrap">
             <header className="lp-head split" data-reveal>
               <div>
@@ -466,8 +556,8 @@ export default function Page() {
               Read the docs, or just try it.
             </h2>
             <p className="lp-sub">
-              The playground runs both editors in your browser. The docs take you from install to
-              going live.
+              The playground runs all three editors in your browser. The docs take you from install
+              to going live.
             </p>
             <div className="lp-actions center">
               <a className="lp-button light" href={LINKS.docs}>

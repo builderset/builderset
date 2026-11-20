@@ -1,0 +1,1194 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n8",
+        "n28",
+        "n36"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": "We need an email we can answer."
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "When to call",
+        "key": "call_time",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "phone",
+              "op": "not_empty",
+              "value": ""
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "address",
+      "v": 1,
+      "props": {
+        "label": "Address",
+        "key": "address",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "date",
+      "v": 1,
+      "props": {
+        "label": "Date",
+        "key": "date",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "time",
+      "v": 1,
+      "props": {
+        "label": "Time",
+        "key": "time",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "About you"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    },
+    "n9": {
+      "id": "n9",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Tell us about it"
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Nickname",
+        "key": "nickname",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": 2,
+          "maxLength": 10,
+          "min": null,
+          "max": null,
+          "pattern": "letters",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Code",
+        "key": "code",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "digits",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Plate",
+        "key": "plate",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "custom",
+          "regex": "^[A-Z]{2}[0-9]{3}[A-Z]{2}$",
+          "message": "Use the form AA123BC."
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "password",
+      "v": 1,
+      "props": {
+        "label": "Password",
+        "key": "password",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": 8,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "number",
+      "v": 1,
+      "props": {
+        "label": "Year",
+        "key": "year",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 1990,
+          "max": 2026,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "unit": "",
+        "defaultValue": null
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "number",
+      "v": 1,
+      "props": {
+        "label": "Doors",
+        "key": "doors",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "unit": "",
+        "defaultValue": null
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Fuel",
+        "key": "fuel",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Petrol",
+          "Diesel",
+          "Electric"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "Gearbox",
+        "key": "gearbox",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Manual",
+          "Automatic"
+        ],
+        "layout": "list",
+        "defaultValue": ""
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "checkbox",
+      "v": 1,
+      "props": {
+        "label": "Extras",
+        "key": "extras",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 2,
+          "max": 3,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Sunroof",
+          "Leather",
+          "Navigation",
+          "Towbar"
+        ],
+        "layout": "list"
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "number",
+      "v": 1,
+      "props": {
+        "label": "Towing weight",
+        "key": "tow_weight",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "extras",
+              "op": "is",
+              "value": "Towbar"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "unit": "",
+        "defaultValue": null
+      }
+    },
+    "n20": {
+      "id": "n20",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Any accident?",
+        "key": "accident",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n21": {
+      "id": "n21",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "What happened?",
+        "key": "accident_details",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": 40,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "accident",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 4
+      }
+    },
+    "n22": {
+      "id": "n22",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Its state",
+        "key": "rating",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n23": {
+      "id": "n23",
+      "type": "scale",
+      "v": 1,
+      "props": {
+        "label": "How likely to sell?",
+        "key": "score",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "from": 0,
+        "to": 10,
+        "lowLabel": "Not at all",
+        "highLabel": "Very likely"
+      }
+    },
+    "n24": {
+      "id": "n24",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Why so low?",
+        "key": "why_low",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "any",
+          "rules": [
+            {
+              "key": "score",
+              "op": "lt",
+              "value": "5"
+            },
+            {
+              "key": "rating",
+              "op": "lt",
+              "value": "2"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n25": {
+      "id": "n25",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Anything about the leather?",
+        "key": "leather_note",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "extras",
+              "op": "contains",
+              "value": "leath"
+            },
+            {
+              "key": "year",
+              "op": "gt",
+              "value": "2015"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n26": {
+      "id": "n26",
+      "type": "slider",
+      "v": 1,
+      "props": {
+        "label": "Price",
+        "key": "budget",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "min": 1000,
+        "max": 50000,
+        "step": 500,
+        "defaultValue": 10000,
+        "unit": "€"
+      }
+    },
+    "n27": {
+      "id": "n27",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Internal reference",
+        "key": "internal_ref",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": true,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n28": {
+      "id": "n28",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "The car"
+      },
+      "children": [
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18",
+        "n19",
+        "n20",
+        "n21",
+        "n22",
+        "n23",
+        "n24",
+        "n25",
+        "n26",
+        "n27"
+      ]
+    },
+    "n29": {
+      "id": "n29",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Two photos at most, 1 MB each."
+      }
+    },
+    "n30": {
+      "id": "n30",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "label": "Photos",
+        "key": "photos",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "accept": [
+          "jpg",
+          "png"
+        ],
+        "maxFiles": 2,
+        "maxMb": 1
+      }
+    },
+    "n31": {
+      "id": "n31",
+      "type": "divider",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n32": {
+      "id": "n32",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "media": {
+          "key": "form-image/2026/01/car.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        "alt": "A car"
+      }
+    },
+    "n33": {
+      "id": "n33",
+      "type": "signature",
+      "v": 1,
+      "props": {
+        "label": "Signature",
+        "key": "signature",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n34": {
+      "id": "n34",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n35": {
+      "id": "n35",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree to the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": "https://example.com/privacy"
+      }
+    },
+    "n36": {
+      "id": "n36",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Photos"
+      },
+      "children": [
+        "n29",
+        "n30",
+        "n31",
+        "n32",
+        "n33",
+        "n34",
+        "n35"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Kitchen sink",
+    "title": "Sell your car",
+    "intro": "Every field.",
+    "slug": "sink"
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you! We got it.",
+      "message": "We will get back to you soon.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": false,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

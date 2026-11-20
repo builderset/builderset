@@ -2293,3 +2293,124 @@ html.lp-anim .lp-footer-mark[data-reveal]:not(.is-in) {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Backends: the stacks the guides cover ──────────────────────────────── */
+.lp-inline {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+.lp-inline:hover {
+  text-decoration-color: var(--accent);
+}
+.lp-stacks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+html.lp-anim .lp-stacks[data-reveal]:not(.is-in) {
+  opacity: 1;
+  transform: none;
+}
+.lp-stacks li {
+  transition:
+    opacity 0.7s var(--ease),
+    transform 0.7s var(--ease);
+  transition-delay: calc(var(--d) * 70ms);
+}
+html.lp-anim .lp-stacks:not(.is-in) li {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.lp-stack {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-areas:
+    'mark name'
+    'mark lang'
+    'what what';
+  column-gap: 14px;
+  row-gap: 2px;
+  height: 100%;
+  padding: 20px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  text-decoration: none;
+  transition:
+    border-color 0.25s,
+    transform 0.35s var(--ease),
+    box-shadow 0.35s var(--ease);
+}
+.lp-stack:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgb(20 23 30 / 0.08);
+}
+.lp-stack .mark {
+  grid-area: mark;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-code);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.lp-stack:hover .mark {
+  background: var(--accent);
+  color: #fff;
+}
+.lp-stack .name {
+  grid-area: name;
+  align-self: end;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 600;
+}
+.lp-stack .lang {
+  grid-area: lang;
+  align-self: start;
+  color: var(--faint);
+  font-size: 12px;
+}
+.lp-stack .what {
+  grid-area: what;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+.lp-stack .go {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  color: var(--faint);
+  transition:
+    color 0.2s,
+    transform 0.25s var(--ease);
+}
+.lp-stack:hover .go {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}
+@media (max-width: 920px) {
+  .lp-stacks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .lp-stacks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

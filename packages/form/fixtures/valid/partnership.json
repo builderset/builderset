@@ -1,0 +1,545 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n9",
+        "n15"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Company",
+        "key": "company",
+        "help": "",
+        "required": true,
+        "lock": "A partnership needs the company",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Website",
+        "key": "website",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "https://",
+        "defaultValue": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Industry",
+        "key": "industry",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Software",
+          "E-commerce",
+          "Agency",
+          "Media",
+          "Finance",
+          "Education",
+          "Other"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Company size",
+        "key": "company_size",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "1–10",
+          "11–50",
+          "51–200",
+          "201–1000",
+          "More than 1000"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Your role",
+        "key": "role",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "We reply to proposals at this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your company"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n10": {
+      "id": "n10",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What kind of partnership?",
+        "key": "kind",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Reseller",
+          "Integration",
+          "Co-marketing",
+          "Sponsorship",
+          "Something else"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Your proposal",
+        "key": "proposal",
+        "help": "What you suggest, what each side brings and what success looks like.",
+        "required": true,
+        "lock": "A partnership request needs the proposal",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 6
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "label": "Deck or one-pager",
+        "key": "deck",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "accept": [
+          "pdf",
+          "ppt",
+          "pptx",
+          "key"
+        ],
+        "maxFiles": 1,
+        "maxMb": 25
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that these details are stored to answer the proposal, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "The proposal"
+      },
+      "children": [
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Partnership proposal",
+    "title": "Partner with us",
+    "intro": "Resellers, integrations, co-marketing or sponsorship — tell us what you have in mind.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send proposal",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you, {{name}}",
+      "message": "Our partnerships team reads every proposal and will reply to {{email}} within five working days.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Your partnership proposal from {{company}}",
+      "body": "Hello {{name}},\n\nThank you for your proposal. Our partnerships team will look at it and reply within five working days.\n\nBest wishes,\nThe partnerships team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#0f172a",
+      "font": "inter",
+      "fullWidthButtons": false
+    }
+  }
+}

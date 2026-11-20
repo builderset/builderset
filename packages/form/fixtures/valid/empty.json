@@ -1,0 +1,88 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "step1"
+      ]
+    },
+    "step1": {
+      "id": "step1",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Step 1"
+      },
+      "children": []
+    }
+  },
+  "meta": {
+    "name": "Empty",
+    "title": "Empty",
+    "intro": "",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you! We got it.",
+      "message": "We will get back to you soon.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": false,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

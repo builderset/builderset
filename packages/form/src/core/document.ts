@@ -15,7 +15,7 @@ export const FORM_SCHEMA = 'form/document' as const;
 export const FORM_VERSION = 1;
 export const FORM_ROOT = 'root';
 
-const hex = () => z.string().regex(/^#[0-9a-f]{6}$/i);
+const hex = () => z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const words = (max: number) => z.string().max(max);
 
 /** The fonts a form may use: system stacks, and Google fonts the host page loads. */

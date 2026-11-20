@@ -19,7 +19,7 @@ Any database with a JSON column works. One row per document, with:
 | ----------------- | ------------------------------------------------------------------------------------------ |
 | `document`        | The live document: what the site renders or the mailer sends                               |
 | `draft_document`  | Autosaves and work in progress. May be unfinished; never unsafe                            |
-| `draft_saved_at`  | The editor sends back the value it last saw; a different value on the server is a conflict |
+| `saved_at`        | The editor sends back the value it last saw; a different value on the server is a conflict |
 | `status`          | `draft`, `published` (and `scheduled`, `archived` where they apply)                        |
 | `version`         | Counts publishes                                                                           |
 | a revisions table | `document`, `kind` (`autosave`, `manual`, `publish`), `label`, author, time                |
@@ -45,7 +45,8 @@ if (issues.some(isDraftBlocking)) refuse(issues); // on an autosave
 if (issues.some(isPublishBlocking)) refuse(issues); // on publish
 ```
 
-The lists are `ARTICLE_DRAFT_TOLERATES` and `EMAIL_DRAFT_TOLERATES`, and each
+The lists are `ARTICLE_DRAFT_TOLERATES`, `EMAIL_DRAFT_TOLERATES` and
+`FORM_DRAFT_TOLERATES`, and each
 kit ships its list as a file too, `fixtures/draft.json`, for a backend in
 another language.
 

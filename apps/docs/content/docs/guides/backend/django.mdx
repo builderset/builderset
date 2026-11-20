@@ -1,0 +1,159 @@
+---
+title: Django
+description: The three builders' backend in Django — models for every table, Django REST framework views, and the builderset Python package checking each document and form response with the editor's own codes.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end a Django app stores email templates, articles and forms, refuses an
+unsafe or stale save with the same issue codes as the editor, and takes form
+responses checked exactly as the form in the browser checked them. The tables and
+routes are the ones in [Data model and API](/docs/guides/backend/data-model); the
+checks come from the `builderset` package, whose install is in
+[Python](/docs/reference/python):
+
+<include cwd lang="sh" meta='title="Terminal"'>
+  ./snippets/backends/django/install.sh
+</include>
+
+The files below are one Django app, `documents`, with `rest_framework` and
+`documents` in `INSTALLED_APPS`.
+
+<Steps>
+<Step>
+
+### The tables
+
+The [SQL schema](/docs/guides/backend/sql) as models, with its table and column
+names. `makemigrations` writes the migration:
+
+<include cwd lang="python" meta='title="documents/models.py"'>
+  ./snippets/backends/django/models.py
+</include>
+
+Two differences from the SQL: Django keeps timestamps to the microsecond, so the
+views write `saved_at` to the millisecond, as JavaScript reads it; and each builder
+has a `publish_*` permission beside Django's own add, change and view, because
+writing a draft and putting it in front of readers are different trust.
+
+</Step>
+<Step>
+
+### The checks
+
+One function checks every document: lenient for a draft, which may be unfinished but
+never unsafe, and strict for publishing. Each kit names what a draft may still carry,
+the same list the editor uses:
+
+<include cwd lang="python" meta='title="documents/checks.py"'>
+  ./snippets/backends/django/checks.py
+</include>
+
+</Step>
+<Step>
+
+### One set of views for three builders
+
+What differs between emails, articles and forms is a small table: the model, the
+kit, the columns copied from the document's meta:
+
+<include cwd lang="python" meta='title="documents/views.py"'>
+  ./snippets/backends/django/views.py#kinds
+</include>
+
+A path converter turns `emails`, `articles` or `forms` in the address into its row of
+that table, so the views are written once:
+
+<include cwd lang="python" meta='title="documents/urls.py"'>
+  ./snippets/backends/django/urls.py
+</include>
+
+The views are Django REST framework's `APIView`s: DRF parses the JSON body, checks
+the permissions per view, keeps the session's CSRF check, and throttles the public
+route. Plain Django views would do each of those by hand.
+
+</Step>
+<Step>
+
+### Saving a draft
+
+The editor sends back the `saved_at` it last saw. A different one on the row means
+someone else saved in between: `409`, and the editor offers to reload or keep its
+own. The `update()` is filtered on the `saved_at` read, so two saves at the same
+instant cannot both win:
+
+<include cwd lang="python" meta='title="documents/views.py"'>
+  ./snippets/backends/django/views.py#draft
+</include>
+
+</Step>
+<Step>
+
+### Publishing
+
+The strict check, then the document goes live with its meta copied to the columns.
+An email type keeps one active design; an article with a future `scheduled_at` waits
+for a job of yours to set it live; a form's address taken by another is refused on
+`meta.slug`, where the editor shows it:
+
+<include cwd lang="python" meta='title="documents/views.py"'>
+  ./snippets/backends/django/views.py#publish
+</include>
+
+Unpublishing leaves an email or an article a draft, and a form `closed`: its link
+keeps working and shows the closed message. Revisions and saved sections have their
+models; their views are a list and an insert with the same check, and until you add
+them the editor hides those features.
+
+</Step>
+<Step>
+
+### The form's public routes
+
+No sign-in, so no session and no CSRF check. The answers are checked against the
+**published** document, never the draft; a filled trap field is answered as a
+success and stored nowhere; and only the `values` that `validate_answers` keeps are
+stored, so an answer to a question the visitor was not shown never reaches the table.
+The count and the insert share a transaction, so `maxResponses` holds when two
+visitors send the last response at once:
+
+<include cwd lang="python" meta='title="documents/views.py"'>
+  ./snippets/backends/django/views.py#public
+</include>
+
+The throttle answers `429` past the rate you set in
+`REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["form_responses"]`, such as `"10/minute"`.
+
+</Step>
+<Step>
+
+### Uploads
+
+An upload is a `POST /api/uploads` that checks the file's type by its first bytes and
+its size, stores it under a new key, and writes a `Media` row. The FastAPI example's
+[upload route](/docs/guides/backend/fastapi-sqlalchemy#the-routes) is the same in a
+Django view, with `request.FILES["file"]` and Django's storage API in place of the
+local disk.
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the document's address,
+`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
+the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+Behind Django's session authentication every write must carry the CSRF token; pass
+this as the host's `headers`:
+
+<include cwd lang="ts" meta='title="csrf.ts"'>
+  ./snippets/backends/django/csrf.ts
+</include>
+
+</Step>
+</Steps>

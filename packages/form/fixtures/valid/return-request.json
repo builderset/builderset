@@ -1,0 +1,528 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n6",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Order number",
+        "key": "order_number",
+        "help": "",
+        "required": true,
+        "lock": "Returns are matched to an order number",
+        "protect": false,
+        "readonly": false,
+        "prefill": "order",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "e.g. 10482",
+        "defaultValue": ""
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "date",
+      "v": 1,
+      "props": {
+        "label": "Delivered on",
+        "key": "delivered_on",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "The one you ordered with.",
+        "required": true,
+        "lock": "Return instructions go to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Which item are you returning?",
+        "key": "item",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "Name, colour and size",
+        "defaultValue": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your order"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5"
+      ]
+    },
+    "n7": {
+      "id": "n7",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "Why are you returning it?",
+        "key": "reason",
+        "help": "",
+        "required": true,
+        "lock": "A return needs a reason",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Wrong size",
+          "Not as described",
+          "Arrived damaged",
+          "Changed my mind",
+          "Something else"
+        ],
+        "layout": "list",
+        "defaultValue": ""
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "label": "Photos of the damage",
+        "key": "photos",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "reason",
+              "op": "is",
+              "value": "Arrived damaged"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "accept": [
+          "jpg",
+          "png",
+          "heic"
+        ],
+        "maxFiles": 5,
+        "maxMb": 10
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Tell us more",
+        "key": "reason_details",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "reason",
+              "op": "is",
+              "value": "Something else"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What would you like instead?",
+        "key": "resolution",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "A refund",
+          "An exchange",
+          "Store credit"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "New size",
+        "key": "new_size",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "resolution",
+              "op": "is",
+              "value": "An exchange"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "XS",
+          "S",
+          "M",
+          "L",
+          "XL",
+          "XXL"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Refunds go back to the way you paid, within five working days of the item reaching us."
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to handle my return, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "The return"
+      },
+      "children": [
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Return request",
+    "title": "Return an item",
+    "intro": "You can return any item within 30 days of delivery. Fill this in and we will email you a free return label.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Request a return",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Return requested",
+      "message": "Thank you, {{name}}. Your return label for order {{order_number}} is on its way to {{email}}.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Your return for order {{order_number}}",
+      "body": "Hello {{name}},\n\nWe got your return request for order {{order_number}}. Your free return label follows in a separate email within one working day. Pack the item in its original packaging if you still have it.\n\nOnce it arrives, we send {{resolution}} within five working days.\n\nThe team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

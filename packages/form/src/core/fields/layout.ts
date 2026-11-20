@@ -78,7 +78,7 @@ export const hiddenField = defineElement({
     value: z.string().max(500),
     prefill: z
       .string()
-      .regex(/^[a-z0-9_]*$/i)
+      .regex(/^[A-Za-z0-9_]*$/)
       .max(40),
   }),
   defaults: () => ({ label: 'Source', key: 'source', value: '', prefill: 'utm_source' }),

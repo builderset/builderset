@@ -14,6 +14,7 @@ from pathlib import Path
 import builderset
 from builderset.article import check_article
 from builderset.email import check_email, render_email
+from builderset.form import check_form, validate_answers
 
 fixtures = Path(sys.argv[1])
 assert "site-packages" in builderset.__file__, f"not the installed wheel: {builderset.__file__}"
@@ -27,4 +28,8 @@ rendered = render_email(email, asset_url=lambda key: f"https://cdn.test/{key}", 
 assert rendered.html.startswith("<!DOCTYPE html"), rendered.html[:80]
 assert rendered.text and rendered.subject
 
-print(f"builderset {builderset.__version__} from {Path(builderset.__file__).parent}: checks and renders")
+form = json.loads((fixtures / "form" / "fixtures" / "valid" / "contact.json").read_text("utf-8"))
+assert check_form(form) == [], "the contact form must pass"
+assert not validate_answers(form, {}).ok, "an empty contact form must be refused"
+
+print(f"builderset {builderset.__version__} from {Path(builderset.__file__).parent}: checks, renders and checks answers")

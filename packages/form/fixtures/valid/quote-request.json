@@ -1,0 +1,588 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n3",
+        "n9",
+        "n17"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What can we help with?",
+        "key": "service",
+        "help": "",
+        "required": true,
+        "lock": "A quote starts from the service",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Website",
+          "Online shop",
+          "Branding",
+          "Marketing",
+          "Something else"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Your project in one line",
+        "key": "summary",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": 120,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "A new website for our bakery",
+        "defaultValue": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "What you need"
+      },
+      "children": [
+        "n1",
+        "n2"
+      ]
+    },
+    "n4": {
+      "id": "n4",
+      "type": "slider",
+      "v": 1,
+      "props": {
+        "label": "Budget",
+        "key": "budget",
+        "help": "A rough figure is fine.",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "min": 1000,
+        "max": 50000,
+        "step": 500,
+        "defaultValue": 5000,
+        "unit": "€"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "When do you need it?",
+        "key": "timeline",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "As soon as possible",
+          "Within a month",
+          "In 1–3 months",
+          "In 3–6 months",
+          "No fixed date"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "date",
+      "v": 1,
+      "props": {
+        "label": "Ideal start date",
+        "key": "start_date",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Details",
+        "key": "details",
+        "help": "Goals, examples you like, anything we should know.",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 6
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "label": "Briefs or examples",
+        "key": "attachments",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "accept": [
+          "pdf",
+          "doc",
+          "docx",
+          "jpg",
+          "png"
+        ],
+        "maxFiles": 5,
+        "maxMb": 20
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Details"
+      },
+      "children": [
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n10": {
+      "id": "n10",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Company",
+        "key": "company",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "The quote is sent to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How should we reach you?",
+        "key": "contact_by",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Email",
+          "Phone"
+        ],
+        "layout": "buttons",
+        "defaultValue": ""
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to prepare the quote, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your details"
+      },
+      "children": [
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Quote request",
+    "title": "Request a quote",
+    "intro": "Tell us about your project and we will send you a tailored quote within two working days.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "numbers",
+    "buttons": {
+      "submit": "Request my quote",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you, {{name}}",
+      "message": "We will send your quote for {{service}} to {{email}} within two working days.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Your quote request: {{service}}",
+      "body": "Hello {{name}},\n\nThank you for your request. We are looking at the details and will send your quote within two working days. If anything is unclear, we will call or write before then.\n\nBest wishes,\nThe team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

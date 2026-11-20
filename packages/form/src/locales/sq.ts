@@ -50,6 +50,8 @@ export const sq: FormLocale = {
       'spam.none': 'Pa mbrojtje nga spami',
       'logic.unknownField': 'Një rregull lexon një fushë që nuk është para tij',
       'meta.titleMissing': 'Formulari nuk ka titull',
+      'meta.slugMissing': 'Formulari nuk ka ende adresë (slug)',
+      'meta.slugTaken': 'Një formular tjetër e ka tashmë këtë adresë',
       'step.empty': 'Një hap bosh',
       'image.altMissing': 'Imazh pa përshkrim',
       'url.unsafe': 'Lidhje e pasigurt',

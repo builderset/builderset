@@ -1,5 +1,6 @@
 import {
   error,
+  isSafeUrl,
   i18nSchema,
   nodeShapeSchema,
   structuralIssues,
@@ -72,7 +73,8 @@ export function formSchema(registry: ElementRegistry) {
 }
 
 /** Field types that hold personal data: asking for them calls for consent. */
-const PERSONAL = new Set(['name', 'email', 'phone', 'address']);
+export const PERSONAL_FIELD_TYPES = ['name', 'email', 'phone', 'address'] as const;
+const PERSONAL = new Set<string>(PERSONAL_FIELD_TYPES);
 
 /** The form's own rules, across fields and settings. */
 function formIssues(doc: FormDocument): Issue[] {
@@ -120,6 +122,14 @@ function formIssues(doc: FormDocument): Issue[] {
   if (settings.after.mode !== 'message' && !settings.after.redirectUrl.trim()) {
     issues.push(error('after.redirectMissing', { path: 'settings.after.redirectUrl' }));
   }
+  // Visitors are sent to the redirect and responses to the webhook: web
+  // addresses (or a path on this site) only — never `javascript:` or `data:`.
+  for (const [value, path] of [
+    [settings.after.redirectUrl, 'settings.after.redirectUrl'],
+    [settings.webhook, 'settings.webhook'],
+  ] as const) {
+    if (value.trim() && !isSafeUrl(value)) issues.push(error('url.unsafe', { path }));
+  }
   if (settings.notify.enabled && settings.notify.recipients.length === 0) {
     issues.push(warning('notify.noRecipients', { path: 'settings.notify.recipients' }));
   }
@@ -152,6 +162,13 @@ export function checkForm(
   if (!parsed.success) {
     return parsed.error.issues.map((issue) => {
       const [first, nodeId, , ...rest] = issue.path.map(String);
+      if (first === 'i18n' && issue.code === 'custom') {
+        // A translation that would not be a valid form in its language, as `checkEmail` says it.
+        return error('props.invalid', {
+          ...(nodeId ? { nodeId } : {}),
+          path: issue.path.slice(2).map(String).join('.'),
+        });
+      }
       if (first === 'nodes' && nodeId) {
         const unknownType = !registry.has(doc.nodes[nodeId]?.type ?? '');
         return error(

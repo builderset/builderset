@@ -54,9 +54,20 @@ function asText(value: unknown): string {
   return '';
 }
 
-/** Whether one rule holds for the answers given so far. */
+/**
+ * The answer to one key — the answers' own, never something inherited:
+ * `constructor` is a key like any other, not `Object.prototype.constructor`.
+ */
+export function answerOf(answers: Answers, key: string): unknown {
+  return Object.hasOwn(answers, key) ? answers[key] : undefined;
+}
+
+/**
+ * Whether one rule holds for the answers given so far. `gt` and `lt` compare
+ * numbers: an empty answer, or one that is not a number, matches neither.
+ */
 export function ruleMatches(rule: LogicRule, answers: Answers): boolean {
-  const answer = answers[rule.key];
+  const answer = answerOf(answers, rule.key);
   const text = asText(answer);
   switch (rule.op) {
     case 'is':
@@ -70,9 +81,9 @@ export function ruleMatches(rule: LogicRule, answers: Answers): boolean {
     case 'not_empty':
       return !isEmpty(answer);
     case 'gt':
-      return Number(text) > Number(rule.value);
+      return !isEmpty(answer) && Number(text) > Number(rule.value);
     case 'lt':
-      return Number(text) < Number(rule.value);
+      return !isEmpty(answer) && Number(text) < Number(rule.value);
   }
 }
 
@@ -126,17 +137,41 @@ export function isEmpty(value: unknown): boolean {
   return false;
 }
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PHONE = /^\+?[\d\s().-]{6,24}$/;
-const LETTERS = /^[\p{L}\s'’-]+$/u;
-const DIGITS = /^\d+$/;
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const TIME = /^\d{2}:\d{2}$/;
+/**
+ * The shapes an answer is held to. Published in the JSON Schema
+ * (`x-answer-formats`) so a server in another language can tell when they change.
+ */
+export const ANSWER_FORMATS = {
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/,
+  phone: /^\+?[\d\s().-]{6,24}$/,
+  letters: /^[\p{L}\s'’-]+$/u,
+  digits: /^\d+$/,
+  date: /^\d{4}-\d{2}-\d{2}$/,
+  time: /^\d{2}:\d{2}$/,
+} as const;
+
+const EMAIL = ANSWER_FORMATS.email;
+const PHONE = ANSWER_FORMATS.phone;
+const LETTERS = ANSWER_FORMATS.letters;
+const DIGITS = ANSWER_FORMATS.digits;
+const DATE = ANSWER_FORMATS.date;
+const TIME = ANSWER_FORMATS.time;
 
 interface FileAnswer {
   name: string;
   size?: number | undefined;
 }
+
+function isFileAnswer(value: unknown): value is FileAnswer {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof (value as { name?: unknown }).name === 'string'
+  );
+}
+
+/** Fields that take one choice: an array sent for them is refused, not read as text. */
+const ONE_CHOICE = new Set(['select', 'radio', 'yes-no']);
 
 function textChecks(text: string, checks: FieldChecks): AnswerError | null {
   if (checks.minLength !== null && text.length < checks.minLength) {
@@ -181,6 +216,8 @@ export function checkAnswer(
 
   switch (answerKindOf(type)) {
     case 'text': {
+      // One choice is one string; a list of them is not an answer to it.
+      if (ONE_CHOICE.has(type) && Array.isArray(value)) return withMessage({ code: 'choice' });
       const text = asText(value).trim();
       if (type === 'email' && !EMAIL.test(text)) return withMessage({ code: 'email' });
       if (type === 'phone' && !PHONE.test(text)) return withMessage({ code: 'phone' });
@@ -240,7 +277,9 @@ export function checkAnswer(
         return withMessage({ code: 'tooManyFiles', limit: props.maxFiles as number });
       }
       const accept = props.accept as string[];
-      for (const file of files) {
+      for (const file of files as unknown[]) {
+        // A file is an object with a name; anything else is a file of no type.
+        if (!isFileAnswer(file)) return withMessage({ code: 'fileType' });
         const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
         if (accept.length && !accept.includes(extension)) return withMessage({ code: 'fileType' });
         if (file.size !== undefined && file.size > (props.maxMb as number) * 1024 * 1024) {
@@ -283,7 +322,7 @@ export function validateAnswers(
     const key = node.props.key as string;
     // Logic reads the answers as sent; hidden fields' answers are kept as they are.
     if (node.type !== 'hidden' && !isShown(node.props, answers)) continue;
-    const value = answers[key];
+    const value = answerOf(answers, key);
     const found = node.type === 'hidden' ? null : checkAnswer(node.type, node.props, value);
     if (found) {
       errors[key] = found;

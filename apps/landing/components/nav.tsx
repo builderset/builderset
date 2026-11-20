@@ -9,6 +9,7 @@ import { ThemeToggle } from './theme';
 const SECTIONS = [
   { href: '#editor', label: 'Live editor' },
   { href: '#how', label: 'How it fits' },
+  { href: '#backends', label: 'Backend' },
   { href: '#kits', label: 'Kits' },
 ];
 

@@ -24,6 +24,8 @@ export {
   type FormSettings,
 } from './document';
 export {
+  ANSWER_FORMATS,
+  answerOf,
   checkAnswer,
   formFields,
   isEmpty,
@@ -44,8 +46,10 @@ export {
   isDraftBlocking,
   isPublishBlocking,
   parseForm,
+  PERSONAL_FIELD_TYPES,
   type CheckFormOptions,
 } from './validate';
+export { toFormJSONSchema } from './json-schema';
 export {
   buildForm,
   field,

@@ -81,7 +81,7 @@ describe('<EmailEditor>', () => {
     expect(screen.getByText('Reset design')).toBeInTheDocument();
     expect(container.querySelectorAll('[data-node]').length).toBeGreaterThan(5);
     // Email settings, not the article's, when nothing is selected.
-    expect(screen.getByText('Email settings')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /Tracking/ })).toBeInTheDocument();
   });
 
   it('adds a structure as a new section', async () => {
@@ -98,6 +98,9 @@ describe('<EmailEditor>', () => {
     mount();
     await user.click(screen.getByRole('button', { name: /^Activate$/ }));
     expect(await screen.findByText(/Fix these before activating/)).toBeInTheDocument();
-    expect(screen.getByText('A required variable is not used')).toBeInTheDocument();
+    // In the dialog's list (the settings' ready card names it too).
+    expect(
+      screen.getByText('A required variable is not used', { selector: 'li' }),
+    ).toBeInTheDocument();
   });
 });

@@ -255,6 +255,10 @@ export const sq: EditorMessages = {
   outlineHint: 'Fjalët për çdo pjesë, sipas titujve. Klikoni një për të shkuar te ajo.',
   layersHint:
     'Tërhiqni rreshtat për t’i renditur. Shift-klik për të zgjedhur disa e për t’i ruajtur si pjesë. Klik i dyfishtë mbi emrin për ta ndryshuar.',
+  layersSummary: (top, blocks) =>
+    `${String(top)} në krye · ${String(blocks)} ${blocks === 1 ? 'bllok' : 'blloqe'}`,
+  collapseAll: 'Mbylli të gjitha',
+  expandAll: 'Hapi të gjitha',
   templatesStart: 'Fillo nga një shabllon',
   useTemplate: 'Përdor',
   addToEnd: 'Shto në fund',

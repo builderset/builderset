@@ -187,6 +187,10 @@ export const de: EditorMessages = {
   outlineHint: 'Wörter je Abschnitt, aus den Überschriften. Zum Springen anklicken.',
   layersHint:
     'Zeilen ziehen zum Umsortieren. Mit Umschalt-Klick mehrere wählen und als Abschnitt speichern. Doppelklick auf einen Namen zum Umbenennen.',
+  layersSummary: (top, blocks) =>
+    `${String(top)} oben · ${String(blocks)} ${blocks === 1 ? 'Block' : 'Blöcke'}`,
+  collapseAll: 'Alle zuklappen',
+  expandAll: 'Alle aufklappen',
   templatesStart: 'Mit einer Vorlage beginnen',
   useTemplate: 'Verwenden',
   addToEnd: 'Am Ende einfügen',

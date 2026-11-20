@@ -217,6 +217,10 @@ export interface EditorMessages {
   intro: string;
   outlineHint: string;
   layersHint: string;
+  /** Over the layers: how many at the top level, and blocks in all. */
+  layersSummary: (top: number, blocks: number) => string;
+  collapseAll: string;
+  expandAll: string;
   /** Templates: start from one, by adding it at the end or replacing the page. */
   templatesStart: string;
   useTemplate: string;

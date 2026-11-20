@@ -18,9 +18,22 @@ export {
   type EditorContextValue,
   type RecordFacts,
 } from './context';
-export type { EditorProfile, TemplateBlock, TemplateCategory, TemplateSpec } from './profile';
+export type {
+  EditorProfile,
+  SideTab,
+  TemplateBlock,
+  TemplateCategory,
+  TemplateSpec,
+} from './profile';
 export type { EditableTextField } from '../core';
 export { IssueList, ReadyCard, useIssues, useJumpToIssue } from './chrome/issues';
+export { DockToggle } from './chrome/dock';
+export {
+  TemplateGallery,
+  templateDocument,
+  templateFragment,
+  type TemplateGalleryProps,
+} from './panels/templates-panel';
 export {
   LanguageBar,
   LanguageSwitch,
@@ -32,6 +45,8 @@ export { ColorField, SpacingField } from './inspector/special-fields';
 export { AlignButtons, FontField } from './inspector/type-fields';
 export { NumberStepper, type NumberStepperProps } from './inspector/number-stepper';
 export { RichTextInput } from './text/rich-text-input';
+export { insertVariableAtCaret, setVariableDragData } from './text/last-text';
+export { DRAG_TYPE_MIME, setActiveDrag, setDragChip, type DragPayload } from './canvas/drop';
 export type {
   BuilderHost,
   OEmbedInfo,

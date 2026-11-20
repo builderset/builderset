@@ -1,0 +1,29 @@
+/// Who did what, and when: one row per action, written in the same
+/// transaction as the action and never changed. No relation to the subject,
+/// on purpose: the log outlives what it describes.
+model Activity {
+  id   BigInt @id @default(autoincrement())
+  uuid String @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // What it happened to
+  subjectType String @map("subject_type") @db.VarChar(30) // email_template, article, form, …
+  subjectId   BigInt @map("subject_id")
+
+  // What happened
+  action     String  @db.VarChar(30) // created, saved, published, unpublished, deleted, restored, …
+  fromStatus String? @map("from_status") @db.VarChar(30)
+  toStatus   String? @map("to_status") @db.VarChar(30)
+  details    Json    @default("{}") // { "revision": "…", "replaced_by": "…" }
+
+  // Who and when
+  actorId   BigInt?  @map("actor_id") // null: a job, or a visitor
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  actor AppUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  // One document's timeline.
+  @@index([subjectType, subjectId, createdAt(sort: Desc)], map: "activity_timeline")
+  // One person's work.
+  @@index([actorId, createdAt(sort: Desc)], map: "activity_by_actor")
+  @@map("activity")
+}

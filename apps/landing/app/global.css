@@ -2359,17 +2359,30 @@ html.lp-anim .lp-stacks:not(.is-in) li {
   place-items: center;
   width: 44px;
   height: 44px;
+  border: 1px solid var(--line);
   border-radius: 11px;
-  background: var(--ink);
-  color: var(--bg);
-  font-family: var(--font-code);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  background: var(--bg-soft);
+  transition:
+    border-color 0.25s,
+    background-color 0.25s,
+    transform 0.35s var(--ease);
 }
 .lp-stack:hover .mark {
-  background: var(--accent);
-  color: #fff;
+  border-color: color-mix(in srgb, var(--brand, var(--accent)) 40%, var(--line));
+  transform: rotate(-4deg) scale(1.04);
+}
+/* A brand's own logo, in its colour; near-black ones turn to ink on a dark page. */
+.lp-techlogo {
+  flex: none;
+  fill: var(--brand);
+}
+:root[data-theme='dark'] .lp-techlogo {
+  fill: var(--brand-dark);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .lp-techlogo {
+    fill: var(--brand-dark);
+  }
 }
 .lp-stack .name {
   grid-area: name;
@@ -2381,8 +2394,22 @@ html.lp-anim .lp-stacks:not(.is-in) li {
 .lp-stack .lang {
   grid-area: lang;
   align-self: start;
-  color: var(--faint);
-  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.lp-stack .lang code {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px 2px 5px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-soft);
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.5;
 }
 .lp-stack .what {
   grid-area: what;

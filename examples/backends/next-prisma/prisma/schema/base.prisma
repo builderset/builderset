@@ -1,0 +1,49 @@
+// The schema, one file per group of models; Prisma reads the whole folder.
+// `prisma migrate dev` writes a migration from a change here, and
+// prisma/migrations holds the ones already written.
+//
+// Every table carries the same audit columns. Prisma has no mixins, so each
+// model writes them out, in this order:
+//
+//   uuid          String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+//   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+//   createdById   BigInt?   @map("created_by_id")
+//   updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+//   updatedById   BigInt?   @map("updated_by_id")
+//   deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
+//   deletedById   BigInt?   @map("deleted_by_id")
+//
+// with a relation to AppUser for each `*ById`, `onDelete: SetNull`: removing
+// a person keeps everything they made, without their name on it.
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../../generated/prisma"
+  // Indexes that hold only live rows: `where: { deletedAt: null }`.
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Your users. The schema only needs `id`: point the relations at your own
+/// model and drop this one.
+model AppUser {
+  id        BigInt   @id @default(autoincrement())
+  uuid      String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String   @unique @db.VarChar(254)
+  name      String   @db.VarChar(120)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // The other end of each audit relation. Prisma wants both ends named; they
+  // add no columns.
+  emailTemplatesCreated   EmailTemplate[]         @relation("EmailTemplateCreatedBy")
+  emailTemplatesUpdated   EmailTemplate[]         @relation("EmailTemplateUpdatedBy")
+  emailTemplatesDeleted   EmailTemplate[]         @relation("EmailTemplateDeletedBy")
+  emailTemplatesPublished EmailTemplate[]         @relation("EmailTemplatePublishedBy")
+  emailTemplateRevisions  EmailTemplateRevision[]
+  activities              Activity[]
+
+  @@map("app_user")
+}

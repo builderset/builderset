@@ -35,7 +35,7 @@
   --font-code: var(--font-jetbrains), ui-monospace, SFMono-Regular, Consolas, monospace;
 
   --top: 60px;
-  --side: 264px;
+  --side: 310px;
   --toc: 232px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -1077,6 +1077,10 @@ body.bs-folded .bs-side {
 .bs-table tbody tr {
   transition: background 0.15s;
 }
+/* A column or route name reads whole: the cell wraps between names, never inside one. */
+.bs-table td code {
+  white-space: nowrap;
+}
 .bs-table tbody tr:hover {
   background: var(--bg-soft);
 }
@@ -1133,6 +1137,10 @@ body.bs-folded .bs-side {
 .bs-code pre code {
   display: grid;
   min-width: max-content;
+}
+/* A blank line is an empty span: keep its height, or the code loses its paragraphs. */
+.bs-code pre code .line {
+  min-height: 1lh;
 }
 .bs-code .shiki span {
   color: var(--shiki-light);
@@ -1336,6 +1344,105 @@ a.bs-row:hover .go {
 }
 .bs-step > h3:first-child {
   margin-top: 0;
+}
+
+/* Tabs: files that belong together, one strip above one code block. */
+.bs-tabs {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+.bs-tabs-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 0 6px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bs-tabs-label {
+  display: flex;
+  align-items: center;
+  padding: 0 10px 0 8px;
+  margin-right: 4px;
+  border-right: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bs-tabs-strip [role='tab'] {
+  position: relative;
+  flex: none;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 500 13px/1 var(--font-text);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s var(--ease);
+}
+.bs-tabs-strip [role='tab']::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.25s var(--ease);
+}
+.bs-tabs-strip [role='tab']:hover {
+  color: var(--ink);
+}
+.bs-tabs-strip [role='tab'][aria-selected='true'] {
+  color: var(--ink);
+}
+.bs-tabs-strip [role='tab'][aria-selected='true']::after {
+  transform: none;
+}
+.bs-tabs-strip [role='tab']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+  border-radius: 6px;
+}
+.bs-tabs-panel > * + * {
+  margin-top: 0;
+}
+.bs-tabs-panel > p {
+  margin: 0;
+  padding: 12px 16px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.bs-tabs-panel > .bs-table {
+  border-top: 0;
+  background: var(--bg);
+}
+.bs-tabs-panel > .bs-table th:first-child,
+.bs-tabs-panel > .bs-table td:first-child {
+  padding-left: 16px;
+}
+.bs-tabs-panel > .bs-table tr:last-child td {
+  border-bottom: 0;
+}
+/* A code block inside a tab joins the strip: no frame of its own. */
+.bs-tabs-panel .bs-code {
+  border: 0;
+  border-radius: 0;
+}
+.bs-tabs-panel > p + .bs-code {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
 }
 
 /* Previous and next. */

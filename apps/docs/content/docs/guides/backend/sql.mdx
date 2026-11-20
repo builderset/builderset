@@ -1,19 +1,102 @@
 ---
 title: SQL
-description: The PostgreSQL schema for every builder — email templates, articles, forms and responses, revisions, sections, media — and the queries that keep two editors from overwriting each other.
+description: The PostgreSQL schema for every builder — email templates, articles, forms and responses, their revisions, the activity log, sections and media — with who made, changed and deleted every row, soft deletes, and the queries that keep two editors from overwriting each other.
 ---
 
 _This page describes Builderset 0.4.0._
 
-The tables of the [data model](/docs/guides/backend/data-model) as one PostgreSQL
-migration. Any framework can run it as it is, or recreate it with its own migrations:
-[Django](/docs/guides/backend/django), [FastAPI](/docs/guides/backend/fastapi) and
-[Node.js](/docs/guides/backend/express) build these same tables, and
-[Supabase](/docs/guides/backend/supabase) adds row-level security on top.
+The tables of the [data model](/docs/guides/backend/data-model) as six PostgreSQL
+migrations, one per group, run in order. Any framework can run them as they are, or
+recreate them with its own migrations: [Django](/docs/guides/backend/django),
+[FastAPI](/docs/guides/backend/fastapi) and [Node.js](/docs/guides/backend/express)
+build these same tables, and [Supabase](/docs/guides/backend/supabase) adds
+row-level security on top.
 
-<include cwd lang="sql" meta='title="schema.sql"'>
-  ./snippets/backends/sql/schema.sql
+<Tabs label="Schema">
+<Tab title="Shared columns">
+
+The audit columns every table carries, the trigger that keeps `updated_at`, and a
+stand-in for your users table:
+
+<include cwd lang="sql" meta='title="01_base.sql"'>
+  ./snippets/backends/sql/01_base.sql
 </include>
+
+</Tab>
+<Tab title="Email templates">
+<include cwd lang="sql" meta='title="02_emails.sql"'>
+  ./snippets/backends/sql/02_emails.sql
+</include>
+</Tab>
+<Tab title="Articles">
+<include cwd lang="sql" meta='title="03_articles.sql"'>
+  ./snippets/backends/sql/03_articles.sql
+</include>
+</Tab>
+<Tab title="Forms">
+<include cwd lang="sql" meta='title="04_forms.sql"'>
+  ./snippets/backends/sql/04_forms.sql
+</include>
+</Tab>
+<Tab title="Library">
+<include cwd lang="sql" meta='title="05_library.sql"'>
+  ./snippets/backends/sql/05_library.sql
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="sql" meta='title="06_activity.sql"'>
+  ./snippets/backends/sql/06_activity.sql
+</include>
+</Tab>
+</Tabs>
+
+## The queries that matter
+
+Most routes are a plain select or insert. These four are where a backend goes wrong:
+
+<Tabs label="Queries">
+<Tab title="Save a draft">
+
+The editor sends back the `saved_at` it last saw. The update is filtered on it, so
+if another save got there first it changes no row, and the route answers `409`
+instead of overwriting:
+
+<include cwd lang="sql" meta='title="save_draft.sql"'>
+  ./snippets/backends/sql/queries/save_draft.sql
+</include>
+
+</Tab>
+<Tab title="Publish">
+
+One transaction: the document goes live, its meta is copied to the columns, the
+publish is kept as a revision and logged as an activity:
+
+<include cwd lang="sql" meta='title="publish.sql"'>
+  ./snippets/backends/sql/queries/publish.sql
+</include>
+
+</Tab>
+<Tab title="Delete and restore">
+
+A soft delete stamps who and when; restoring clears both. A live document is refused
+— unpublish it first — and a restore whose address was taken meanwhile fails on the
+partial unique index, which the route answers as `409`:
+
+<include cwd lang="sql" meta='title="delete_restore.sql"'>
+  ./snippets/backends/sql/queries/delete_restore.sql
+</include>
+
+</Tab>
+<Tab title="Timeline">
+
+One document's activity, with the names of the people, for a "History" panel:
+
+<include cwd lang="sql" meta='title="timeline.sql"'>
+  ./snippets/backends/sql/queries/timeline.sql
+</include>
+
+</Tab>
+</Tabs>
 
 ## Why it is shaped this way
 
@@ -23,22 +106,30 @@ migration. Any framework can run it as it is, or recreate it with its own migrat
 - **`document` and `draft_document`.** Readers get `document`. Autosaves go to
   `draft_document`, so a half-written article never reaches the site, and publishing
   copies the checked draft into `document` in one statement.
-- **`saved_at` with milliseconds.** The editor sends back the value it last saw. The
-  save is an `update … where id = $1 and saved_at = $2`: if another save got there
-  first, it changes no row, and the route answers `409` instead of overwriting.
+- **A bigint `id` and a `uuid`.** Joins and indexes use the small integer; URLs and
+  answers use the uuid, which says nothing about how many rows there are and cannot
+  be guessed one after another.
+- **Soft deletes with partial indexes.** A deleted row keeps its revisions, its
+  activity and its responses, and can be restored. Every unique rule and every list
+  index is `where deleted_at is null`, so the dead rows cost the live queries nothing
+  and free the addresses they held.
+- **`on delete set null` for people.** An author leaving the company must not delete
+  their articles with them.
+- **Revisions per builder, activity for all.** A revision belongs to one document and
+  goes when it goes, so it gets a real foreign key. The activity log describes rows
+  that may be gone, so it names them by type and id instead.
+- **`saved_at` with milliseconds.** JavaScript's dates have milliseconds; a
+  microsecond value would never compare equal to what the editor sends back.
 - **Copies of the meta for lists.** An article's `title` and `excerpt`, a form's
   `slug` and `name` are written from `document.meta` in the same transaction as the
   document. Lists and search read these, and an index serves them.
-- **Responses keep the version they answered.** Every publish records a `publish`
-  revision, so a response's `form_version` finds the document it answered, even after
-  the form was edited.
-- **A partial unique index** keeps one active design per email type, so the mailer
-  never has to choose.
 
 ## Other databases
 
 MySQL 8 and MariaDB have a `JSON` type: use it for the documents, `datetime(3)` for
-the timestamps, and an `enum` or a check for the statuses; the partial indexes become
-plain indexes and the one-active-design rule a check in the publish route. SQLite
-stores the JSON as text, which is fine for a small site: the documents are always
-read and written whole.
+the timestamps, `binary(16)` or `char(36)` for the uuid, and an `enum` or a check for
+the statuses. They have no partial indexes: put `deleted_at` into each unique index
+instead — or a generated `live` column that is `1` when live and `null` when deleted,
+since unique indexes ignore nulls — and keep the one-active-design rule in the
+publish route. SQLite stores the JSON as text, which is fine for a small site: the
+documents are always read and written whole.

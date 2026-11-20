@@ -1,1 +1,1 @@
-pip install builderset django djangorestframework "psycopg[binary]"
+pip install builderset "django>=6.0" djangorestframework "psycopg[binary]" pillow

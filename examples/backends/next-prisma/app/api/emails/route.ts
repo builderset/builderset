@@ -1,16 +1,28 @@
-import { prisma } from '@/lib/db';
-import { checkDocument, recordOf, refused, toJson } from '@/lib/emails';
+import { currentUser } from '@/lib/auth';
+import { checkDocument } from '@/lib/email-check';
+import { createEmail, listEmails } from '@/lib/emails';
+import { optionalText, pageOf, readJson, route } from '@/lib/http';
+import { EMAIL_STATUSES } from '@/lib/vocabulary';
+
+/** GET /api/emails: the templates, newest change first; `?deleted=true` for the trash. */
+export const GET = route(async (request) => {
+  await currentUser(request);
+  const url = new URL(request.url);
+  const status = url.searchParams.get('status');
+  const list = await listEmails({
+    status: EMAIL_STATUSES.find((known) => known === status) ?? null,
+    q: url.searchParams.get('q')?.trim() || null,
+    deleted: url.searchParams.get('deleted') === 'true',
+    ...pageOf(url),
+  });
+  return Response.json(list);
+});
 
 /** POST /api/emails: a new template, as a draft. The back office sends a starter document. */
-export async function POST(request: Request) {
-  const body = (await request.json()) as { name?: unknown; document?: unknown };
-  const name = typeof body.name === 'string' ? body.name.trim() : '';
-  if (!name || name.length > 120)
-    return Response.json({ message: 'The name is 1 to 120 characters.' }, { status: 422 });
-  const checked = checkDocument(body.document, 'draft');
-  if (!checked.ok) return refused(checked.issues);
-  const row = await prisma.emailTemplate.create({
-    data: { name, document: toJson(checked.document), savedAt: new Date() },
-  });
-  return Response.json(recordOf(row), { status: 201 });
-}
+export const POST = route(async (request) => {
+  const user = await currentUser(request);
+  const body = await readJson(request);
+  const typeKey = optionalText(body.type_key, 'type_key', 60);
+  const document = checkDocument(body.document, 'draft');
+  return Response.json(await createEmail(document, typeKey, user), { status: 201 });
+});

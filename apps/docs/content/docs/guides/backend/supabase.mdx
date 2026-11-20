@@ -1,63 +1,127 @@
 ---
 title: Supabase
-description: The three builders on Supabase — the tables with row-level security, a Storage bucket for media, and Edge Functions that check every document and every form response.
+description: The three builders on Supabase — the audited tables with row-level security, every write as one Postgres function, a Storage bucket for media, and Edge Functions that check every document and every form response.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end your Supabase project stores email templates, articles and forms, refuses
-an unsafe or stale save with the editor's own issue codes, and takes form responses
-from visitors who cannot write to any table. The tables are the ones in
-[Data model and API](/docs/guides/backend/data-model). The checks are the kits' own,
-so they run where JavaScript runs: in two Edge Functions. A policy cannot run them,
-so no document reaches a table except through a function.
+At the end your Supabase project stores email templates, articles and forms with who
+made, changed and deleted every row, keeps their revisions and an activity log,
+refuses an unsafe or stale save with the editor's own issue codes, and takes form
+responses from visitors who cannot write to any table. The tables are the ones in
+[Data model and API](/docs/guides/backend/data-model), with Supabase's own users. The
+checks are the kits' own, so they run where JavaScript runs: in two Edge Functions. A
+policy cannot run them, so no document reaches a table except through a function.
 
 <Steps>
 <Step>
 
 ### The tables, and who may read them
 
-One migration: the [SQL schema](/docs/guides/backend/sql) with uuid ids and
-Supabase's users, row-level security on every table, the function that stores a
-response, and the media bucket. Put it in `supabase/migrations/` and run
-`supabase db push`:
+Eight migrations, run in order: the [SQL schema](/docs/guides/backend/sql) with
+`auth.users` for the people, the functions that write, and row-level security on every
+table. Put them in `supabase/migrations/` and run `supabase db push`:
 
-<include cwd lang="sql" meta='title="supabase/migrations/0001_builderset.sql"'>
-  ./snippets/backends/supabase/migrations/0001_builderset.sql
+<Tabs label="Migrations">
+<Tab title="Shared columns">
+
+The team, the trigger that keeps `updated_at`, and the one that names who made a
+change when Postgres knows it:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000001_base.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000001_base.sql
 </include>
 
-Three choices in it:
+</Tab>
+<Tab title="Email templates">
+
+A trigger copies the name from the document, so the list cannot disagree with it:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000002_emails.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000002_emails.sql
+</include>
+
+</Tab>
+<Tab title="Articles">
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000003_articles.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000003_articles.sql
+</include>
+</Tab>
+<Tab title="Forms">
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000004_forms.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000004_forms.sql
+</include>
+</Tab>
+<Tab title="Library">
+
+Saved sections, the `media` table beside Storage's own `storage.objects`, and the
+public bucket:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000005_library.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000005_library.sql
+</include>
+
+</Tab>
+<Tab title="Activity">
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000006_activity.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000006_activity.sql
+</include>
+</Tab>
+<Tab title="Writes">
+
+Every write as one function, so one transaction: the row, its revision and its
+activity, or nothing. A refusal is raised as `PT404` or `PT409`, which PostgREST turns
+into that status:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000007_writes.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000007_writes.sql
+</include>
+
+</Tab>
+<Tab title="Security">
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000008_security.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000008_security.sql
+</include>
+</Tab>
+</Tabs>
+
+Four choices in them:
 
 - **The team is a table, not the author.** A row in `profiles` makes a user an
   `editor` or a `publisher`. A policy of `auth.uid() = created_by` would let only a
   template's author fix a typo in it. With one team per project, membership is the
-  rule; with several, add a `team_id` to `profiles` and to each table, and compare
-  the two in the same policies. You add members yourself, from the dashboard or SQL.
-- **Nobody writes through the REST API.** The team may read every row, for lists and
-  search; there is no insert or update policy, so only the service role writes, and
-  only the functions below hold it, after their checks.
-- **The public reads columns, not tables.** `anon` may select the live `document` of
-  a published article or form, and nothing else: it must name the columns
-  (`select=id,slug,status,document`), and a `draft_document` is never theirs, even of
-  a published row. It cannot insert into `form_response` at all.
+  rule; with several, add a `team_id` to `profiles` and to each table, and compare the
+  two in the same policies. You add members yourself, from the dashboard or SQL.
+- **The functions name the actor.** A write made with a user's token carries
+  `auth.uid()`, and the `stamp_actor` trigger puts it in `created_by` and `updated_by`
+  whatever the request said. The Edge Functions write with the service role, which has
+  no user, so `auth.uid()` is null there: they check the caller's token themselves and
+  pass that user to every write function as `p_actor`.
+- **Nobody writes through the REST API.** The team may read every row, live or in the
+  trash, for lists and search; there is no insert, update or delete policy, and the
+  grants are gone too, so only the service role writes. Even it may not change the
+  activity log or a revision.
+- **The public reads columns, not tables.** `anon` may select the live `document` of a
+  published article or form, and nothing else: it must name the columns
+  (`select=uuid,slug,document`), and a `draft_document`, the internal `id` or who wrote
+  it is never theirs. It cannot insert into `form_response` at all.
+
+Scheduled articles go live when `publish_due_articles()` runs: schedule it every
+minute with `pg_cron`. The retention job that deletes old responses for good is
+yours too; it is the one place a row is removed.
 
 </Step>
 <Step>
 
 ### The checks
 
-Every document is checked before it is stored, with the editor's rules: a draft may
-be unfinished but never unsafe, and publishing refuses every error. The table below
-says, for each builder, which kit checks it and which columns copy its meta:
+Every document is checked before it is stored, with the editor's rules: a draft may be
+unfinished but never unsafe, and publishing refuses every error. For each builder, this
+file says which kit checks it, which table keeps it, and what a new one takes
+from the request:
 
 <include cwd lang="ts" meta='title="supabase/functions/documents/kinds.ts"'>
   ./snippets/backends/supabase/functions/documents/kinds.ts
-</include>
-
-Both functions share the service-role client:
-
-<include cwd lang="ts" meta='title="supabase/functions/_shared/supabase.ts"'>
-  ./snippets/backends/supabase/functions/_shared/supabase.ts
 </include>
 
 These files run in Deno, as Edge Functions do: `npm:@builderset/form@0.4.0` loads the
@@ -68,52 +132,111 @@ runs Node.
 </Step>
 <Step>
 
-### Saving a draft
+### What both functions share
 
-The editor sends back the `saved_at` it last saw. A different one on the row means
-someone else saved in between: `409`, and the editor offers to reload or keep its
-own. The update is conditional, so two saves at the same instant cannot both win:
+The service-role client and the write functions, the answers and the one place an
+error becomes one, who is calling, and the audit columns as an answer shows them:
 
-<include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
-  ./snippets/backends/supabase/functions/documents/index.ts#draft
+<Tabs label="Shared">
+<Tab title="Database">
+<include cwd lang="ts" meta='title="supabase/functions/_shared/supabase.ts"'>
+  ./snippets/backends/supabase/functions/_shared/supabase.ts
 </include>
+</Tab>
+<Tab title="HTTP">
+<include cwd lang="ts" meta='title="supabase/functions/_shared/http.ts"'>
+  ./snippets/backends/supabase/functions/_shared/http.ts
+</include>
+</Tab>
+<Tab title="Who is calling">
+<include cwd lang="ts" meta='title="supabase/functions/_shared/auth.ts"'>
+  ./snippets/backends/supabase/functions/_shared/auth.ts
+</include>
+</Tab>
+<Tab title="Audit">
+
+A row in an answer: its uuid as `id`, people as `{ id, name }` from `profiles`, and
+the soft delete, restore and timeline every audited table shares:
+
+<include cwd lang="ts" meta='title="supabase/functions/_shared/audit.ts"'>
+  ./snippets/backends/supabase/functions/_shared/audit.ts
+</include>
+
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
 
-### Publishing
+### The documents function
 
-The strict check, then the document goes live with its meta copied to the columns.
-An email type keeps one active design; an article with a future `scheduled_at` waits
-for a job of yours (`pg_cron`) to set it live:
-
-<include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
-  ./snippets/backends/supabase/functions/documents/index.ts#publish
-</include>
-
-The function's front door: who is calling, which builder, which route. Publishing
-and unpublishing need the `publisher` role:
+Every route of the data model for your team, in one function. A route names its
+handler; the front door finds the route, signs the caller in, and turns any refusal
+into its answer. Publishing and unpublishing need the `publisher` role:
 
 <include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
-  ./snippets/backends/supabase/functions/documents/index.ts#serve
+  ./snippets/backends/supabase/functions/documents/index.ts
 </include>
 
-Deploy it with `supabase functions deploy documents`. Lists read the tables directly
-through the REST API, which the team's policy allows. Revisions and saved sections
-have their tables; their routes would be one more function with the same check, and
-until then the editor hides those features.
+The handlers, one file per concern. Each one checks, then makes one write, and the
+write function does the rest:
+
+<Tabs label="Routes">
+<Tab title="Documents">
+
+A save sends back the `saved_at` the editor last saw, and `save_draft` locks the row
+and compares: another one is a `409`, and the editor offers to reload or keep its own.
+Deleting a published document is a `409` too: unpublish it first.
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/documents.ts"'>
+  ./snippets/backends/supabase/functions/documents/documents.ts
+</include>
+
+</Tab>
+<Tab title="History">
+<include cwd lang="ts" meta='title="supabase/functions/documents/history.ts"'>
+  ./snippets/backends/supabase/functions/documents/history.ts
+</include>
+</Tab>
+<Tab title="Library">
+
+Saved sections, and uploads. A file comes to the function, which reads its first
+bytes, measures an image, and stores the same file twice only once:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/library.ts"'>
+  ./snippets/backends/supabase/functions/documents/library.ts
+</include>
+
+</Tab>
+<Tab title="Responses">
+<include cwd lang="ts" meta='title="supabase/functions/documents/responses.ts"'>
+  ./snippets/backends/supabase/functions/documents/responses.ts
+</include>
+</Tab>
+<Tab title="Every route">
+
+What each handler is handed, and the read most of them start with:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/call.ts"'>
+  ./snippets/backends/supabase/functions/documents/call.ts
+</include>
+
+</Tab>
+</Tabs>
+
+Deploy it with `supabase functions deploy documents`.
 
 </Step>
 <Step>
 
 ### The form's public routes
 
-The page that shows a form reads it through the REST API with the anon key, and
-passes `closed` to `FormView` when its `status` is `closed`. A response goes to its
-own function, which reads the **published** document with the service role, ignores
-a filled trap field, checks the answers with `validateAnswers`, and stores only the
-`values` it keeps. `record_form_response` in the migration counts and stores in one
-transaction, so `maxResponses` holds when two visitors send the last response at once:
+The page that shows a form reads it through the REST API with the anon key, and passes
+`closed` to `FormView` when its `status` is `closed`. A response goes to its own
+function, which reads the **published** document with the service role, ignores a
+filled trap field, checks the answers with `validateAnswers`, and stores only the
+`values` it keeps. `record_form_response` counts and stores in one transaction, so
+`maxResponses` holds when two visitors send the last response at once:
 
 <include cwd lang="ts" meta='title="supabase/functions/form-responses/index.ts"'>
   ./snippets/backends/supabase/functions/form-responses/index.ts
@@ -129,11 +252,11 @@ Deploy it with `supabase functions deploy form-responses`. It has no rate limit;
 
 The `media` bucket is public, so a published page shows its images at an address that
 never changes, and Storage enforces the bucket's size and type limits on the server.
-The editor uploads straight into it, into the user's own folder (the policy refuses
-any other), and keeps the object's key in the document. Storage's own
-`storage.objects` holds each file's key, size, type and owner, so there is no `media`
-table. Files a visitor attaches to a form response need a signed upload URL from a
-function, which is not shown here.
+The editor sends a file to the documents function, not to Storage: there is no policy
+on `storage.objects`, so only the function, after reading the file's first bytes,
+puts it there. The `media` table keeps what Storage does not know — the kind, an
+image's size, who uploaded it and a hash — and documents keep only the key. A deleted
+file stays in the bucket until a job of yours removes the ones no live document uses.
 
 </Step>
 <Step>
@@ -142,7 +265,7 @@ function, which is not shown here.
 
 [`createRestHost`](/docs/guides/host#createresthost) with the function's address per
 document, `…/functions/v1/documents/forms/<id>`, and the signed-in user's access token
-on every request:
+on every request. Its uploads, revisions and saved sections go to the same function:
 
 <include cwd lang="ts" meta='title="host.ts"'>
   ./snippets/backends/supabase/host.ts

@@ -1,24 +1,57 @@
 ---
 title: 'FastAPI and SQLAlchemy'
-description: The email editor's backend in Python — FastAPI routes over Postgres with SQLAlchemy and Alembic, checked and rendered by the builderset package. About 20 minutes.
+description: The email editor's backend in Python — FastAPI routes over Postgres with SQLAlchemy and Alembic, checked and rendered by the builderset package, with who did what, soft delete, revisions and an activity log. About 30 minutes.
 ---
 
 At the end a Python server stores the templates, refuses what the editor would
 refuse — with the same issue codes — and renders the email to send, byte for byte
-as the Node renderer does. Every file is from
+as the Node renderer does. Every row records who made it, changed it and deleted it,
+and when; deleting is a soft delete; each template keeps its revisions and an
+activity log, as the [data model](/docs/guides/backend/data-model) describes. Every
+file is from
 [`examples/backends/fastapi-sqlalchemy`](https://github.com/builderset/builderset/tree/development/examples/backends/fastapi-sqlalchemy),
 tested against a real Postgres on each change. The Python package's install is in
 [Python](/docs/reference/python).
 
 _This page describes Builderset 0.4.0._
 
-## The table
+## The tables
 
-<include cwd lang="python" meta='title="app/models.py"'>
-  ../../examples/backends/fastapi-sqlalchemy/app/models.py
+One file per group. They build the email part of the
+[SQL schema](/docs/guides/backend/sql) — the same tables, columns, constraint names
+and partial indexes:
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns every table carries, as a mixin, with `live()` for the filter every
+query on live rows has. `app_user` stands in for your users table.
+
+<include cwd lang="python" meta='title="app/models/base.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/models/base.py
 </include>
+</Tab>
+<Tab title="Email templates">
 
-`alembic revision --autogenerate` wrote the migration:
+The template, with its live document, its draft and `saved_at` for the conflict
+check; and its revisions, written once and never changed.
+
+<include cwd lang="python" meta='title="app/models/emails.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/models/emails.py
+</include>
+</Tab>
+<Tab title="Activity">
+
+One row per action, for every kind of row. No foreign key to its subject: the log
+outlives what it describes.
+
+<include cwd lang="python" meta='title="app/models/activity.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/models/activity.py
+</include>
+</Tab>
+</Tabs>
+
+`alembic revision --autogenerate` wrote the migration, put in reading order by hand:
 
 <include cwd lang="python" meta='title="migrations/versions/0001_email_templates.py"'>
   ../../examples/backends/fastapi-sqlalchemy/migrations/versions/0001_email_templates.py
@@ -29,24 +62,94 @@ _This page describes Builderset 0.4.0._
 `check_email` returns the TypeScript codes; a draft lets through the ones in
 `DRAFT_TOLERATES`, the same list the editor uses:
 
-<include cwd lang="python" meta='title="app/emails.py"'>
-  ../../examples/backends/fastapi-sqlalchemy/app/emails.py
+<include cwd lang="python" meta='title="app/checks.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/checks.py
 </include>
+
+## Who did it, and what happened
+
+The routes share three small modules. `deps.py` gives them the session, the
+signed-in user and the template from its `uuid`; `audit.py` does what every write
+shares; `errors.py` is the only place a refusal becomes an HTTP answer:
+
+<Tabs label="Audit">
+<Tab title="Dependencies">
+
+The signed-in user is a stand-in so the example runs on its own: replace
+`current_user` with your auth.
+
+<include cwd lang="python" meta='title="app/deps.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/deps.py
+</include>
+</Tab>
+<Tab title="Audit">
+<include cwd lang="python" meta='title="app/audit.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/audit.py
+</include>
+</Tab>
+<Tab title="Errors">
+<include cwd lang="python" meta='title="app/errors.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/errors.py
+</include>
+</Tab>
+</Tabs>
 
 ## The routes
 
-Every route of the REST shape, with the conditional write for the conflict check and
-`render_email` for sending:
+Every route of the REST shape, and your list, trash and timeline. Each write checks
+the document, writes the row with who did it, records a revision on a manual save or
+a publish, and appends the activity — in one transaction:
 
+<Tabs label="Routes">
+<Tab title="Templates">
+
+The conditional write for the conflict check, the one active design per email type,
+and `render_email` for sending.
+
+<include cwd lang="python" meta='title="app/routers/emails.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/routers/emails.py
+</include>
+</Tab>
+<Tab title="History">
+<include cwd lang="python" meta='title="app/routers/history.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/routers/history.py
+</include>
+</Tab>
+<Tab title="Answers">
+
+A row's `uuid` is its `id` in every answer, and people are `{ id, name }` — but a
+revision's `author` is a name, as the editor's history list shows it.
+
+<include cwd lang="python" meta='title="app/schemas.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/schemas.py
+</include>
+</Tab>
+<Tab title="App">
 <include cwd lang="python" meta='title="app/main.py"'>
   ../../examples/backends/fastapi-sqlalchemy/app/main.py
 </include>
+</Tab>
+</Tabs>
 
 ## The tests
 
+<Tabs label="Tests">
+<Tab title="Templates">
 <include cwd lang="python" meta='title="tests/test_emails.py"'>
   ../../examples/backends/fastapi-sqlalchemy/tests/test_emails.py
 </include>
+</Tab>
+<Tab title="History">
+<include cwd lang="python" meta='title="tests/test_history.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/tests/test_history.py
+</include>
+</Tab>
+<Tab title="Trash">
+<include cwd lang="python" meta='title="tests/test_trash.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/tests/test_trash.py
+</include>
+</Tab>
+</Tabs>
 
 `uv run pytest` needs Docker (Testcontainers starts a Postgres), or a database in
 `TEST_DATABASE_URL`.

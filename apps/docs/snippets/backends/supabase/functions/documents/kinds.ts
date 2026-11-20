@@ -1,11 +1,11 @@
-// The three builders' checks and columns, for the documents function.
+// What differs between emails, articles and forms: which kit checks the
+// document, which table keeps it, and what a new one needs from the request.
 import {
   checkArticle,
   createArticleRegistry,
   isDraftBlocking as articleDraftBlocks,
   isPublishBlocking as articlePublishBlocks,
   parseArticle,
-  type ArticleDocument,
 } from 'npm:@builderset/article@0.4.0';
 import {
   checkEmail,
@@ -16,7 +16,12 @@ import {
   type EmailDocument,
   type EmailType,
 } from 'npm:@builderset/email@0.4.0';
-import { error, type EngineDocument, type Issue } from 'npm:@builderset/engine@0.4.0';
+import {
+  error,
+  type ElementRegistry,
+  type EngineDocument,
+  type Issue,
+} from 'npm:@builderset/engine@0.4.0';
 import {
   checkForm,
   createFormRegistry,
@@ -26,9 +31,13 @@ import {
   type FormDocument,
 } from 'npm:@builderset/form@0.4.0';
 
-export type Level = 'draft' | 'publish';
-export type Checked = { ok: true; document: EngineDocument } | { ok: false; issues: Issue[] };
-type Row = Record<string, unknown>;
+import { HttpError, notFound, type Json } from '../_shared/http.ts';
+
+/** A draft may be unfinished but never unsafe; publishing refuses every error. */
+export const Level = { draft: 'draft', publish: 'publish' } as const;
+export type Level = (typeof Level)[keyof typeof Level];
+
+type Checked = { ok: true; document: EngineDocument } | { ok: false; issues: Issue[] };
 
 /** The languages the project writes in: a document in another is refused. */
 const LOCALES = ['en', 'sq'];
@@ -36,13 +45,28 @@ const LOCALES = ['en', 'sq'];
 /** Your email types, by key: the variables a template for each may use. */
 const EMAIL_TYPES: Record<string, EmailType> = {};
 
-// One registry per kit: the elements a document may hold. Add your own
-// elements here too, or documents that use them are refused.
-const emailRegistry = createEmailRegistry();
-const articleRegistry = createArticleRegistry();
-const formRegistry = createFormRegistry();
+const SLUG = /^[a-z0-9-]{1,200}$/;
+const LOCALE = /^[a-z]{2}(-[A-Z]{2})?$/;
 
-/** A draft may be unfinished but never unsafe; publishing refuses every error. */
+export interface Kind {
+  table: 'email_template' | 'article' | 'form';
+  /** Its name in a message: "There is no such email template." */
+  noun: string;
+  /** Its saved sections' `kit`. */
+  kit: 'email' | 'article' | 'form';
+  /** The elements a document may hold. Add your own here too, or documents that use them are refused. */
+  registry: ElementRegistry;
+  /** The column a list shows as the name, and searches. */
+  nameColumn: 'name' | 'title';
+  statuses: readonly string[];
+  /** Whether publishing may wait for a `scheduled_at`. */
+  schedules: boolean;
+  check(raw: unknown, level: Level, typeKey: string | null): Checked;
+  /** What create_document takes from the request, besides the document. */
+  newColumns(body: Json): Json;
+}
+
+/** The checked document, or the issues that block it at this level. */
 function verdict(
   document: EngineDocument | null,
   issues: Issue[],
@@ -53,96 +77,99 @@ function verdict(
   return { ok: false, issues: blocking.length ? blocking : [error('document.malformed')] };
 }
 
-/** What differs between emails, articles and forms. */
-export interface Kind {
-  table: 'email_template' | 'article' | 'form';
-  noun: string;
-  check(raw: unknown, level: Level, row: Row): Checked;
-  /** Copies of the live document's meta, for lists and search. */
-  copies(document: EngineDocument): Row;
-  /** The columns a new row takes from the request; null when it lacks them. */
-  create(body: Row, document: EngineDocument, userId: string): Row | null;
-  unpublished: string;
-  schedules?: boolean;
-}
+const emailRegistry = createEmailRegistry();
+const articleRegistry = createArticleRegistry();
+const formRegistry = createFormRegistry();
 
-export const KINDS: Record<string, Kind> = {
-  emails: {
-    table: 'email_template',
-    noun: 'email template',
-    check(raw, level, row) {
-      const typeKey = typeof row.type_key === 'string' ? row.type_key : '';
-      const type = Object.hasOwn(EMAIL_TYPES, typeKey) ? EMAIL_TYPES[typeKey] : null;
-      // parseEmail only says yes or no; checkEmail says why, with the codes.
-      const issues = checkEmail(raw as EmailDocument, emailRegistry, type, { locales: LOCALES });
-      const blocks = level === 'draft' ? emailDraftBlocks : emailPublishBlocks;
-      return verdict(parseEmail(raw, emailRegistry), issues, blocks);
-    },
-    copies: (document) => ({ name: (document as EmailDocument).meta.name }),
-    create: (body, _document, userId) => ({
-      type_key:
-        typeof body.type_key === 'string' && Object.hasOwn(EMAIL_TYPES, body.type_key)
-          ? body.type_key
-          : null,
-      created_by: userId,
-    }),
-    unpublished: 'draft',
+const emails: Kind = {
+  table: 'email_template',
+  noun: 'email template',
+  kit: 'email',
+  registry: emailRegistry,
+  nameColumn: 'name',
+  statuses: ['draft', 'published'],
+  schedules: false,
+  check(raw, level, typeKey) {
+    const type =
+      typeKey !== null && Object.hasOwn(EMAIL_TYPES, typeKey) ? EMAIL_TYPES[typeKey] : null;
+    // parseEmail only says yes or no; checkEmail says why, with the codes.
+    const issues = checkEmail(raw as EmailDocument, emailRegistry, type, { locales: LOCALES });
+    const blocks = level === Level.draft ? emailDraftBlocks : emailPublishBlocks;
+    return verdict(parseEmail(raw, emailRegistry), issues, blocks);
   },
-
-  articles: {
-    table: 'article',
-    noun: 'article',
-    check(raw, level) {
-      // parseArticle also brings an older document up to the current version.
-      const parsed = parseArticle(raw, articleRegistry);
-      if (!parsed.doc) return { ok: false, issues: parsed.issues };
-      const issues = checkArticle(parsed.doc, articleRegistry, { locales: LOCALES });
-      const blocks = level === 'draft' ? articleDraftBlocks : articlePublishBlocks;
-      return verdict(parsed.doc, issues, blocks);
-    },
-    copies(document) {
-      const { meta } = document as ArticleDocument;
-      return {
-        title: meta.title,
-        excerpt: meta.excerpt ?? '',
-        cover_key: meta.cover?.media.key ?? null,
-        cover_alt: meta.cover?.alt ?? null,
-      };
-    },
-    // The address is the article's, chosen when it is made.
-    create: (body, _document, userId) =>
-      typeof body.slug === 'string' &&
-      /^[a-z0-9-]{1,200}$/.test(body.slug) &&
-      typeof body.locale === 'string' &&
-      /^[a-z]{2}(-[A-Z]{2})?$/.test(body.locale)
-        ? { slug: body.slug, locale: body.locale, author_id: userId }
+  // An unknown type is no type: the template is checked without variables.
+  newColumns: (body) => ({
+    p_type_key:
+      typeof body.type_key === 'string' && Object.hasOwn(EMAIL_TYPES, body.type_key)
+        ? body.type_key
         : null,
-    unpublished: 'draft',
-    schedules: true,
-  },
+  }),
+};
 
-  forms: {
-    table: 'form',
-    noun: 'form',
-    check(raw, level) {
-      const issues = checkForm(raw as FormDocument, formRegistry, { locales: LOCALES });
-      const blocks = level === 'draft' ? formDraftBlocks : formPublishBlocks;
-      const checked = verdict(parseForm(raw, formRegistry), issues, blocks);
-      // A live form needs its address; a draft may not have one yet.
-      if (checked.ok && level === 'publish' && !(checked.document as FormDocument).meta.slug)
-        return { ok: false, issues: [error('meta.slugMissing', { path: 'meta.slug' })] };
-      return checked;
-    },
-    copies(document) {
-      const { meta } = document as FormDocument;
-      return { name: meta.name, slug: meta.slug };
-    },
-    // The slug is unique and required, and a new form often has none yet.
-    create: (_body, document, userId) => ({
-      slug: (document as FormDocument).meta.slug || `draft-${crypto.randomUUID()}`,
-      created_by: userId,
-    }),
-    // A closed form keeps its link and shows its closed message.
-    unpublished: 'closed',
+const articles: Kind = {
+  table: 'article',
+  noun: 'article',
+  kit: 'article',
+  registry: articleRegistry,
+  nameColumn: 'title',
+  statuses: ['draft', 'scheduled', 'published', 'archived'],
+  schedules: true,
+  check(raw, level) {
+    // parseArticle also brings an older document up to the current version.
+    const parsed = parseArticle(raw, articleRegistry);
+    if (!parsed.doc) return { ok: false, issues: parsed.issues };
+    const issues = checkArticle(parsed.doc, articleRegistry, { locales: LOCALES });
+    const blocks = level === Level.draft ? articleDraftBlocks : articlePublishBlocks;
+    return verdict(parsed.doc, issues, blocks);
+  },
+  // The address is the article's, chosen when it is made.
+  newColumns({ slug, locale }) {
+    if (typeof slug !== 'string' || !SLUG.test(slug))
+      throw new HttpError(400, 'A new article needs a slug: a-z, 0-9 and -.');
+    if (typeof locale !== 'string' || !LOCALE.test(locale))
+      throw new HttpError(400, 'A new article needs a locale: en, sq, pt-BR.');
+    return { p_slug: slug, p_locale: locale };
   },
 };
+
+const forms: Kind = {
+  table: 'form',
+  noun: 'form',
+  kit: 'form',
+  registry: formRegistry,
+  nameColumn: 'name',
+  statuses: ['draft', 'published', 'closed'],
+  schedules: false,
+  check(raw, level) {
+    const issues = checkForm(raw as FormDocument, formRegistry, { locales: LOCALES });
+    const blocks = level === Level.draft ? formDraftBlocks : formPublishBlocks;
+    const checked = verdict(parseForm(raw, formRegistry), issues, blocks);
+    // A live form needs its address; a draft may not have one yet.
+    if (checked.ok && level === Level.publish && !(checked.document as FormDocument).meta.slug)
+      return { ok: false, issues: [error('meta.slugMissing', { path: 'meta.slug' })] };
+    return checked;
+  },
+  // The slug waits for publishing: until then the table gives it `draft-<uuid>`.
+  newColumns: () => ({}),
+};
+
+/** The builders, by the path segment that names them: /documents/{kind}/… */
+const KINDS: Record<string, Kind> = { emails, articles, forms };
+
+export function kindOf(segment: string): Kind {
+  const kind = Object.hasOwn(KINDS, segment) ? KINDS[segment] : undefined;
+  if (!kind) throw notFound();
+  return kind;
+}
+
+/** The document, checked at this level: a 422 with the editor's issue codes when it is refused. */
+export function checkedDocument(
+  kind: Kind,
+  raw: unknown,
+  level: Level,
+  typeKey: string | null = null,
+): EngineDocument {
+  const result = kind.check(raw, level, typeKey);
+  if (!result.ok) throw new HttpError(422, 'The document was refused.', { issues: result.issues });
+  return result.document;
+}

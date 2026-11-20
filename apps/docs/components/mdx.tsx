@@ -4,6 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 
 import { CodeBlock } from './docs/code-block';
 import { Icon } from './docs/icons';
+import { Tab, Tabs } from './docs/tabs';
 
 /** A heading with its own link, shown on hover. */
 function heading(Tag: 'h2' | 'h3' | 'h4') {
@@ -113,6 +114,8 @@ export function getMDXComponents(components?: MDXComponents) {
     Card,
     Steps,
     Step,
+    Tabs,
+    Tab,
     ...components,
   } satisfies MDXComponents;
 }

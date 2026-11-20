@@ -1,5 +1,6 @@
-import type { EngineDocument, MediaKind } from '@builderset/engine';
-import { createRestHost, type UploadResult } from '@builderset/engine/host';
+import type { EngineDocument } from '@builderset/engine';
+import { createRestHost } from '@builderset/engine/host';
+import type { FormResponses } from '@builderset/form/editor';
 import type { FormSubmission } from '@builderset/form/render';
 
 /** Your Supabase project, as the browser knows it. */
@@ -9,113 +10,101 @@ export interface SupabaseProject {
   /** The anon key. It names the project; past that, RLS decides. */
   anonKey: string;
   /**
-   * The signed-in user's access token. With supabase-js:
+   * The signed-in user's access token, if any. With supabase-js:
    * `async () => (await supabase.auth.getSession()).data.session?.access_token`
    */
   accessToken: () => Promise<string | undefined>;
-  /** The signed-in user's id: their uploads go in their own folder. */
-  userId: string;
 }
 
+/** The three builders' routes differ only in this segment. */
+export type DocumentKind = 'emails' | 'articles' | 'forms';
+
+/** The user's token when signed in; the anon key, which is no user, when not. */
 async function authHeaders(project: SupabaseProject): Promise<Record<string, string>> {
-  const token = await project.accessToken();
-  return { apikey: project.anonKey, ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+  const token = (await project.accessToken()) ?? project.anonKey;
+  return { apikey: project.anonKey, Authorization: `Bearer ${token}` };
 }
+
+const functionUrl = (project: SupabaseProject, path: string) =>
+  `${project.url}/functions/v1/${path}`;
 
 /** The media bucket is public: a key's URL never changes and needs no token. */
 const publicUrl = (project: SupabaseProject, key: string) =>
   `${project.url}/storage/v1/object/public/media/${key}`;
 
-/** Straight into Storage, which checks the bucket's size and type limits. */
-async function upload(
-  project: SupabaseProject,
-  file: File,
-  kind: MediaKind,
-  onProgress: (fraction: number) => void,
-  signal: AbortSignal,
-): Promise<UploadResult> {
-  const extension = /\.([a-z0-9]{1,8})$/i.exec(file.name)?.[1]?.toLowerCase() ?? 'bin';
-  // The user's own folder, as the storage policy insists, and a name nobody
-  // else has: a key never changes, so it is never reused.
-  const key = `${project.userId}/${crypto.randomUUID()}.${extension}`;
-  const response = await fetch(`${project.url}/storage/v1/object/media/${key}`, {
-    method: 'POST',
-    headers: {
-      ...(await authHeaders(project)),
-      'Content-Type': file.type || 'application/octet-stream',
-    },
-    body: file,
-    signal,
-  });
-  if (!response.ok) {
-    const answer = (await response.json().catch(() => ({}))) as { message?: string };
-    throw new Error(answer.message ?? 'The file could not be uploaded.');
-  }
-  onProgress(1);
-  // The editor reserves an image's space before it loads.
-  let size = {};
-  if (kind === 'image') {
-    const bitmap = await createImageBitmap(file);
-    size = { width: bitmap.width, height: bitmap.height };
-    bitmap.close();
-  }
-  return {
-    key,
-    url: publicUrl(project, key),
-    mime: file.type,
-    size: file.size,
-    name: file.name,
-    ...size,
-  };
-}
-
-/** The editor's host: the documents Edge Function, with the user's token on every request. */
+/**
+ * The editor's host: the documents function, with the user's token on every
+ * request. `id` is the row's uuid; `savedAt` is the row's, as the page loaded
+ * it: the first save sends it back.
+ */
 export function supabaseHost<TDoc extends EngineDocument>(
   project: SupabaseProject,
-  kind: 'emails' | 'articles' | 'forms',
+  kind: DocumentKind,
   id: string,
   savedAt: string,
   toast: (message: string) => void,
 ) {
-  return createRestHost<TDoc>({
-    baseUrl: `${project.url}/functions/v1/documents/${kind}/${id}`,
+  const host = createRestHost<TDoc>({
+    baseUrl: functionUrl(project, `documents/${kind}/${encodeURIComponent(id)}`),
+    uploadUrl: functionUrl(project, 'documents/uploads'),
     headers: () => authHeaders(project),
     // The token travels in a header, not a cookie.
     credentials: 'omit',
-    upload: (file, mediaKind, onProgress, signal) =>
-      upload(project, file, mediaKind, onProgress, signal),
     resolveMedia: (key) => publicUrl(project, key),
     savedAt,
     toast: (_kind, message) => {
       toast(message);
     },
-    // Routes the function does not have: the editor hides those features.
-    paths: { revisions: null, sections: null, oembed: null, preview: null },
+    // Revisions and sections are the function's; oEmbed and previews are yours to add.
+    paths: { oembed: null, preview: null },
   });
+  // No route here imports an image from a link (POST {uploadUrl}/import, which must
+  // fetch only public addresses): without the method, the editor hides that option.
+  delete host.importImage;
+  return host;
 }
 
-/** FormView's `onSubmit` on the public page: the visitor needs no sign-in, only the anon key. */
+/** FormView's `onSubmit` on the public page. A signed-in visitor is named on the response. */
 export async function submitResponse(
   project: SupabaseProject,
   slug: string,
   submission: FormSubmission,
 ) {
-  const response = await fetch(
-    `${project.url}/functions/v1/form-responses/${encodeURIComponent(slug)}`,
-    {
-      method: 'POST',
-      headers: {
-        apikey: project.anonKey,
-        Authorization: `Bearer ${project.anonKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        answers: submission.values,
-        locale: document.documentElement.lang || null,
-        trap: submission.trap,
-      }),
-    },
-  );
+  const response = await fetch(functionUrl(project, `form-responses/${encodeURIComponent(slug)}`), {
+    method: 'POST',
+    headers: { ...(await authHeaders(project)), 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      answers: submission.values,
+      locale: document.documentElement.lang || null,
+      trap: submission.trap,
+    }),
+  });
   // false keeps the visitor on the form, answers and all.
   return response.ok;
+}
+
+/** The form editor's Responses tab. */
+export async function loadResponses(
+  project: SupabaseProject,
+  formId: string,
+): Promise<FormResponses> {
+  const response = await fetch(
+    functionUrl(project, `documents/forms/${encodeURIComponent(formId)}/responses`),
+    { headers: await authHeaders(project) },
+  );
+  if (!response.ok) throw new Error(`The server answered ${String(response.status)}.`);
+  const body = (await response.json()) as {
+    total: number;
+    this_week: number;
+    latest: { id: string; title: string; when: string; status: string }[];
+  };
+  return {
+    total: body.total,
+    thisWeek: body.this_week,
+    latest: body.latest.map((row) => ({
+      ...row,
+      // The tab shows "when" as words; the server sends the instant.
+      when: new Date(row.when).toLocaleString(),
+    })),
+  };
 }

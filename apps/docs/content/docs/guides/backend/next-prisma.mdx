@@ -1,6 +1,6 @@
 ---
 title: 'Next.js and Prisma'
-description: The same backend as the Drizzle one, with Prisma — the schema, the client with the pg adapter, and the routes. About 20 minutes.
+description: The same backend as the Drizzle one, with Prisma — the audited models in a multi-file schema, the client with the pg adapter, and the writes. About 30 minutes.
 ---
 
 The routes, the checks and the answers are the same as in
@@ -11,14 +11,49 @@ tested against a real Postgres on each change.
 
 _This page describes Builderset 0.4.0._
 
-## The table
+## The tables
 
-<include cwd lang="prisma" meta='title="prisma/schema.prisma"'>
-  ../../examples/backends/next-prisma/prisma/schema.prisma
+The [SQL schema](/docs/guides/backend/sql) as Prisma models, one file per group in
+`prisma/schema/` (Prisma reads the whole folder; `prisma.config.ts` points at it):
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+Prisma has no mixins, so this file lists the audit columns each model writes out,
+and your users, with the other end of every relation to them.
+
+<include cwd lang="prisma" meta='title="prisma/schema/base.prisma"'>
+  ../../examples/backends/next-prisma/prisma/schema/base.prisma
 </include>
 
-<include cwd lang="sql" meta='title="prisma/migrations/0001_email_template/migration.sql"'>
-  ../../examples/backends/next-prisma/prisma/migrations/0001_email_template/migration.sql
+</Tab>
+<Tab title="Email templates">
+<include cwd lang="prisma" meta='title="prisma/schema/emails.prisma"'>
+  ../../examples/backends/next-prisma/prisma/schema/emails.prisma
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="prisma" meta='title="prisma/schema/activity.prisma"'>
+  ../../examples/backends/next-prisma/prisma/schema/activity.prisma
+</include>
+</Tab>
+</Tabs>
+
+The migration is what `prisma migrate diff` wrote from them, with the check
+constraints added by hand at the end, since a Prisma schema cannot hold them:
+
+<include cwd lang="sql" meta='title="prisma/migrations/0001_email_templates/migration.sql"'>
+  ../../examples/backends/next-prisma/prisma/migrations/0001_email_templates/migration.sql
+</include>
+
+Where the tables differ from the SQL: ids are `bigserial` rather than identity
+columns, foreign keys add `on update cascade`, and Prisma keeps `updated_at` itself
+(`@updatedAt`), so there is no trigger. The partial indexes need the
+`partialIndexes` preview feature. `status`, `kind` and `action` stay text, as in the
+SQL; their values are constants:
+
+<include cwd lang="ts" meta='title="lib/vocabulary.ts"'>
+  ../../examples/backends/next-prisma/lib/vocabulary.ts
 </include>
 
 ## The client
@@ -31,22 +66,49 @@ _This page describes Builderset 0.4.0._
 
 A document is JSON to Prisma; `toJson` and `storedEmail` are the only casts:
 
-<include cwd lang="ts" meta='title="lib/emails.ts"'>
-  ../../examples/backends/next-prisma/lib/emails.ts
+<include cwd lang="ts" meta='title="lib/email-check.ts"'>
+  ../../examples/backends/next-prisma/lib/email-check.ts
+</include>
+
+## The audit work
+
+The same stamps and log as the Drizzle example. People in answers come from an
+`include` of each relation, `{ uuid, name }`:
+
+<include cwd lang="ts" meta='title="lib/audit.ts"'>
+  ../../examples/backends/next-prisma/lib/audit.ts
 </include>
 
 ## Saving a draft
 
-`updateMany` with the `saved_at` just checked is the conditional write: a count of
-`0` means someone else saved in between.
+Prisma has no `for update`, so one line of SQL in `lockLive` takes the row's lock;
+the rest is `prisma.$transaction` with the transaction's client:
 
-<include cwd lang="ts" meta='title="app/api/emails/[id]/draft/route.ts"'>
-  ../../examples/backends/next-prisma/app/api/emails/[id]/draft/route.ts
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-prisma/lib/emails.ts#draft
+</include>
+
+## Publishing
+
+`version: { increment: 1 }` counts the publish, and `Prisma.DbNull` clears the draft
+to SQL `NULL`. `updateManyAndReturn` moves the design published before back to draft
+and says which one it was, for its activity:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-prisma/lib/emails.ts#publish
+</include>
+
+## The trash
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-prisma/lib/emails.ts#trash
 </include>
 
 ## The rest
 
-Publishing, sending and uploads are as in the Drizzle example, in
+The signed-in user, the errors, the history, sending, uploads and the routes are as
+in the Drizzle example, in
+[`lib`](https://github.com/builderset/builderset/tree/development/examples/backends/next-prisma/lib) and
 [`app/api`](https://github.com/builderset/builderset/tree/development/examples/backends/next-prisma/app/api).
 The editor's host is the same:
 [the editor's side](/docs/guides/backend/next-drizzle#the-editors-side).

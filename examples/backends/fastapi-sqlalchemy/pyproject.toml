@@ -1,7 +1,7 @@
 [project]
 name = "builderset-example-fastapi"
 version = "0.0.0"
-description = "Email templates for the Builderset editor: FastAPI, SQLAlchemy 2, Alembic and Postgres."
+description = "Email templates for the Builderset editor, with their history: FastAPI, SQLAlchemy 2, Alembic and Postgres."
 requires-python = ">=3.11"
 dependencies = [
     "alembic>=1.20",
@@ -29,7 +29,7 @@ dev = [
 package = false
 
 # The package from this repository, as it is today. A project of your own
-# depends on the released one instead: `builderset==0.3.0`.
+# depends on the released one instead: `builderset==0.4.0`.
 [tool.uv.sources]
 builderset = { path = "../../../python", editable = true }
 
@@ -42,6 +42,10 @@ select = ["E", "W", "F", "I", "N", "UP", "B", "C4", "DTZ", "SIM", "RUF"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
+
+[tool.ruff.lint.pep8-naming]
+# Its methods take the class being mapped, as a classmethod does.
+classmethod-decorators = ["sqlalchemy.orm.declared_attr"]
 
 [tool.mypy]
 python_version = "3.11"

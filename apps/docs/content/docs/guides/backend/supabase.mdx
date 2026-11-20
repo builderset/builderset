@@ -1,0 +1,152 @@
+---
+title: Supabase
+description: The three builders on Supabase — the tables with row-level security, a Storage bucket for media, and Edge Functions that check every document and every form response.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end your Supabase project stores email templates, articles and forms, refuses
+an unsafe or stale save with the editor's own issue codes, and takes form responses
+from visitors who cannot write to any table. The tables are the ones in
+[Data model and API](/docs/guides/backend/data-model). The checks are the kits' own,
+so they run where JavaScript runs: in two Edge Functions. A policy cannot run them,
+so no document reaches a table except through a function.
+
+<Steps>
+<Step>
+
+### The tables, and who may read them
+
+One migration: the [SQL schema](/docs/guides/backend/sql) with uuid ids and
+Supabase's users, row-level security on every table, the function that stores a
+response, and the media bucket. Put it in `supabase/migrations/` and run
+`supabase db push`:
+
+<include cwd lang="sql" meta='title="supabase/migrations/0001_builderset.sql"'>
+  ./snippets/backends/supabase/migrations/0001_builderset.sql
+</include>
+
+Three choices in it:
+
+- **The team is a table, not the author.** A row in `profiles` makes a user an
+  `editor` or a `publisher`. A policy of `auth.uid() = created_by` would let only a
+  template's author fix a typo in it. With one team per project, membership is the
+  rule; with several, add a `team_id` to `profiles` and to each table, and compare
+  the two in the same policies. You add members yourself, from the dashboard or SQL.
+- **Nobody writes through the REST API.** The team may read every row, for lists and
+  search; there is no insert or update policy, so only the service role writes, and
+  only the functions below hold it, after their checks.
+- **The public reads columns, not tables.** `anon` may select the live `document` of
+  a published article or form, and nothing else: it must name the columns
+  (`select=id,slug,status,document`), and a `draft_document` is never theirs, even of
+  a published row. It cannot insert into `form_response` at all.
+
+</Step>
+<Step>
+
+### The checks
+
+Every document is checked before it is stored, with the editor's rules: a draft may
+be unfinished but never unsafe, and publishing refuses every error. The table below
+says, for each builder, which kit checks it and which columns copy its meta:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/kinds.ts"'>
+  ./snippets/backends/supabase/functions/documents/kinds.ts
+</include>
+
+Both functions share the service-role client:
+
+<include cwd lang="ts" meta='title="supabase/functions/_shared/supabase.ts"'>
+  ./snippets/backends/supabase/functions/_shared/supabase.ts
+</include>
+
+These files run in Deno, as Edge Functions do: `npm:@builderset/form@0.4.0` loads the
+kit from npm, and `Deno.env` holds the project's URL and service-role key. Unlike the
+rest of the code in these docs, they are not type-checked by the site's build, which
+runs Node.
+
+</Step>
+<Step>
+
+### Saving a draft
+
+The editor sends back the `saved_at` it last saw. A different one on the row means
+someone else saved in between: `409`, and the editor offers to reload or keep its
+own. The update is conditional, so two saves at the same instant cannot both win:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
+  ./snippets/backends/supabase/functions/documents/index.ts#draft
+</include>
+
+</Step>
+<Step>
+
+### Publishing
+
+The strict check, then the document goes live with its meta copied to the columns.
+An email type keeps one active design; an article with a future `scheduled_at` waits
+for a job of yours (`pg_cron`) to set it live:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
+  ./snippets/backends/supabase/functions/documents/index.ts#publish
+</include>
+
+The function's front door: who is calling, which builder, which route. Publishing
+and unpublishing need the `publisher` role:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/index.ts"'>
+  ./snippets/backends/supabase/functions/documents/index.ts#serve
+</include>
+
+Deploy it with `supabase functions deploy documents`. Lists read the tables directly
+through the REST API, which the team's policy allows. Revisions and saved sections
+have their tables; their routes would be one more function with the same check, and
+until then the editor hides those features.
+
+</Step>
+<Step>
+
+### The form's public routes
+
+The page that shows a form reads it through the REST API with the anon key, and
+passes `closed` to `FormView` when its `status` is `closed`. A response goes to its
+own function, which reads the **published** document with the service role, ignores
+a filled trap field, checks the answers with `validateAnswers`, and stores only the
+`values` it keeps. `record_form_response` in the migration counts and stores in one
+transaction, so `maxResponses` holds when two visitors send the last response at once:
+
+<include cwd lang="ts" meta='title="supabase/functions/form-responses/index.ts"'>
+  ./snippets/backends/supabase/functions/form-responses/index.ts
+</include>
+
+Deploy it with `supabase functions deploy form-responses`. It has no rate limit; the
+`429` of the data model needs a counter by address, in a table or at your edge.
+
+</Step>
+<Step>
+
+### Uploads
+
+The `media` bucket is public, so a published page shows its images at an address that
+never changes, and Storage enforces the bucket's size and type limits on the server.
+The editor uploads straight into it, into the user's own folder (the policy refuses
+any other), and keeps the object's key in the document. Storage's own
+`storage.objects` holds each file's key, size, type and owner, so there is no `media`
+table. Files a visitor attaches to a form response need a signed upload URL from a
+function, which is not shown here.
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the function's address per
+document, `…/functions/v1/documents/forms/<id>`, and the signed-in user's access token
+on every request:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/supabase/host.ts
+</include>
+
+</Step>
+</Steps>

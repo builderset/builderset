@@ -1,0 +1,363 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n9"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "scale",
+      "v": 1,
+      "props": {
+        "label": "How likely are you to recommend us to a friend or colleague?",
+        "key": "score",
+        "help": "",
+        "required": true,
+        "lock": "An NPS survey is built on this score",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "from": 0,
+        "to": 10,
+        "lowLabel": "Not at all likely",
+        "highLabel": "Extremely likely"
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "What is the main reason for your score?",
+        "key": "reason",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "What would make it a 10?",
+        "key": "improve",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "score",
+              "op": "lt",
+              "value": "9"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "What do you like most about us?",
+        "key": "favourite",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "score",
+              "op": "gt",
+              "value": "8"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "May we contact you about your answer?",
+        "key": "follow_up",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "Only to talk about your feedback.",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "follow_up",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "follow_up",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "text": "I agree to be contacted about my feedback, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your score"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    }
+  },
+  "meta": {
+    "name": "NPS survey",
+    "title": "How are we doing?",
+    "intro": "One question, maybe two. It takes thirty seconds and helps us a lot.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "none",
+    "buttons": {
+      "submit": "Send feedback",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "optional",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you for your feedback",
+      "message": "We read every answer, and it shapes what we work on next.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": false,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "device",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

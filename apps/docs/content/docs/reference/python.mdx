@@ -1,19 +1,20 @@
 ---
 title: Python
-description: builderset for Python — check documents and render emails on a Python server, byte for byte as the TypeScript does.
+description: builderset for Python — check documents and form answers, and render emails, on a Python server as the TypeScript does.
 ---
 
-_This page describes Builderset 0.3.0._
+_This page describes Builderset 0.4.0._
 
-`builderset` is the server side of the kits in Python. It checks an article or an
-email with the same rules and the same issue codes as the TypeScript packages, and
-renders an email to the same HTML and text, byte for byte: the email you send is the
-one the editor showed. Python 3.11 or newer.
+`builderset` is the server side of the kits in Python. It checks an article, an
+email or a form with the same rules and the same issue codes as the TypeScript
+packages, checks a form's answers exactly as the browser did, and renders an email to
+the same HTML and text, byte for byte: the email you send is the one the editor
+showed. Python 3.11 or newer.
 
 ## Install
 
 Until Builderset is public, the wheel is attached to each GitHub release
-(`v0.3.0`, beside its SHA-256). Download it and install the file:
+(`v0.4.0`, beside its SHA-256). Download it and install the file:
 
 <include cwd lang="bash">
   ./snippets/python/install.sh
@@ -36,6 +37,30 @@ Until Builderset is public, the wheel is attached to each GitHub release
 `builderset.article.check_article(document, *, locales, check_media_key)` checks an
 article. There is no article renderer in Python: it is React. A Python site serves
 the document to a JavaScript front end, or renders it with its own templates.
+
+## Forms
+
+`builderset.form` checks the form a person builds and the answers a visitor sends.
+
+<include cwd lang="python" meta='title="check_form.py"'>
+  ./snippets/python/check_form.py
+</include>
+
+- `check_form(document, *, locales, check_media_key)` — every issue `checkForm`
+  reports, with the same codes. Some are warnings (`is_warning`): worth showing, never
+  a reason to refuse. A draft may still carry the codes in `DRAFT_TOLERATES`
+  (`is_draft_blocking`); going live refuses every error (`is_publish_blocking`).
+- `validate_answers(document, answers, *, step)` — the answers checked exactly as the
+  form checked them in the browser: which fields show, which must be answered, what
+  each answer must look like. `result.errors` holds, per field key, the first thing
+  wrong (`code`, and `limit` or `message` when there is one); `result.values` holds
+  the answers worth storing — shown fields only, numbers as numbers. `as_dict()` gives
+  the shape `validateAnswers` returns.
+
+A form's own pattern (`checks.regex`) is compiled by Python's `re`, not by
+JavaScript. The two agree on what people write for a plate or a code; on exotic
+syntax (`\p{…}`, variable-length lookbehind) one of them may refuse what the other
+takes.
 
 ## Media keys are your rule
 

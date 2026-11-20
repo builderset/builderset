@@ -1,0 +1,154 @@
+{
+  "duplicate-key.json": {
+    "errors": [
+      "field.keyDuplicate"
+    ],
+    "warnings": []
+  },
+  "label-missing.json": {
+    "errors": [
+      "field.labelMissing"
+    ],
+    "warnings": []
+  },
+  "one-option.json": {
+    "errors": [
+      "field.optionsMissing"
+    ],
+    "warnings": []
+  },
+  "consent-text-missing.json": {
+    "errors": [
+      "consent.textMissing"
+    ],
+    "warnings": []
+  },
+  "unsafe-consent-link.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "auto-reply-no-email-field.json": {
+    "errors": [
+      "autoReply.noEmailField"
+    ],
+    "warnings": []
+  },
+  "redirect-missing.json": {
+    "errors": [
+      "after.redirectMissing"
+    ],
+    "warnings": []
+  },
+  "unsafe-redirect.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "unsafe-webhook.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "pattern-invalid.json": {
+    "errors": [
+      "field.patternInvalid"
+    ],
+    "warnings": []
+  },
+  "range-invalid.json": {
+    "errors": [
+      "field.rangeInvalid"
+    ],
+    "warnings": []
+  },
+  "no-fields.json": {
+    "errors": [
+      "form.noFields"
+    ],
+    "warnings": []
+  },
+  "missing-child.json": {
+    "errors": [
+      "document.missingChild"
+    ],
+    "warnings": []
+  },
+  "orphan.json": {
+    "errors": [
+      "document.orphan"
+    ],
+    "warnings": []
+  },
+  "unknown-element.json": {
+    "errors": [
+      "element.unknown"
+    ],
+    "warnings": []
+  },
+  "step-in-step.json": {
+    "errors": [
+      "placement.notAllowed"
+    ],
+    "warnings": []
+  },
+  "field-in-root.json": {
+    "errors": [
+      "placement.notAllowed"
+    ],
+    "warnings": []
+  },
+  "no-steps.json": {
+    "errors": [
+      "container.minimum"
+    ],
+    "warnings": []
+  },
+  "props-wrong-type.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "key-malformed.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "settings-malformed.json": {
+    "errors": [
+      "document.malformed"
+    ],
+    "warnings": []
+  },
+  "not-a-form.json": {
+    "errors": [
+      "document.malformed"
+    ],
+    "warnings": []
+  },
+  "translation-too-long.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "every-warning.json": {
+    "errors": [
+      "field.labelMissing"
+    ],
+    "warnings": [
+      "consent.missing",
+      "image.altMissing",
+      "logic.unknownField",
+      "meta.titleMissing",
+      "notify.noRecipients",
+      "spam.none",
+      "step.empty"
+    ]
+  }
+}

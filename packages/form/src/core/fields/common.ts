@@ -100,7 +100,7 @@ export const inputShape = {
   /** The link parameter that fills it: `plate` for `?plate=AA123BC`. Empty: none. */
   prefill: z
     .string()
-    .regex(/^[a-z0-9_]*$/i)
+    .regex(/^[A-Za-z0-9_]*$/)
     .max(40),
   checks: checksSchema,
   ...layoutShape,

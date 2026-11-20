@@ -25,19 +25,20 @@ server library. You bring the theme, the language and the database.
 **[Documentation](https://docs-builderset.vercel.app/docs)** ·
 **[Playground](https://docs-builderset.vercel.app/playground)**
 
-> **Status: 0.3.0, on GitHub Packages.** The packages are used in production, but
+> **Status: 0.4.0, on GitHub Packages.** The packages are used in production, but
 > they are not on npm yet and the API may change before 1.0. Installing needs a
 > token until then — see [Install](https://docs-builderset.vercel.app/docs/install).
 
 ## Packages
 
-| Package                                   | What                                                                                                                           |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [`@builderset/engine`](packages/engine)   | The node tree, operations with undo, the host contract, the generic editor and its UI kit                                      |
-| [`@builderset/article`](packages/article) | Articles: elements, renderer for the web, editor, schema and contract fixtures                                                 |
-| [`@builderset/email`](packages/email)     | Emails: elements, renderer to email HTML and text, editor, schema and golden files                                             |
-| [`builderset`](packages/builderset)       | Every kit in one install, under `builderset/email/…`, `builderset/article/…`, and one stylesheet for all of them               |
-| [`builderset` (Python)](python)           | The checks and the email renderer in Python, byte for byte with the TypeScript: `check_article`, `check_email`, `render_email` |
+| Package                                   | What                                                                                                                                                             |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@builderset/engine`](packages/engine)   | The node tree, operations with undo, the host contract, the generic editor and its UI kit                                                                        |
+| [`@builderset/article`](packages/article) | Articles: elements, renderer for the web, editor, schema and contract fixtures                                                                                   |
+| [`@builderset/email`](packages/email)     | Emails: elements, renderer to email HTML and text, editor, schema and golden files                                                                               |
+| [`@builderset/form`](packages/form)       | Forms: fields with checks and logic, the working form for a page, editor, `validateAnswers` for the server, schema and fixtures                                  |
+| [`builderset`](packages/builderset)       | Every kit in one install, under `builderset/email/…`, `builderset/article/…`, `builderset/form/…`, and one stylesheet for all of them                            |
+| [`builderset` (Python)](python)           | The checks and the email renderer in Python, byte for byte with the TypeScript: `check_article`, `check_email`, `check_form`, `validate_answers`, `render_email` |
 
 Every kit has the same entries: `core` (the document, no React, runs on a
 server), `render`, `editor`, `host` and `locales/*`. What a backend must store,

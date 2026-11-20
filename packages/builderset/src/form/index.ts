@@ -2,10 +2,12 @@
 
 export {
   addressField,
+  ANSWER_FORMATS,
   ANSWER_KEY,
   ANSWER_KINDS,
   answerKey,
   answerKindOf,
+  answerOf,
   basicFields,
   buildForm,
   checkAnswer,
@@ -61,6 +63,7 @@ export {
   passwordField,
   PATTERNS,
   peopleFields,
+  PERSONAL_FIELD_TYPES,
   phoneField,
   radioField,
   ratingField,
@@ -79,6 +82,7 @@ export {
   textareaField,
   textField,
   timeField,
+  toFormJSONSchema,
   validateAnswers,
   yesNoField,
 } from '@builderset/form';

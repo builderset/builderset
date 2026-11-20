@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 import { buildForm, createFormRegistry, field, step } from '../core';
-import { FormView } from './form-view';
+import { FormView, redirectTarget } from './form-view';
 
 const registry = createFormRegistry();
 
@@ -53,5 +53,27 @@ describe('<FormView>', () => {
       trap: '',
     });
     expect(await screen.findByText('Thanks, Arben!')).toBeInTheDocument();
+  });
+});
+
+describe('redirectTarget', () => {
+  const after = (mode: 'message' | 'redirect' | 'both', redirectUrl: string) => ({
+    mode,
+    title: '',
+    message: '',
+    redirectUrl,
+  });
+
+  it('goes to a web address or a path on this site', () => {
+    expect(redirectTarget(after('redirect', ' https://example.com/thanks '))).toBe(
+      'https://example.com/thanks',
+    );
+    expect(redirectTarget(after('both', '/thank-you'))).toBe('/thank-you');
+  });
+
+  it('never to an unsafe address, nor when the form only shows its message', () => {
+    expect(redirectTarget(after('redirect', 'javascript:alert(1)'))).toBeNull();
+    expect(redirectTarget(after('redirect', '//evil.test'))).toBeNull();
+    expect(redirectTarget(after('message', 'https://example.com'))).toBeNull();
   });
 });

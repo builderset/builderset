@@ -1,0 +1,138 @@
+---
+title: Data model and API
+description: The tables every builder needs — email templates, articles, forms and their responses, revisions, sections, media — field by field, and the REST routes each one answers. For any language.
+---
+
+_This page describes Builderset 0.4.0._
+
+Every builder keeps its document the same way, so one design serves all three: a row
+per document with its **live** version, the **draft** since, and a `saved_at` that
+catches two people saving at once. Each adds the columns its site lists, searches or
+joins by. The framework pages — [SQL](/docs/guides/backend/sql),
+[Supabase](/docs/guides/backend/supabase), [Django](/docs/guides/backend/django),
+[FastAPI](/docs/guides/backend/fastapi), [Node.js](/docs/guides/backend/express) —
+build exactly these tables and routes.
+
+## What every document row has
+
+| Field            | Type                | What it is                                                                                  |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------- |
+| `id`             | integer or UUID     | The row. The editor never sees it inside the document                                       |
+| `document`       | JSON                | The live document: what readers get, what is sent, what the form shows. Checked strictly    |
+| `draft_document` | JSON, nullable      | Work in progress since the last publish. May be unfinished, never unsafe                    |
+| `saved_at`       | timestamp (ms)      | Changes on every write. A save that brings an older one is someone else's stale copy: `409` |
+| `status`         | text                | Where it is: `draft`, `published`, and per builder `scheduled`, `archived`, `closed`        |
+| `version`        | integer             | Counts publishes                                                                            |
+| `published_at`   | timestamp, nullable | The last publish                                                                            |
+| `created_by`     | your user           | Who made it; who may edit it is your rule                                                   |
+
+A JSON column holds the document as it is: `jsonb` in PostgreSQL, `JSON` in MySQL,
+a text column elsewhere. The site never reads inside it for lists or search — those
+read the columns below, which are copies written in the same transaction.
+
+## Email templates
+
+| Field      | Type                | What it is                                                                       |
+| ---------- | ------------------- | -------------------------------------------------------------------------------- |
+| `name`     | text, 120           | The design's working name: `document.meta.name`                                  |
+| `type_key` | text, 60, nullable  | The [email type](/docs/guides/content-types) it is for: its variables and checks |
+| `status`   | `draft`·`published` | `published` is the active design the mailer sends for its type                   |
+
+At most one published design per type: publishing another moves the one before it
+back to `draft`. Sending never takes the browser's HTML: the
+server renders the stored `document` with `renderEmail` (Node) or `render_email`
+(Python), with the type's data.
+
+## Articles
+
+| Field                    | Type                                       | What it is                                                  |
+| ------------------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| `slug`, `locale`         | text, unique together                      | The address, per language                                   |
+| `status`                 | `draft`·`scheduled`·`published`·`archived` | A job of yours publishes `scheduled` ones at `scheduled_at` |
+| `scheduled_at`           | timestamp, nullable                        | When                                                        |
+| `title`, `excerpt`       | text                                       | Copies of `document.meta.title` and `document.meta.excerpt` |
+| `cover_key`, `cover_alt` | text, nullable                             | A copy of `document.meta.cover`                             |
+| `author_id`              | your user                                  | And your own: category, tags, featured                      |
+
+## Forms
+
+| Field            | Type                         | What it is                                                                                                                                                                                                                                |
+| ---------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slug`           | text, 80, unique             | Its public address, `example.com/f/<slug>`: `document.meta.slug`. A new form has none yet: store a placeholder (`draft-<uuid>`) until publishing copies the real one, refused when empty (`meta.slugMissing`) or taken (`meta.slugTaken`) |
+| `name`           | text, 120                    | `document.meta.name`, for your list of forms                                                                                                                                                                                              |
+| `status`         | `draft`·`published`·`closed` | `closed` keeps the link but shows the form's closed message                                                                                                                                                                               |
+| `response_count` | integer                      | Kept by the response route, for the list and `maxResponses`                                                                                                                                                                               |
+
+And one row per **response**:
+
+| Field          | Type           | What it is                                                                       |
+| -------------- | -------------- | -------------------------------------------------------------------------------- |
+| `form_id`      | the form       | Delete the form, its responses go with it — or keep them: your rule              |
+| `form_version` | integer        | The version answered: editing the form later does not change what was asked      |
+| `answers`      | JSON           | `validateAnswers(form, body).values`: shown fields only, numbers as numbers      |
+| `locale`       | text, nullable | The language it was filled in                                                    |
+| `status`       | text           | Your team's own triage: `new`, `called`, `done`                                  |
+| `ip`           | inet, nullable | Only when the form's `settings.privacy.storeIp` is on                            |
+| `created_at`   | timestamp      | Responses older than `settings.privacy.keepMonths` are deleted by a job of yours |
+
+Files sent with a response are uploaded by your own route, like any media; `answers`
+holds what `validateAnswers` checked for them, `{ name, size }`, with the key your
+upload route gave each one added by the server.
+
+## What every builder shares
+
+| Table           | Fields                                                                                                    | For the host method             |
+| --------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `revision`      | `document_kind`, `document_id`, `kind` (`autosave`·`manual`·`publish`), `label`, `document`, author, time | `loadRevisions`, `saveRevision` |
+| `saved_section` | `kit`, `name`, `fragment`, `synced`                                                                       | `loadSections`, `saveSection`   |
+| `media`         | `key`, `kind`, `mime`, `size`, `width`, `height`, `name`, owner                                           | `upload`, `resolveMedia`        |
+
+Record a revision on every manual save and every publish; keep few autosaves (the
+last twenty, or one every ten minutes) or the table grows by a whole document every
+few seconds of typing.
+
+## The routes
+
+The editor's routes are the same for every builder — `{kind}` is `emails`,
+`articles` or `forms` — and are what [`createRestHost`](/docs/guides/host) calls:
+
+| Route                                | Host method     | Body                                                                        | Answers                                                     |
+| ------------------------------------ | --------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `GET /api/{kind}`                    | your list       | —                                                                           | `200 [{ id, name, status, saved_at, … }]`                   |
+| `POST /api/{kind}`                   | your "New"      | `{ document }`, and an article's `slug` and `locale`, an email's `type_key` | `201` the row · `422 { issues }`                            |
+| `GET /api/{kind}/:id`                | `reload`        | —                                                                           | `200 { document, draft_document, saved_at, status }`        |
+| `PUT /api/{kind}/:id/draft`          | `save`          | `{ document, reason, expected_saved_at }`                                   | `200 { saved_at }` · `409` · `422 { issues }`               |
+| `POST /api/{kind}/:id/publish`       | `publish`       | `{ document, scheduled_at }`                                                | `200 { saved_at, status, published_at }` · `422 { issues }` |
+| `POST /api/{kind}/:id/unpublish`     | `unpublish`     | —                                                                           | `200 { saved_at, status }`                                  |
+| `GET /api/{kind}/:id/revisions`      | `loadRevisions` | —                                                                           | `200 [{ id, kind, label, created_at, author }]`             |
+| `GET /api/{kind}/:id/revisions/:rid` | `loadRevision`  | —                                                                           | `200 { document }`                                          |
+| `POST /api/{kind}/:id/revisions`     | `saveRevision`  | `{ document, label }`                                                       | `201`                                                       |
+| `GET /api/{kind}/sections`           | `loadSections`  | —                                                                           | `200 [{ id, name, fragment }]`                              |
+| `POST /api/{kind}/sections`          | `saveSection`   | `{ name, fragment }`                                                        | `201 { id, name, fragment }`                                |
+| `POST /api/uploads`                  | `upload`        | multipart: `file`, `kind`                                                   | `201 { key, url, width, height, mime, size, name }`         |
+
+And each builder's own:
+
+| Route                                    | For                                                  | Answers                                                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/emails/:id/send`              | your mailer: render with data                        | `200 { subject, html, text }` · `409` while a draft                                                                                           |
+| `POST /api/emails/:id/test`              | `onSendTest`: the draft, to one address              | `202`                                                                                                                                         |
+| `GET /api/public/articles/:locale/:slug` | your site: the published article                     | `200 { document, title, … }` · `404`                                                                                                          |
+| `GET /api/public/forms/:slug`            | the page that shows the form                         | `200 { document }` · `404` · `410` closed                                                                                                     |
+| `POST /api/public/forms/:slug/responses` | `FormView`'s `onSubmit`: `{ answers, locale, trap }` | `201 { id }` — `{ id: null }` when the trap was filled, so a bot learns nothing · `422 { errors }` · `410 { message }` closed or full · `429` |
+| `GET /api/forms/:id/responses`           | `loadResponses`, your inbox                          | `200 { total, this_week, latest: [{ id, title, when }] }`                                                                                     |
+
+## What each write checks
+
+| Write                         | Node                                                      | Python                            |
+| ----------------------------- | --------------------------------------------------------- | --------------------------------- |
+| An email's draft or publish   | `parseEmail`, then `checkEmail(document, registry, type)` | `check_email(document, spec)`     |
+| An article's draft or publish | `parseArticle`, then `checkArticle(document, registry)`   | `check_article(document)`         |
+| A form's draft or publish     | `parseForm`, then `checkForm(document, registry)`         | `check_form(document)`            |
+| A form's response             | `validateAnswers(form, answers)`                          | `validate_answers(form, answers)` |
+
+A draft is refused only for what `isDraftBlocking` names — an unsafe link, a broken
+tree — and publishing for any error. A form response is checked against the
+**published** document, never the draft, and only `values` is stored: answers to
+questions the visitor was not shown are dropped, and anything the form does not ask
+never reaches the table.

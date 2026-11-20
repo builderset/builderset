@@ -23,7 +23,9 @@
     "**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "schema",
+    "fixtures"
   ],
   "exports": {
     ".": {
@@ -46,6 +48,8 @@
       "types": "./dist/locales/*.d.ts",
       "default": "./dist/locales/*.js"
     },
+    "./schema.json": "./schema/form.schema.json",
+    "./fixtures/*": "./fixtures/*",
     "./styles.css": "./dist/styles.css",
     "./form.css": "./dist/form.css",
     "./theme/shadcn.css": "./dist/theme/shadcn.css",

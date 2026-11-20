@@ -1,9 +1,11 @@
 'use client';
 
+import { isSafeUrl } from '@builderset/engine';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
 import {
   answerKindOf,
+  answerOf,
   isShown,
   stepsOf,
   validateAnswers,
@@ -88,11 +90,21 @@ function startingAnswers(
       answers[key] = node.props.defaultValue;
     }
     const param = node.props.prefill;
-    if (prefill && typeof param === 'string' && param && prefill[param] !== undefined) {
+    if (prefill && typeof param === 'string' && param && Object.hasOwn(prefill, param)) {
       if (doc.settings.prefill || node.type === 'hidden') answers[key] = prefill[param];
     }
   }
   return { ...answers, ...initial };
+}
+
+/**
+ * Where to send the visitor once the form is sent, or null: never anywhere
+ * `checkForm` refuses (`url.unsafe`) — a stored `javascript:` address must not
+ * run, even in a form that was saved before the check existed.
+ */
+export function redirectTarget(after: FormDocument['settings']['after']): string | null {
+  const url = after.redirectUrl.trim();
+  return after.mode !== 'message' && url && isSafeUrl(url) ? url : null;
 }
 
 /** `{{key}}` in the thank-you message, filled with that answer. */
@@ -100,11 +112,11 @@ function fill(template: string, answers: Answers): string {
   return template.replace(
     /\{\{\s*([a-z][a-z0-9_]*)(?:\.([a-z]+))?\s*\}\}/g,
     (_, key: string, part: string | undefined) => {
-      const answer = answers[key];
+      const answer = answerOf(answers, key);
       // `{{name.first}}`: one part of an answer with parts.
       return answerText(
         part && answer && typeof answer === 'object' && !Array.isArray(answer)
-          ? (answer as Record<string, unknown>)[part]
+          ? answerOf(answer as Answers, part)
           : answer,
       );
     },
@@ -186,7 +198,7 @@ export function FormView({
   const answer = (key: string, value: unknown) => {
     setAnswers((current) => ({ ...current, [key]: value }));
     // An error goes as soon as the answer is fixed; a new one waits for "Continue".
-    if (errors[key]) {
+    if (Object.hasOwn(errors, key)) {
       setErrors((current) => {
         const next = { ...current };
         Reflect.deleteProperty(next, key);
@@ -245,8 +257,8 @@ export function FormView({
           // Nothing kept to remove.
         }
       }
-      const url = settings.after.redirectUrl.trim();
-      if (settings.after.mode !== 'message' && url && typeof window !== 'undefined') {
+      const url = redirectTarget(settings.after);
+      if (url && typeof window !== 'undefined') {
         const go = () => {
           window.location.assign(url);
         };
@@ -330,11 +342,13 @@ export function FormView({
           const key = typeof node.props.key === 'string' ? node.props.key : id;
           const controlId = `${base}-${id}`;
           if (node.type === 'hidden') {
-            return <input key={id} type="hidden" name={key} value={answerText(answers[key])} />;
+            return (
+              <input key={id} type="hidden" name={key} value={answerText(answerOf(answers, key))} />
+            );
           }
           if (node.props.hideFromVisitors === true) return null;
           if (!isShown(node.props, answers)) return null;
-          const error = errors[key];
+          const error = Object.hasOwn(errors, key) ? errors[key] : undefined;
           return (
             <FieldBox
               key={id}
@@ -348,7 +362,7 @@ export function FormView({
               <FieldControl
                 node={node}
                 id={controlId}
-                value={answers[key]}
+                value={answerOf(answers, key)}
                 words={words}
                 assetUrl={assetUrl}
                 invalid={!!error}

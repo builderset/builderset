@@ -8,7 +8,33 @@ trust it either. This page is what the other side of the line does. It is the sa
 text as [`BACKEND.md`](https://github.com/builderset/builderset/blob/development/packages/engine/src/host/BACKEND.md)
 in the engine package.
 
-_This page describes Builderset 0.3.0._
+_This page describes Builderset 0.4.0._
+
+## Pick your stack
+
+The tables and routes for email templates, articles and forms are on one page,
+[Data model and API](/docs/guides/backend/data-model). Each stack below builds them:
+
+<Cards>
+  <Card title="Data model and API" href="/docs/guides/backend/data-model">
+    Every table, field by field, and the routes each builder answers. Start here.
+  </Card>
+  <Card title="SQL" href="/docs/guides/backend/sql">
+    The PostgreSQL schema for every builder, and why it is shaped that way.
+  </Card>
+  <Card title="Supabase" href="/docs/guides/backend/supabase">
+    The tables with row-level security, Storage for media, Edge Functions for the checks.
+  </Card>
+  <Card title="Django" href="/docs/guides/backend/django">
+    Models, Django REST framework views and the builderset Python package.
+  </Card>
+  <Card title="FastAPI" href="/docs/guides/backend/fastapi">
+    SQLAlchemy models and one router for all three builders.
+  </Card>
+  <Card title="Node.js" href="/docs/guides/backend/express">
+    Express and pg, with the kits' own checks.
+  </Card>
+</Cards>
 
 <include cwd>../../packages/engine/src/host/BACKEND.md#1-what-to-store</include>
 
@@ -58,9 +84,9 @@ index of it.
 - **The brand kit**: one JSON value — `default`, or one per tenant or sender. See
   [Sending email](/docs/guides/email#the-brand-kit).
 
-## Three complete backends
+## Three complete, tested email backends
 
-The same routes, each tested against a real Postgres on every change:
+The email routes as whole projects, each tested against a real Postgres on every change:
 
 <Cards>
   <Card title="Next.js and Drizzle" href="/docs/guides/backend/next-drizzle">

@@ -1,0 +1,142 @@
+---
+title: FastAPI
+description: The three builders' backend in FastAPI — SQLAlchemy 2 models for every table, one router for emails, articles and forms, and the form's public routes, checked by the builderset Python package.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end a FastAPI app stores email templates, articles and forms, refuses an
+unsafe or stale save with the same issue codes as the editor, and takes form
+responses checked exactly as the form in the browser checked them. The tables and
+routes are the ones in [Data model and API](/docs/guides/backend/data-model).
+[FastAPI and SQLAlchemy](/docs/guides/backend/fastapi-sqlalchemy) is the complete,
+tested backend for emails alone, with uploads, sending and its tests; this page
+builds all three builders in the same style. The `builderset` package's install is in
+[Python](/docs/reference/python).
+
+<Steps>
+<Step>
+
+### The tables
+
+The [SQL schema](/docs/guides/backend/sql) as SQLAlchemy models, with its table and
+column names. `alembic revision --autogenerate` writes the migration:
+
+<include cwd lang="python" meta='title="app/models.py"'>
+  ./snippets/backends/fastapi/models.py
+</include>
+
+The session is the example's, one per request:
+
+<include cwd lang="python" meta='title="app/db.py"'>
+  ../../examples/backends/fastapi-sqlalchemy/app/db.py
+</include>
+
+</Step>
+<Step>
+
+### The checks
+
+One function checks every document: lenient for a draft, which may be unfinished but
+never unsafe, and strict for publishing. Each kit names what a draft may still carry,
+the same list the editor uses:
+
+<include cwd lang="python" meta='title="app/checks.py"'>
+  ./snippets/backends/fastapi/checks.py
+</include>
+
+</Step>
+<Step>
+
+### One router for three builders
+
+The routes are written once, in `document_router(kind)`. What differs between emails,
+articles and forms is a small table: the model, the kit, the columns copied from the
+document's meta, what a new row needs:
+
+<include cwd lang="python" meta='title="app/documents.py"'>
+  ./snippets/backends/fastapi/documents.py#kinds
+</include>
+
+The app mounts it once per builder, after the form's public routes:
+
+<include cwd lang="python" meta='title="app/main.py"'>
+  ./snippets/backends/fastapi/main.py
+</include>
+
+</Step>
+<Step>
+
+### Saving a draft
+
+The editor sends back the `saved_at` it last saw. A different one on the row means
+someone else saved in between: `409`, and the editor offers to reload or keep its
+own. The update is conditional, so two saves at the same instant cannot both win. The
+column keeps milliseconds, as JavaScript does, so the value the editor sends back is
+exactly the one stored:
+
+<include cwd lang="python" meta='title="app/documents.py"'>
+  ./snippets/backends/fastapi/documents.py#draft
+</include>
+
+</Step>
+<Step>
+
+### Publishing
+
+The strict check, then the document goes live with its meta copied to the columns.
+Publishing is its own permission. An email type keeps one active design; an article
+with a future `scheduled_at` waits for a job of yours to set it live; a form's address
+taken by another is refused on `meta.slug`, where the editor shows it:
+
+<include cwd lang="python" meta='title="app/documents.py"'>
+  ./snippets/backends/fastapi/documents.py#publish
+</include>
+
+Creating, reading, the list and unpublishing are in the same router. Unpublishing
+leaves an email or an article a draft, and a form `closed`: its link keeps working
+and shows the closed message. Revisions and saved sections have their models; their
+routes are a list and an insert with the same check, and until you add them the
+editor hides those features.
+
+</Step>
+<Step>
+
+### The form's public routes
+
+No sign-in. The answers are checked against the **published** document, never the
+draft; a filled trap field is answered as a success and stored nowhere; and only the
+`values` that `validate_answers` keeps are stored, so an answer to a question the
+visitor was not shown never reaches the table. The count goes up in the same
+statement that checks `maxResponses`, so two visitors cannot both take the last
+place:
+
+<include cwd lang="python" meta='title="app/forms.py"'>
+  ./snippets/backends/fastapi/forms.py
+</include>
+
+</Step>
+<Step>
+
+### Uploads
+
+An upload checks the file's type by its first bytes and its size, stores it under a
+new key, and answers with the key and its address. The email example's
+[upload route](/docs/guides/backend/fastapi-sqlalchemy#the-routes) is the one to copy;
+here it would also write a `Media` row.
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the document's address,
+`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
+the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+</Step>
+</Steps>

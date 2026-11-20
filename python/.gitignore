@@ -2,6 +2,7 @@
 src/builderset/article/schema.json
 src/builderset/email/schema.json
 src/builderset/email/render_data.json
+src/builderset/form/schema.json
 
 .venv/
 dist/

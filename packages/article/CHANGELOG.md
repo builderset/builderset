@@ -1,5 +1,12 @@
 # @builderset/article
 
+## 0.5.0
+
+### Patch Changes
+
+- Updated dependencies [36bbbf3]
+  - @builderset/engine@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

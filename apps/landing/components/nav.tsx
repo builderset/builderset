@@ -25,11 +25,15 @@ export function Nav({
   version: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
+  // Over the dark hero, the bar drops its glass and takes light ink.
+  const [overHero, setOverHero] = useState(true);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 8);
+      const hero = document.querySelector<HTMLElement>('.lp-hero');
+      setOverHero(hero ? window.scrollY < hero.offsetHeight - 64 : false);
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -48,7 +52,12 @@ export function Nav({
   };
 
   return (
-    <header className="lp-top" data-scrolled={scrolled} data-open={open}>
+    <header
+      className="lp-top"
+      data-scrolled={scrolled}
+      data-hero={overHero && !open}
+      data-open={open}
+    >
       <div className="lp-top-in">
         <a className="lp-brand" href="#top" aria-label="Builderset, back to the top">
           <Logo size={26} />

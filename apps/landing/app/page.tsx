@@ -14,6 +14,7 @@ import { Code } from '@/components/code';
 import { CopyButton } from '@/components/copy-button';
 import { Features, type Feature } from '@/components/features';
 import { HeroBuild } from '@/components/hero-build';
+import { Horizon } from '@/components/horizon';
 import { LiveDemo } from '@/components/live-demo';
 import { Logo } from '@/components/logo';
 import { Nav } from '@/components/nav';
@@ -21,6 +22,15 @@ import { Reveal } from '@/components/reveal';
 
 import { editorWords, heroBlocks, issues, VERSION } from './data';
 import { LINKS } from './links';
+
+/** A button's label that rolls up to a copy of itself on hover. */
+function Roll({ children }: { children: string }) {
+  return (
+    <span className="lp-roll" data-text={children}>
+      <span>{children}</span>
+    </span>
+  );
+}
 
 const delay = (step: number) => ({ '--d': step }) as CSSProperties;
 
@@ -201,71 +211,67 @@ export default function Page() {
       <main id="top">
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="lp-hero">
-          <div className="lp-hero-grid" aria-hidden="true" />
-          <div className="lp-wrap lp-hero-in">
-            <div className="lp-hero-copy">
-              <a className="lp-pill lp-rise" href={LINKS.docs} style={delay(0)}>
-                <span className="dot" aria-hidden="true" />
-                <span>
-                  <b>{VERSION}</b> · Email and article kits
-                </span>
-                <ArrowRight size={14} />
+          <div className="lp-hero-sky" aria-hidden="true" />
+          <div className="lp-wrap lp-hero-copy">
+            <a className="lp-pill lp-rise" href={LINKS.docs} style={delay(0)}>
+              <span className="dot" aria-hidden="true" />
+              <span>
+                <b>{VERSION}</b> · Email and article kits
+              </span>
+              <ArrowRight size={14} />
+            </a>
+            <h1 className="lp-h1">
+              <span className="lp-rise" style={delay(1)}>
+                Let your users design emails and articles,
+              </span>{' '}
+              <span className="lp-rise accent" style={delay(2)}>
+                inside your own app.
+              </span>
+            </h1>
+            <p className="lp-lead lp-rise" style={delay(3)}>
+              Builderset is the editor, the renderer and the checker: React components and a server
+              library. You bring the theme, the language and the database.
+            </p>
+            <div className="lp-actions center lp-rise" style={delay(4)}>
+              <a className="lp-button light" href={LINKS.quickStart}>
+                <Roll>Get started</Roll> <ArrowRight className="arrow" size={17} />
               </a>
-              <h1 className="lp-h1">
-                <span className="lp-rise" style={delay(1)}>
-                  Let your users design
-                </span>{' '}
-                <span className="lp-rise" style={delay(2)}>
-                  emails and articles,
-                </span>{' '}
-                <span className="lp-rise accent" style={delay(3)}>
-                  inside your own app.
-                </span>
-              </h1>
-              <p className="lp-lead lp-rise" style={delay(4)}>
-                Builderset is the editor, the renderer and the checker: React components and a
-                server library. You bring the theme, the language and the database.
-              </p>
-              <div className="lp-actions lp-rise" style={delay(5)}>
-                <a className="lp-button" href={LINKS.quickStart}>
-                  Get started <ArrowRight className="arrow" size={17} />
-                </a>
-                <a className="lp-button ghost" href={LINKS.playground}>
-                  Open the playground
-                </a>
-              </div>
-              <div className="lp-install lp-rise" style={delay(6)}>
-                <span className="lp-install-p" aria-hidden="true">
-                  $
-                </span>
-                <code>{INSTALL}</code>
-                <CopyButton text={INSTALL} />
-              </div>
+              <a className="lp-button glass" href={LINKS.playground}>
+                <Roll>Open the playground</Roll>
+              </a>
             </div>
-            <div className="lp-hero-art lp-rise" style={delay(3)}>
-              <HeroBuild blocks={heroBlocks()} />
+            <div className="lp-install lp-rise" style={delay(5)}>
+              <span className="lp-install-p" aria-hidden="true">
+                $
+              </span>
+              <code>{INSTALL}</code>
+              <CopyButton text={INSTALL} />
             </div>
           </div>
-          <div className="lp-wrap">
-            <ul className="lp-facts lp-rise" style={delay(7)}>
-              <li>
-                <b>React 19</b> components
-              </li>
-              <li>
-                <b>Node 20+</b> or <b>Python 3.11+</b> on the server
-              </li>
-              <li>
-                <b>Your database</b>, no hosted account
-              </li>
-              <li>
-                <b>MIT</b> licensed
-              </li>
-            </ul>
-          </div>
+          <Horizon>
+            <HeroBuild blocks={heroBlocks()} />
+          </Horizon>
         </section>
 
+        <div className="lp-facts-band">
+          <ul className="lp-wrap lp-facts">
+            <li>
+              <b>React 19</b> components
+            </li>
+            <li>
+              <b>Node 20+</b> or <b>Python 3.11+</b> on the server
+            </li>
+            <li>
+              <b>Your database</b>, no hosted account
+            </li>
+            <li>
+              <b>MIT</b> licensed
+            </li>
+          </ul>
+        </div>
+
         {/* ── The live editor ─────────────────────────────────────────────── */}
-        <section className="lp-section" id="editor">
+        <section className="lp-section tint" id="editor">
           <div className="lp-wrap">
             <header className="lp-head split" data-reveal>
               <div>
@@ -287,7 +293,7 @@ export default function Page() {
         </section>
 
         {/* ── How it fits ─────────────────────────────────────────────────── */}
-        <section className="lp-section tint" id="how">
+        <section className="lp-section" id="how">
           <div className="lp-wrap">
             <header className="lp-head" data-reveal>
               <p className="lp-eyebrow">
@@ -326,7 +332,7 @@ export default function Page() {
         </section>
 
         {/* ── What every kit gets ─────────────────────────────────────────── */}
-        <section className="lp-section" id="features">
+        <section className="lp-section tint" id="features">
           <div className="lp-wrap">
             <header className="lp-head" data-reveal>
               <p className="lp-eyebrow">
@@ -346,7 +352,7 @@ export default function Page() {
         </section>
 
         {/* ── Get started ─────────────────────────────────────────────────── */}
-        <section className="lp-section tint" id="start">
+        <section className="lp-section" id="start">
           <div className="lp-wrap lp-start">
             <header className="lp-head lp-start-head" data-reveal>
               <p className="lp-eyebrow">
@@ -406,7 +412,7 @@ export default function Page() {
         </section>
 
         {/* ── Kits ────────────────────────────────────────────────────────── */}
-        <section className="lp-section" id="kits">
+        <section className="lp-section tint" id="kits">
           <div className="lp-wrap">
             <header className="lp-head split" data-reveal>
               <div>
@@ -450,23 +456,24 @@ export default function Page() {
         </section>
 
         {/* ── The way in ──────────────────────────────────────────────────── */}
-        <section className="lp-section lp-end">
-          <div className="lp-wrap">
-            <div className="lp-end-card" data-reveal>
-              <Logo size={64} className="lp-end-mark" />
-              <h2 className="lp-h2">Read the docs, or just try it.</h2>
-              <p className="lp-sub">
-                The playground runs both editors in your browser. The docs take you from install to
-                going live.
-              </p>
-              <div className="lp-actions center">
-                <a className="lp-button" href={LINKS.docs}>
-                  Read the docs <ArrowRight className="arrow" size={17} />
-                </a>
-                <a className="lp-button ghost" href={LINKS.playground}>
-                  Open the playground
-                </a>
-              </div>
+        <section className="lp-end" aria-labelledby="lp-end-title">
+          <div className="lp-end-grid" aria-hidden="true" />
+          <div className="lp-wrap lp-end-in" data-reveal>
+            <Logo size={64} className="lp-end-mark" />
+            <h2 className="lp-h2" id="lp-end-title">
+              Read the docs, or just try it.
+            </h2>
+            <p className="lp-sub">
+              The playground runs both editors in your browser. The docs take you from install to
+              going live.
+            </p>
+            <div className="lp-actions center">
+              <a className="lp-button light" href={LINKS.docs}>
+                <Roll>Read the docs</Roll> <ArrowRight className="arrow" size={17} />
+              </a>
+              <a className="lp-button glass" href={LINKS.playground}>
+                <Roll>Open the playground</Roll>
+              </a>
             </div>
           </div>
         </section>

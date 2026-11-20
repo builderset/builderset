@@ -1,0 +1,185 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "inline",
+        "width": 360,
+        "height": 240,
+        "position": "center",
+        "background": "#fdf1e9",
+        "radius": 14,
+        "shadow": "soft",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "load",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "only",
+          "rules": [
+            "/blog/*"
+          ],
+          "audience": "all",
+          "language": "all",
+          "frequency": "every",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "none",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 22,
+          "w": 300,
+          "h": 14,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "SI FUNKSIONON"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 42,
+          "w": 320,
+          "h": 30,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Shitni makinën në tre hapa"
+          }
+        ],
+        "font": "sora",
+        "size": 22,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 80,
+          "w": 320,
+          "h": 66,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Plotësoni formularin, merrni ofertën brenda 24 orësh dhe paguhuni ditën e kontrollit."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.5,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 170,
+          "w": 200,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Fillo vlerësimin"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "/vleresim",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    }
+  },
+  "meta": {
+    "name": "Karta “Si funksionon”"
+  }
+}

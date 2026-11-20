@@ -624,7 +624,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
                 !rightOpen && 'bst:mr-2.5',
               )}
             >
-              <Canvas />
+              <Board />
               <LanguageBar />
               <Dock
                 issues={issues}
@@ -642,7 +642,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         ) : (
           <>
             <main className="bst:relative bst:mx-2 bst:min-w-0 bst:flex-1 bst:overflow-hidden bst:rounded-2xl bst:border bst:border-border bst:bg-muted">
-              <Canvas />
+              <Board />
               <LanguageBar />
               {phone ? null : (
                 <Dock
@@ -905,6 +905,13 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   );
 }
 
+/** The board: the kit's own stage when it has one (a free canvas), else the page canvas. */
+function Board() {
+  const { profile } = useEditorContext();
+  const Stage = profile.stage;
+  return Stage ? <Stage /> : <Canvas />;
+}
+
 interface RailTab {
   value: LeftTab;
   label: string;
@@ -926,7 +933,7 @@ function useRailTabs(messages: EditorMessages): RailTab[] {
       value: 'layers',
       label: messages.layers,
       icon: <Layers aria-hidden="true" />,
-      Panel: LayersPanel,
+      Panel: profile.layersPanel ?? LayersPanel,
     },
     {
       value: 'templates',

@@ -5,7 +5,7 @@ description: The tables every builder needs — email templates, articles, forms
 
 _This page describes Builderset 0.4.0._
 
-Every builder keeps its document the same way, so one design serves all three: a row
+Every builder keeps its document the same way, so one design serves all five: a row
 per document with its **live** version, the **draft** since, and a `saved_at` that
 catches two people saving at once. Around it, every row records **who made it,
 who last changed it and who deleted it, and when**; deleting is a **soft delete**
@@ -14,18 +14,22 @@ that can be undone; and two kinds of history sit beside each document — its
 
 The framework pages — [SQL](/docs/guides/backend/sql),
 [Supabase](/docs/guides/backend/supabase), [Django](/docs/guides/backend/django),
-[FastAPI](/docs/guides/backend/fastapi), [Node.js](/docs/guides/backend/express) —
-build exactly these tables and routes.
+[FastAPI](/docs/guides/backend/fastapi), [Node.js](/docs/guides/backend/express),
+[Laravel](/docs/guides/backend/laravel), [Spring Boot](/docs/guides/backend/spring-boot)
+and [ASP.NET Core](/docs/guides/backend/aspnet-core) — build exactly these tables
+and routes.
 
 ## The tables at a glance
 
-| Group           | Tables                                      | What they hold                                              |
-| --------------- | ------------------------------------------- | ----------------------------------------------------------- |
-| Email templates | `email_template`, `email_template_revision` | Designs for each email your app sends, and their versions   |
-| Articles        | `article`, `article_revision`               | Pages of your site's blog or help centre, per language      |
-| Forms           | `form`, `form_revision`, `form_response`    | Forms, their versions, and what visitors sent               |
-| Library         | `saved_section`, `media`                    | Pieces of documents saved to reuse, and every uploaded file |
-| Activity        | `activity`                                  | Who did what to which row, and when; never edited           |
+| Group           | Tables                                                            | What they hold                                                       |
+| --------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Email templates | `email_template`, `email_template_revision`                       | Designs for each email your app sends, and their versions            |
+| Articles        | `article`, `article_revision`                                     | Pages of your site's blog or help centre, per language               |
+| Forms           | `form`, `form_revision`, `form_response`                          | Forms, their versions, and what visitors sent                        |
+| Cards           | `card_design`, `card_design_revision`, `card_issue`               | Card designs, their versions, and each card made out to a member     |
+| Popups          | `popup`, `popup_revision`, `popup_submission`, `popup_daily_stat` | Popups, their versions, what visitors sent, and how each did per day |
+| Library         | `saved_section`, `media`                                          | Pieces of documents saved to reuse, and every uploaded file          |
+| Activity        | `activity`                                                        | Who did what to which row, and when; never edited                    |
 
 ## What every row has
 
@@ -109,6 +113,60 @@ stored `document` with `renderEmail` (Node) or `render_email` (Python).
 | `response_count`         | integer                      | Kept by the response route, for the list and `maxResponses`                                                                                            |
 
 </Tab>
+<Tab title="Card designs">
+
+| Field                   | Type                                                          | What it is                                                |
+| ----------------------- | ------------------------------------------------------------- | --------------------------------------------------------- |
+| `name`                  | text, 120                                                     | `document.meta.name`                                      |
+| `format`                | `membership`·`id`·`bank`·`business`·`badge`·`wallet`·`custom` | The card's kind: its size, corners and print rules        |
+| `width_mm`, `height_mm` | decimal                                                       | Copies of the document's size, for lists and print orders |
+| `sides`                 | 1 or 2                                                        | Front only, or front and back                             |
+| `status`                | `draft`·`published`                                           | `published` is the design new cards are made from         |
+
+</Tab>
+<Tab title="Card issues">
+
+One row per card made out to a member, with the audit columns. The design's
+version and the member's data are frozen when it is issued, so a reprint matches
+the card in their hand.
+
+| Field                                                     | Type                         | What it is                                                    |
+| --------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------- |
+| `card_design`, `design_version`                           | the design, integer          | What it was printed from                                      |
+| `member_ref`                                              | text                         | Your member's id, as your system knows it                     |
+| `number`                                                  | text, unique                 | The number on the card. Never reused, not even after a revoke |
+| `data`                                                    | JSON                         | The fields filled in: `{ "member.name": "Arben Hoxha" }`      |
+| `status`                                                  | `issued`·`printed`·`revoked` | One card that is not revoked per member and design            |
+| `delivery`                                                | `print`·`wallet`             | On plastic, or a wallet pass                                  |
+| `valid_until`                                             | date, nullable               | Printed on the card                                           |
+| `printed_at`, `revoked_at`, `revoked_by`, `revoke_reason` |                              | When it went to print; when, by whom and why it was cancelled |
+
+</Tab>
+<Tab title="Popups">
+
+| Field                  | Type                                                                  | What it is                                                          |
+| ---------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `name`                 | text, 120                                                             | `document.meta.name`                                                |
+| `type`                 | `modal`·`slidein`·`bartop`·`barbottom`·`fullscreen`·`drawer`·`inline` | How it sits on the page                                             |
+| `status`               | `draft`·`published`·`paused`                                          | `paused` takes it off the site and keeps it as it is                |
+| `starts_at`, `ends_at` | timestamp, nullable                                                   | Copies of `document.display`, so the site asks one indexed question |
+| `priority`             | integer                                                               | When two popups match a page, the higher one shows                  |
+
+The rest of the display rules — the trigger, the audience, how often, the
+devices — stay in the document and run in the browser with `shouldShow`.
+
+</Tab>
+<Tab title="Popup results">
+
+`popup_submission` holds what a visitor typed into a popup's inputs —
+`validateSubmission`'s values only — with `popup_version`, `page_path`,
+`locale`, your team's `status` and, when your privacy rules allow it, `ip`.
+
+`popup_daily_stat` counts, per popup and day, how often it was `shown`,
+`closed`, `clicked` and `submitted`: counters added to with an upsert, never
+one row per view.
+
+</Tab>
 <Tab title="Form responses">
 
 One row per submission, with the audit columns: `created_by` is the visitor when
@@ -143,7 +201,7 @@ action, with who and when.
 <Tab title="Revisions">
 
 One table per builder — `email_template_revision`, `article_revision`,
-`form_revision` — so each has a real foreign key, deleted with its document:
+`form_revision`, `card_design_revision`, `popup_revision` — so each has a real foreign key, deleted with its document:
 
 | Field                      | Type                          | What it is                                                     |
 | -------------------------- | ----------------------------- | -------------------------------------------------------------- |
@@ -165,14 +223,14 @@ table grows by a whole document every few seconds of typing.
 
 One table for every kind of row, written in the same transaction as what it records:
 
-| Field                        | Type                | What it is                                                                                                                            |
-| ---------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `subject_type`, `subject_id` | text, bigint        | Which row: `article` 7. No foreign key — the log outlives what it describes                                                           |
-| `action`                     | text                | `created`, `saved`, `renamed`, `published`, `scheduled`, `unpublished`, `closed`, `reverted`, `status_changed`, `deleted`, `restored` |
-| `from_status`, `to_status`   | text, nullable      | For a change of status: `draft` → `published`                                                                                         |
-| `details`                    | JSON                | What else matters: the old slug, the revision restored                                                                                |
-| `actor`                      | your user, nullable | Who did it. Null for a job (a scheduled publish) or a visitor                                                                         |
-| `created_at`                 | timestamp           | When                                                                                                                                  |
+| Field                        | Type                | What it is                                                                                                                                                           |
+| ---------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subject_type`, `subject_id` | text, bigint        | Which row: `article` 7, `popup` 3, `card_issue` 41. No foreign key — the log outlives what it describes                                                              |
+| `action`                     | text                | `created`, `saved`, `renamed`, `published`, `scheduled`, `unpublished`, `closed`, `paused`, `issued`, `revoked`, `reverted`, `status_changed`, `deleted`, `restored` |
+| `from_status`, `to_status`   | text, nullable      | For a change of status: `draft` → `published`                                                                                                                        |
+| `details`                    | JSON                | What else matters: the old slug, the revision restored                                                                                                               |
+| `actor`                      | your user, nullable | Who did it. Null for a job (a scheduled publish) or a visitor                                                                                                        |
+| `created_at`                 | timestamp           | When                                                                                                                                                                 |
 
 Autosaves are not logged — they are revisions at most. The log is only ever
 appended to: give your app's database role no `update` or `delete` on it.
@@ -217,7 +275,7 @@ storage until a job of yours removes the ones no live document uses.
 
 ## The routes
 
-`{kind}` is `emails`, `articles` or `forms`, and `:id` is the row's `uuid`. The
+`{kind}` is `emails`, `articles`, `forms`, `cards` or `popups`, and `:id` is the row's `uuid`. The
 routes marked **editor** are what [`createRestHost`](/docs/guides/host) calls; the
 others are for your own screens.
 
@@ -262,19 +320,31 @@ shows it; an activity's `actor` is `{ id, name }` like every other person.
 | `DELETE /api/{kind}/sections/:sid` | your library              | —                         | `204`                                                               |
 | `POST /api/uploads`                | **editor** `upload`       | multipart: `file`, `kind` | `201 { key, url, width, height, mime, size, name }` · `413` · `415` |
 
+Saved sections are for the block builders — `{kind}` is `emails`, `articles` or
+`forms` here. A card or a popup is placed element by element on a free canvas and
+has no sections: those routes answer `404` for `cards` and `popups`, and their
+editors leave the feature out.
+
 </Tab>
 <Tab title="Each builder's own">
 
-| Route                                    | For                                                  | Answers                                                                                                                                       |
-| ---------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /api/emails/:id/send`              | your mailer: render with data                        | `200 { subject, html, text }` · `409` while a draft                                                                                           |
-| `POST /api/emails/:id/test`              | `onSendTest`: the draft, to one address              | `202`                                                                                                                                         |
-| `GET /api/public/articles/:locale/:slug` | your site: the published article                     | `200 { document, title, … }` · `404`                                                                                                          |
-| `GET /api/public/forms/:slug`            | the page that shows the form                         | `200 { document }` · `404` · `410` closed                                                                                                     |
-| `POST /api/public/forms/:slug/responses` | `FormView`'s `onSubmit`: `{ answers, locale, trap }` | `201 { id }` — `{ id: null }` when the trap was filled, so a bot learns nothing · `422 { errors }` · `410 { message }` closed or full · `429` |
-| `GET /api/forms/:id/responses`           | `loadResponses`, the Responses tab                   | `200 { total, this_week, latest: [{ id, title, when, status }] }`                                                                             |
-| `PATCH /api/forms/:id/responses/:rid`    | your inbox: `{ status, note }`                       | `200` the response                                                                                                                            |
-| `DELETE /api/forms/:id/responses/:rid`   | your inbox                                           | `204`                                                                                                                                         |
+| Route                                     | For                                                  | Answers                                                                                                                                       |
+| ----------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/emails/:id/send`               | your mailer: render with data                        | `200 { subject, html, text }` · `409` while a draft                                                                                           |
+| `POST /api/emails/:id/test`               | `onSendTest`: the draft, to one address              | `202`                                                                                                                                         |
+| `GET /api/public/articles/:locale/:slug`  | your site: the published article                     | `200 { document, title, … }` · `404`                                                                                                          |
+| `GET /api/public/forms/:slug`             | the page that shows the form                         | `200 { document }` · `404` · `410` closed                                                                                                     |
+| `POST /api/public/forms/:slug/responses`  | `FormView`'s `onSubmit`: `{ answers, locale, trap }` | `201 { id }` — `{ id: null }` when the trap was filled, so a bot learns nothing · `422 { errors }` · `410 { message }` closed or full · `429` |
+| `GET /api/forms/:id/responses`            | `loadResponses`, the Responses tab                   | `200 { total, this_week, latest: [{ id, title, when, status }] }`                                                                             |
+| `PATCH /api/forms/:id/responses/:rid`     | your inbox: `{ status, note }`                       | `200` the response                                                                                                                            |
+| `DELETE /api/forms/:id/responses/:rid`    | your inbox                                           | `204`                                                                                                                                         |
+| `POST /api/cards/:id/issues`              | issue a card: `{ member_ref, data, delivery }`       | `201` the issue, with its number · `409` the member already holds one · `422` while the design is a draft                                     |
+| `GET /api/cards/:id/issues`               | the cards made from a design                         | `200 { items, total }`                                                                                                                        |
+| `POST /api/cards/:id/issues/:iid/revoke`  | cancel a member's card: `{ reason }`                 | `200` the issue                                                                                                                               |
+| `GET /api/public/popups?path=&locale=`    | your site: the popups that may show on this page     | `200 [{ id, version, document }]`, highest priority first; `shouldShow` decides the rest in the browser                                       |
+| `POST /api/public/popups/:id/events`      | `PopupView`'s `onEvent`: `{ event }`                 | `204` — adds to today's `popup_daily_stat`                                                                                                    |
+| `POST /api/public/popups/:id/submissions` | `PopupView`'s `onSubmit`: `{ values, path, locale }` | `201 { id }` · `422 { errors }` · `410` paused or ended · `429`                                                                               |
+| `PATCH /api/popups/:id/pause`             | take it off the site, or back on                     | `200 { status }`                                                                                                                              |
 
 </Tab>
 </Tabs>
@@ -289,12 +359,15 @@ Every write that changes a row does the same four things, in one transaction:
 3. **Records a revision** on a manual save or a publish.
 4. **Appends an activity** row for anything but an autosave.
 
-| Write                         | Node                                                      | Python                            |
-| ----------------------------- | --------------------------------------------------------- | --------------------------------- |
-| An email's draft or publish   | `parseEmail`, then `checkEmail(document, registry, type)` | `check_email(document, spec)`     |
-| An article's draft or publish | `parseArticle`, then `checkArticle(document, registry)`   | `check_article(document)`         |
-| A form's draft or publish     | `parseForm`, then `checkForm(document, registry)`         | `check_form(document)`            |
-| A form's response             | `validateAnswers(form, answers)`                          | `validate_answers(form, answers)` |
+| Write                         | Node                                                      | Python                               |
+| ----------------------------- | --------------------------------------------------------- | ------------------------------------ |
+| An email's draft or publish   | `parseEmail`, then `checkEmail(document, registry, type)` | `check_email(document, spec)`        |
+| An article's draft or publish | `parseArticle`, then `checkArticle(document, registry)`   | `check_article(document)`            |
+| A form's draft or publish     | `parseForm`, then `checkForm(document, registry)`         | `check_form(document)`               |
+| A form's response             | `validateAnswers(form, answers)`                          | `validate_answers(form, answers)`    |
+| A card design                 | `parseCard`, then `checkCard(document, registry)`         | `check_card(document)`               |
+| A popup                       | `parsePopup`, then `checkPopup(document, registry)`       | `check_popup(document)`              |
+| A popup's submission          | `validateSubmission(popup, values)`                       | `validate_submission(popup, values)` |
 
 A draft is refused only for what `isDraftBlocking` names — an unsafe link, a broken
 tree — and publishing for any error. A form response is checked against the

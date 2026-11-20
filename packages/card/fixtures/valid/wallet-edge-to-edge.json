@@ -1,0 +1,99 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "wallet",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 4,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n2"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 1,
+          "y": 1,
+          "w": 30,
+          "h": 6,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 12,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0.5,
+          "y": 0.5,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "data": "https://marrimauto.com/k/MA02481173",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    }
+  },
+  "meta": {
+    "name": "Wallet"
+  }
+}

@@ -27,6 +27,10 @@ export const AUDITED_TABLES = [
   'article',
   'form',
   'form_response',
+  'card_design',
+  'card_issue',
+  'popup',
+  'popup_submission',
   'saved_section',
   'media',
 ] as const;
@@ -39,6 +43,7 @@ export type PersonColumn =
   | 'deleted_by_id'
   | 'published_by_id'
   | 'closed_by_id'
+  | 'revoked_by_id'
   | 'author_id';
 
 export const AUDIT_PEOPLE: readonly PersonColumn[] = [

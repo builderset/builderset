@@ -1,0 +1,13 @@
+/*
+ * @builderset/card/styles.css — everything the card editor needs, in one
+ * file: the engine's stylesheet (theme, reset, the editor's UI), the marks
+ * this kit's editor draws on the canvas, and the card's own look
+ * (`card.css`), which the canvas draws with. A page that only shows a card
+ * loads `card.css` alone.
+ */
+@import '../../engine/src/theme/index.css';
+@import './card.css';
+@import './editor/editor.css';
+
+@source './editor';
+@source './render';

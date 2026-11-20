@@ -4,7 +4,7 @@ import type { User } from './auth';
 import { type Columns, type Db, insertRow, updateRow } from './db';
 import type { Action, SubjectType } from './models/activity';
 import type { Audited } from './models/base';
-import type { RevisionKind } from './models/document';
+import type { RevisionKind, RevisionTarget } from './models/document';
 
 /**
  * The audit work every write shares: who to stamp on the row, the activity
@@ -44,11 +44,6 @@ export async function recordActivity(db: Db, entry: ActivityEntry): Promise<void
     details: entry.details ?? {},
     actor_id: entry.actor?.id ?? null,
   });
-}
-
-export interface RevisionTarget {
-  table: 'email_template_revision' | 'article_revision' | 'form_revision';
-  parent: 'email_template_id' | 'article_id' | 'form_id';
 }
 
 /** Keep a version of a document. Returns the revision's public id. */

@@ -13,9 +13,10 @@
 
 -- The tables these functions accept, so a wrong name fails loudly.
 create domain public.document_table as text
-  check (value in ('email_template', 'article', 'form'));
+  check (value in ('email_template', 'article', 'form', 'card_design', 'popup'));
 create domain public.audited_table as text
   check (value in ('email_template', 'article', 'form', 'form_response',
+                   'card_design', 'card_issue', 'popup', 'popup_submission',
                    'saved_section', 'media'));
 
 -- ── Documents ───────────────────────────────────────────────────────────────
@@ -81,10 +82,15 @@ begin
       insert into public.article (slug, locale, author_id, document, created_by, updated_by)
       values (p_slug, p_locale, p_actor, p_document, p_actor, p_actor)
       returning id, uuid into new_id, new_uuid;
-    when 'form' then
-      insert into public.form (document, created_by, updated_by)
-      values (p_document, p_actor, p_actor)
-      returning id, uuid into new_id, new_uuid;
+    else
+      -- A form, a card design, a popup: the document is all they take. The
+      -- tables' triggers copy what the lists show from it.
+      execute format(
+        'insert into public.%I (document, created_by, updated_by)
+         values ($1, $2, $2)
+         returning id, uuid', p_table)
+        into new_id, new_uuid
+        using p_document, p_actor;
   end case;
   perform public.log_activity(p_table, new_id, 'created', p_actor, p_to_status => 'draft');
   return new_uuid;
@@ -198,6 +204,20 @@ begin
       returning jsonb_build_object(
         'saved_at', saved_at, 'status', status, 'published_at', published_at)
         into answer;
+
+    else
+      -- A card design is approved for print; a popup goes on the site, a
+      -- paused one too. Their triggers copy the format and the display rules.
+      execute format(
+        'update public.%I
+            set document = $2, draft_document = null, status = ''published'',
+                version = version + 1, saved_at = now(),
+                published_at = now(), published_by = $3, updated_by = $3
+          where id = $1
+         returning jsonb_build_object(
+           ''saved_at'', saved_at, ''status'', status, ''published_at'', published_at)', p_table)
+        into answer
+        using doc.id, p_document, p_actor;
   end case;
 
   perform public.add_revision(p_table, doc.id, 'publish', doc.version + 1, p_document, p_actor);
@@ -220,7 +240,8 @@ end;
 $$;
 
 -- POST /{kind}/:id/unpublish. A form closes instead: it keeps its link and
--- shows its closed message. saved_at stays: the document did not change.
+-- shows its closed message. A paused popup goes back to draft too. saved_at
+-- stays: the document did not change.
 create function public.unpublish_document(
   p_table public.document_table, p_uuid uuid, p_actor uuid
 ) returns jsonb
@@ -231,14 +252,11 @@ declare
   new_status text := case when p_table = 'form' then 'closed' else 'draft' end;
 begin
   select * into doc from public.lock_document(p_table, p_uuid);
-  if doc.status not in ('published', 'scheduled') then
+  if doc.status not in ('published', 'scheduled', 'paused') then
     raise exception 'It is not live.' using errcode = 'PT409';
   end if;
 
   case p_table
-    when 'email_template' then
-      update public.email_template set status = 'draft', updated_by = p_actor
-       where id = doc.id;
     when 'article' then
       update public.article set status = 'draft', scheduled_at = null, updated_by = p_actor
        where id = doc.id;
@@ -246,6 +264,11 @@ begin
       update public.form
          set status = 'closed', closed_at = now(), closed_by = p_actor, updated_by = p_actor
        where id = doc.id;
+    else
+      -- An email template, a card design, a popup: back to draft.
+      execute format(
+        'update public.%I set status = ''draft'', updated_by = $2 where id = $1', p_table)
+        using doc.id, p_actor;
   end case;
 
   perform public.log_activity(
@@ -318,7 +341,8 @@ begin
   if row_id is null then
     raise exception 'There is no such %.', replace(p_table, '_', ' ') using errcode = 'PT404';
   end if;
-  if p_table in ('email_template', 'article', 'form') and row_status = 'published' then
+  if p_table in ('email_template', 'article', 'form', 'card_design', 'popup')
+     and row_status = 'published' then
     raise exception 'It is live: unpublish it first.' using errcode = 'PT409';
   end if;
 

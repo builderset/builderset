@@ -1,0 +1,6 @@
+{
+  "tolerates": [
+    "variable.unknown",
+    "i18n.locale.unknown"
+  ]
+}

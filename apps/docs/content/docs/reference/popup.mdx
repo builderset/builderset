@@ -1,0 +1,171 @@
+---
+title: Popup
+description: The popup document's shape — its type, size, display rules and motion — the rules a server shares with the page, what a visitor sends, and every prop of the editor and the renderer.
+---
+
+_This page describes Builderset 0.4.0, where the popup kit is new. Every element, with its
+props, is in [Popup elements](/docs/reference/popup-elements); how to use the kit is in
+[Popups](/docs/guides/popup)._
+
+## The document
+
+The engine's node tree (see [Email](/docs/reference/email#the-document) for
+`BuilderNode`). The root is the popup itself: its props are its type, size and look,
+its display rules and its motion; its children are the elements, each at its own
+frame in CSS pixels, the last one on top. The meta is the popup's working name.
+
+### Types
+
+Each type has its starting size, the sizes and positions it offers, the sides that
+stretch to the page, and whether it dims the page and takes the keyboard:
+
+<include cwd lang="ts" meta='title="@builderset/popup — POPUP_TYPES"'>
+  ../../packages/popup/src/core/document.ts#types
+</include>
+
+### Format, display and motion
+
+<include cwd lang="ts" meta='title="@builderset/popup — PopupFormat"'>
+  ../../packages/popup/src/core/document.ts#format
+</include>
+
+The kit's JSON Schema is `@builderset/popup/schema.json`; `fixtures/` holds valid
+and invalid popups with the codes they are refused with, display cases with their
+answers (`show.json`) and submissions with theirs (`submissions.json`) — for a
+backend in another language.
+
+## Display rules
+
+`shouldShow(popup, context)` says whether a popup shows here and now;
+`whyHidden(popup, context)` says which rule hides it, checked in this order:
+`device`, `dates`, `pages`, `audience`, `language`, `frequency` (`HIDE_REASONS`).
+The trigger is not a rule: the rules say **whether**, the trigger **when**.
+`pickPopup(popups, context)` returns the one with the highest `display.priority`
+among those that show, the first listed on a tie.
+
+The context is the facts the rules read. `PopupView` fills it from the browser; a
+server passes what it knows:
+
+| Field       | Type                      | What it is                                                                       |
+| ----------- | ------------------------- | -------------------------------------------------------------------------------- |
+| `path`      | `string`                  | The page's path, `/blog/new-cars`. A query or a `#hash` is ignored               |
+| `device`    | `'desktop'` · `'mobile'`  | Which of the popup's devices this is                                             |
+| `language`  | `string`                  | The page's language (`sq`, `en-GB`); `sq` matches `sq-AL` too                    |
+| `returning` | `boolean`                 | The visitor was on the site in an earlier session                                |
+| `now`       | `number`                  | Milliseconds since 1970                                                          |
+| `today`     | `string`                  | The visitor's date, `2026-11-30`. Default: `now`'s date in the runtime's zone    |
+| `seen`      | `SeenRecord`              | What the browser remembers: `shownAt`, `session`, `closedAt`, `submittedAt`      |
+| `session`   | `string`                  | This visit's id, for `frequency: 'session'`                                      |
+
+A page rule is a path where `*` stands for any part, slashes included: `/blog/*`.
+Someone who filled a popup in is never asked again, whatever its frequency.
+
+## Submissions
+
+`validateSubmission(popup, values)` checks what a visitor sends against the popup's
+visible inputs, exactly as the popup did before it called `onSubmit`, and returns
+`{ ok, errors, values }`: by input name, the first thing wrong with each answer, and
+the answers to keep — the popup's own inputs only, trimmed. Answers to names the
+popup does not ask are dropped.
+
+| Code       | Why                                                                    |
+| ---------- | ---------------------------------------------------------------------- |
+| `required` | A required input is empty, or missing                                  |
+| `text`     | The answer is not text                                                 |
+| `tooLong`  | Over `SUBMISSION_MAX_LENGTH` (500) characters; `limit` says how many   |
+| `email`    | An email input that is not an address                                  |
+| `phone`    | A phone input that is not a number (`+`, digits, spaces, `().-`)       |
+| `plate`    | A plate input that is not a plate (`AA 123 BC`, `TR-482-KL`)           |
+
+The patterns are `SUBMISSION_FORMATS`, published in the schema
+(`x-submission-formats`) so a server in another language can tell when they change.
+
+## Checks
+
+`checkPopup(popup, registry, { locales, variables })` returns every issue
+([Issues](/docs/reference/issues)); `parsePopup(raw, registry)` returns the popup,
+or `null` when the stored value is not one. It refuses a popup with no way to close
+it, a link that goes nowhere or somewhere unsafe, an input without a name or two
+with the same one, inputs no button sends, display rules that can never match, and a
+variable outside `variables` (default: the paths of `POPUP_FIELDS`). It warns about a
+popup shown on every visit, and a modal or full screen that covers the page the
+moment it opens — search engines rank such pages lower.
+
+A draft may still carry the codes in `POPUP_DRAFT_TOLERATES` (`isDraftBlocking`):
+an empty popup, a button without its link yet, a rule half typed. Going live refuses
+every error (`isPublishBlocking`); warnings never do. `popupTips(popup)` adds what is
+worth knowing but nothing to fix: a popup wider than `PHONE_WIDTH` (358 px) is drawn
+smaller on a phone.
+
+## Variables
+
+A variable is a dotted path in double braces, `{{visitor.first_name}}`, filled from
+`PopupView`'s `data` (`{ visitor: { first_name: 'Ana' } }`); a value that is missing,
+or not a string or a number, reads as nothing. The editor offers your `fields`, each a
+`PopupField` — a path, a label and an example for its preview. `fillVariables`,
+`variablesIn` and `exampleData` are the pieces.
+
+## PopupView
+
+`@builderset/popup/render`, with `@builderset/popup/popup.css`:
+
+| Prop        | Type                                     | What it does                                                                                       |
+| ----------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `document`  | `PopupDocument`                          | The popup. Required                                                                                |
+| `locale`    | `string`                                 | The visitor's language: the popup's words in it, when it has them, and the built-in words           |
+| `words`     | `PopupWords`                             | Words for a language that is not built in (`en`, `sq`, `de` are)                                    |
+| `data`      | `unknown`                                | The variables' values                                                                              |
+| `assetUrl`  | `(key: string) => string`                | A media key's address, for pictures and logos                                                      |
+| `storageKey`| `string`                                 | The name this browser remembers it under: its id in your database                                  |
+| `store`     | `PopupStore`                             | Where it is remembered. Default: `localStorage` and `sessionStorage`; `memoryStore()` for tests     |
+| `context`   | `Partial<ShowContext>`                   | Facts the rules read, in place of the browser's: the path, the device, the language, now            |
+| `rules`     | `boolean`                                | Apply the display rules. Off: only the trigger decides (a preview). Default: on                    |
+| `maxDelay`  | `number`                                 | The longest a delay trigger waits, in milliseconds                                                 |
+| `contained` | `boolean`                                | Drawn inside its parent element instead of over the window                                         |
+| `scope`     | `HTMLElement \| null`                     | Where a scroll, a mouse leaving and a click are watched. Default: the window                        |
+| `onSubmit`  | `(values, details: PopupClick) => unknown` | The checked answers. Resolve `false`, or throw, to stay on the form; anything else shows the thank-you |
+| `onEvent`   | `(event: PopupEvent) => void`            | `'shown'`, `'closed'`, `'clicked'`, `'submitted'` — for counting                                    |
+| `onClick`   | `(click: PopupClick) => void`            | Every click on a link, a "close" or a submit button: its action, element id, layer name and URL     |
+| `onClose`   | `(reason: CloseReason) => void`          | Why it closed: `close`, `outside`, `esc`, `auto`, `action`                                          |
+| `className` | `string`                                 | Added to its root                                                                                  |
+
+The words a visitor reads that the popup does not set itself:
+
+<include cwd lang="ts" meta='title="@builderset/popup/render — PopupWords"'>
+  ../../packages/popup/src/render/words.ts#words
+</include>
+
+`PopupPicture` draws a popup still — for a list, a thumbnail — with no rules,
+trigger or motion: `document`, `locale`, `words`, `data`, `assetUrl`, and `scale`.
+
+## PopupEditor
+
+`@builderset/popup/editor`, with `@builderset/popup/styles.css`:
+
+| Prop                   | Type                                         | What it does                                                                                    |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `document`             | `PopupDocument`                              | The popup to edit. Read once, when the editor mounts: remount it (a new `key`) to load another. Required |
+| `registry`             | `ElementRegistry`                            | Usually `createPopupRegistry()`. Required                                                        |
+| `host`                 | `BuilderHost<PopupDocument>`                 | Saving, publishing, uploads, notices ([Host](/docs/reference/host)). Required                    |
+| `record`               | `RecordFacts`                                | `status: 'published'` means the popup is live. Required                                         |
+| `onRecordChange`       | `(patch) => void`                            | The facts the person changed (publishing, pausing); keep them and pass them back as `record`    |
+| `onBack`               | `() => void`                                 | The back button. The editor does not navigate by itself. Required                               |
+| `onDuplicate`          | `() => void`                                 | Adds "Duplicate popup" to the document menu                                                     |
+| `onDelete`             | `() => Promise<boolean>`                     | Adds "Delete popup"; resolve `true` once it is deleted                                          |
+| `fields`               | `readonly PopupField[]`                      | The variables your pages fill in, with an example each. Default: `POPUP_FIELDS`                 |
+| `colors`               | `{ value, label, hex }[]`                    | Colours offered first in every colour field: your brand's                                       |
+| `locale`               | `string`                                     | The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`                      |
+| `locales`              | `Record<string, PopupLocale>`                | Other languages: `{ sq }` from `@builderset/popup/locales/sq`. English is built in              |
+| `messages`             | `PopupMessages`                              | Replace single words, in whatever language is active                                            |
+| `contentLocales`       | `readonly string[]`                          | The languages a popup can be written in. One: no language switch                                |
+| `defaultContentLocale` | `string`                                     | The language a new popup is written in                                                          |
+| `storageKey`           | `string`                                     | Where the crash-safety copy is kept in `localStorage`; omit to disable                          |
+| `savedAt`              | `string \| null`                              | When the server copy was last saved: a newer local copy is offered back                         |
+| `theme`, `tokens`      | `'light'` · `'dark'` · `'auto'`, theme values | [Theme](/docs/guides/theme)                                                                     |
+| `className`            | `string`                                     | Applied to the editor's root element                                                            |
+
+Its words, besides the engine's:
+
+<include cwd lang="ts" meta='title="@builderset/popup/editor — PopupEditorWords"'>
+  ../../packages/popup/src/editor/messages.ts#editor-words
+</include>

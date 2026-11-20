@@ -8,18 +8,25 @@ import { error as issue, readFragmentJson, type MediaKind } from 'npm:@builderse
 import { imageSize } from 'npm:image-size@2.0.4';
 
 import { softDelete } from '../_shared/audit.ts';
-import { HttpError, json, noContent, type Json } from '../_shared/http.ts';
+import { HttpError, json, noContent, notFound, type Json } from '../_shared/http.ts';
 import { admin, rowsOf, write } from '../_shared/supabase.ts';
 import type { Call } from './call.ts';
+import type { Kind, SectionKit } from './kinds.ts';
 
 // ── Saved sections ──────────────────────────────────────────────────────────
+
+/** Cards and popups keep no saved sections: their routes are a 404. */
+function sectionKitOf(kind: Kind): SectionKit {
+  if (kind.kit === null) throw notFound();
+  return kind.kit;
+}
 
 export async function listSections({ kind }: Call) {
   const rows = rowsOf<{ uuid: string; name: string; fragment: Json }[]>(
     await admin
       .from('saved_section')
       .select('uuid, name, fragment')
-      .eq('kit', kind.kit)
+      .eq('kit', sectionKitOf(kind))
       .is('deleted_at', null)
       .order('name'),
   );
@@ -27,6 +34,7 @@ export async function listSections({ kind }: Call) {
 }
 
 export async function saveSection({ kind, body, member }: Call) {
+  const kit = sectionKitOf(kind);
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   if (!name || name.length > 120)
     throw new HttpError(400, 'A section needs a name of 120 characters at most.');
@@ -38,7 +46,7 @@ export async function saveSection({ kind, body, member }: Call) {
     throw new HttpError(422, 'The section was refused.', { issues: [issue('document.malformed')] });
 
   const id = await write<string>('create_section', {
-    p_kit: kind.kit,
+    p_kit: kit,
     p_name: name,
     p_fragment: fragment,
     p_actor: member.id,

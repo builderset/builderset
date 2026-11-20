@@ -1,0 +1,277 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "drawer",
+        "width": 380,
+        "height": 640,
+        "position": "left",
+        "background": "#ffffff",
+        "radius": 0,
+        "shadow": "strong",
+        "overlay": 30,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 30,
+          "scroll": 50,
+          "selector": "",
+          "pages": "only",
+          "rules": [
+            "/makina/*"
+          ],
+          "audience": "all",
+          "language": "all",
+          "frequency": "until",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "side",
+          "duration": 420,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 40,
+          "w": 300,
+          "h": 14,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "NJË MINUTË"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 62,
+          "w": 324,
+          "h": 72,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Na ndihmoni ta bëjmë shitjen më të lehtë"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 146,
+          "w": 324,
+          "h": 66,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Tri pyetje të shkurtra. Përgjigjet na tregojnë çfarë duhet t’u shpjegojmë më mirë shitësve."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 232,
+          "w": 324,
+          "h": 46,
+          "r": 0
+        },
+        "name": "car",
+        "label": "Çfarë makine keni?",
+        "placeholder": "p.sh. Volkswagen Golf 2017",
+        "kind": "text",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 290,
+          "w": 324,
+          "h": 46,
+          "r": 0
+        },
+        "name": "missing",
+        "label": "Çfarë ju mungoi në faqe?",
+        "placeholder": "Çfarë ju mungoi në faqe?",
+        "kind": "text",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 348,
+          "w": 324,
+          "h": 46,
+          "r": 0
+        },
+        "name": "email",
+        "label": "Email, nëse doni përgjigje",
+        "placeholder": "Email, nëse doni përgjigje",
+        "kind": "email",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 414,
+          "w": 324,
+          "h": 48,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Dërgo përgjigjet"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Faleminderit! Kjo na ndihmon shumë."
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 334,
+          "y": 14,
+          "w": 32,
+          "h": 32,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Anketë me tri pyetje"
+  }
+}

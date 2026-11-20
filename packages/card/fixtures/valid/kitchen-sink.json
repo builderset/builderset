@@ -1,0 +1,500 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "bank",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 500
+        },
+        "source": "Anëtarët aktivë"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n16",
+        "n17",
+        "n18",
+        "n19",
+        "n20",
+        "n21"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 57,
+          "y": -18,
+          "w": 50,
+          "h": 50,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 1
+      },
+      "name": "Orange circle"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 65,
+          "y": -10,
+          "w": 33,
+          "h": 33,
+          "r": 0
+        },
+        "fill": "",
+        "stroke": "#ffffff",
+        "strokeWidth": 0.25,
+        "opacity": 0.35
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": 46,
+          "w": 91.6,
+          "h": 11,
+          "r": 0
+        },
+        "fill": "#1f2937",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Bottom band"
+    },
+    "n4": {
+      "id": "n4",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 3.7,
+          "w": 27,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.5,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 50,
+          "y": 4,
+          "w": 5,
+          "h": 5,
+          "r": 0
+        },
+        "name": "car",
+        "color": "#ffffff"
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 10,
+          "w": 40,
+          "h": 6,
+          "r": 0
+        },
+        "text": "Klubi",
+        "font": "sora",
+        "size": 10,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "chip",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 10.25,
+          "y": 19.23,
+          "w": 11,
+          "h": 9,
+          "r": 0
+        },
+        "finish": "gold"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 18,
+          "w": 27,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtari",
+        "font": "poppins",
+        "size": 6,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 21.5,
+          "w": 30,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "poppins",
+        "size": 9,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 33,
+          "w": 20,
+          "h": 4.7,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 700,
+        "color": "#111827",
+        "align": "center",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": true,
+        "background": "#ffffff",
+        "backgroundRadius": 2.3
+      },
+      "name": "Tier"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "line",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 40,
+          "w": 30,
+          "h": 0.3,
+          "r": 0
+        },
+        "color": "#d1d5db",
+        "opacity": 1
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "nfc",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 58,
+          "y": 41.7,
+          "w": 3.7,
+          "h": 3.7,
+          "r": 0
+        },
+        "color": "#9ca3af"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 36,
+          "y": 38,
+          "w": 10,
+          "h": 7,
+          "r": 0
+        },
+        "media": {
+          "key": "card-image/2026/11/pattern.png",
+          "width": 1200,
+          "height": 800
+        },
+        "fit": "contain",
+        "radius": 1.3,
+        "opacity": 1,
+        "tone": "#2b3442"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 67.6,
+          "y": 30.6,
+          "w": 14,
+          "h": 17.3,
+          "r": 0
+        },
+        "bind": "member.photo",
+        "radius": 1.7,
+        "tone": "#374151"
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 42,
+          "w": 30,
+          "h": 4,
+          "r": 0
+        },
+        "text": "Hidden note",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "hidden": true
+    },
+    "n16": {
+      "id": "n16",
+      "type": "stripe",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 5.54,
+          "w": 85.6,
+          "h": 12.7,
+          "r": 0
+        },
+        "color": "#1f2937"
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 20,
+          "w": 16,
+          "h": 16,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64,
+          "y": 20,
+          "w": 16,
+          "h": 16,
+          "r": 0
+        },
+        "data": "https://marrimauto.com/k/{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "Q"
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 23,
+          "y": 21,
+          "w": 38,
+          "h": 7,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n20": {
+      "id": "n20",
+      "type": "sign",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 23,
+          "y": 30,
+          "w": 38,
+          "h": 6,
+          "r": 0
+        },
+        "label": "Nënshkrimi",
+        "color": "#9ca3af"
+      }
+    },
+    "n21": {
+      "id": "n21",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 39,
+          "w": 77,
+          "h": 8,
+          "r": 0
+        },
+        "text": "Karta është personale. Nëse e gjeni, kthejeni në marrimauto.com.",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Kitchen sink"
+  }
+}

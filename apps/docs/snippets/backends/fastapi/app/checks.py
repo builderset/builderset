@@ -1,15 +1,15 @@
-"""Checking a document before it is stored, for all three builders, with the
-same issue codes as the editor."""
+"""Checking a document before it is stored, for every builder, with the same
+issue codes as the editor."""
 
 from collections.abc import Callable
 from enum import StrEnum
 from typing import Any
 
+from builderset import card, form, popup
 from builderset.article import DRAFT_TOLERATES as ARTICLE_DRAFT_TOLERATES
 from builderset.article import check_article
 from builderset.email import DRAFT_TOLERATES as EMAIL_DRAFT_TOLERATES
 from builderset.email import DocumentIssue, EmailTypeSpec, check_email
-from builderset.form import check_form, is_draft_blocking, is_publish_blocking
 
 from app.errors import InvalidDocumentError
 from app.models import Kit
@@ -18,12 +18,15 @@ from app.models import Kit
 LOCALES = ("en", "sq")
 #: Your email types, by key: the variables a template for each may use.
 EMAIL_TYPES: dict[str, EmailTypeSpec] = {}
+#: Your members' fields a card may print, as {"path": "member.name", "kind": "text"}.
+#: None: the card kit's own.
+CARD_FIELDS: list[card.CardField] | None = None
 
 
 class Level(StrEnum):
     #: May be unfinished, never unsafe.
     DRAFT = "draft"
-    #: Every error blocks it.
+    #: Every error blocks it. For a card design, approval for print.
     PUBLISH = "publish"
 
 
@@ -38,8 +41,12 @@ _BLOCKS: dict[tuple[Kit, Level], Callable[[DocumentIssue], bool]] = {
     (Kit.EMAIL, Level.PUBLISH): _every,
     (Kit.ARTICLE, Level.DRAFT): lambda issue: issue.code not in ARTICLE_DRAFT_TOLERATES,
     (Kit.ARTICLE, Level.PUBLISH): _every,
-    (Kit.FORM, Level.DRAFT): is_draft_blocking,
-    (Kit.FORM, Level.PUBLISH): is_publish_blocking,
+    (Kit.FORM, Level.DRAFT): form.is_draft_blocking,
+    (Kit.FORM, Level.PUBLISH): form.is_publish_blocking,
+    (Kit.CARD, Level.DRAFT): card.is_draft_blocking,
+    (Kit.CARD, Level.PUBLISH): card.is_print_blocking,
+    (Kit.POPUP, Level.DRAFT): popup.is_draft_blocking,
+    (Kit.POPUP, Level.PUBLISH): popup.is_publish_blocking,
 }
 
 
@@ -49,7 +56,11 @@ def _issues(kit: Kit, document: Any, type_key: str | None) -> list[DocumentIssue
         return check_email(document, spec, locales=LOCALES)
     if kit == Kit.ARTICLE:
         return check_article(document, locales=LOCALES)
-    return check_form(document, locales=LOCALES)
+    if kit == Kit.CARD:
+        return card.check_card(document, fields=CARD_FIELDS, locales=LOCALES)
+    if kit == Kit.POPUP:
+        return popup.check_popup(document, locales=LOCALES)
+    return form.check_form(document, locales=LOCALES)
 
 
 def checked(

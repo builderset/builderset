@@ -1,0 +1,164 @@
+---
+title: Popups
+description: Modals, slide-ins, bars, drawers and full-screen offers — the editor in your back office, the popup on your site with its triggers, frequency, events and inputs, and the rules and answers your server checks. About 15 minutes.
+---
+
+At the end someone on your team builds a popup — a newsletter slide-in, a cookie
+bar, an exit offer — and publishes it; your site shows it to the right visitors, at
+the right moment, as often as it was told to; and your server checks every answer a
+visitor sends with exactly the rules the popup used in the browser.
+
+_This page describes Builderset 0.4.0, where the popup kit is new. Every element is in
+[Popup elements](/docs/reference/popup-elements); the document, the rules and every
+prop are in [Popup](/docs/reference/popup)._
+
+## Install
+
+<include cwd lang="bash">
+  ./snippets/install-popup.sh
+</include>
+
+Until Builderset is public, the packages are on GitHub Packages and need a token to
+install — see [Install](/docs/install#before-the-launch). React 19 for the editor
+and the renderer; the core, `@builderset/popup`, needs neither and runs on Node 20
+or newer.
+
+## The editor
+
+A client component, loaded only on the page that edits
+([Frontend setup](/docs/guides/frontend)). `createRestHost` saves through your routes
+([The host adapter](/docs/guides/host)):
+
+<include cwd lang="tsx" meta='title="popup-edit.tsx"'>
+  ./snippets/guides/popup-editor.tsx
+</include>
+
+- `record.status: 'published'` means the popup is **live**. The publish button calls
+  your host's `publish`, and your server checks again.
+- The popup is a free canvas in CSS pixels: each element sits at its own x and y —
+  drag, resize, rotate, snap, align, layers. The settings hold its **format** (type,
+  size, look), its **display** rules and its **motion**; the preview shows it on a
+  made-up page, at a computer's or a phone's size, as a visitor meets it.
+- `colors` puts your brand first in every colour field.
+
+## Types
+
+| Type         | What it is                                         | Dims the page | Takes the keyboard |
+| ------------ | -------------------------------------------------- | ------------- | ------------------ |
+| `modal`      | A box in the middle, in three sizes                | yes           | yes                |
+| `slidein`    | A small box in a corner                            | no            | no                 |
+| `bartop`     | A bar across the top of the page                   | no            | no                 |
+| `barbottom`  | A bar across the bottom                            | no            | no                 |
+| `fullscreen` | The whole window                                   | yes           | yes                |
+| `drawer`     | A panel down the left or the right side            | yes           | yes                |
+| `inline`     | A card inside the page, where you put `PopupView`  | no            | no                 |
+
+A bar or a full screen stretches to the page; its elements stay in a box of the
+design's width, centred. A popup wider than the screen is scaled down to fit.
+
+## Variables
+
+A popup's words may hold variables — `{{visitor.first_name}}`, `{{offer.ends}}` —
+that your page fills in. Which ones exist is yours to say, each with an example for
+the editor's preview. Give the editor and your server the same list:
+
+<include cwd lang="ts" meta='title="popup-fields.ts"'>
+  ./snippets/guides/popup-fields.ts
+</include>
+
+On the page, `data` holds the values, by path: `{ visitor: { first_name: 'Ana' } }`.
+A value that is missing reads as nothing, so write words that still read well
+without it.
+
+## On your site
+
+One component in your site's layout: it asks your server for the popups this page
+may show, and draws each with `PopupView`. `popup.css` is plain CSS under `.bsp`,
+with no reset — safe beside your site's own:
+
+<include cwd lang="tsx" meta='title="site-popups.tsx"'>
+  ./snippets/guides/popup-site.tsx#popups
+</include>
+
+What happens next is the popup's own settings:
+
+- **Rules first.** It shows only on the devices, pages, dates, language and kind of
+  visitor (new or returning) it was set for — and as often: every visit, once a
+  visit, once every few days, or until the visitor closes it. Someone who filled it
+  in is never asked again.
+- **Then the trigger**: on load, after a delay, at a scroll depth, when the mouse
+  heads for the tab bar, or on a click on an element of your page (a CSS selector,
+  `#offer` — your own "Get the offer" button).
+- **Then its motion** — fade, grow, slide up, from the side — and it closes with its
+  ×, a "close" button, a click on the dimmed page, Esc, or by itself after a while.
+  A modal takes the keyboard while it is open and gives it back after; under
+  `prefers-reduced-motion` nothing moves.
+- **Its memory.** The browser remembers when it was shown, closed and filled in,
+  under `storageKey` — your row's id — in `localStorage` by default. Pass `store`
+  for somewhere else (`memoryStore()` in tests).
+- **Its events.** `onEvent` is called with `'shown'`, `'closed'`, `'clicked'` and
+  `'submitted'`, for your counts. `onClick` says which element was clicked (its id
+  and its name in the layers, "Accept all"); `onClose` says why it closed.
+- **Its inputs.** A button that sends checks the inputs first — required, an email
+  address, a phone number, a plate — and calls `onSubmit` with the answers. Resolve
+  `false` (or throw) and the visitor stays on the form with a message; anything else
+  shows the thank-you.
+
+For a cookie bar, use `onClick`: the element's layer name tells "Accept all" from
+"Only necessary", and your page sets its consent from it.
+
+## On your server
+
+Check a popup on every save and before it goes live; choose the popups for a page;
+and check every answer that arrives — the browser's word is never taken for it:
+
+<Tabs label="Server">
+<Tab title="Node">
+
+<include cwd lang="ts" meta='title="popups.ts"'>
+  ./snippets/guides/popup-server.ts
+</include>
+
+</Tab>
+<Tab title="Python">
+
+<include cwd lang="python" meta='title="popups.py"'>
+  ./snippets/python/popup_server.py
+</include>
+
+</Tab>
+</Tabs>
+
+- `checkPopup` and `check_popup` return the same issues with the same codes
+  ([Issues](/docs/reference/issues)): no way to close it, a link that goes nowhere,
+  inputs with no name or no button to send them, rules that can never match, a
+  variable your pages do not fill in. Shown on every visit, and a modal the moment
+  the page opens, are warnings — search engines rank such pages lower.
+- `shouldShow` and `should_show` are the rules the popup applies in the browser, as
+  one pure function: the server and the page give the same answer
+  ([Popup](/docs/reference/popup#display-rules)). `pickPopup` chooses one of
+  several by priority.
+- `validateSubmission` and `validate_submission` return the answers worth keeping
+  — the popup's own inputs only, trimmed — or, per input, the first thing wrong.
+- The tables — `popup`, its revisions, `popup_submission` and `popup_daily_stat`,
+  which counts each day's events — and the public routes the site above calls are in
+  [Data model and API](/docs/guides/backend/data-model#the-routes).
+
+## Templates
+
+The editor's Templates tab offers fourteen popups for seven purposes — lead capture,
+offers and sales, announcements, newsletter, cookies and consent, feedback, app
+download — across the seven types. For a "New popup" screen of your own,
+`POPUP_TEMPLATES` lists them and `buildTemplatePopup(registry, template)` builds one
+as a whole document, both from `@builderset/popup/editor`. Their words are in
+Albanian, and are reworded and translated in the editor.
+
+## Languages
+
+The editor speaks English, Albanian and German (`locales={{ sq, de }}`). A popup can
+carry its words in several languages with `contentLocales`; pass the same list to
+`checkPopup(…, { locales })`. On the site, `locale` picks the popup's words and the
+few the popup does not set itself — the close button's name, the countdown's units,
+what is wrong with an answer — built in for `en`, `sq` and `de`; pass `words` for
+another language. A display rule can limit a popup to one language: the page's
+`<html lang>` decides.

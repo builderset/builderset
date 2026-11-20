@@ -13,7 +13,7 @@ from app import storage
 from app.audit import find, record_activity, soft_delete, stamp
 from app.deps import CurrentUser, SessionDep, current_user
 from app.errors import NotFoundError, TooLargeError, UnsupportedTypeError
-from app.kinds import DocumentKind
+from app.kinds import LibraryKind
 from app.models import Action, Media, MediaKind, SavedSection, User
 from app.schemas import NewSection, SectionOut, Uploaded
 
@@ -23,7 +23,7 @@ router = APIRouter(prefix="/api", dependencies=[Depends(current_user)])
 
 
 @router.get("/{kind}/sections")
-def list_sections(kind: DocumentKind, db: SessionDep) -> list[SectionOut]:
+def list_sections(kind: LibraryKind, db: SessionDep) -> list[SectionOut]:
     """For the editor's ``loadSections``: this builder's, by name."""
     sections = db.scalars(
         select(SavedSection)
@@ -35,7 +35,7 @@ def list_sections(kind: DocumentKind, db: SessionDep) -> list[SectionOut]:
 
 @router.post("/{kind}/sections", status_code=201)
 def save_section(
-    kind: DocumentKind, body: NewSection, db: SessionDep, user: CurrentUser
+    kind: LibraryKind, body: NewSection, db: SessionDep, user: CurrentUser
 ) -> SectionOut:
     section = SavedSection(kit=kind.kit, name=body.name, fragment=body.fragment.model_dump())
     stamp(section, user)
@@ -46,7 +46,7 @@ def save_section(
 
 
 @router.delete("/{kind}/sections/{section_id}", status_code=204)
-def delete_section(kind: DocumentKind, section_id: UUID, db: SessionDep, user: CurrentUser) -> None:
+def delete_section(kind: LibraryKind, section_id: UUID, db: SessionDep, user: CurrentUser) -> None:
     """Hidden from the editor's list; the documents that used it keep their copy."""
     section = find(db, SavedSection, section_id)
     if section.kit != kind.kit:

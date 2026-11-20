@@ -5,7 +5,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Builderset Docs',
     short_name: 'Docs',
-    description: "How to put Builderset's email and article editors into your project.",
+    description:
+      "How to put Builderset's email, article, form, card and popup editors into your project.",
     start_url: '/docs',
     display: 'browser',
     background_color: '#ffffff',

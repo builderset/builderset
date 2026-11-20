@@ -144,16 +144,20 @@ body::before {
   background: var(--accent-soft);
   color: var(--ink);
 }
-a {
-  color: inherit;
-}
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-code {
-  font-family: var(--font-code);
+/* In the base layer: the kits' editors (layer builderset, components/kit-*.css)
+   sit above it, so these never reach inside them. */
+@layer base {
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  code {
+    font-family: var(--font-code);
+  }
 }
 
 .lp-wrap {
@@ -636,11 +640,10 @@ html.lp-anim [data-reveal]:not(.is-in) {
   letter-spacing: -0.045em;
   color: var(--sky-ink);
 }
-.lp-hero .lp-h1 .accent {
-  background: linear-gradient(180deg, #d9e2ff 0%, #8ea7ff 55%, #5f80f5 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* The headline's changing word (KitWord): the sky's light cobalt, solid — a
+   gradient clipped to the text loses its clip under a moving blur in Chrome. */
+.lp-hero .lp-word-ink {
+  color: #9fb4ff;
 }
 .lp-hero .lp-lead {
   max-width: 36em;
@@ -749,8 +752,9 @@ html.lp-anim [data-reveal]:not(.is-in) {
 .lp-stage-hero {
   position: relative;
   z-index: 1;
-  height: clamp(300px, 40vw, 520px);
-  margin-top: clamp(56px, 8vw, 104px);
+  /* The product's visible part, and the kit switcher over it. */
+  height: calc(clamp(300px, 40vw, 520px) + 46px + clamp(40px, 5vw, 64px));
+  margin-top: clamp(44px, 6vw, 80px);
   padding-left: max(24px, env(safe-area-inset-left, 0px));
   padding-right: max(24px, env(safe-area-inset-right, 0px));
   perspective: 1800px;
@@ -775,10 +779,15 @@ html.lp-anim .lp-product {
     translate: 0 0;
   }
 }
-/* The real editor, laid out at a desktop size and scaled to fit (hero-editor.tsx). */
+/*
+ * The five real editors, laid out at a desktop size and scaled to fit, taking
+ * turns (hero-editor.tsx). The next one is mounted behind, then rises in out
+ * of a blur, tipped back a little, while the one before sinks into the depth.
+ */
 .lp-shot {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   border-radius: 14px;
   background: var(--surface);
   box-shadow:
@@ -786,6 +795,51 @@ html.lp-anim .lp-product {
     0 -18px 60px -20px rgb(125 156 255 / 0.5),
     0 50px 120px -30px rgb(0 0 0 / 0.8);
   aspect-ratio: 1280 / 780;
+  perspective: 1500px;
+  perspective-origin: 50% 0%;
+}
+.lp-shot-wait {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle, var(--line-strong) 1px, transparent 1.4px) 0 0 / 16px 16px,
+    var(--bg-sunk);
+}
+/* Once an editor is in, the dots are only what shows through between two. */
+.lp-shot[data-showing] .lp-shot-wait {
+  background: var(--bg-sunk);
+}
+.lp-shot-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--surface);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.7s var(--ease),
+    transform 1.1s var(--ease),
+    filter 0.9s var(--ease);
+  backface-visibility: hidden;
+}
+.lp-shot-layer[data-phase='wait'] {
+  z-index: 0;
+  opacity: 0;
+  transform: translate3d(0, 10%, -160px) rotateX(10deg) scale(0.97);
+  filter: blur(14px);
+}
+.lp-shot-layer[data-phase='in'] {
+  z-index: 2;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.lp-shot-layer[data-phase='out'] {
+  z-index: 1;
+  opacity: 0;
+  transform-origin: 50% 0%;
+  transform: translate3d(0, -3%, -320px) rotateX(-7deg) scale(0.94);
+  filter: blur(10px);
+  transition-duration: 0.85s, 1.1s, 0.8s;
 }
 .lp-shot-frame {
   position: absolute;
@@ -796,12 +850,255 @@ html.lp-anim .lp-product {
   pointer-events: none;
   user-select: none;
 }
-.lp-shot-wait {
-  width: 100%;
-  height: 100%;
-  background:
-    radial-gradient(circle, var(--line-strong) 1px, transparent 1.4px) 0 0 / 16px 16px,
-    var(--bg-sunk);
+/* A cobalt light passing over the glass as each editor comes in. */
+.lp-shot-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgb(125 156 255 / 0.16) 45%,
+    rgb(220 230 255 / 0.22) 50%,
+    rgb(125 156 255 / 0.12) 55%,
+    transparent 70%
+  );
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: lp-sheen 1.5s var(--ease) 0.1s both;
+}
+@keyframes lp-sheen {
+  0% {
+    opacity: 1;
+    background-position: 100% 0;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-position: 0% 0;
+  }
+}
+
+/* The kit switcher, over the shot and upright: glass on the sky. */
+.lp-kit-switch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+.lp-kit-tabs {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--sky-line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px -12px rgb(0 0 0 / 0.6);
+}
+html.lp-anim .lp-kit-tabs {
+  animation: lp-rise 0.9s var(--ease) 0.6s both;
+}
+.lp-kit-glider {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: var(--w, 0px);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.14),
+    0 0 24px -4px rgb(125 156 255 / 0.45);
+  transform: translateX(var(--x, 0px));
+  opacity: 0;
+  transition:
+    transform 0.55s var(--ease),
+    width 0.55s var(--ease),
+    opacity 0.3s;
+}
+.lp-kit-tabs[data-placed] .lp-kit-glider {
+  opacity: 1;
+}
+.lp-kit-tab {
+  all: unset;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sky-muted);
+  cursor: pointer;
+  transition: color 0.25s;
+}
+.lp-kit-tab:hover {
+  color: var(--sky-ink);
+}
+.lp-kit-tab[aria-selected='true'] {
+  color: var(--sky-ink);
+}
+/* Before the glider is placed (no script yet), the chosen tab carries its own pill. */
+.lp-kit-tabs:not([data-placed]) .lp-kit-tab[aria-selected='true'] {
+  background: rgb(255 255 255 / 0.1);
+}
+.lp-kit-tab:focus-visible {
+  outline: 2px solid #7d9cff;
+  outline-offset: 2px;
+}
+.lp-kit-tab .icon {
+  flex: none;
+  opacity: 0.75;
+  transition:
+    opacity 0.25s,
+    color 0.25s;
+}
+.lp-kit-tab[aria-selected='true'] .icon {
+  color: #a9bdff;
+  opacity: 1;
+}
+/* The clock: a line that fills under the chosen tab. */
+.lp-kit-progress {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 5px;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.1);
+}
+.lp-kit-progress i {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5f80f5, #a9bdff);
+  transform-origin: 0 50%;
+  animation: lp-fill linear both;
+}
+@keyframes lp-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The headline's changing word (hero-kits.tsx): a box whose width glides,
+   masked top and bottom, the words rolling through it. */
+.lp-nowrap {
+  white-space: nowrap;
+}
+.lp-h1 .lp-h1-line {
+  display: block;
+}
+.lp-word {
+  --pad: 0.16em;
+  position: relative;
+  display: inline-block;
+  padding: var(--pad) 0.08em;
+  margin: calc(-1 * var(--pad)) -0.08em;
+  white-space: nowrap;
+  mask-image: linear-gradient(
+    180deg,
+    transparent,
+    #000 calc(var(--pad) + 0.04em),
+    #000 calc(100% - var(--pad) - 0.04em),
+    transparent
+  );
+}
+.lp-word[data-measured] {
+  width: calc(var(--word-w) + 0.16em);
+  transition: width 0.8s var(--ease);
+}
+.lp-word-sizer {
+  visibility: hidden;
+}
+.lp-word-face {
+  position: absolute;
+  top: var(--pad);
+  left: 50%;
+  translate: -50% 0;
+  color: var(--accent);
+}
+.lp-word-face.in {
+  animation: lp-word-in 0.85s var(--ease) 0.06s both;
+}
+.lp-word-face.out {
+  animation: lp-word-out 0.6s var(--ease) both;
+}
+@keyframes lp-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.62em) scale(0.96);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes lp-word-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.62em) scale(0.96);
+    filter: blur(6px);
+  }
+}
+.lp-word-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.lp-word-measure > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+}
+
+/* The install line's package name, rolling in with the kit. */
+.lp-install-kit {
+  display: inline-block;
+  color: #a9bdff;
+  animation: lp-install-kit 0.6s var(--ease) both;
+}
+@keyframes lp-install-kit {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(4px);
+  }
+}
+
+@media (max-width: 560px) {
+  .lp-kit-tab {
+    gap: 0;
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13.5px;
+  }
+  .lp-kit-tab .icon {
+    display: none;
+  }
+  .lp-kit-progress {
+    left: 12px;
+    right: 12px;
+  }
 }
 
 /* Facts, on the hero's own dark, under the cut. */

@@ -72,6 +72,12 @@ export function instantOf(value: unknown): Date | null {
   return Number.isNaN(instant.getTime()) ? null : instant;
 }
 
+/** A calendar day the client sent, `2027-12-31`, or null. */
+export const dayOf = (value: unknown): string | null =>
+  typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value))
+    ? value
+    : null;
+
 /** `?limit=&offset=`: a page of at most 100 rows. */
 export function pageOf(query: Request['query'], defaultLimit = 50) {
   const limit = Number(query.limit ?? defaultLimit);

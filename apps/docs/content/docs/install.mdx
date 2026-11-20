@@ -7,17 +7,28 @@ _This page describes Builderset 0.4.0._
 
 ## The packages
 
-| Package               | Install it for                                                                                   |
-| --------------------- | ------------------------------------------------------------------------------------------------ |
-| `@builderset/email`   | Emails: the editor, the renderer to HTML and plain text, the checker                             |
-| `@builderset/article` | Articles: the editor, the renderer for your site, the checker                                    |
-| `@builderset/engine`  | What the kits share. The kits depend on it — install it yourself only to build a kit of your own |
-| `builderset` (Python) | The checker and the email renderer for a Python backend: see [Python](/docs/reference/python)    |
+| Package               | Install it for                                                                                                     |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `@builderset/email`   | Emails: the editor, the renderer to HTML and plain text, the checker                                               |
+| `@builderset/article` | Articles: the editor, the renderer for your site, the checker                                                      |
+| `@builderset/form`    | Forms: the editor, the working form for your site, the checker and `validateAnswers`                               |
+| `@builderset/card`    | Cards: the editor, the card and its print-ready sheet, the checker and `fillCard` ([Cards](/docs/guides/card))     |
+| `@builderset/popup`   | Popups: the editor, the popup for your site, the checker, `shouldShow` and `validateSubmission` ([Popups](/docs/guides/popup)) |
+| `@builderset/engine`  | What the kits share. The kits depend on it — install it yourself only to build a kit of your own                   |
+| `builderset` (Python) | The checkers, form answers, popup rules and submissions, card filling and the email renderer for a Python backend: see [Python](/docs/reference/python) |
 
 Each kit has the same entry points: `@builderset/<kit>` (the document, no React — it
 runs on a server), `/render`, `/editor`, `/host`, `/locales/<language>`, and the
-stylesheets `/styles.css` and `/theme/shadcn.css`; the article kit also has
-`/content.css`, for the rendered page.
+stylesheets `/styles.css` and `/theme/shadcn.css`. The renderers that run on your
+site have a stylesheet of their own, without the editor: `/content.css` for an
+article, `/form.css` for a form, `/card.css` for a card and `/popup.css` for a popup.
+
+<Callout title="More than one editor on a page">
+  Each kit's `styles.css` carries the engine's whole stylesheet with that kit's classes. Two of
+  them on one page repeat the engine's rules, and the one loaded last wins for both. When a page
+  shows editors from several kits, load `builderset/styles.css` from the all-in-one package
+  instead: the engine once, with every kit's classes.
+</Callout>
 
 ## Before the launch
 

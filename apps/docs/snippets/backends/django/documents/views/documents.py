@@ -1,4 +1,4 @@
-"""The editor's routes, the same for the three builders: the list, a new
+"""The editor's routes, the same for every builder: the list, a new
 document, its draft, publishing, and deleting and restoring.
 
 Every write is one transaction: check the document, write the row with who
@@ -183,7 +183,7 @@ class Publish(StaffView):
 
 class Unpublish(StaffView):
     """POST /api/{kind}/:id/unpublish: readers no longer get it; the document is
-    kept. An email or an article goes back to draft; a form closes."""
+    kept. A form closes; the others go back to draft, a paused popup too."""
 
     actions = {"POST": "publish"}
 
@@ -192,7 +192,7 @@ class Unpublish(StaffView):
         actor = actor_of(request)
         row = kind.find(id, lock=True)
         from_status = row.status
-        if from_status in (Status.PUBLISHED, Status.SCHEDULED):
+        if from_status in (Status.PUBLISHED, Status.SCHEDULED, Status.PAUSED):
             row.status = kind.unpublished
             if kind.on_unpublish:
                 kind.on_unpublish(row, actor)

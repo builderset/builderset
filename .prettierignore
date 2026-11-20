@@ -1,7 +1,7 @@
 # The kits' contract files: generated, and compared byte for byte by the tests
 # that write them (packages/article/src/core/fixtures.test.ts,
 # packages/email/src/core/email.test.ts, packages/email/src/render/golden.test.ts,
-# packages/form/src/core/fixtures.test.ts).
+# packages/form/src/core/fixtures.test.ts, and the card and popup kits' own).
 # Reformatting them by hand would make those tests fail; regenerate with
 # UPDATE_FIXTURES=1 instead.
 packages/article/schema/
@@ -10,6 +10,10 @@ packages/email/schema/
 packages/email/fixtures/
 packages/form/schema/
 packages/form/fixtures/
+packages/card/schema/
+packages/card/fixtures/
+packages/popup/schema/
+packages/popup/fixtures/
 
 pnpm-lock.yaml
 

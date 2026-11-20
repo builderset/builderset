@@ -1,6 +1,6 @@
 'use client';
 
-import '@builderset/email/styles.css';
+import './kit-email.css';
 
 import { createEmailRegistry, starterEmail, type EmailDocument } from '@builderset/email';
 import { EmailEditor } from '@builderset/email/editor';

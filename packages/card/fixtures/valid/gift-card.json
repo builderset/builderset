@@ -1,0 +1,370 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#fdf1e9",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -20,
+          "y": 20,
+          "w": 60,
+          "h": 60,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 1
+      },
+      "name": "Orange circle"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 8,
+          "y": 33,
+          "w": 9,
+          "h": 9,
+          "r": 0
+        },
+        "name": "gift",
+        "color": "#ffffff"
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#111827",
+        "media": null
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 44,
+          "y": 14,
+          "w": 38.6,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Kartë dhuratë",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 600,
+        "color": "#c2610c",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 34,
+          "y": 18,
+          "w": 48.6,
+          "h": 12,
+          "r": 0
+        },
+        "text": "50 €",
+        "font": "sora",
+        "size": 26,
+        "weight": 800,
+        "color": "#111827",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 34,
+          "y": 32,
+          "w": 48.6,
+          "h": 8,
+          "r": 0
+        },
+        "text": "Për një kontroll teknik të plotë ose një larje profesionale.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 44,
+          "y": 44,
+          "w": 38.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Vlen deri {{member.valid_until}}",
+        "font": "mono",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 60,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Si ta përdorni",
+        "font": "sora",
+        "size": 9,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 10.5,
+          "w": 50,
+          "h": 18,
+          "r": 0
+        },
+        "text": "Tregojeni kartën në çdo pikë kontrolli marrimauto. Vlera zbritet nga fatura; pjesa që mbetet ruhet për herën tjetër.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 62.6,
+          "y": 4,
+          "w": 20,
+          "h": 20,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 33,
+          "w": 50,
+          "h": 8,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 42.5,
+          "w": 50,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 600,
+        "color": "#111827",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.1,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Code"
+    },
+    "n13": {
+      "id": "n13",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 58,
+          "y": 33,
+          "w": 24.6,
+          "h": 13,
+          "r": 0
+        },
+        "text": "Nuk këmbehet me para. Nuk zëvendësohet nëse humbet.",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 400,
+        "color": "#9ca3af",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.35,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Kartë dhuratë"
+  }
+}

@@ -1,5 +1,5 @@
-"""The app: the editor's routes for the three builders, the library, and the
-form's public routes.
+"""The app: the editor's routes for the five builders, the library, the
+public routes of forms and popups, and card issues.
 
 Run it: ``uv run uvicorn app.main:app --reload``.
 """
@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app import storage
 from app.errors import ApiError
-from app.routers import documents, forms, history, library
+from app.routers import cards, documents, forms, history, library, popups
 
 app = FastAPI(title="Builderset documents")
 
@@ -27,5 +27,8 @@ app.mount("/api/uploads", StaticFiles(directory=storage.ROOT, check_dir=False), 
 app.include_router(library.router)
 app.include_router(forms.public)
 app.include_router(forms.inbox)
+app.include_router(popups.public)
+app.include_router(popups.team)
+app.include_router(cards.router)
 app.include_router(history.router)
 app.include_router(documents.router)

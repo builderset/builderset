@@ -7,6 +7,10 @@
     "django",
     "fastapi",
     "express",
+    "laravel",
+    "spring-boot",
+    "aspnet-core",
+    "checker",
     "next-drizzle",
     "next-prisma",
     "fastapi-sqlalchemy"

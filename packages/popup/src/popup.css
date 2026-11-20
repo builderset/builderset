@@ -1,0 +1,568 @@
+/*
+ * @builderset/popup/popup.css — how a popup looks and moves on your site.
+ *
+ * Plain CSS, every rule under `.bsp`, no reset of your page. A popup's own
+ * look arrives as variables on its outermost element (`popupStyle`): its
+ * design size (--bsp-w, --bsp-h), how far it is scaled to fit (--bsp-scale),
+ * its background, corners, shadow, the page's dimming and blur, and how long
+ * its entrance takes. Elements are placed in the design's pixels inside
+ * `.bsp-stage`, which is scaled as one.
+ *
+ * --bsp-z sets how high it sits over your page.
+ */
+
+.bsp {
+  --bsp-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --bsp-bounce: cubic-bezier(0.34, 1.4, 0.5, 1);
+  --bsp-side: 60px;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: var(--bsp-z, 2147483000);
+  pointer-events: none;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bsp *,
+.bsp *::before,
+.bsp *::after {
+  box-sizing: border-box;
+}
+
+.bsp.bsp-contained {
+  position: absolute;
+  z-index: 10;
+}
+
+/* ── where it sits ─────────────────────────────────────────────────────── */
+
+.bsp-t-modal,
+.bsp-t-fullscreen,
+.bsp-t-drawer {
+  inset: 0;
+  display: grid;
+}
+
+.bsp-t-modal {
+  place-items: center;
+  padding: 16px;
+}
+
+.bsp-t-drawer.bsp-p-left {
+  justify-items: start;
+}
+
+.bsp-t-drawer.bsp-p-right {
+  justify-items: end;
+}
+
+.bsp-t-slidein {
+  margin: 24px;
+}
+
+.bsp-t-slidein.bsp-p-top-left {
+  top: 0;
+  left: 0;
+}
+
+.bsp-t-slidein.bsp-p-top-right {
+  top: 0;
+  right: 0;
+}
+
+.bsp-t-slidein.bsp-p-bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+.bsp-t-slidein.bsp-p-bottom-right {
+  right: 0;
+  bottom: 0;
+}
+
+.bsp-t-bartop,
+.bsp-t-barbottom {
+  right: 0;
+  left: 0;
+}
+
+.bsp-t-bartop {
+  top: 0;
+}
+
+.bsp-t-barbottom {
+  bottom: 0;
+}
+
+.bsp-t-inline {
+  position: relative;
+  z-index: auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── the page behind ───────────────────────────────────────────────────── */
+
+.bsp-dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  background: var(--bsp-dim);
+  -webkit-backdrop-filter: blur(var(--bsp-blur));
+  backdrop-filter: blur(var(--bsp-blur));
+  animation: bsp-fade-in var(--bsp-duration) ease both;
+}
+
+.bsp-leaving .bsp-dim {
+  animation: bsp-fade-out 240ms ease-in both;
+}
+
+/* ── the popup ─────────────────────────────────────────────────────────── */
+
+.bsp-box {
+  position: relative;
+  overflow: hidden;
+  width: calc(var(--bsp-w) * var(--bsp-scale));
+  height: calc(var(--bsp-h) * var(--bsp-scale));
+  pointer-events: auto;
+  background: var(--bsp-bg);
+  border-radius: calc(var(--bsp-radius) * var(--bsp-scale));
+  box-shadow: var(--bsp-shadow);
+  outline: none;
+}
+
+.bsp-fill-width .bsp-box {
+  width: 100%;
+}
+
+.bsp-fill-height .bsp-box {
+  height: 100%;
+}
+
+.bsp-fill-both .bsp-box {
+  width: 100%;
+  height: 100%;
+}
+
+.bsp-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--bsp-w);
+  height: var(--bsp-h);
+  margin: 0;
+  transform: scale(var(--bsp-scale));
+  transform-origin: 0 0;
+}
+
+/* A bar keeps its design box in the middle of the page's width. */
+.bsp-fill-width .bsp-stage {
+  left: 50%;
+  transform: translateX(-50%) scale(var(--bsp-scale));
+  transform-origin: 50% 0;
+}
+
+.bsp-fill-both .bsp-stage {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(var(--bsp-scale));
+  transform-origin: 50% 50%;
+}
+
+/* A still picture (`PopupPicture`) is its design box, whatever it fills on a page. */
+.bsp.bsp-picture {
+  position: relative;
+  z-index: auto;
+  display: inline-block;
+  inset: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.bsp-picture .bsp-box {
+  width: calc(var(--bsp-w) * var(--bsp-scale));
+  height: calc(var(--bsp-h) * var(--bsp-scale));
+}
+
+.bsp-picture .bsp-stage {
+  top: 0;
+  left: 0;
+  transform: scale(var(--bsp-scale));
+  transform-origin: 0 0;
+}
+
+/* ── motion ────────────────────────────────────────────────────────────── */
+
+.bsp-open.bsp-in-fade .bsp-box {
+  animation: bsp-fade-in var(--bsp-duration) var(--bsp-ease) both;
+}
+
+.bsp-open.bsp-in-scale .bsp-box {
+  animation: bsp-grow var(--bsp-duration) var(--bsp-bounce) both;
+}
+
+.bsp-open.bsp-in-up .bsp-box {
+  animation: bsp-rise var(--bsp-duration) var(--bsp-ease) both;
+}
+
+.bsp-open.bsp-in-side .bsp-box {
+  animation: bsp-slide var(--bsp-duration) var(--bsp-ease) both;
+}
+
+/* From the side it sits on. */
+.bsp-p-left,
+.bsp-p-top-left,
+.bsp-p-bottom-left {
+  --bsp-side: -60px;
+}
+
+.bsp-t-drawer.bsp-p-left {
+  --bsp-side: -100%;
+}
+
+.bsp-t-drawer.bsp-p-right {
+  --bsp-side: 100%;
+}
+
+/* A bar at the top comes down from above the page. */
+.bsp-t-bartop {
+  --bsp-rise: -100%;
+}
+
+.bsp-leaving .bsp-box {
+  animation: bsp-fade-out 240ms ease-in both;
+}
+
+.bsp-leaving.bsp-out-down .bsp-box {
+  animation: bsp-sink 240ms ease-in both;
+}
+
+.bsp-leaving:not(.bsp-out-fade, .bsp-out-down) .bsp-box {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes bsp-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes bsp-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes bsp-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+}
+
+@keyframes bsp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--bsp-rise, 40px));
+  }
+}
+
+@keyframes bsp-slide {
+  from {
+    opacity: 0;
+    transform: translateX(var(--bsp-side));
+  }
+}
+
+@keyframes bsp-sink {
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bsp .bsp-box,
+  .bsp .bsp-dim,
+  .bsp .bsp-thanks {
+    animation-duration: 1ms !important;
+  }
+}
+
+/* ── elements ──────────────────────────────────────────────────────────── */
+
+.bsp-el {
+  position: absolute;
+  margin: 0;
+}
+
+.bsp-words {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bsp-words a,
+.bsp-inline-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+/* A text that is a link or closes the popup: still the text as designed. */
+.bsp-plain {
+  border: 0;
+  background: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.bsp-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 8px;
+  border: 0;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    filter 150ms ease,
+    transform 150ms ease;
+}
+
+.bsp-button:hover {
+  filter: brightness(1.06);
+}
+
+.bsp-button:active {
+  transform: translateY(1px);
+}
+
+.bsp-button[aria-busy='true'] {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+.bsp-button-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bsp-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid;
+  font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  outline: none;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.bsp-input::placeholder,
+.bsp-placeholder {
+  color: #9ca3af;
+}
+
+.bsp-input:focus {
+  border-color: #e06a1b;
+  box-shadow: 0 0 0 3px rgba(224, 106, 27, 0.2);
+}
+
+.bsp-input[aria-invalid='true'] {
+  border-color: #dc2626;
+}
+
+.bsp-error {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 2px;
+  font:
+    500 12px/1.3 ui-sans-serif,
+    system-ui,
+    sans-serif;
+  color: #dc2626;
+  white-space: nowrap;
+}
+
+.bsp-close {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.bsp-close svg {
+  width: 55%;
+  height: 55%;
+}
+
+.bsp-shape,
+.bsp-image,
+.bsp-qr,
+.bsp-icon,
+.bsp-logo-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bsp-logo-image {
+  object-fit: contain;
+}
+
+.bsp-image-empty {
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.bsp-image-empty svg {
+  width: min(32px, 40%);
+  height: min(32px, 40%);
+}
+
+.bsp-logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-family: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.bsp-countdown {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4em;
+  height: 100%;
+}
+
+.bsp-countdown-unit {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.bsp-countdown-unit b {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bsp-countdown-unit small {
+  margin-top: 0.3em;
+  font-size: 0.42em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.bsp a:focus-visible,
+.bsp button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* ── after sending ─────────────────────────────────────────────────────── */
+
+.bsp-thanks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: var(--bsp-bg);
+  font:
+    600 16px/1.4 'Poppins',
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+  text-align: center;
+  animation: bsp-fade-in 240ms ease both;
+}
+
+.bsp-fill-width .bsp-thanks {
+  flex-direction: row;
+  padding: 0 56px;
+}
+
+.bsp-thanks p {
+  margin: 0;
+}
+
+.bsp-thanks-icon {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #16a34a;
+}
+
+.bsp-thanks-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.bsp-fill-width .bsp-thanks-close {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bsp-thanks-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.bsp-failed {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 8px 12px;
+  font:
+    500 13px/1.3 ui-sans-serif,
+    system-ui,
+    sans-serif;
+  color: #ffffff;
+  background: #dc2626;
+  text-align: center;
+}

@@ -1,0 +1,74 @@
+/*
+ * The card editor's own marks on the free canvas — plain CSS, every rule
+ * under `.bsc-`: the veil over the bleed, the cut line, the safe area, the
+ * ISO chip zone, typing into a text, and the flip when the side changes.
+ * Inside the artboard one millimetre is `--bld-free-u` (the stage's unit).
+ */
+
+.bsc-board {
+  --bsc-mm: var(--bld-free-u, 6px);
+  --bsc-pt: 0.35278;
+}
+.bsc-cut {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+.bsc-veil {
+  fill: rgb(255 255 255 / 0.5);
+}
+.bsc-cut-line {
+  stroke: #ff3d8b;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.bsc-cut-soft .bsc-veil {
+  fill: rgb(255 255 255 / 0.22);
+}
+.bsc-cut-soft .bsc-cut-line {
+  stroke-opacity: 0.35;
+}
+.bsc-safe {
+  position: absolute;
+  border: 1px dashed rgb(70 110 255 / 0.85);
+  pointer-events: none;
+}
+.bsc-chip-zone {
+  position: absolute;
+  border: 1px dashed rgb(216 183 94 / 0.95);
+  border-radius: calc(var(--bsc-mm) * 1.2);
+  background: rgb(216 183 94 / 0.12);
+  pointer-events: none;
+}
+.bsc-editing {
+  min-height: 1lh;
+  outline: none;
+  caret-color: currentColor;
+  cursor: text;
+  user-select: text;
+}
+
+/* A new side turns in, as the card does in your hand. */
+@media (prefers-reduced-motion: no-preference) {
+  .bsc-stage .bsc-board {
+    animation: bsc-flip-in 320ms cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  }
+}
+@keyframes bsc-flip-in {
+  from {
+    transform: perspective(1400px) rotateY(-80deg);
+    opacity: 0.4;
+  }
+}
+
+/* The preview's card: it tilts with the mouse and turns over; with reduced
+   motion it only turns, at once. */
+.bsc-preview-card {
+  transform: var(--turn);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bsc-preview-card {
+    transform: var(--tilt);
+    transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  }
+}

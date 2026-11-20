@@ -1,0 +1,149 @@
+---
+title: Cards
+description: Membership, ID, bank and business cards — the editor in your back office, your members' data, the card on a page and on a print-ready sheet, and the checks your server runs before anything is printed. About 15 minutes.
+---
+
+At the end a designer in your back office lays out a card — front and back, in
+millimetres, with bleed and a safe area — your server approves it with the same
+checks the editor ran, and every member gets their own card: on their account page,
+and on a sheet a print shop can cut.
+
+_This page describes Builderset 0.4.0, where the card kit is new. Every element is in
+[Card elements](/docs/reference/card-elements); the document, the checks and the
+renderer's options are in [Card](/docs/reference/card)._
+
+## Install
+
+<include cwd lang="bash">
+  ./snippets/install-card.sh
+</include>
+
+Until Builderset is public, the packages are on GitHub Packages and need a token to
+install — see [Install](/docs/install#before-the-launch). React 19 for the editor
+and the renderer; the core, `@builderset/card`, needs neither and runs on Node 20 or
+newer.
+
+## The editor
+
+A client component, loaded only on the page that edits
+([Frontend setup](/docs/guides/frontend)). `createRestHost` saves through your routes
+([The host adapter](/docs/guides/host)); `styles.css` is the editor's whole
+stylesheet, the card's own look included:
+
+<include cwd lang="tsx" meta='title="card-edit.tsx"'>
+  ./snippets/guides/card-editor.tsx
+</include>
+
+- `record.status: 'published'` means the design is **approved** for print. The
+  approve button calls your host's `publish`, and your server checks again.
+- `records` are members to design with: the canvas shows their data, and the
+  preview switches between them. Without any, three example members.
+- `memberCount` names the print run ("Print 248 cards"); `onPrint` is yours to
+  run it. Without `onPrint`, "Print-ready sheet" opens a sheet of the example
+  members in a window, over the browser's print dialog.
+- The designer works on a free canvas: drag, resize, rotate, snap to the safe area,
+  align, layers, the arrow keys in half millimetres (5 mm with Shift). A bank card has its chip
+  spot and stripe marked where ISO puts them.
+
+## Your members' data
+
+A card is designed once and printed once per member, so its words hold variables —
+`{{member.name}}`, `{{member.valid_until}}` — that each card fills from its member's
+record. Which fields exist is yours to say. Give the editor and your server the same
+list:
+
+<include cwd lang="ts" meta='title="card-fields.ts"'>
+  ./snippets/guides/card-fields.ts
+</include>
+
+A `text` field may go into any words, a QR code or a barcode; a `photo` field only
+into a photo frame, its value the picture's address. A record is a flat map from
+path to text: `{ 'member.name': 'Arben Hoxha', 'member.photo': '/members/ah.jpg' }`.
+
+## The card on a page
+
+`CardView` draws one side at any size, filled in for one member. It has no browser
+code: render it in a Server Component. `card.css` is plain CSS under `.bsc`, with no
+reset — safe beside your site's own:
+
+<include cwd lang="tsx" meta='title="member-card.tsx"'>
+  ./snippets/guides/card-view.tsx#member
+</include>
+
+Without `scale`, a card is drawn at its actual size on a screen; a number is pixels
+per millimetre, and `'1mm'` is real size on paper. `assetUrl` turns a stored media
+key — a side's picture, an image, a logo file — into its address.
+
+## Printing
+
+`CardPrintSheet` lays every printed side of every member's card out at real size,
+with the bleed and crop marks, one page each. Print the page with margins off, or
+save it as a PDF and send it to the print shop:
+
+<include cwd lang="tsx" meta='title="app/cards/[id]/print/page.tsx"'>
+  ./snippets/guides/card-view.tsx#sheet
+</include>
+
+The design carries how it is printed: bleed and safe margin in millimetres, 300 or
+600 dpi, CMYK or RGB, material, finish and quantity — the root's `print`
+([Card](/docs/reference/card#the-document)). A `wallet` card is never printed: it
+has no bleed, no safe area, and is only shown on a screen.
+
+## On your server
+
+Check a design on every save and before it is approved — the browser's checks are
+the designer's comfort, yours are the ones that count. Then issue each member's card
+with their data frozen into a copy, so a reprint shows what the card said:
+
+<Tabs label="Server">
+<Tab title="Node">
+
+<include cwd lang="ts" meta='title="cards.ts"'>
+  ./snippets/guides/card-server.ts
+</include>
+
+</Tab>
+<Tab title="Python">
+
+<include cwd lang="python" meta='title="cards.py"'>
+  ./snippets/python/check_card.py
+</include>
+
+</Tab>
+</Tabs>
+
+- `checkCard` and `check_card` return the same issues with the same codes
+  ([Issues](/docs/reference/issues)). Warnings — words outside the safe area, type
+  under 6 pt, a QR code under 15 mm — never block; a draft may still name a field you
+  have not added yet; approving refuses every error.
+- `fieldsUsed` says which of a member's fields the design needs; `fillCard` writes
+  them in. Photos keep their field: the picture is the record's, by address.
+- The tables — `card_design`, its revisions, and `card_issue`, one row per card made
+  out to a member, with its number and status — and their routes are in
+  [Data model and API](/docs/guides/backend/data-model#the-documents).
+
+## Templates
+
+The editor's Templates tab offers thirteen designs in six groups — membership, ID and
+staff, bank and gift, business cards, event badges, wallet — each a front and a back.
+For a "New card" screen of your own, `CARD_TEMPLATES` lists them and
+`buildTemplateCard(registry, template)` builds one as a whole document, both from
+`@builderset/card/editor`. Their words are in Albanian, and
+the designer rewords them in the editor.
+
+## Languages
+
+The editor speaks English, Albanian and German (`locales={{ sq, de }}`, each its own
+entry point, `@builderset/card/locales/sq`). A design can carry its words in several
+languages with `contentLocales`; pass the same list to `checkCard(…, { locales })`.
+The words a screen reader hears on a rendered card — "Front", "QR code: …" — are
+`CardView`'s `words` ([Card](/docs/reference/card#the-renderer)).
+
+## Fonts
+
+A card's words are set in Poppins, Sora, Inter, Geist Mono, Georgia or the system's
+own. The editor loads the web fonts from Google Fonts; pass `fontPreviews={false}`
+when your page loads them itself or its Content-Security-Policy allows no font host
+([Security](/docs/guides/security#content-security-policy)). On your site,
+`CARD_FONTS_URL` from `@builderset/card/render` is the stylesheet that loads them for
+`CardView`.

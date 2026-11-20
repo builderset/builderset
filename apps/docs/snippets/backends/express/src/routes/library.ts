@@ -5,17 +5,23 @@ import express, { Router } from 'express';
 
 import { createdBy, recordActivity, softDelete } from '../audit';
 import { currentUser } from '../auth';
-import { checkSection, passed, type Kit } from '../checks';
+import { checkSection, passed } from '../checks';
 import { insertRow, pool, transaction } from '../db';
 import { bodyOf, HttpError, oneOf, refused, textOf } from '../http';
 import { getRow, sideFilter } from '../models/base';
-import { mediaAnswer, sectionAnswer, type Media, type SavedSection } from '../models/library';
+import {
+  mediaAnswer,
+  sectionAnswer,
+  type Media,
+  type SavedSection,
+  type SectionKit,
+} from '../models/library';
 import { dimensionsOf, fileTypeOf, MAX_UPLOAD_BYTES, storeFile, urlOf } from '../storage';
 
 // ── Saved sections: /api/{kind}/sections ─────────────────────────────────────
 
 /** One builder's library. Deleting a section hides it; documents that used it keep their copy. */
-export function sectionsRouter(kit: Kit): Router {
+export function sectionsRouter(kit: SectionKit): Router {
   const router = Router();
 
   /** GET / — the editor's loadSections. */

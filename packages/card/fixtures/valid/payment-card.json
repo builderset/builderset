@@ -1,0 +1,377 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "bank",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#1e293b",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#f8fafc",
+        "image": null
+      },
+      "children": [
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 40,
+          "y": -40,
+          "w": 80,
+          "h": 80,
+          "r": 0
+        },
+        "fill": "#334155",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 0.6
+      },
+      "name": "Glow"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 56,
+          "y": 4.4,
+          "w": 26.6,
+          "h": 4,
+          "r": 0
+        },
+        "text": "DEBIT",
+        "font": "poppins",
+        "size": 7,
+        "weight": 700,
+        "color": "#e06a1b",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0.12,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "chip",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 10.25,
+          "y": 19.23,
+          "w": 11,
+          "h": 9,
+          "r": 0
+        },
+        "finish": "gold"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "nfc",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24.5,
+          "y": 21,
+          "w": 5,
+          "h": 5,
+          "r": 0
+        },
+        "color": "#cbd5e1"
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 32,
+          "w": 70,
+          "h": 5,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 10,
+        "weight": 500,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.08,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Card number"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 39.5,
+          "w": 20,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Vlen deri",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#94a3b8",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 42.7,
+          "w": 20,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.valid_until}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Valid until"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 42.7,
+          "w": 54.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "poppins",
+        "size": 7.5,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.06,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Cardholder"
+    },
+    "n10": {
+      "id": "n10",
+      "type": "stripe",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 5.54,
+          "w": 85.6,
+          "h": 12.7,
+          "r": 0
+        },
+        "color": "#1f2937"
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "sign",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 21.5,
+          "w": 55,
+          "h": 7.5,
+          "r": 0
+        },
+        "label": "Nënshkrimi",
+        "color": "#9ca3af"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 62,
+          "y": 21.5,
+          "w": 20.6,
+          "h": 7.5,
+          "r": 0
+        },
+        "text": "CVV\n•••",
+        "font": "mono",
+        "size": 7,
+        "weight": 600,
+        "color": "#111827",
+        "align": "center",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "#ffffff",
+        "backgroundRadius": 0.8
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 32,
+          "w": 78.6,
+          "h": 10,
+          "r": 0
+        },
+        "text": "Karta lëshohet nga marrimauto dhe mbetet pronë e saj. Për bllokim të menjëhershëm telefononi +355 69 400 2026, ditë e natë.",
+        "font": "poppins",
+        "size": 6.3,
+        "weight": 400,
+        "color": "#475569",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 44.5,
+          "w": 26.7,
+          "h": 4.5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 9,
+        "color": "#1e293b",
+        "media": null
+      }
+    }
+  },
+  "meta": {
+    "name": "Kartë pagese"
+  }
+}

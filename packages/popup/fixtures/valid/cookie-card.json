@@ -1,0 +1,234 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "slidein",
+        "width": 360,
+        "height": 230,
+        "position": "bottom-left",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "load",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "until",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "up",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": false,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 20,
+          "w": 28,
+          "h": 28,
+          "r": 0
+        },
+        "name": "cookie",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 60,
+          "y": 22,
+          "w": 280,
+          "h": 26,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Cookies te marrimauto"
+          }
+        ],
+        "font": "sora",
+        "size": 18,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 60,
+          "w": 320,
+          "h": 58,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Cookies të nevojshme e mbajnë faqen në punë; me lejen tuaj përdorim edhe cookies për statistika."
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 124,
+          "w": 320,
+          "h": 18,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Lexoni politikën e privatësisë"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 400,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "link",
+        "url": "/privatesia",
+        "newTab": false
+      },
+      "name": "Privacy policy"
+    },
+    "n5": {
+      "id": "n5",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 164,
+          "w": 140,
+          "h": 42,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Pranoj të gjitha"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "close",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      },
+      "name": "Accept all"
+    },
+    "n6": {
+      "id": "n6",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 168,
+          "y": 164,
+          "w": 172,
+          "h": 42,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Vetëm të nevojshmet"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#111827",
+        "fill": "#f3f4f6",
+        "radius": 10,
+        "action": "close",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      },
+      "name": "Necessary only"
+    }
+  },
+  "meta": {
+    "name": "Karta e cookies"
+  }
+}

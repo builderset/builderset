@@ -1,0 +1,439 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Anëtarët aktivë"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#e06a1b",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 52,
+          "y": -22,
+          "w": 56,
+          "h": 56,
+          "r": 0
+        },
+        "fill": "#111827",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 1
+      },
+      "name": "Dark circle"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 62,
+          "y": 30,
+          "w": 34,
+          "h": 34,
+          "r": 0
+        },
+        "fill": "",
+        "stroke": "#111827",
+        "strokeWidth": 0.4,
+        "opacity": 0.5
+      },
+      "name": "Ring"
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 3.7,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 74.6,
+          "y": 4,
+          "w": 5,
+          "h": 5,
+          "r": 0
+        },
+        "name": "star",
+        "color": "#e06a1b"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 25,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtari",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#fde4d1",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 28.3,
+          "w": 52,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 11.3,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member name"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 38,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Nr. anëtarësie",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#fde4d1",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 42,
+          "w": 33.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member number"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 39.3,
+          "y": 38,
+          "w": 18.3,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Niveli",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#fde4d1",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 39.3,
+          "y": 42,
+          "w": 18.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 7,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Tier"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 30,
+          "h": 5.5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 11.5,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 12,
+          "w": 46,
+          "h": 18,
+          "r": 0
+        },
+        "text": "Një kartë, çdo pikë kontrolli: vlerësim falas, radhë me përparësi dhe ofertë me shkrim brenda 24 orësh.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#d1d5db",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 61.6,
+          "y": 4,
+          "w": 21,
+          "h": 21,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 33,
+          "w": 46,
+          "h": 7,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#ffffff"
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 44,
+          "w": 46,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Vlen deri {{member.valid_until}}",
+        "font": "mono",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 53,
+          "y": 44,
+          "w": 28.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "marrimauto.com",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#e06a1b",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Portokalli i markës"
+  }
+}

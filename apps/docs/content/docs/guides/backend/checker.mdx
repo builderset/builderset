@@ -1,0 +1,53 @@
+---
+title: The checker
+description: The kits' own checks behind two HTTP routes, for a backend in PHP, Java, C# or any language without a Builderset package — run beside your app, on a private port.
+---
+
+_This page describes Builderset 0.4.0._
+
+Node and Python run the kits' checks in the same process as the app. A backend in
+another language — [Laravel](/docs/guides/backend/laravel),
+[Spring Boot](/docs/guides/backend/spring-boot),
+[ASP.NET Core](/docs/guides/backend/aspnet-core) — checks in two layers:
+
+1. **The structure, in-process.** Each kit ships its JSON Schema
+   (`@builderset/<kit>/schema.json`). A standard validator refuses a document that is
+   not the kit's shape before anything else looks at it.
+2. **The kits' own checks, over HTTP.** An unsafe link, a variable that does not
+   exist, a form's answers: these rules are code, and the checker runs that code.
+
+## The service
+
+One file, no framework, nothing stored. It trusts every caller, so it listens on
+`127.0.0.1` only: put it beside your app, never in front of the internet.
+
+<include cwd lang="ts" meta='title="checker/server.ts"'>
+  ./snippets/backends/checker/server.ts
+</include>
+
+Run it with Node 22.6 or newer, from a folder where the kits are installed
+(`npm install @builderset/email @builderset/article @builderset/form @builderset/card @builderset/popup`):
+
+```sh title="Terminal"
+CHECKER_PORT=4319 node --experimental-strip-types server.ts
+```
+
+## The routes
+
+| Route                 | Body                                               | Answers                                                                                   |
+| --------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `POST /check/{kit}`   | `{ document, level: "draft" \| "publish", type? }` | `200 { ok: true, document }` — the parsed document to store · `200 { ok: false, issues }` |
+| `POST /answers/form`  | `{ form, answers }` — the **published** form       | `200 { ok, errors, values }` — store `values` only                                        |
+| `POST /answers/popup` | `{ popup, values }` — the **published** popup      | `200 { ok, errors, values }` — store `values` only                                        |
+| `POST /render/email`  | `{ document, data, locale?, assetBase }`           | `200 { subject, html, text }` — the stored document, rendered with the data               |
+
+`{kit}` is `email`, `article`, `form`, `card` or `popup`; `type` is an email's type key. A card's "publish" is approving it for print. A draft is
+refused only for what can never be saved (an unsafe link, a broken tree), publishing
+for any error — the same rules as the editor.
+
+## When it is down
+
+Your app answers `503` and stores nothing: an unchecked document must never reach
+the table. Give the client a short timeout (two seconds is plenty for a document),
+and run the checker under the same supervisor as the app, so they start and stop
+together.

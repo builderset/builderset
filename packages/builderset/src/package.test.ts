@@ -18,8 +18,9 @@ describe('the re-export files', () => {
 
   it("start with 'use client' on a client door, and only there", () => {
     for (const path of files.keys()) {
-      // The form's render door is the working form, with its own state.
-      const client = /\/(editor|ui)\.ts$/.test(path) || path === 'form/render.ts';
+      // The form's and popup's render doors are working components, with their own state.
+      const client =
+        /\/(editor|ui)\.ts$/.test(path) || path === 'form/render.ts' || path === 'popup/render.ts';
       expect(/^(\/\/[^\n]*\n)*'use client';/.test(read(path)), path).toBe(client);
       expect(read(path), path).not.toMatch(/export \*/);
     }

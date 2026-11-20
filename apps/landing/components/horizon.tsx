@@ -121,7 +121,7 @@ void main() {
 }
 `;
 
-export function Horizon({ children }: { children: ReactNode }) {
+export function Horizon({ children, bar }: { children: ReactNode; bar?: ReactNode }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const product = useRef<HTMLDivElement>(null);
@@ -283,6 +283,7 @@ export function Horizon({ children }: { children: ReactNode }) {
     <>
       <canvas ref={canvas} className="lp-horizon" aria-hidden="true" />
       <div ref={stage} className="lp-stage-hero">
+        {bar}
         <div ref={product} className="lp-product">
           {children}
         </div>

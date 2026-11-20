@@ -9,6 +9,8 @@
     "backend",
     "email",
     "articles",
+    "card",
+    "popup",
     "custom-elements",
     "content-types",
     "security",

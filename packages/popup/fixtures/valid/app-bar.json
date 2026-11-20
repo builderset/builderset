@@ -1,0 +1,152 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "barbottom",
+        "width": 358,
+        "height": 64,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 0,
+        "shadow": "soft",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 2,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "session",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": false,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "up",
+          "duration": 280,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 16,
+          "y": 16,
+          "w": 32,
+          "h": 32,
+          "r": 0
+        },
+        "name": "smartphone",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 58,
+          "y": 12,
+          "w": 160,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Më shpejt dhe më lehtë në aplikacion"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.3,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 14,
+          "w": 90,
+          "h": 36,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Hape"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "https://marrimauto.com/app",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 322,
+          "y": 17,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Hape në aplikacion"
+  }
+}

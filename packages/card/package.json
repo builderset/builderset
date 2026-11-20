@@ -1,0 +1,108 @@
+{
+  "name": "@builderset/card",
+  "version": "0.4.0",
+  "description": "Card builder: membership, ID, bank and business cards in millimetres, front and back, with bleed, safe area, member data and print checks.",
+  "license": "MIT",
+  "keywords": [
+    "card",
+    "card-builder",
+    "membership-card",
+    "id-card",
+    "print",
+    "react"
+  ],
+  "homepage": "https://github.com/builderset/builderset/tree/development/packages/card#readme",
+  "bugs": "https://github.com/builderset/builderset/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/builderset/builderset.git",
+    "directory": "packages/card"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "schema",
+    "fixtures"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./render": {
+      "types": "./dist/render/index.d.ts",
+      "default": "./dist/render/index.js"
+    },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "default": "./dist/editor/index.js"
+    },
+    "./host": {
+      "types": "./dist/host.d.ts",
+      "default": "./dist/host.js"
+    },
+    "./locales/*": {
+      "types": "./dist/locales/*.d.ts",
+      "default": "./dist/locales/*.js"
+    },
+    "./schema.json": "./schema/card.schema.json",
+    "./fixtures/*": "./fixtures/*",
+    "./styles.css": "./dist/styles.css",
+    "./card.css": "./dist/card.css",
+    "./theme/shadcn.css": "./dist/theme/shadcn.css",
+    "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsdown && pnpm build:css",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify && tailwindcss -i src/card.css -o dist/card.css --minify && node ../../tooling/finish-css.mjs dist/styles.css dist/card.css && node ../../tooling/copy-theme-files.mjs dist/theme",
+    "dev": "tsdown --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@builderset/engine": "workspace:*",
+    "lucide-react": "^1.32.0",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@vitejs/plugin-react": "6.0.5",
+    "eslint": "9.39.5",
+    "jsdom": "30.0.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.67.0",
+    "vitest": "4.1.11"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

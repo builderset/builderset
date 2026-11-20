@@ -1,0 +1,351 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "business",
+        "width": 85,
+        "height": 55,
+        "radius": 0,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "paper",
+          "finish": "soft-touch",
+          "quantity": 250
+        },
+        "source": "Stafi"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#e06a1b",
+        "image": null
+      },
+      "children": [
+        "n11",
+        "n12",
+        "n13"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#e06a1b",
+        "media": null
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 17,
+          "w": 60,
+          "h": 6,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 12,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Name"
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 23.5,
+          "w": 60,
+          "h": 4,
+          "r": 0
+        },
+        "text": "Këshilltar shitjesh",
+        "font": "poppins",
+        "size": 7.5,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Role"
+    },
+    "n4": {
+      "id": "n4",
+      "type": "line",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 30,
+          "w": 12,
+          "h": 0.5,
+          "r": 0
+        },
+        "color": "#e06a1b",
+        "opacity": 1
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 34,
+          "w": 3.2,
+          "h": 3.2,
+          "r": 0
+        },
+        "name": "phone",
+        "color": "#e06a1b"
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 9,
+          "y": 34,
+          "w": 50,
+          "h": 3.4,
+          "r": 0
+        },
+        "text": "+355 69 400 2026",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "#111827",
+        "align": "left",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 39.5,
+          "w": 3.2,
+          "h": 3.2,
+          "r": 0
+        },
+        "name": "mail",
+        "color": "#e06a1b"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 9,
+          "y": 39.5,
+          "w": 50,
+          "h": 3.4,
+          "r": 0
+        },
+        "text": "shitje@marrimauto.com",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "#111827",
+        "align": "left",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 45,
+          "w": 3.2,
+          "h": 3.2,
+          "r": 0
+        },
+        "name": "map-pin",
+        "color": "#e06a1b"
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 9,
+          "y": 45,
+          "w": 60,
+          "h": 3.4,
+          "r": 0
+        },
+        "text": "Rruga e Durrësit 142, Tiranë",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "#111827",
+        "align": "left",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 19.5,
+          "w": 40,
+          "h": 8,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 17,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 29,
+          "w": 40,
+          "h": 8,
+          "r": 0
+        },
+        "text": "Shitni makinën tuaj sot. Ofertë me shkrim brenda 24 orësh.",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "#fdf1e9",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 60,
+          "y": 17,
+          "w": 20,
+          "h": 20,
+          "r": 0
+        },
+        "data": "https://marrimauto.com/vleresim",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    }
+  },
+  "meta": {
+    "name": "Këshilltar shitjesh"
+  }
+}

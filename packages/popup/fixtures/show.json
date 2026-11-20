@@ -1,0 +1,982 @@
+{
+  "cases": [
+    {
+      "name": "the defaults, a first visit",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "desktop only, on a phone",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": false,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "mobile",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "device"
+    },
+    {
+      "name": "phones only, on a desktop",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": false,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "device"
+    },
+    {
+      "name": "before it starts",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "2026-11-21",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "dates"
+    },
+    {
+      "name": "on its first day",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "2026-11-20",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "on its last day",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "2026-11-20",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "after it ends",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "2026-11-19",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "dates"
+    },
+    {
+      "name": "only on listed pages: listed",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/vleresim"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/vleresim/?utm=x#top",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "only on listed pages: not listed",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/vleresim"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/vleresim/hapi-2",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "pages"
+    },
+    {
+      "name": "a wildcard takes any part, slashes too",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/blog/*"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/blog/2026/makina-elektrike",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "a wildcard after a slash needs something there",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/blog/*"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/blog",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "pages"
+    },
+    {
+      "name": "a wildcard in the middle",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/*/oferta"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/tirane/oferta",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "paths are case-sensitive",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/Blog"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/blog",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "pages"
+    },
+    {
+      "name": "a rule without its leading slash",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "kontakt"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/kontakt",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "dots and brackets are themselves",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/a.b(c)"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/axb(c)",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "pages"
+    },
+    {
+      "name": "all except listed: listed",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "except",
+        "rules": [
+          "/vleresim",
+          "/llogaria/*"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/llogaria/profili",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "pages"
+    },
+    {
+      "name": "all except listed: elsewhere",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "except",
+        "rules": [
+          "/vleresim",
+          "/llogaria/*"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/makina",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "the home page is /",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "only",
+        "rules": [
+          "/"
+        ],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "new visitors, a new one",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "new",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": null
+    },
+    {
+      "name": "new visitors, a returning one",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "new",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "returning": true
+      },
+      "expected": "audience"
+    },
+    {
+      "name": "returning visitors, a new one",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "returning",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "audience"
+    },
+    {
+      "name": "one language, the page in it",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "sq",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "language": "sq-AL"
+      },
+      "expected": null
+    },
+    {
+      "name": "one language, the page in another",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "sq",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "language": "en"
+      },
+      "expected": "language"
+    },
+    {
+      "name": "one language, the page’s unknown",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "de",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "language"
+    },
+    {
+      "name": "a region asks for that region",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "pt-BR",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "language": "pt-PT"
+      },
+      "expected": "language"
+    },
+    {
+      "name": "every visit: shown again",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "every",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1795175999000,
+          "closedAt": 1795175999500
+        },
+        "session": "s1"
+      },
+      "expected": null
+    },
+    {
+      "name": "once a session: this session",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "session",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1795175999000,
+          "session": "s1"
+        },
+        "session": "s1"
+      },
+      "expected": "frequency"
+    },
+    {
+      "name": "once a session: a new session",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "session",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1795175999000,
+          "session": "s1"
+        },
+        "session": "s2"
+      },
+      "expected": null
+    },
+    {
+      "name": "every seven days: six days on",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1794657600000
+        }
+      },
+      "expected": "frequency"
+    },
+    {
+      "name": "every seven days: seven days on",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1794571200000
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "until closed: shown, not closed",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "until",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1795175999000
+        }
+      },
+      "expected": null
+    },
+    {
+      "name": "until closed: closed",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "until",
+        "days": 7,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1795175999000,
+          "closedAt": 1795175999100
+        }
+      },
+      "expected": "frequency"
+    },
+    {
+      "name": "filled in: never asked again",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "all",
+        "language": "all",
+        "frequency": "days",
+        "days": 1,
+        "starts": "",
+        "ends": "",
+        "desktop": true,
+        "mobile": true,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "desktop",
+        "now": 1795176000000,
+        "today": "2026-11-20",
+        "seen": {
+          "shownAt": 1792584000000,
+          "submittedAt": 1792584000000
+        }
+      },
+      "expected": "frequency"
+    },
+    {
+      "name": "the first rule that hides it is the reason",
+      "display": {
+        "trigger": "delay",
+        "delay": 6,
+        "scroll": 50,
+        "selector": "",
+        "pages": "all",
+        "rules": [],
+        "audience": "returning",
+        "language": "all",
+        "frequency": "days",
+        "days": 7,
+        "starts": "",
+        "ends": "2026-01-01",
+        "desktop": true,
+        "mobile": false,
+        "priority": 0
+      },
+      "context": {
+        "path": "/",
+        "device": "mobile",
+        "now": 1795176000000,
+        "today": "2026-11-20"
+      },
+      "expected": "device"
+    }
+  ]
+}

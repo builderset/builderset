@@ -1,16 +1,18 @@
 ---
 title: SQL
-description: The PostgreSQL schema for every builder — email templates, articles, forms and responses, their revisions, the activity log, sections and media — with who made, changed and deleted every row, soft deletes, and the queries that keep two editors from overwriting each other.
+description: The PostgreSQL schema for every builder — email templates, articles, forms and responses, cards and the cards issued, popups and their results, their revisions, the activity log, sections and media — with who made, changed and deleted every row, soft deletes, and the queries that keep two editors from overwriting each other.
 ---
 
 _This page describes Builderset 0.4.0._
 
-The tables of the [data model](/docs/guides/backend/data-model) as six PostgreSQL
-migrations, one per group, run in order. Any framework can run them as they are, or
-recreate them with its own migrations: [Django](/docs/guides/backend/django),
-[FastAPI](/docs/guides/backend/fastapi) and [Node.js](/docs/guides/backend/express)
-build these same tables, and [Supabase](/docs/guides/backend/supabase) adds
-row-level security on top.
+The tables of the [data model](/docs/guides/backend/data-model) as eight PostgreSQL
+migrations, one per group, run in order of their numbers. Any framework can run
+them as they are, or recreate them with its own migrations:
+[Django](/docs/guides/backend/django), [FastAPI](/docs/guides/backend/fastapi),
+[Node.js](/docs/guides/backend/express), [Laravel](/docs/guides/backend/laravel),
+[Spring Boot](/docs/guides/backend/spring-boot) and
+[ASP.NET Core](/docs/guides/backend/aspnet-core) build these same tables, and
+[Supabase](/docs/guides/backend/supabase) adds row-level security on top.
 
 <Tabs label="Schema">
 <Tab title="Shared columns">
@@ -36,6 +38,16 @@ stand-in for your users table:
 <Tab title="Forms">
 <include cwd lang="sql" meta='title="04_forms.sql"'>
   ./snippets/backends/sql/04_forms.sql
+</include>
+</Tab>
+<Tab title="Cards">
+<include cwd lang="sql" meta='title="07_cards.sql"'>
+  ./snippets/backends/sql/07_cards.sql
+</include>
+</Tab>
+<Tab title="Popups">
+<include cwd lang="sql" meta='title="08_popups.sql"'>
+  ./snippets/backends/sql/08_popups.sql
 </include>
 </Tab>
 <Tab title="Library">

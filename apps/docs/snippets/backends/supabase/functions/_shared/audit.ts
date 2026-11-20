@@ -5,7 +5,16 @@ import { admin, rowsOf, write } from './supabase.ts';
 
 /** The tables with the full audit columns: each can be deleted and restored. */
 export type AuditedTable =
-  'email_template' | 'article' | 'form' | 'form_response' | 'saved_section' | 'media';
+  | 'email_template'
+  | 'article'
+  | 'form'
+  | 'form_response'
+  | 'card_design'
+  | 'card_issue'
+  | 'popup'
+  | 'popup_submission'
+  | 'saved_section'
+  | 'media';
 
 /** A person in an answer. */
 export interface Person {
@@ -20,6 +29,7 @@ const PEOPLE: Record<string, string> = {
   deleted_by: 'deleted_by',
   published_by: 'published_by',
   closed_by: 'closed_by',
+  revoked_by: 'revoked_by',
   author_id: 'author',
   actor_id: 'actor',
 };

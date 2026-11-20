@@ -35,3 +35,18 @@
 .builderset .bld-canvas [data-inline-text] {
   cursor: text;
 }
+
+/* The free canvas (a card, a popup): elements glide into place after an
+   align or a spread (`data-glide`, for a moment), and a moving element lifts. Reduced motion stops the glide (rules.css). */
+.builderset .bld-free-artboard[data-glide] [data-free-element] {
+  transition:
+    left 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.builderset .bld-free-stage [data-free-element]:focus-visible {
+  outline: 2px solid #6d89ff;
+  outline-offset: 2px;
+}
+.builderset .bld-free-stage .bld-free-moving {
+  filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.28));
+}

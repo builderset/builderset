@@ -13,9 +13,11 @@
   },
   "dependencies": {
     "@builderset/article": "workspace:*",
+    "@builderset/card": "workspace:*",
     "@builderset/email": "workspace:*",
     "@builderset/engine": "workspace:*",
     "@builderset/form": "workspace:*",
+    "@builderset/popup": "workspace:*",
     "fumadocs-core": "16.19.4",
     "fumadocs-mdx": "15.6.3",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.19.4",

@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: Builderset puts visual editors for emails and articles inside your own React app. Each kit is an editor, a renderer and a checker for one kind of document; you supply the storage, the theme and the language.
+description: Builderset puts visual editors for emails, articles, forms, cards and popups inside your own React app. Each kit is an editor, a renderer and a checker for one kind of document; you supply the storage, the theme and the language.
 ---
 
 ## Start here
@@ -14,7 +14,34 @@ description: Builderset puts visual editors for emails and articles inside your 
     An article editor, and the published article as a page of your site, from a Server Component.
   </Card>
   <Card label="in the browser" title="Playground" href="/playground">
-    Both editors with every setting: theme, language, templates. Copy the code for what you see.
+    Every editor with every setting: theme, language, templates. Copy the code for what you see.
+  </Card>
+</Cards>
+
+## The kits
+
+Five kits, one engine: the same workspace, theme, languages and host in each.
+
+<Cards>
+  <Card label="@builderset/email" title="Email" href="/docs/guides/email">
+    Templates your code sends — order shipped, password reset — rendered to HTML and plain text
+    that mail clients show, with variables and a brand kit.
+  </Card>
+  <Card label="@builderset/article" title="Article" href="/docs/guides/articles">
+    Blog posts, help pages, job posts: the published article as a page of your site, rendered on
+    the server.
+  </Card>
+  <Card label="@builderset/form" title="Form" href="/docs/reference/form">
+    Forms with steps, logic and checks; the working form for your site, and the same checks on
+    every answer your server receives.
+  </Card>
+  <Card label="@builderset/card" title="Card" href="/docs/guides/card">
+    Membership, ID, bank and business cards in millimetres, front and back, filled in for each
+    member and printed on a sheet with bleed and crop marks.
+  </Card>
+  <Card label="@builderset/popup" title="Popup" href="/docs/guides/popup">
+    Modals, slide-ins, bars, drawers and full-screen offers, with display rules, triggers and
+    inputs your server checks.
   </Card>
 </Cards>
 
@@ -26,8 +53,9 @@ description: Builderset puts visual editors for emails and articles inside your 
     through an adapter you give it and owns nothing else.
   </Card>
   <Card label="@builderset/email/render" title="The renderer">
-    A document to email HTML and plain text, or an article to a page of your site. It runs on your
-    server, with no browser.
+    A document to email HTML and plain text, an article to a page of your site, a card to a
+    print-ready sheet — on your server, with no browser. A form and a popup come alive in the
+    visitor's browser.
   </Card>
   <Card label="checkEmail · check_email" title="The checker">
     The same rules in the editor and on your server, in TypeScript and in Python, with the same
@@ -42,6 +70,10 @@ description: Builderset puts visual editors for emails and articles inside your 
 - **Uploads.** Pictures go wherever your files already go.
 - **Sending.** You render an email on your server and send it with your own provider
   ([Sending email](/docs/guides/email)).
+- **Printing.** You print a card sheet, or send its PDF to your print shop
+  ([Cards](/docs/guides/card)).
+- **Counting.** A popup tells you when it was shown, clicked and sent; you keep the
+  numbers ([Popups](/docs/guides/popup)).
 
 ## How these pages work
 

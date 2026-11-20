@@ -1,0 +1,159 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 24,
+          "w": 400,
+          "h": 34,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Sa vlen makina juaj?"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "link",
+        "url": "data:text/html,<b>x</b>",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 80,
+          "w": 272,
+          "h": 44,
+          "r": 0
+        },
+        "name": "plate",
+        "label": "Targa",
+        "placeholder": "name@example.com",
+        "kind": "plate",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 136,
+          "w": 272,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Vlerëso"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Broken on purpose"
+  }
+}

@@ -1,0 +1,482 @@
+---
+title: ASP.NET Core
+description: The five builders' backend in C# — ASP.NET Core minimal APIs and EF Core over Postgres, every row audited and soft-deleted, revisions and an activity log written in the same transaction, documents checked by the kits' JSON Schemas and the Builderset checker.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end an ASP.NET Core app stores email templates, articles, forms, card designs
+and popups with everything the [data model](/docs/guides/backend/data-model) asks of a
+real app: who made, changed, published and deleted each row and when, a trash to
+restore from, a revision on every manual save and publish, and an activity line for
+everything that happens. It refuses an unsafe or stale save with the editor's own issue
+codes, takes form responses and popup submissions checked exactly as the browser
+checked them, and issues cards to members.
+
+Tested with .NET 9 (SDK 9.0.321, ASP.NET Core 9.0.23) and C# 13, EF Core 9 with
+Npgsql.EntityFrameworkCore.PostgreSQL 9.0.4 and EFCore.NamingConventions 9.0.0,
+JsonSchema.Net 9.7.0, and PostgreSQL 18. About 25 minutes to read.
+
+There is no Builderset package for C#, so every document is checked in two layers. Its
+**structure** is checked in-process, against the kit's JSON Schema, with JsonSchema.Net.
+The **kits' own rules** — an unsafe link, a variable the email type does not have, a
+form's answers — run in the [Builderset checker](/docs/guides/backend/checker), a small
+Node service beside the app that runs the same functions the editor runs. When the
+checker cannot be reached, the app answers `503` and stores nothing.
+
+The routes are minimal APIs grouped with `MapGroup`, not controllers: the five builders
+share one set of routes over five row types, and a generic method mapped five times says
+that directly, where controllers would need a generic controller and a feature provider
+to register it.
+
+```txt title="Builderset.Api/"
+Builderset.Api.csproj   packages, and the kits' schemas copied in at build
+Program.cs              services, middleware, route groups
+Kinds.cs                what differs between the five builders
+Data/                   the DbContext, and the interceptor that stamps who and when
+Models/                 one file per group of tables
+Auth/                   who is signed in: a stand-in for yours
+Http/                   request records, problem details, the visitors' rate limit
+Checks/                 the JSON Schemas, the checker's client, the two together
+Audit/                  activity, revisions, soft delete and restore
+Routes/                 documents, history, forms, cards, popups, library, delivery
+Storage/                uploaded files on disk
+```
+
+<Steps>
+<Step>
+
+### The project
+
+A web project with three packages. The build copies the five kits' JSON Schemas from
+the checker's `npm install` into `schemas/` beside the app, so the structure checked
+here and the rules the checker runs come from the same version of the kits:
+
+<include cwd lang="xml" meta='title="Builderset.Api.csproj"'>
+  ./snippets/backends/aspnet-core/Builderset.Api.csproj
+</include>
+
+The connection string, the checker's address and where uploads go. Each can be an
+environment variable too: `ConnectionStrings__Builderset`, `Checker__Url`:
+
+<include cwd lang="json" meta='title="appsettings.json"'>
+  ./snippets/backends/aspnet-core/appsettings.json
+</include>
+
+The checker sits next to the project, in `checker/`, set up as
+[its page](/docs/guides/backend/checker) says; the build reads the schemas from its
+`node_modules`. With both in place:
+
+```sh title="Terminal"
+(cd checker && node --experimental-strip-types server.ts) &
+cd Builderset.Api && DEV_USER_EMAIL=you@example.com dotnet run
+```
+
+</Step>
+<Step>
+
+### The tables
+
+Run the eight migrations of the [SQL page](/docs/guides/backend/sql), `01_base.sql` to
+`08_popups.sql`, in order, with the migration tool you already use — DbUp, Flyway,
+`psql`. EF Core maps the tables and does not create them: the partial unique indexes,
+the checks and the `touch_updated_at` trigger are written once, in SQL, for every stack.
+The snake-case naming convention makes each property's name its column's, so the
+mappings below say only what differs:
+
+<include cwd lang="csharp" meta='title="Data/AppDb.cs"'>
+  ./snippets/backends/aspnet-core/Data/AppDb.cs
+</include>
+
+</Step>
+<Step>
+
+### The models
+
+One file per group of tables: the entities, their statuses as constants, what each
+builder does on publish and unpublish, and its `IEntityTypeConfiguration`. Table and
+column names come only from these files, never from a request.
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns every row has, the soft-delete filter every query gets, and people
+answered as `{ id, name }`:
+
+<include cwd lang="csharp" meta='title="Models/Base.cs"'>
+  ./snippets/backends/aspnet-core/Models/Base.cs
+</include>
+
+What the five document tables add — `saved_at` as their concurrency token — their
+revisions, and the answer every document route gives:
+
+<include cwd lang="csharp" meta='title="Models/Document.cs"'>
+  ./snippets/backends/aspnet-core/Models/Document.cs
+</include>
+
+</Tab>
+<Tab title="Email templates">
+
+Publishing a design moves the one before it, for the same email type, back to draft:
+
+<include cwd lang="csharp" meta='title="Models/Emails.cs"'>
+  ./snippets/backends/aspnet-core/Models/Emails.cs
+</include>
+
+</Tab>
+<Tab title="Articles">
+
+An article's address is chosen when it is made; a future `scheduled_at` waits for a
+job of yours. Its `Name` is its `title`, so lists and search treat every document
+alike:
+
+<include cwd lang="csharp" meta='title="Models/Articles.cs"'>
+  ./snippets/backends/aspnet-core/Models/Articles.cs
+</include>
+
+</Tab>
+<Tab title="Forms">
+
+A form, its revisions and its responses. Unpublishing closes a form: its link keeps
+working and shows the closed message.
+
+<include cwd lang="csharp" meta='title="Models/Forms.cs"'>
+  ./snippets/backends/aspnet-core/Models/Forms.cs
+</include>
+
+</Tab>
+<Tab title="Cards">
+
+A card design, its revisions, and the cards issued from it. A card freezes the
+design's version and the member's data, and its number is never reused:
+
+<include cwd lang="csharp" meta='title="Models/Cards.cs"'>
+  ./snippets/backends/aspnet-core/Models/Cards.cs
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions, what visitors sent through it, and its counters per day. The
+display rules stay in the document; the columns copy what the site's one query needs:
+
+<include cwd lang="csharp" meta='title="Models/Popups.cs"'>
+  ./snippets/backends/aspnet-core/Models/Popups.cs
+</include>
+
+</Tab>
+<Tab title="Library">
+<include cwd lang="csharp" meta='title="Models/Library.cs"'>
+  ./snippets/backends/aspnet-core/Models/Library.cs
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="csharp" meta='title="Models/Activity.cs"'>
+  ./snippets/backends/aspnet-core/Models/Activity.cs
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Who, and what went wrong
+
+The audit columns are set from the signed-in user, never from the request body. A
+handler that takes an `Actor` gets the signed-in user; one that takes `Actor?` may be
+called by a visitor. Publishing is its own policy:
+
+<Tabs label="Auth">
+<Tab title="The actor">
+<include cwd lang="csharp" meta='title="Auth/Actor.cs"'>
+  ./snippets/backends/aspnet-core/Auth/Actor.cs
+</include>
+</Tab>
+<Tab title="Your auth here">
+
+A stand-in so the example runs. It never signs anyone in on `/api/public/`, so the
+visitors' routes behave there as they will behind your real sign-in:
+
+<include cwd lang="csharp" meta='title="Auth/DevAuthentication.cs"'>
+  ./snippets/backends/aspnet-core/Auth/DevAuthentication.cs
+</include>
+
+</Tab>
+</Tabs>
+
+Handlers throw; one exception handler turns what they throw into problem details: `404`,
+`409`, `410`, `415`, `422`, and `503` when the checker is away. The editor shows
+`detail`, or the first of the `issues`:
+
+<include cwd lang="csharp" meta='title="Http/Problems.cs"'>
+  ./snippets/backends/aspnet-core/Http/Problems.cs
+</include>
+
+</Step>
+<Step>
+
+### The checks
+
+Every document is checked before it is stored, with the editor's own rules: a draft may
+be unfinished but never unsafe, and publishing refuses every error. A refusal carries
+the issue codes, so the editor shows each problem on its block.
+
+<Tabs label="Checks">
+<Tab title="Both layers">
+<include cwd lang="csharp" meta='title="Checks/DocumentChecks.cs"'>
+  ./snippets/backends/aspnet-core/Checks/DocumentChecks.cs
+</include>
+</Tab>
+<Tab title="JSON Schemas">
+
+A document that is not the kit's shape stops here, without a trip to the checker:
+
+<include cwd lang="csharp" meta='title="Checks/KitSchemas.cs"'>
+  ./snippets/backends/aspnet-core/Checks/KitSchemas.cs
+</include>
+
+</Tab>
+<Tab title="The checker's client">
+
+A typed `HttpClient` with a two-second timeout. A checker that is down, slow, or too
+old to know a kit is an exception the problem handler answers `503`:
+
+<include cwd lang="csharp" meta='title="Checks/CheckerClient.cs"'>
+  ./snippets/backends/aspnet-core/Checks/CheckerClient.cs
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The audit work
+
+Who and when are stamped by a `SaveChanges` interceptor, on every row a save writes,
+and a delete becomes a soft delete there. The history — activity lines, revisions,
+deleting and restoring — goes into the same unit of work as the write, so one
+`SaveChanges` stores the row and its history together. An autosave becomes a revision
+at most every ten minutes and is never logged:
+
+<Tabs label="Audit">
+<Tab title="Interceptor">
+<include cwd lang="csharp" meta='title="Data/AuditInterceptor.cs"'>
+  ./snippets/backends/aspnet-core/Data/AuditInterceptor.cs
+</include>
+</Tab>
+<Tab title="Activity and revisions">
+<include cwd lang="csharp" meta='title="Audit/AuditTrail.cs"'>
+  ./snippets/backends/aspnet-core/Audit/AuditTrail.cs
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### One set of routes for five builders
+
+What differs between the builders that their rows do not say themselves:
+
+<include cwd lang="csharp" meta='title="Kinds.cs"'>
+  ./snippets/backends/aspnet-core/Kinds.cs
+</include>
+
+`MapDocuments<TRow, TRevision>` is written once and mapped for each. Each handler reads
+the request and answers; the work is in `Documents<TRow, TRevision>`, a scoped service.
+Lists answer `{ items, total }`, with `?status=`, `?q=`, `?limit=`, `?offset=`, and
+`?deleted=true` for the trash.
+
+<Tabs label="Document routes">
+<Tab title="Save a draft">
+
+The editor sends back the `saved_at` it last saw, and EF Core writes the row only where
+`saved_at` still has that value: someone else's save in between is a `409`, and the
+editor offers to reload or keep its own. A save without it is refused too, unless it
+is "keep mine" (`force`):
+
+<include cwd lang="csharp" meta='title="Routes/DocumentRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/DocumentRoutes.cs#draft
+</include>
+
+</Tab>
+<Tab title="Publish">
+
+The strict check, then the document goes live with its meta copied to the columns, a
+`publish` revision and an activity line, in one transaction. A form's address taken by
+another is refused on `meta.slug`, where the editor shows it:
+
+<include cwd lang="csharp" meta='title="Routes/DocumentRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/DocumentRoutes.cs#publish
+</include>
+
+</Tab>
+<Tab title="Delete and restore">
+
+A soft delete. A published document is refused — unpublish it first — and a restore
+whose address another live row took meanwhile fails on the partial unique index, which
+the problem handler answers as `409`:
+
+<include cwd lang="csharp" meta='title="Routes/DocumentRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/DocumentRoutes.cs#delete
+</include>
+
+</Tab>
+<Tab title="The whole file">
+<include cwd lang="csharp" meta='title="Routes/DocumentRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/DocumentRoutes.cs
+</include>
+</Tab>
+<Tab title="Requests">
+
+What the editor and your screens send, as records. The JSON is snake_case both ways:
+
+<include cwd lang="csharp" meta='title="Http/Requests.cs"'>
+  ./snippets/backends/aspnet-core/Http/Requests.cs
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### History
+
+A document's revisions — what it said — for the editor's version panel, and its
+activity — what happened to it — for a timeline of yours:
+
+<include cwd lang="csharp" meta='title="Routes/HistoryRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/HistoryRoutes.cs
+</include>
+
+</Step>
+<Step>
+
+### Forms and their responses
+
+The public side takes no sign-in. The answers are checked by the checker against the
+**published** document, never the draft; a filled trap field is answered as a success
+and stored nowhere; and only the `values` that `validateAnswers` keeps are stored. The
+count goes up in the same statement that checks `maxResponses`, so two visitors cannot
+both take the last place. Your team's side lists the responses, triages them with
+`PATCH` and deletes them softly; only your retention job deletes them for good.
+
+<include cwd lang="csharp" meta='title="Routes/FormRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/FormRoutes.cs
+</include>
+
+</Step>
+<Step>
+
+### Cards
+
+A card is issued from a published design only (`422` while it is a draft), and a
+member holds one card of a design that is not revoked: the partial unique index
+`card_issue_one_valid` refuses a second, answered `409`. Revoking keeps the row, so the
+number printed on the card still points at it:
+
+<include cwd lang="csharp" meta='title="Routes/CardRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/CardRoutes.cs
+</include>
+
+</Step>
+<Step>
+
+### Popups
+
+Your site asks which popups may show on a page; the server answers from the indexed
+columns, the dates and the page rules, highest priority first, and `shouldShow` decides
+the rest in the browser. Events add to the day's counters in one upsert. A submission is
+checked by the checker with `validateSubmission`, against the live popup; pausing takes
+a popup off the site without touching its document:
+
+<include cwd lang="csharp" meta='title="Routes/PopupRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/PopupRoutes.cs
+</include>
+
+</Step>
+<Step>
+
+### The library
+
+Saved sections, per builder, and uploads. A file is known by its first bytes, never by
+its name, and the same bytes uploaded twice are one `media` row. The upload route
+raises the request size limit for itself; past it Kestrel answers `413`.
+
+<Tabs label="Library">
+<Tab title="Routes">
+<include cwd lang="csharp" meta='title="Routes/LibraryRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/LibraryRoutes.cs
+</include>
+</Tab>
+<Tab title="Storage">
+
+Files on the local disk. For S3 or similar, only this class changes: a document holds
+a file's key, never its URL.
+
+<include cwd lang="csharp" meta='title="Storage/FileStore.cs"'>
+  ./snippets/backends/aspnet-core/Storage/FileStore.cs
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### What leaves the server
+
+Your site's published article, and an email rendered for your mailer from the live
+document. Rendering is the email kit's, so it is the checker's too: the HTML is the one
+the editor previewed, and the browser never sends HTML. A test send of the draft is your
+mailer's: render the draft the same way and send it to one address.
+
+<include cwd lang="csharp" meta='title="Routes/DeliveryRoutes.cs"'>
+  ./snippets/backends/aspnet-core/Routes/DeliveryRoutes.cs
+</include>
+
+</Step>
+<Step>
+
+### The app
+
+Services first, then the pipeline: problem details, the uploaded files, sign-in, the
+rate limit. Visitors' routes are one group; everything else is your team's, behind
+`RequireAuthorization`. Each builder gets its documents, its history, and its library
+or its own routes:
+
+<Tabs label="App">
+<Tab title="Program.cs">
+<include cwd lang="csharp" meta='title="Program.cs"'>
+  ./snippets/backends/aspnet-core/Program.cs
+</include>
+</Tab>
+<Tab title="Rate limit">
+
+ASP.NET Core's own rate limiter, on the two routes a visitor sends to: form responses
+and popup submissions answer `429` past it.
+
+<include cwd lang="csharp" meta='title="Http/RateLimits.cs"'>
+  ./snippets/backends/aspnet-core/Http/RateLimits.cs
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the document's address,
+`/api/articles/<uuid>`: the row's `uuid`, its public id. For forms, the same file has
+the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+</Step>
+</Steps>

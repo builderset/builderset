@@ -1,20 +1,21 @@
 ---
 title: Node.js and Express
-description: The three builders' backend in Node.js — Express 5 over Postgres with pg and plain SQL, every row audited and soft-deleted, revisions and an activity log written in the same transaction, checked by the kits' own functions.
+description: The five builders' backend in Node.js — Express 5 over Postgres with pg and plain SQL, every row audited and soft-deleted, revisions and an activity log written in the same transaction, checked by the kits' own functions.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end an Express server stores email templates, articles and forms with
-everything the [data model](/docs/guides/backend/data-model) asks of a real app: who
-made, changed and deleted each row and when, a trash to restore from, a revision on
-every manual save and publish, and an activity line for everything that happens. It
-refuses an unsafe or stale save with the editor's own issue codes, and takes form
-responses checked by the same `validateAnswers` the form ran in the browser.
+At the end an Express server stores email templates, articles, forms, card designs
+and popups with everything the [data model](/docs/guides/backend/data-model) asks of a
+real app: who made, changed and deleted each row and when, a trash to restore from, a
+revision on every manual save and publish, and an activity line for everything that
+happens. It refuses an unsafe or stale save with the editor's own issue codes, takes
+form responses and popup submissions checked by the same `validateAnswers` and
+`validateSubmission` the browser ran, and issues cards to members.
 
 There is no ORM: the queries are written against the tables of the
 [SQL schema](/docs/guides/backend/sql), in TypeScript, with `pg`. It needs `express`
-5, `pg` and the three kits from npm. For the same routes as Next.js route handlers
+5, `pg` and the five kits from npm. For the same routes as Next.js route handlers
 with an ORM, see [Next.js and Drizzle](/docs/guides/backend/next-drizzle).
 
 ```txt title="src/"
@@ -25,7 +26,7 @@ checks.ts     the kits' checks, draft or publish
 audit.ts      actor columns, activity, revisions, soft delete and restore
 storage.ts    uploaded files on disk
 models/       one file per group of tables
-routes/       documents, history, forms, library, delivery
+routes/       documents, history, forms, cards, popups, library, delivery
 server.ts     the app
 ```
 
@@ -34,8 +35,8 @@ server.ts     the app
 
 ### The tables
 
-Run the six migrations of the [SQL page](/docs/guides/backend/sql), `01_base.sql` to
-`06_activity.sql`, in order. The server holds one pool, and every write goes through
+Run the eight migrations of the [SQL page](/docs/guides/backend/sql), `01_base.sql` to
+`08_popups.sql`, in order. The server holds one pool, and every write goes through
 `transaction()`: the row, its revision and its activity line are written together or
 not at all.
 
@@ -62,7 +63,7 @@ people answered as `{ id, name }`:
   ./snippets/backends/express/src/models/base.ts
 </include>
 
-What the three document tables add, their revisions, and the shape of a builder's
+What the five document tables add, their revisions, and the shape of a builder's
 model:
 
 <include cwd lang="ts" meta='title="src/models/document.ts"'>
@@ -99,7 +100,33 @@ working and shows the closed message.
 </include>
 
 </Tab>
+<Tab title="Cards">
+
+A card design, its revisions, and the cards issued from it. Approving a design for
+print is its publish; a card keeps the design's version and the member's data as they
+were when it was issued.
+
+<include cwd lang="ts" meta='title="src/models/cards.ts"'>
+  ./snippets/backends/express/src/models/cards.ts
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions and what visitors sent through it. The display dates and the
+priority are copied to columns, so your site asks one indexed question: which popups
+may show today.
+
+<include cwd lang="ts" meta='title="src/models/popups.ts"'>
+  ./snippets/backends/express/src/models/popups.ts
+</include>
+
+</Tab>
 <Tab title="Library">
+
+Saved sections are for emails, articles and forms: a card or a popup is one free
+canvas, with no sections.
+
 <include cwd lang="ts" meta='title="src/models/library.ts"'>
   ./snippets/backends/express/src/models/library.ts
 </include>
@@ -138,8 +165,10 @@ Express 5 hands a rejected async handler to it by itself, so there is no wrapper
 
 Every document is checked before it is stored, with the editor's own rules: a draft
 may be unfinished but never unsafe, and publishing refuses every error. A refusal
-carries the issue codes, so the editor shows each problem on its block. A saved
-section is read the way a paste is, against the kit's own elements:
+carries the issue codes, so the editor shows each problem on its block. A card's
+publish is its approval for print, so it is checked with `isPrintBlocking`. A saved
+section is read the way a paste is, against the kit's own elements, and the data a
+card is issued with must fill every field the design prints:
 
 <include cwd lang="ts" meta='title="src/checks.ts"'>
   ./snippets/backends/express/src/checks.ts
@@ -161,9 +190,10 @@ a revision at most every ten minutes and is never logged:
 </Step>
 <Step>
 
-### One router for three builders
+### One router for five builders
 
-`documentRouter(model)` is written once and mounted for emails, articles and forms.
+`documentRouter(model)` is written once and mounted for emails, articles, forms,
+cards and popups.
 Each handler reads the request and answers; the work is in a function below it. Lists
 answer `{ items, total }`, with `?status=`, `?q=`, `?limit=`, `?offset=`, and
 `?deleted=true` for the trash.
@@ -240,6 +270,43 @@ deletes them softly; only your retention job deletes them for good.
 </Step>
 <Step>
 
+### Cards
+
+A card is issued from an approved design only — `422` while it is a draft — and a
+member holds one card of a design that is not revoked: the partial unique index
+`card_issue_one_valid` refuses a second, answered `409`. The number is drawn at
+random and never given out twice, not even after a revoke. One card answers with the
+design as it was when the card was issued, filled in by `fillCard`, so a reprint
+matches the card in the member's hand:
+
+<include cwd lang="ts" meta='title="src/routes/cards.ts"'>
+  ./snippets/backends/express/src/routes/cards.ts
+</include>
+
+</Step>
+<Step>
+
+### Popups
+
+Your site asks which popups may show on a page. The status and the dates are one
+indexed question; the page's path and language are the kit's `pathMatches` and
+`languageMatches`; `shouldShow` decides the rest in the browser — the audience, how
+often, the device. `PopupView`'s `onEvent` adds to today's counters, and
+`onSubmit` sends what the visitor typed, checked again with `validateSubmission`
+against the live popup. Pausing takes a popup off the site without touching its
+document:
+
+<include cwd lang="ts" meta='title="src/routes/popups.ts"'>
+  ./snippets/backends/express/src/routes/popups.ts
+</include>
+
+On the page, `onEvent` posts `{ event }` to `/api/public/popups/<id>/events` and
+`onSubmit` posts `{ values, path, locale }` to `…/submissions`; resolve `false`
+when the answer is not `201` and the visitor stays on the popup.
+
+</Step>
+<Step>
+
 ### The library
 
 Saved sections, per builder, and uploads. A file is known by its first bytes, never
@@ -283,7 +350,7 @@ is your mailer's: render the draft with the same function and send it to one add
 ### The server
 
 Visitors' routes first, then your sign-in in front of everything else. Each builder
-gets its library, its history and its documents:
+gets its history and its documents, and emails, articles and forms their library:
 
 <include cwd lang="ts" meta='title="src/server.ts"'>
   ./snippets/backends/express/src/server.ts

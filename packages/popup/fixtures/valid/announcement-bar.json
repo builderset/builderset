@@ -1,0 +1,152 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "bartop",
+        "width": 1100,
+        "height": 64,
+        "position": "center",
+        "background": "#111827",
+        "radius": 0,
+        "shadow": "soft",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "load",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "until",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "fade",
+          "duration": 240,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 18,
+          "w": 28,
+          "h": 28,
+          "r": 0
+        },
+        "name": "megaphone",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64,
+          "y": 21,
+          "w": 760,
+          "h": 24,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Tani blejmë edhe makina elektrike dhe hibride — ofertë me shkrim brenda 24 orësh."
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 400,
+        "color": "#ffffff",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 864,
+          "y": 12,
+          "w": 170,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Mësoni më shumë"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "/makina-elektrike",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 1050,
+          "y": 17,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#d1d5db",
+        "fill": "#1f2937"
+      }
+    }
+  },
+  "meta": {
+    "name": "Shiriti i njoftimit"
+  }
+}

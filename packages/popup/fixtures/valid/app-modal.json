@@ -1,0 +1,281 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 10,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 30,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": false,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 48,
+          "w": 160,
+          "h": 160,
+          "r": 0
+        },
+        "data": "https://marrimauto.com/app",
+        "color": "#111827",
+        "background": "#ffffff"
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 216,
+          "w": 160,
+          "h": 36,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Skanoni me kamerën e telefonit"
+          }
+        ],
+        "font": "poppins",
+        "size": 12,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "center",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 52,
+          "w": 260,
+          "h": 14,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "APLIKACIONI"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 72,
+          "w": 264,
+          "h": 64,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Oferta në xhep, njoftim kur vjen çmimi"
+          }
+        ],
+        "font": "sora",
+        "size": 24,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 146,
+          "w": 264,
+          "h": 66,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Ndiqni vlerësimin hap pas hapi, ngarkoni foto dhe flisni me ekipin nga telefoni."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 234,
+          "w": 128,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "App Store"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#111827",
+        "radius": 10,
+        "action": "link",
+        "url": "https://apps.apple.com/",
+        "newTab": true,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 360,
+          "y": 234,
+          "w": 128,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Google Play"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#111827",
+        "radius": 10,
+        "action": "link",
+        "url": "https://play.google.com/store",
+        "newTab": true,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Shkarkoni aplikacionin"
+  }
+}

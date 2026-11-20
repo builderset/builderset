@@ -1,0 +1,500 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "id",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Stafi"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#f3f4f6",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": -3,
+          "w": 91.6,
+          "h": 12.7,
+          "r": 0
+        },
+        "fill": "#111827",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Top band"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 3.2,
+          "w": 26.7,
+          "h": 4.5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 9.5,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 44,
+          "y": 3.6,
+          "w": 38.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Kartë identifikimi",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 12.7,
+          "w": 18.3,
+          "h": 22.7,
+          "r": 0
+        },
+        "bind": "member.photo",
+        "radius": 1.2,
+        "tone": "#9ca3af"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 13,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Emri",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 16.3,
+          "w": 56.6,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 11,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Name"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 24.5,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Detyra",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 27.8,
+          "w": 56.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Inspektor teknik · Tiranë",
+        "font": "poppins",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Role"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 34,
+          "w": 26,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Nr. personal",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 37.3,
+          "w": 26,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Number"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 56,
+          "y": 34,
+          "w": 26.6,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Vlen deri",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 56,
+          "y": 37.3,
+          "w": 26.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.valid_until}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Valid until"
+    },
+    "n13": {
+      "id": "n13",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 43,
+          "w": 78.6,
+          "h": 6,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 22,
+          "h": 22,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 30,
+          "y": 4.5,
+          "w": 52.6,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Pronë e marrimauto",
+        "font": "sora",
+        "size": 9,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 30,
+          "y": 10.5,
+          "w": 52.6,
+          "h": 16,
+          "r": 0
+        },
+        "text": "Kjo kartë hap dyert e pikave të kontrollit dhe të servisit. Mbajeni të dukshme gjatë punës dhe mos ia jepni askujt.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "line",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 31,
+          "w": 78.6,
+          "h": 0.3,
+          "r": 0
+        },
+        "color": "#e5e7eb",
+        "opacity": 1
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 34,
+          "w": 78.6,
+          "h": 13,
+          "r": 0
+        },
+        "text": "Nëse e gjeni këtë kartë, ju lutemi kthejeni në çdo pikë kontrolli marrimauto ose telefononi +355 69 400 2026.",
+        "font": "poppins",
+        "size": 6.3,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Kartë identifikimi"
+  }
+}

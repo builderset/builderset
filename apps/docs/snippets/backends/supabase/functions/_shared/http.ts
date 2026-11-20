@@ -1,8 +1,8 @@
-// Requests in, answers out: the same for both functions.
+// Requests in, answers out: the same for every function.
 
 export type Json = Record<string, unknown>;
 
-// The editor and the form's page call from your site's origin.
+// The editor and your site's pages call from your site's origin.
 export const cors = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info',

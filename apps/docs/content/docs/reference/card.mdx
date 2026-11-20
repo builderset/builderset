@@ -1,0 +1,129 @@
+---
+title: Card
+description: The card document's shape — its format, print settings, sides and placed elements — member data and variables, the print checks, and the renderer's options.
+---
+
+_This page describes Builderset 0.4.0, where the card kit is new. Every element, with its
+props, is in [Card elements](/docs/reference/card-elements); how to use the kit is in
+[Cards](/docs/guides/card)._
+
+## The document
+
+The engine's node tree (see [Email](/docs/reference/email#the-document) for
+`BuilderNode`). The root holds the format and how the card is printed; under it are
+exactly two sides, the front and the back; the elements sit on a side, each at its
+own frame. With `sides: 1` the back is kept, but neither printed nor checked:
+
+<include cwd lang="ts" meta='title="@builderset/card — CardDocument"'>
+  ../../packages/card/src/core/document.ts#shape
+</include>
+
+A one-sided card, as stored:
+
+<include cwd lang="json" meta='title="fixtures/valid/one-sided.json"'>
+  ../../packages/card/fixtures/valid/one-sided.json
+</include>
+
+The kit's JSON Schema is `@builderset/card/schema.json`, for a backend in any
+language; `fixtures/` holds valid and invalid cards with the codes they are refused
+with, and member data with the cards it fills.
+
+## Frames and units
+
+Every length is in millimetres, every type size in points. An element's place is the
+engine's free-canvas frame, measured from the card's top-left corner — the cut line,
+not the bleed — and turned clockwise about its centre:
+
+<include cwd lang="ts" meta='title="@builderset/engine — FreeFrame"'>
+  ../../packages/engine/src/core/frame.ts#frame
+</include>
+
+An element may reach into the bleed, or past it: a band of colour that runs off the
+edge is how a card is printed without a white rim. `mmToPt`, `ptToMm`, `mmToPx` and
+`pxToMm` convert for whatever else your host draws.
+
+## Formats
+
+| Format       | Size (mm)     | Corners (mm) | Printed | For                                              |
+| ------------ | ------------- | ------------ | ------- | ------------------------------------------------ |
+| `membership` | 85.60 × 53.98 | 3.18         | yes     | A club or loyalty card — ISO/IEC 7810 ID-1       |
+| `id`         | 85.60 × 53.98 | 3.18         | yes     | A staff or student ID                            |
+| `bank`       | 85.60 × 53.98 | 3.18         | yes     | A payment or gift card: wants its chip (ISO 7816) |
+| `business`   | 85 × 55       | 0            | yes     | A business card                                  |
+| `badge`      | 53.98 × 85.60 | 3.18         | yes     | A portrait event badge                           |
+| `wallet`     | 85.60 × 53.98 | 4            | no      | A card shown on a screen only                    |
+| `custom`     | 90 × 60       | 2            | yes     | Any size from 20 to 300 mm                       |
+
+A format is a starting size and corner, and decides which checks apply; the designer
+may still change the size. `CARD_FORMATS` lists them; `CHIP_ZONE` and `STRIPE_ZONE`
+are where ISO puts a bank card's chip and magnetic stripe.
+
+## Member data
+
+A card is designed once and printed many times — once per member — so its words may
+hold variables, `{{member.name}}`, that each printed card fills from its own record.
+There is no expression language: a variable is a dotted path, and a record is a flat
+map from path to text (`{ 'member.name': 'Arben Hoxha' }`).
+
+Which fields exist is yours to say, as `CardField`s — a path, a label per language
+and a kind. A `text` field may go in any words, a QR code or a barcode; a `photo`
+field only in a photo frame, its value the picture's address. Without a list of your
+own, a card uses `CARD_FIELDS`: a member's name, number, tier, since, valid until,
+QR value and photo.
+
+| Function                        | What it does                                                                  |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| `fieldsUsed(card)`              | Every field the printed sides use, in order of first use                      |
+| `fillCard(card, record)`        | A copy with one member's data written in — what you store with an issued card |
+| `fillText(text, record)`        | One string filled; a variable the record lacks stays as written               |
+| `variablesIn(text)`             | The paths in a string                                                         |
+
+## Checks
+
+`checkCard(card, registry, { fields, locales })` returns every issue
+([Issues](/docs/reference/issues)); `parseCard(raw, registry)` returns the card, or
+`null` when the stored value is not one. What the print checks hold a card to:
+
+| Rule                                                          | Code                                 | Level   |
+| ------------------------------------------------------------- | ------------------------------------ | ------- |
+| Words and codes inside the safe area                          | `card.outsideSafe`                   | warning |
+| Type no smaller than 6 pt                                     | `card.textTooSmall`                  | warning |
+| QR codes of 15 mm or more                                     | `card.qrTooSmall`                    | warning |
+| A chip on the front of a bank card                            | `card.chipMissing`                   | warning |
+| Something on every printed side, every element placed         | `side.empty`, `frame.unplaced`       | warning |
+| A code with something to encode, in characters it can encode  | `code.empty`, `barcode.unencodable`  | warning |
+| A picture in every image frame; a name for the design         | `image.missing`, `meta.nameMissing`  | warning |
+| Variables your member data has                                | `variable.unknown`                   | error   |
+| QR links a phone may be sent to (no `javascript:`, `data:`, …) | `url.unsafe`                         | error   |
+
+Warnings never stop a card. A draft may still carry the codes in
+`CARD_DRAFT_TOLERATES` (`isDraftBlocking`); printing — approving the design — refuses
+every error (`isPrintBlocking`). The numbers are `CARD_RULES`, and the schema
+publishes them (`x-rules`), so a server in another language holds a card to exactly
+the same ones.
+
+## The renderer
+
+`CardView` draws one side at any size, filled in for one member; `CardPrintSheet`
+lays every printed side of every member's card out at real size, with bleed and crop
+marks, a page each. Both are in `@builderset/card/render`, have no browser code, and
+need `@builderset/card/card.css`. Every prop is in
+[Props](/docs/reference/props#buildersetcard--cardview-cardprintsheet); the words a
+screen reader hears are `CardWords`:
+
+<include cwd lang="ts" meta='title="@builderset/card/render — CardWords"'>
+  ../../packages/card/src/render/words.ts#words
+</include>
+
+`QrCode` and `Barcode` draw a code on their own. Their encoders — QR in byte mode,
+versions 1 to 40, all four error-correction levels, and Code 128 — are the kit's
+own, with no dependency (`encodeQr`, `encodeCode128`).
+
+## The editor
+
+`CardEditor`'s props are in [Props](/docs/reference/props#buildersetcard--cardeditor).
+Its words, besides the engine's, are `CardEditorWords`:
+
+<include cwd lang="ts" meta='title="@builderset/card/editor — CardEditorWords"'>
+  ../../packages/card/src/editor/messages.ts#editor-words
+</include>

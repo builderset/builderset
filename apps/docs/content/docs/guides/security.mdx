@@ -45,6 +45,7 @@ What each part loads, for a page with a policy:
 | Part                          | Loads                                          | Directive                                                                                  |
 | ----------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | The email editor's canvas     | Fonts the email uses, from Google Fonts        | `style-src fonts.googleapis.com`, `font-src fonts.gstatic.com` — or `fontPreviews={false}` |
+| The card editor's canvas      | The card's web fonts, from Google Fonts        | The same — or `fontPreviews={false}`                                                       |
 | Any editor, any renderer      | Your media, through `resolveMedia`             | `img-src` your storage or CDN                                                              |
 | The article renderer's embeds | The provider's player, after the reader clicks | `frame-src` the providers you allow (below)                                                |
 

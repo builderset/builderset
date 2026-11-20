@@ -1,0 +1,253 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "fullscreen",
+        "width": 1100,
+        "height": 640,
+        "position": "center",
+        "background": "#111827",
+        "radius": 0,
+        "shadow": "strong",
+        "overlay": 0,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 3,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "session",
+          "days": 7,
+          "starts": "2026-11-23",
+          "ends": "2026-11-30",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "fade",
+          "duration": 480,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 400,
+          "y": 150,
+          "w": 300,
+          "h": 16,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "VETËM KËTË JAVË"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#f5a25d",
+        "align": "center",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 200,
+          "y": 176,
+          "w": 700,
+          "h": 64,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Java e ofertave te marrimauto"
+          }
+        ],
+        "font": "sora",
+        "size": 48,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "center",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 250,
+          "y": 252,
+          "w": 600,
+          "h": 52,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Për çdo makinë të shitur deri të dielën, kalimi i pronësisë te noteri është falas."
+          }
+        ],
+        "font": "poppins",
+        "size": 17,
+        "weight": 400,
+        "color": "#d1d5db",
+        "align": "center",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "countdown",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 400,
+          "y": 328,
+          "w": 300,
+          "h": 64,
+          "r": 0
+        },
+        "to": "2026-11-30T23:59",
+        "font": "sora",
+        "size": 30,
+        "color": "#ffffff"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 460,
+          "y": 418,
+          "w": 180,
+          "h": 52,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Shiko ofertën"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "/oferta",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 400,
+          "y": 486,
+          "w": 300,
+          "h": 20,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Ndoshta më vonë"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 400,
+        "color": "#9ca3af",
+        "align": "center",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "close",
+        "url": "",
+        "newTab": false
+      },
+      "name": "Later"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 1036,
+          "y": 28,
+          "w": 36,
+          "h": 36,
+          "r": 0
+        },
+        "color": "#d1d5db",
+        "fill": "#1f2937"
+      }
+    }
+  },
+  "meta": {
+    "name": "Ofertë me afat"
+  }
+}

@@ -6,6 +6,8 @@
  *   reference/email-blocks.mdx      createEmailRegistry() + the English locale
  *   reference/article-elements.mdx  createArticleRegistry() + the English locale
  *   reference/form-fields.mdx       createFormRegistry() + the English locale
+ *   reference/card-elements.mdx     createCardRegistry() + the English locale
+ *   reference/popup-elements.mdx    createPopupRegistry() + the English locale
  *   reference/issues.mdx            every issue code, with its message
  *   reference/css-variables.mdx     the public variables, from the theme's own files
  *   reference/props.mdx             every prop, from the tables in the packages' READMEs
@@ -25,6 +27,10 @@ import { createEmailRegistry } from '@builderset/email';
 import { en as emailEn } from '@builderset/email/locales/en';
 import { createFormRegistry } from '@builderset/form';
 import { en as formEn } from '@builderset/form/locales/en';
+import { createCardRegistry } from '@builderset/card';
+import { en as cardEn } from '@builderset/card/locales/en';
+import { createPopupRegistry } from '@builderset/popup';
+import { en as popupEn } from '@builderset/popup/locales/en';
 import { TOKEN_NAMES, z } from '@builderset/engine';
 import { en as engineEn } from '@builderset/engine/locales/en';
 
@@ -155,6 +161,18 @@ const KIT_PAGES = {
     plural: 'fields',
     factory: 'createFormRegistry',
   },
+  card: {
+    title: 'Card elements',
+    what: 'element of the card kit',
+    plural: 'elements',
+    factory: 'createCardRegistry',
+  },
+  popup: {
+    title: 'Popup elements',
+    what: 'element of the popup kit',
+    plural: 'elements',
+    factory: 'createPopupRegistry',
+  },
 };
 
 // ── issues ─────────────────────────────────────────────────────────────────
@@ -165,24 +183,27 @@ function issuesPage() {
     ['Email', emailEn.workspace?.issueText ?? {}],
     ['Article', articleEn.workspace?.issueText ?? {}],
     ['Form', formEn.workspace?.issueText ?? {}],
+    ['Card', cardEn.workspace?.issueText ?? {}],
+    ['Popup', popupEn.workspace?.issueText ?? {}],
   ];
+  // One row per code and wording: a kit that words a shared code its own way
+  // (a card's member data, a popup's page variables) gets a row of its own.
   const rows = new Map();
   for (const [kit, messages] of sources) {
     for (const [codeName, message] of Object.entries(messages)) {
-      const row = rows.get(codeName) ?? { message: String(message), kits: [] };
+      const key = `${codeName}\n${String(message)}`;
+      const row = rows.get(key) ?? { code: codeName, message: String(message), kits: [] };
       row.kits.push(kit);
-      rows.set(codeName, row);
+      rows.set(key, row);
     }
   }
-  const table = [...rows]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(
-      ([codeName, row]) => `| ${code(codeName)} | ${text(row.message)} | ${row.kits.join(', ')} |`,
-    );
+  const table = [...rows.values()]
+    .sort((a, b) => a.code.localeCompare(b.code))
+    .map((row) => `| ${code(row.code)} | ${text(row.message)} | ${row.kits.join(', ')} |`);
   return page(
     'Issues',
     'Every issue code the checkers report, in the browser and on the server, with the message a writer sees.',
-    `The editor shows these to the writer; \`checkEmail\` and \`checkArticle\` return them, and so does the Python package — a server can answer with the same codes and the editor shows them in the same words. A draft may still carry the codes in \`DRAFT_TOLERATES\`; publishing refuses them all.\n\n| Code | Message | Kit |\n| --- | --- | --- |\n${table.join('\n')}`,
+    `The editor shows these to the writer; \`checkEmail\`, \`checkArticle\`, \`checkForm\`, \`checkCard\` and \`checkPopup\` return them, and so does the Python package — a server can answer with the same codes and the editor shows them in the same words. A draft may still carry the codes its kit tolerates (\`DRAFT_TOLERATES\`, \`CARD_DRAFT_TOLERATES\`, \`POPUP_DRAFT_TOLERATES\`); publishing a document, or printing a card, refuses every error.\n\n| Code | Message | Kit |\n| --- | --- | --- |\n${table.join('\n')}`,
   );
 }
 
@@ -256,7 +277,7 @@ function cssVariablesPage() {
 
 function propsPage() {
   const blocks = [];
-  for (const kit of ['email', 'article', 'engine']) {
+  for (const kit of ['email', 'article', 'card', 'engine']) {
     const readme = readFileSync(join(REPO, 'packages', kit, 'README.md'), 'utf8');
     for (const [, file, components, table] of readme.matchAll(
       /<!-- props: ([^\s]+)((?: [\w]+)*) -->\n([\s\S]*?)<!-- \/props -->/g,
@@ -280,6 +301,8 @@ const pages = {
   'email-blocks.mdx': elementsPage(createEmailRegistry(), emailEn, 'email'),
   'article-elements.mdx': elementsPage(createArticleRegistry(), articleEn, 'article'),
   'form-fields.mdx': elementsPage(createFormRegistry(), formEn, 'form'),
+  'card-elements.mdx': elementsPage(createCardRegistry(), cardEn, 'card'),
+  'popup-elements.mdx': elementsPage(createPopupRegistry(), popupEn, 'popup'),
   'issues.mdx': issuesPage(),
   'css-variables.mdx': cssVariablesPage(),
   'props.mdx': propsPage(),

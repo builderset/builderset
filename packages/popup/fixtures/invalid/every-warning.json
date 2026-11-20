@@ -1,0 +1,202 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "load",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "every",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 24,
+          "w": 400,
+          "h": 34,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Hello {{customer.name}}"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 80,
+          "w": 272,
+          "h": 44,
+          "r": 0
+        },
+        "name": "email",
+        "label": " ",
+        "placeholder": "",
+        "kind": "email",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 140,
+          "w": 120,
+          "h": 80,
+          "r": 0
+        },
+        "media": {
+          "key": "popup-image/a.jpg"
+        },
+        "alt": "",
+        "fit": "cover",
+        "radius": 8,
+        "opacity": 1,
+        "tone": "#2b3442"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 600,
+          "y": 0,
+          "w": 40,
+          "h": 40,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "radius": 8,
+        "stroke": "",
+        "strokeWidth": 1,
+        "opacity": 1
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 240,
+          "w": 200,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Go"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Every warning"
+  }
+}

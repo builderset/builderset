@@ -1,0 +1,9 @@
+/*
+ * @builderset/popup/styles.css — everything the popup editor needs, in one
+ * file: the engine's stylesheet, this kit's editor classes, and popup.css.
+ */
+@import '../../engine/src/theme/index.css';
+@import './popup.css';
+
+@source './editor';
+@source './render';

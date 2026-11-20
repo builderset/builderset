@@ -1,0 +1,396 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "badge",
+        "width": 53.98,
+        "height": 85.6,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "paper",
+          "finish": "matte",
+          "quantity": 1500
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n11",
+        "n12",
+        "n13",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": 62,
+          "w": 59.98,
+          "h": 26.6,
+          "r": 0
+        },
+        "fill": "#111827",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Bottom band"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 21.3,
+          "y": 3.7,
+          "w": 11.3,
+          "h": 2,
+          "r": 0
+        },
+        "fill": "#d1d5db",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 1,
+        "opacity": 1
+      },
+      "name": "Lanyard slot"
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 10,
+          "w": 46,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 9.5,
+        "color": "#e06a1b",
+        "media": null
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 22,
+          "w": 46,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Panairi i Makinave 2026",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 26,
+          "w": 46,
+          "h": 12,
+          "r": 0
+        },
+        "text": "Vizitor",
+        "font": "sora",
+        "size": 24,
+        "weight": 800,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 41,
+          "w": 46,
+          "h": 5.5,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "poppins",
+        "size": 10,
+        "weight": 600,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Visitor name"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 48,
+          "w": 46,
+          "h": 8,
+          "r": 0
+        },
+        "text": "Pallati i Kongreseve, Tiranë\n14–16 maj · 10:00–20:00",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 67,
+          "w": 5,
+          "h": 5,
+          "r": 0
+        },
+        "name": "ticket",
+        "color": "#e06a1b"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 11,
+          "y": 67,
+          "w": 39,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Hyrje e lirë në të gjitha sallat",
+        "font": "poppins",
+        "size": 7,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 75,
+          "w": 46,
+          "h": 4,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Ticket number"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 6,
+          "w": 46,
+          "h": 6,
+          "r": 0
+        },
+        "text": "Skanoni në hyrje",
+        "font": "sora",
+        "size": 10,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 10,
+          "y": 16,
+          "w": 34,
+          "h": 34,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "Q"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 56,
+          "w": 46,
+          "h": 14,
+          "r": 0
+        },
+        "text": "Mbajeni bexhin të dukshëm gjatë gjithë kohës. Programi i plotë: marrimauto.com/panairi",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#d1d5db",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 14,
+          "y": 75,
+          "w": 26,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 9.5,
+        "color": "#ffffff",
+        "media": null
+      }
+    }
+  },
+  "meta": {
+    "name": "Vizitor në panair"
+  }
+}

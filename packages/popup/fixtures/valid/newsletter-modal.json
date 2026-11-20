@@ -1,0 +1,256 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 20,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "new",
+          "language": "all",
+          "frequency": "until",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "w": 520,
+          "h": 110,
+          "r": 0
+        },
+        "fill": "#fdf1e9",
+        "radius": 0,
+        "stroke": "",
+        "strokeWidth": 1,
+        "opacity": 1
+      },
+      "name": "Band"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 38,
+          "w": 36,
+          "h": 36,
+          "r": 0
+        },
+        "name": "mail",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 132,
+          "w": 456,
+          "h": 34,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Mos humbisni asnjë ofertë"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 172,
+          "w": 456,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Çdo të enjte: makinat më të kërkuara të javës dhe një këshillë për ta shitur më mirë."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 230,
+          "w": 160,
+          "h": 44,
+          "r": 0
+        },
+        "name": "first_name",
+        "label": "Emri",
+        "placeholder": "Emri",
+        "kind": "text",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 200,
+          "y": 230,
+          "w": 288,
+          "h": 44,
+          "r": 0
+        },
+        "name": "email",
+        "label": "Email",
+        "placeholder": "emri@shembull.com",
+        "kind": "email",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 282,
+          "w": 456,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Regjistrohu"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Faleminderit! Shihemi të enjten."
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#ffffff"
+      }
+    }
+  },
+  "meta": {
+    "name": "Buletini i së enjtes"
+  }
+}

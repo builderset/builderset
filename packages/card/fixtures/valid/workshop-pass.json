@@ -1,0 +1,392 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "id",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Stafi"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#0f172a",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": 40,
+          "w": 91.6,
+          "h": 16.98,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Access stripe"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 76.6,
+          "y": 4,
+          "w": 6,
+          "h": 6,
+          "r": 0
+        },
+        "name": "wrench",
+        "color": "#e06a1b"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 13,
+          "w": 15,
+          "h": 18.5,
+          "r": 0
+        },
+        "bind": "member.photo",
+        "radius": 1.2,
+        "tone": "#334155"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 23,
+          "y": 13.5,
+          "w": 40,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Leje hyrjeje · Servisi",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#94a3b8",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 23,
+          "y": 17,
+          "w": 59.6,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 11,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Name"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 23,
+          "y": 25,
+          "w": 40,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#cbd5e1",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Number"
+    },
+    "n8": {
+      "id": "n8",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 43.5,
+          "w": 50,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Hyrje: Salla 1 · Salla 2 · Magazina",
+        "font": "poppins",
+        "size": 7,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Access"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 56,
+          "y": 43.5,
+          "w": 26.6,
+          "h": 5,
+          "r": 0
+        },
+        "text": "{{member.valid_until}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 600,
+        "color": "#111827",
+        "align": "right",
+        "valign": "middle",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Valid until"
+    },
+    "n10": {
+      "id": "n10",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 60,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Rregullat e servisit",
+        "font": "sora",
+        "size": 9,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 10.5,
+          "w": 56,
+          "h": 22,
+          "r": 0
+        },
+        "text": "Kartën e mbani të dukshme në çdo kohë. Hyrja në sallat e tjera bëhet vetëm me shoqërues. Mjetet e punës nuk dalin nga servisi.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64.6,
+          "y": 4,
+          "w": 18,
+          "h": 18,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "sign",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 38,
+          "w": 45,
+          "h": 7,
+          "r": 0
+        },
+        "label": "Nënshkrimi",
+        "color": "#9ca3af"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 53,
+          "y": 38,
+          "w": 29.6,
+          "h": 9,
+          "r": 0
+        },
+        "text": "Humbët kartën?\n+355 69 400 2026",
+        "font": "poppins",
+        "size": 6.3,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.35,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Leje për servisin"
+  }
+}

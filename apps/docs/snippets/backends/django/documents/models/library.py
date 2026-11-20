@@ -8,18 +8,24 @@ from .base import LIVE, AuditedModel, one_of
 
 
 class Kit(models.TextChoices):
-    """Which builder a saved section belongs to."""
+    """Which builder: the checks its documents get, and its saved sections."""
 
     EMAIL = "email"
     ARTICLE = "article"
     FORM = "form"
+    CARD = "card"
+    POPUP = "popup"
+
+
+#: The builders whose editors keep a library of sections. Cards and popups keep none.
+SECTION_KITS = (Kit.EMAIL, Kit.ARTICLE, Kit.FORM)
 
 
 class SavedSection(AuditedModel):
     """An email header, an article's call to action. Deleting one hides it from
     the editor's list; the documents that used it keep their copy."""
 
-    kit = models.CharField(max_length=16, choices=Kit)
+    kit = models.CharField(max_length=16, choices=[(kit.value, kit.label) for kit in SECTION_KITS])
     #: What the editor lists it as.
     name = models.CharField(max_length=120)
     #: The piece of a document the editor hands over: ``{ roots, nodes }``.
@@ -29,7 +35,7 @@ class SavedSection(AuditedModel):
 
     class Meta:
         db_table = "saved_section"
-        constraints = [one_of("kit", Kit, table="saved_section")]
+        constraints = [one_of("kit", SECTION_KITS, table="saved_section")]
         indexes = [
             models.Index(fields=["kit", "name"], condition=LIVE, name="saved_section_by_kit")
         ]

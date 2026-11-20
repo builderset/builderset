@@ -34,3 +34,33 @@ def test_check_form_publishes_a_template_and_receives_its_answers() -> None:
     assert namespace["receive"](form, answers) == answers
     with pytest.raises(ValueError, match="required"):
         namespace["receive"](form, {**answers, "email": " "})
+
+
+CARD_FIXTURES = REPOSITORY / "packages" / "card" / "fixtures"
+POPUP_FIXTURES = REPOSITORY / "packages" / "popup" / "fixtures"
+
+
+def test_check_card_approves_a_template_and_issues_a_members_card() -> None:
+    namespace = runpy.run_path(str(SNIPPETS / "check_card.py"))
+    card = json.loads(
+        (CARD_FIXTURES / "valid" / "gold-membership.json").read_text(encoding="utf-8")
+    )
+    namespace["approve"](card)  # warnings at most: a print-blocking error raises
+    from builderset.card import fields_used
+
+    member = dict.fromkeys(fields_used(card), "Arben Hoxha")
+    issued = namespace["issue"](card, member)
+    assert "Arben Hoxha" in json.dumps(issued, ensure_ascii=False)
+    with pytest.raises(ValueError, match="missing"):
+        namespace["issue"](card, {})
+
+
+def test_popup_server_publishes_picks_and_receives() -> None:
+    namespace = runpy.run_path(str(SNIPPETS / "popup_server.py"))
+    popup = json.loads(
+        (POPUP_FIXTURES / "valid" / "newsletter-modal.json").read_text(encoding="utf-8")
+    )
+    namespace["publish"](popup)
+    assert isinstance(namespace["popups_for"]([popup], "/", "sq"), list)
+    with pytest.raises(ValueError):
+        namespace["receive"](popup, {})

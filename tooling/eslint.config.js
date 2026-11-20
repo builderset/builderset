@@ -18,11 +18,14 @@ import tseslint from 'typescript-eslint';
 const NO_FRAMEWORK =
   'A package may not depend on Next.js: it has to work in any React app. Use @builderset/engine/ui and EditorMessages.';
 
-const KITS = {
-  engine: ['@builderset/article', '@builderset/email'],
-  article: ['@builderset/email'],
-  email: ['@builderset/article'],
-};
+/** Each kit stands alone: it may import the engine, never another kit. */
+const KIT_NAMES = ['article', 'email', 'form', 'card', 'popup'];
+const KITS = Object.fromEntries(
+  ['engine', ...KIT_NAMES].map((pkg) => [
+    pkg,
+    KIT_NAMES.filter((other) => other !== pkg).map((other) => `@builderset/${other}`),
+  ]),
+);
 const LAYERS = {
   core: {
     paths: ['react', 'react-dom'],

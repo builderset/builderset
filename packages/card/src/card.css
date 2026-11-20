@@ -1,0 +1,239 @@
+/*
+ * @builderset/card/card.css — how a card looks, printed or on a screen.
+ *
+ * Plain CSS, every rule under `.bsc`. Every length is millimetres times
+ * `--bsc-mm` (the pixels one millimetre takes), set by the renderer with the
+ * card's width, height and corners: the same rules draw a thumbnail, the
+ * editor's canvas at any zoom, a card at actual size and a print sheet in
+ * real millimetres. It carries no reset and no utilities, and is safe beside
+ * any other stylesheet.
+ */
+
+.bsc {
+  --bsc-mm: 3.7795px;
+  --bsc-w: 85.6;
+  --bsc-h: 53.98;
+  --bsc-radius: 3.18;
+  --bleed: 0;
+  /* Points to millimetres: type is sized in points. */
+  --bsc-pt: 0.35278;
+
+  position: relative;
+  box-sizing: border-box;
+  flex: none;
+  width: calc((var(--bsc-w) + 2 * var(--bleed)) * var(--bsc-mm));
+  height: calc((var(--bsc-h) + 2 * var(--bleed)) * var(--bsc-mm));
+  font-size: calc(8 * var(--bsc-pt) * var(--bsc-mm));
+  line-height: 1.25;
+  text-align: left;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.bsc *,
+.bsc *::before,
+.bsc *::after {
+  box-sizing: border-box;
+}
+
+/* The card's surface: rounded and clipped as cut; square with its bleed, as printed. */
+.bsc-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: calc(var(--bsc-radius) * var(--bsc-mm));
+  background-position: center;
+  background-size: cover;
+}
+.bsc-bleed .bsc-face {
+  border-radius: 0;
+}
+.bsc-trim {
+  position: absolute;
+  top: calc(var(--bleed) * var(--bsc-mm));
+  left: calc(var(--bleed) * var(--bsc-mm));
+  width: calc(var(--bsc-w) * var(--bsc-mm));
+  height: calc(var(--bsc-h) * var(--bsc-mm));
+}
+
+/* An element at its frame: millimetres from the cut line's top-left corner. */
+.bsc-el {
+  position: absolute;
+  top: calc(var(--y) * var(--bsc-mm));
+  left: calc(var(--x) * var(--bsc-mm));
+  width: calc(var(--w) * var(--bsc-mm));
+  height: calc(var(--h) * var(--bsc-mm));
+  transform: rotate(var(--r, 0deg));
+}
+
+/* Words */
+.bsc-text {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: calc(var(--size) * var(--bsc-pt) * var(--bsc-mm));
+  border-radius: calc(var(--radius, 0) * var(--bsc-mm));
+}
+.bsc-text.bsc-middle {
+  justify-content: center;
+}
+.bsc-text.bsc-bottom {
+  justify-content: flex-end;
+}
+.bsc-words {
+  width: 100%;
+  min-height: 1lh;
+  outline: none;
+}
+/* A variable shown as written, in the editor without example data: kept to
+   its box, as the member's value will be, rather than spilling over the next. */
+.bsc-text:has(.bsc-var) {
+  overflow: hidden;
+}
+.bsc-var {
+  border-radius: 0.2em;
+  white-space: nowrap;
+  background: rgb(91 108 255 / 0.28);
+  box-shadow: 0 0 0 0.08em rgb(91 108 255 / 0.28);
+  font-variant-ligatures: none;
+}
+.bsc-var::before {
+  content: '{{';
+  opacity: 0.6;
+}
+.bsc-var::after {
+  content: '}}';
+  opacity: 0.6;
+}
+.bsc-logo {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-size: calc(var(--size) * var(--bsc-pt) * var(--bsc-mm));
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+/* Shapes and pictures */
+.bsc-shape {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--radius, 0) * var(--bsc-mm));
+}
+.bsc-shape[data-stroke] {
+  border: calc(var(--stroke) * var(--bsc-mm)) solid;
+}
+.bsc-shape.bsc-round {
+  border-radius: 50%;
+}
+.bsc-picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--radius, 0) * var(--bsc-mm));
+}
+.bsc-logo-file {
+  object-fit: contain;
+  object-position: left center;
+}
+.bsc-placeholder {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 255 255 / 0.55);
+}
+.bsc-placeholder svg {
+  width: 42%;
+  max-width: calc(9 * var(--bsc-mm));
+  height: 42%;
+  max-height: calc(9 * var(--bsc-mm));
+  stroke-width: 1.5;
+}
+.bsc-photo-path {
+  position: absolute;
+  right: 0;
+  bottom: calc(1.2 * var(--bsc-mm));
+  left: 0;
+  font:
+    500 calc(4 * var(--bsc-pt) * var(--bsc-mm)) / 1 ui-monospace,
+    'SFMono-Regular',
+    Menlo,
+    monospace;
+  text-align: center;
+}
+.bsc-icon {
+  width: 100%;
+  height: 100%;
+}
+.bsc-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.bsc-code {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The strip a member signs: a fine hatch, the label in its corner. */
+.bsc-sign {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  padding: calc(0.8 * var(--bsc-mm)) calc(1.2 * var(--bsc-mm));
+  border-radius: calc(0.6 * var(--bsc-mm));
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgb(17 24 39 / 0.07) 0 calc(0.5 * var(--bsc-mm)),
+      transparent calc(0.5 * var(--bsc-mm)) calc(1.2 * var(--bsc-mm))
+    ),
+    #f8f6ef;
+  box-shadow: inset 0 0 0 calc(0.15 * var(--bsc-mm)) rgb(17 24 39 / 0.12);
+}
+.bsc-sign span {
+  font:
+    600 calc(5 * var(--bsc-pt) * var(--bsc-mm)) / 1 ui-sans-serif,
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The print sheet: a page per side per member, the card centred with its crop marks. */
+.bsc-sheet {
+  display: grid;
+  justify-content: center;
+  gap: 8mm;
+}
+.bsc-page {
+  display: grid;
+  position: relative;
+  place-items: center;
+  width: var(--page-w);
+  height: var(--page-h);
+  background: #ffffff;
+  break-after: page;
+}
+.bsc-crop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+@media print {
+  .bsc-sheet {
+    display: block;
+  }
+}

@@ -11,7 +11,11 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@builderset/article": "workspace:*",
+    "@builderset/card": "workspace:*",
     "@builderset/email": "workspace:*",
+    "@builderset/form": "workspace:*",
+    "@builderset/popup": "workspace:*",
     "lucide-react": "1.32.0",
     "next": "16.4.6",
     "react": "19.2.8",

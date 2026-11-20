@@ -1,26 +1,28 @@
 ---
 title: Supabase
-description: The three builders on Supabase — the audited tables with row-level security, every write as one Postgres function, a Storage bucket for media, and Edge Functions that check every document and every form response.
+description: The five builders on Supabase — the audited tables with row-level security, every write as one Postgres function, a Storage bucket for media, and Edge Functions that check every document, form response and popup submission.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end your Supabase project stores email templates, articles and forms with who
-made, changed and deleted every row, keeps their revisions and an activity log,
-refuses an unsafe or stale save with the editor's own issue codes, and takes form
-responses from visitors who cannot write to any table. The tables are the ones in
+At the end your Supabase project stores email templates, articles, forms, card designs
+and popups with who made, changed and deleted every row, keeps their revisions and an
+activity log, refuses an unsafe or stale save with the editor's own issue codes, issues
+cards to members, and takes form responses and popup submissions from visitors who
+cannot write to any table. The tables are the ones in
 [Data model and API](/docs/guides/backend/data-model), with Supabase's own users. The
-checks are the kits' own, so they run where JavaScript runs: in two Edge Functions. A
-policy cannot run them, so no document reaches a table except through a function.
+checks are the kits' own, so they run where JavaScript runs: in three Edge Functions.
+A policy cannot run them, so no document reaches a table except through a function.
 
 <Steps>
 <Step>
 
 ### The tables, and who may read them
 
-Eight migrations, run in order: the [SQL schema](/docs/guides/backend/sql) with
+Ten migrations, run in order: the [SQL schema](/docs/guides/backend/sql) with
 `auth.users` for the people, the functions that write, and row-level security on every
-table. Put them in `supabase/migrations/` and run `supabase db push`:
+table. Cards and popups come last, each in one file with its tables, its own writes and
+its security. Put them in `supabase/migrations/` and run `supabase db push`:
 
 <Tabs label="Migrations">
 <Tab title="Shared columns">
@@ -83,9 +85,32 @@ into that status:
   ./snippets/backends/supabase/migrations/20260101000008_security.sql
 </include>
 </Tab>
+<Tab title="Cards">
+
+A card design, its revisions and the cards issued from it. A trigger copies the
+format and the size from the document; `issue_card` freezes the design's version, and
+the partial unique index keeps one valid card per member and design. Cards are your
+team's alone:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000009_cards.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000009_cards.sql
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions, what visitors sent through it, and its counters per day. A
+trigger copies the display dates as the widest window and the priority; the public
+reads the live ones' public columns and adds to their counters, and nothing else:
+
+<include cwd lang="sql" meta='title="supabase/migrations/20260101000010_popups.sql"'>
+  ./snippets/backends/supabase/migrations/20260101000010_popups.sql
+</include>
+
+</Tab>
 </Tabs>
 
-Four choices in them:
+Five choices in them:
 
 - **The team is a table, not the author.** A row in `profiles` makes a user an
   `editor` or a `publisher`. A policy of `auth.uid() = created_by` would let only a
@@ -104,7 +129,11 @@ Four choices in them:
 - **The public reads columns, not tables.** `anon` may select the live `document` of a
   published article or form, and nothing else: it must name the columns
   (`select=uuid,slug,document`), and a `draft_document`, the internal `id` or who wrote
-  it is never theirs. It cannot insert into `form_response` at all.
+  it is never theirs. It cannot insert into `form_response` or `popup_submission` at all.
+- **A counter is the one thing the public writes.** A popup's events — shown, closed,
+  clicked, submitted — need none of the kit's checks, so the page calls
+  `record_popup_event` through the REST API. It runs as its owner and can only add
+  one to today's counter of a popup that has been on the site.
 
 Scheduled articles go live when `publish_due_articles()` runs: schedule it every
 minute with `pg_cron`. The retention job that deletes old responses for good is
@@ -118,7 +147,8 @@ yours too; it is the one place a row is removed.
 Every document is checked before it is stored, with the editor's rules: a draft may be
 unfinished but never unsafe, and publishing refuses every error. For each builder, this
 file says which kit checks it, which table keeps it, and what a new one takes
-from the request:
+from the request. A card's publish is its approval for print, so it is checked with
+`isPrintBlocking`:
 
 <include cwd lang="ts" meta='title="supabase/functions/documents/kinds.ts"'>
   ./snippets/backends/supabase/functions/documents/kinds.ts
@@ -132,7 +162,7 @@ runs Node.
 </Step>
 <Step>
 
-### What both functions share
+### What the functions share
 
 The service-role client and the write functions, the answers and the one place an
 error becomes one, who is calling, and the audit columns as an answer shows them:
@@ -213,6 +243,29 @@ bytes, measures an image, and stores the same file twice only once:
   ./snippets/backends/supabase/functions/documents/responses.ts
 </include>
 </Tab>
+<Tab title="Cards">
+
+A card is issued from an approved design only — `422` while it is a draft — with data
+for every field the design prints, and a member holds one valid card of a design: a
+second is a `409`. The number is drawn here, and drawn again in the rare case it was
+given out before. One card answers with the design as it was when it was issued,
+filled in by `fillCard`, for a reprint:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/cards.ts"'>
+  ./snippets/backends/supabase/functions/documents/cards.ts
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+Pausing takes a popup off the site without touching its document; a popup never
+published answers `409`. It needs the `publisher` role, like publishing:
+
+<include cwd lang="ts" meta='title="supabase/functions/documents/popups.ts"'>
+  ./snippets/backends/supabase/functions/documents/popups.ts
+</include>
+
+</Tab>
 <Tab title="Every route">
 
 What each handler is handed, and the read most of them start with:
@@ -248,6 +301,25 @@ Deploy it with `supabase functions deploy form-responses`. It has no rate limit;
 </Step>
 <Step>
 
+### Popups on your site
+
+The popups function answers your site's question — which popups may show on this page —
+by reading them with the anon key, so the policy is the filter: published, not deleted,
+inside their dates. It matches the page's path and language with the kit's
+`pathMatches` and `languageMatches`, and `shouldShow` decides the rest in the
+browser: the audience, how often, the device. A submission is checked again with
+`validateSubmission` against the live popup, and only its values are stored:
+
+<include cwd lang="ts" meta='title="supabase/functions/popups/index.ts"'>
+  ./snippets/backends/supabase/functions/popups/index.ts
+</include>
+
+Deploy it with `supabase functions deploy popups`. `PopupView`'s events skip it:
+`popupHandlers` in the host file below sends them to `record_popup_event` directly.
+
+</Step>
+<Step>
+
 ### Uploads
 
 The `media` bucket is public, so a published page shows its images at an address that
@@ -265,7 +337,9 @@ file stays in the bucket until a job of yours removes the ones no live document 
 
 [`createRestHost`](/docs/guides/host#createresthost) with the function's address per
 document, `…/functions/v1/documents/forms/<id>`, and the signed-in user's access token
-on every request. Its uploads, revisions and saved sections go to the same function:
+on every request. Its uploads, revisions and saved sections go to the same function.
+The same file has the form's `onSubmit` and the Responses tab's loader, and
+`popupHandlers` for `PopupView` on your site:
 
 <include cwd lang="ts" meta='title="host.ts"'>
   ./snippets/backends/supabase/host.ts

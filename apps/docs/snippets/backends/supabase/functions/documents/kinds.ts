@@ -1,5 +1,5 @@
-// What differs between emails, articles and forms: which kit checks the
-// document, which table keeps it, and what a new one needs from the request.
+// What differs between the five builders: which kit checks the document,
+// which table keeps it, and what a new one needs from the request.
 import {
   checkArticle,
   createArticleRegistry,
@@ -7,6 +7,14 @@ import {
   isPublishBlocking as articlePublishBlocks,
   parseArticle,
 } from 'npm:@builderset/article@0.4.0';
+import {
+  checkCard,
+  createCardRegistry,
+  isDraftBlocking as cardDraftBlocks,
+  isPrintBlocking as cardPrintBlocks,
+  parseCard,
+  type CardDocument,
+} from 'npm:@builderset/card@0.4.0';
 import {
   checkEmail,
   createEmailRegistry,
@@ -30,6 +38,14 @@ import {
   parseForm,
   type FormDocument,
 } from 'npm:@builderset/form@0.4.0';
+import {
+  checkPopup,
+  createPopupRegistry,
+  isDraftBlocking as popupDraftBlocks,
+  isPublishBlocking as popupPublishBlocks,
+  parsePopup,
+  type PopupDocument,
+} from 'npm:@builderset/popup@0.4.0';
 
 import { HttpError, notFound, type Json } from '../_shared/http.ts';
 
@@ -48,12 +64,15 @@ const EMAIL_TYPES: Record<string, EmailType> = {};
 const SLUG = /^[a-z0-9-]{1,200}$/;
 const LOCALE = /^[a-z]{2}(-[A-Z]{2})?$/;
 
+/** The builders with a library of saved sections. A card or a popup is one free canvas: no sections. */
+export type SectionKit = 'email' | 'article' | 'form';
+
 export interface Kind {
-  table: 'email_template' | 'article' | 'form';
+  table: 'email_template' | 'article' | 'form' | 'card_design' | 'popup';
   /** Its name in a message: "There is no such email template." */
   noun: string;
-  /** Its saved sections' `kit`. */
-  kit: 'email' | 'article' | 'form';
+  /** Its saved sections' `kit`; null for a builder without sections. */
+  kit: SectionKit | null;
   /** The elements a document may hold. Add your own here too, or documents that use them are refused. */
   registry: ElementRegistry;
   /** The column a list shows as the name, and searches. */
@@ -80,6 +99,8 @@ function verdict(
 const emailRegistry = createEmailRegistry();
 const articleRegistry = createArticleRegistry();
 const formRegistry = createFormRegistry();
+const cardRegistry = createCardRegistry();
+const popupRegistry = createPopupRegistry();
 
 const emails: Kind = {
   table: 'email_template',
@@ -153,8 +174,43 @@ const forms: Kind = {
   newColumns: () => ({}),
 };
 
+const cards: Kind = {
+  table: 'card_design',
+  noun: 'card design',
+  kit: null,
+  registry: cardRegistry,
+  nameColumn: 'name',
+  statuses: ['draft', 'published'],
+  schedules: false,
+  // A card's publish is approving it for print: `isPrintBlocking` is that level.
+  check(raw, level) {
+    const issues = checkCard(raw as CardDocument, cardRegistry, { locales: LOCALES });
+    const blocks = level === Level.draft ? cardDraftBlocks : cardPrintBlocks;
+    return verdict(parseCard(raw, cardRegistry), issues, blocks);
+  },
+  // The format, the size and the sides come from the document: a trigger copies them.
+  newColumns: () => ({}),
+};
+
+const popups: Kind = {
+  table: 'popup',
+  noun: 'popup',
+  kit: null,
+  registry: popupRegistry,
+  nameColumn: 'name',
+  statuses: ['draft', 'published', 'paused'],
+  schedules: false,
+  check(raw, level) {
+    const issues = checkPopup(raw as PopupDocument, popupRegistry, { locales: LOCALES });
+    const blocks = level === Level.draft ? popupDraftBlocks : popupPublishBlocks;
+    return verdict(parsePopup(raw, popupRegistry), issues, blocks);
+  },
+  // The type, the dates and the priority come from the document: a trigger copies them.
+  newColumns: () => ({}),
+};
+
 /** The builders, by the path segment that names them: /documents/{kind}/… */
-const KINDS: Record<string, Kind> = { emails, articles, forms };
+const KINDS: Record<string, Kind> = { emails, articles, forms, cards, popups };
 
 export function kindOf(segment: string): Kind {
   const kind = Object.hasOwn(KINDS, segment) ? KINDS[segment] : undefined;

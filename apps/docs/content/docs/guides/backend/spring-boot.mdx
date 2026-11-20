@@ -1,0 +1,750 @@
+---
+title: Spring Boot
+description: The five builders' backend in Java — Spring Boot 3 with Spring Data JPA over Postgres, Flyway running the SQL schema, every row audited and soft-deleted, revisions and an activity log written in the same transaction, documents checked by the kits' JSON Schemas and the Builderset checker.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end a Spring Boot app stores email templates, articles, forms, card designs and
+popups with everything the [data model](/docs/guides/backend/data-model) asks of a real
+app: who made, changed, published and deleted each row and when, a trash to restore
+from, a revision on every manual save and publish, and an activity line for everything
+that happens. It refuses an unsafe or stale save with the editor's own issue codes,
+takes form responses and popup submissions checked exactly as the browser checked
+them, and issues cards to members.
+
+Tested with Spring Boot 3.5.7 on Java 21 (Temurin 21.0.12, Maven 3.9), with
+Hibernate 6.6, Spring Data JPA 3.5, Flyway 11.7, networknt json-schema-validator 1.5.8
+and PostgreSQL 18. About 30 minutes to read.
+
+There is no Builderset package for Java, so every document is checked in two layers.
+Its **structure** is checked in-process, against the kit's JSON Schema. The **kits' own
+rules** — an unsafe link, a variable the email type does not have, a form's answers —
+run in the [Builderset checker](/docs/guides/backend/checker), a small Node service
+beside the app that runs the same functions the editor runs. When the checker cannot
+be reached, the app answers `503` and stores nothing.
+
+The tables are the [SQL schema](/docs/guides/backend/sql)'s own files, run by Flyway;
+the entities are mapped onto them and Hibernate only checks that they match. Code is
+grouped by feature, one package per builder:
+
+```txt title="src/main/java/com/example/builder/"
+Application.java   the app
+shared/            the audit columns, the document columns, revisions, people, statuses
+audit/             who is signed in (a stand-in for yours), auditing, the trash
+web/               errors as answers, paging, the sign-in check, uploaded files
+checks/            the JSON Schemas, the checker's client, the two together
+activity/          the activity log
+documents/         the routes the five builders share, written once
+emails/ articles/ forms/ cards/ popups/   each builder: its tables, and what is its own
+library/           saved sections and uploads
+```
+
+<Steps>
+<Step>
+
+### The project
+
+A Spring Boot web app with Spring Data JPA, Flyway, the Postgres driver and a JSON
+Schema validator:
+
+<include cwd lang="xml" meta='title="pom.xml"'>
+  ./snippets/backends/spring-boot/pom.xml
+</include>
+
+The database, the checker's address and where uploads go; each is an environment
+variable too. The answers' names are the data model's, `saved_at` and
+`draft_document`, so Jackson writes every record in snake case:
+
+<include cwd lang="properties" meta='title="src/main/resources/application.properties"'>
+  ./snippets/backends/spring-boot/src/main/resources/application.properties
+</include>
+
+</Step>
+<Step>
+
+### The tables
+
+The eight files of the [SQL page](/docs/guides/backend/sql), `01_base.sql` to
+`08_popups.sql`, are Flyway's migrations as they are, renamed to `V1__base.sql` …
+`V8__popups.sql`. Run this once from the app's folder:
+
+<include cwd lang="sh" meta='title="migrations.sh"'>
+  ./snippets/backends/spring-boot/migrations.sh
+</include>
+
+Flyway runs them in order on startup, and with `ddl-auto=validate` Hibernate refuses to
+start when an entity names a column the tables do not have. The partial unique
+indexes, the triggers that keep `updated_at` and the check constraints are the SQL's,
+so they hold whatever writes to the tables.
+
+</Step>
+<Step>
+
+### The models
+
+One package per group of tables. Every entity extends one of two `@MappedSuperclass`es:
+the audit columns, or the audit columns and a document. Spring Data's auditing fills
+`created_by` and `updated_by` from the signed-in user; deleting stamps `deleted_at` and
+`deleted_by` and keeps the row. The database spells statuses in lowercase — `draft`,
+`status_changed` — so each enum carries a converter that writes them so.
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns every row has, and your users, who are answered as `{ id, name }`:
+
+<include cwd lang="java" meta='title="shared/AuditedEntity.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/AuditedEntity.java
+</include>
+
+<include cwd lang="java" meta='title="shared/AppUser.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/AppUser.java
+</include>
+
+<include cwd lang="java" meta='title="shared/PersonRef.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/PersonRef.java
+</include>
+
+What the five document tables add: the live document, the draft since, and the two
+clocks. `saved_at` is cut to the millisecond the column keeps, so the one an answer
+gives is exactly the one the next save is compared with:
+
+<include cwd lang="java" meta='title="shared/DocumentEntity.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/DocumentEntity.java
+</include>
+
+A revision, mapped once; each builder's table names its parent column:
+
+<include cwd lang="java" meta='title="shared/Revision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/Revision.java
+</include>
+
+The statuses, the revision kinds and your team's triage words, and how an enum is
+spelled in the database and the API:
+
+<include cwd lang="java" meta='title="shared/Status.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/Status.java
+</include>
+
+<include cwd lang="java" meta='title="shared/RevisionKind.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/RevisionKind.java
+</include>
+
+<include cwd lang="java" meta='title="shared/TriageStatus.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/TriageStatus.java
+</include>
+
+<include cwd lang="java" meta='title="shared/Lowercase.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/Lowercase.java
+</include>
+
+</Tab>
+<Tab title="Email templates">
+
+A design for an email your app sends, and its versions. Its type is chosen when it is
+made and never changes:
+
+<include cwd lang="java" meta='title="emails/EmailTemplate.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/emails/EmailTemplate.java
+</include>
+
+<include cwd lang="java" meta='title="emails/EmailTemplateRevision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/emails/EmailTemplateRevision.java
+</include>
+
+</Tab>
+<Tab title="Articles">
+
+An article's address is chosen when it is made. Publishing keeps the first
+`published_at`; scheduling writes the document now and leaves the publish to a job of
+yours:
+
+<include cwd lang="java" meta='title="articles/Article.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/articles/Article.java
+</include>
+
+<include cwd lang="java" meta='title="articles/ArticleRevision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/articles/ArticleRevision.java
+</include>
+
+</Tab>
+<Tab title="Forms">
+
+A form, its revisions and its responses. Unpublishing closes a form: its link keeps
+working and shows the closed message.
+
+<include cwd lang="java" meta='title="forms/Form.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/Form.java
+</include>
+
+<include cwd lang="java" meta='title="forms/FormRevision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/FormRevision.java
+</include>
+
+<include cwd lang="java" meta='title="forms/FormResponse.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/FormResponse.java
+</include>
+
+</Tab>
+<Tab title="Cards">
+
+A card design copies its format and size to columns, for lists and print orders. A
+card issued to a member freezes the design's version and the member's data:
+
+<include cwd lang="java" meta='title="cards/CardDesign.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardDesign.java
+</include>
+
+<include cwd lang="java" meta='title="cards/CardDesignRevision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardDesignRevision.java
+</include>
+
+<include cwd lang="java" meta='title="cards/CardIssue.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardIssue.java
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup copies its days and priority to columns, so the site asks one indexed
+question. The days are the visitor's, so the window is widened to every time zone and
+the browser narrows it. `popup_daily_stat` has no entity: an upsert in the popups' routes adds
+to it.
+
+<include cwd lang="java" meta='title="popups/Popup.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/Popup.java
+</include>
+
+<include cwd lang="java" meta='title="popups/PopupRevision.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/PopupRevision.java
+</include>
+
+<include cwd lang="java" meta='title="popups/PopupSubmission.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/PopupSubmission.java
+</include>
+
+</Tab>
+<Tab title="Library">
+
+<include cwd lang="java" meta='title="library/SavedSection.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/SavedSection.java
+</include>
+
+<include cwd lang="java" meta='title="library/Media.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/Media.java
+</include>
+
+</Tab>
+<Tab title="Activity">
+
+One table for every kind of row, appended to and never edited. Its actor is stamped by
+the same auditing as `created_by`:
+
+<include cwd lang="java" meta='title="activity/Activity.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/activity/Activity.java
+</include>
+
+<include cwd lang="java" meta='title="activity/Action.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/activity/Action.java
+</include>
+
+<include cwd lang="java" meta='title="activity/SubjectType.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/activity/SubjectType.java
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The repositories
+
+Every finder names which side of a soft delete it reads: the live rows, or the trash.
+A deleted row is `404` everywhere but restore. Each builder declares its own
+repositories inside its class — `Articles.Rows`, `Articles.Revisions` — so the
+application lets Spring Data find nested ones:
+
+<include cwd lang="java" meta='title="shared/AuditedRepository.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/AuditedRepository.java
+</include>
+
+<include cwd lang="java" meta='title="shared/RevisionRepository.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/RevisionRepository.java
+</include>
+
+<include cwd lang="java" meta='title="Application.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/Application.java
+</include>
+
+</Step>
+<Step>
+
+### Who, and what went wrong
+
+The audit columns are set from the signed-in user, never from the request body. Your
+sign-in puts the person on the request; the filter here is a stand-in so the example
+runs, and it leaves the public routes to visitors. Publishing is its own permission:
+
+<Tabs label="Who">
+<Tab title="The signed-in user">
+
+<include cwd lang="java" meta='title="audit/CurrentUser.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/audit/CurrentUser.java
+</include>
+
+</Tab>
+<Tab title="The stand-in">
+
+<include cwd lang="java" meta='title="audit/DevSignIn.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/audit/DevSignIn.java
+</include>
+
+<include cwd lang="java" meta='title="shared/AppUsers.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/AppUsers.java
+</include>
+
+</Tab>
+<Tab title="Auditing">
+
+<include cwd lang="java" meta='title="audit/AuditConfig.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/audit/AuditConfig.java
+</include>
+
+</Tab>
+<Tab title="Your team's routes">
+
+<include cwd lang="java" meta='title="audit/SignInRequired.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/audit/SignInRequired.java
+</include>
+
+<include cwd lang="java" meta='title="web/WebConfig.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/WebConfig.java
+</include>
+
+</Tab>
+</Tabs>
+
+Handlers throw; one `@RestControllerAdvice` turns what they throw into `404`, `409`,
+`422` or `503`. A `422` carries the issue codes, so the editor shows each problem on
+its block:
+
+<Tabs label="Errors">
+<Tab title="The answers">
+
+<include cwd lang="java" meta='title="web/ApiErrors.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/ApiErrors.java
+</include>
+
+</Tab>
+<Tab title="What handlers throw">
+
+<include cwd lang="java" meta='title="web/ApiException.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/ApiException.java
+</include>
+
+<include cwd lang="java" meta='title="web/Issue.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/Issue.java
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The checks
+
+The schemas are the kits' own `schema.json` files, copied in from the checker's
+`npm install`, so the structure checked here and the rules the checker runs are always
+the same version of the kits. Run it after installing or updating the kits:
+
+<include cwd lang="sh" meta='title="copy-schemas.sh"'>
+  ./snippets/backends/spring-boot/copy-schemas.sh
+</include>
+
+A document is checked in two layers. Either refuses with the editor's issue codes:
+
+<Tabs label="Checks">
+<Tab title="Both layers">
+
+<include cwd lang="java" meta='title="checks/DocumentChecks.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/DocumentChecks.java
+</include>
+
+</Tab>
+<Tab title="The JSON Schemas">
+
+<include cwd lang="java" meta='title="checks/DocumentSchemas.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/DocumentSchemas.java
+</include>
+
+</Tab>
+<Tab title="The checker">
+
+`RestClient` with a short timeout: anything but an answer — refused, slow, down — is
+`CheckerUnavailable`, and the error advice answers `503`:
+
+<include cwd lang="java" meta='title="checks/CheckerClient.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/CheckerClient.java
+</include>
+
+<include cwd lang="java" meta='title="checks/CheckerUnavailable.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/CheckerUnavailable.java
+</include>
+
+</Tab>
+<Tab title="Kits and levels">
+
+<include cwd lang="java" meta='title="checks/Kit.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/Kit.java
+</include>
+
+<include cwd lang="java" meta='title="checks/Level.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/checks/Level.java
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The audit work
+
+What every write shares, called inside its transaction: the activity line, and the
+soft delete and its undoing. A restore is flushed at once, so a partial unique index
+that refuses it does so here, and the advice answers `409`:
+
+<include cwd lang="java" meta='title="activity/ActivityLog.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/activity/ActivityLog.java
+</include>
+
+<include cwd lang="java" meta='title="audit/Trash.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/audit/Trash.java
+</include>
+
+</Step>
+<Step>
+
+### One set of routes for five builders
+
+`/api/emails`, `/api/articles`, `/api/forms`, `/api/cards` and `/api/popups` differ only
+in what a `DocumentKind` says: its tables, its statuses, what a new row takes, what
+publishing and unpublishing do. Each builder is a component that implements it, and
+one controller serves all five by the URL's `{kind}`:
+
+<include cwd lang="java" meta='title="documents/DocumentKind.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentKind.java
+</include>
+
+<Tabs label="Kinds">
+<Tab title="Email templates">
+
+Publishing a design moves the one before it, for the same email type, back to draft:
+
+<include cwd lang="java" meta='title="emails/EmailTemplates.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/emails/EmailTemplates.java
+</include>
+
+</Tab>
+<Tab title="Articles">
+
+<include cwd lang="java" meta='title="articles/Articles.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/articles/Articles.java
+</include>
+
+</Tab>
+<Tab title="Forms">
+
+A form's address is copied from the document on publish; one another live form holds
+is refused on `meta.slug`, where the editor shows it:
+
+<include cwd lang="java" meta='title="forms/Forms.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/Forms.java
+</include>
+
+</Tab>
+<Tab title="Cards">
+
+<include cwd lang="java" meta='title="cards/CardDesigns.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardDesigns.java
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+<include cwd lang="java" meta='title="popups/Popups.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/Popups.java
+</include>
+
+</Tab>
+<Tab title="By {kind}">
+
+<include cwd lang="java" meta='title="documents/DocumentKinds.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentKinds.java
+</include>
+
+</Tab>
+</Tabs>
+
+The work is in one service. The checker is called before the transaction opens, so a
+network call never holds a row lock; the row, its revision and its activity line are
+then written in one `TransactionTemplate`, together or not at all.
+
+<Tabs label="Document routes">
+<Tab title="Save a draft">
+
+The editor sends back the `saved_at` it last saw. The row is locked first, so the
+`saved_at` compared is the one overwritten: a different one — or none — means someone
+else saved in between, `409`, and the editor offers to reload or keep its own, which
+sends `force`. An autosave becomes a revision at most every ten minutes and is never
+logged:
+
+<include cwd lang="java" meta='title="documents/DocumentService.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentService.java#draft
+</include>
+
+</Tab>
+<Tab title="Publish">
+
+The strict check, then the document goes live with its meta copied to the columns, a
+`publish` revision and an activity line, in one transaction. A name, title or slug the
+publish changed is logged as a rename:
+
+<include cwd lang="java" meta='title="documents/DocumentService.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentService.java#publish
+</include>
+
+</Tab>
+<Tab title="Delete and restore">
+
+A soft delete. A published document is refused — unpublish it first — and a restore
+whose address another live row took meanwhile meets the partial unique index: `409`.
+
+<include cwd lang="java" meta='title="documents/DocumentService.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentService.java#delete
+</include>
+
+</Tab>
+<Tab title="The whole file">
+
+<include cwd lang="java" meta='title="documents/DocumentService.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentService.java
+</include>
+
+</Tab>
+</Tabs>
+
+The controller only reads the request and answers. Lists answer `{ items, total }`,
+with `?status=`, `?q=`, `?limit=`, `?offset=` and `?deleted=true` for the trash:
+
+<Tabs label="Controller">
+<Tab title="Routes">
+
+<include cwd lang="java" meta='title="documents/DocumentController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentController.java
+</include>
+
+</Tab>
+<Tab title="Bodies and answers">
+
+The builder's own columns sit beside the shared ones in an answer, unwrapped:
+
+<include cwd lang="java" meta='title="documents/DocumentRequests.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentRequests.java
+</include>
+
+<include cwd lang="java" meta='title="documents/DocumentAnswers.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/DocumentAnswers.java
+</include>
+
+</Tab>
+<Tab title="Filters and pages">
+
+<include cwd lang="java" meta='title="documents/Rows.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/Rows.java
+</include>
+
+<include cwd lang="java" meta='title="web/Paging.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/Paging.java
+</include>
+
+<include cwd lang="java" meta='title="web/Text.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/web/Text.java
+</include>
+
+<include cwd lang="java" meta='title="shared/Json.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/shared/Json.java
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### History
+
+A document's revisions — what it said — for the editor's version panel, and its
+activity — what happened to it — for a timeline of yours. The work is in
+`DocumentService`, under "History". A revision's `author` is a name, as the editor
+shows it; an activity's `actor` is `{ id, name }`:
+
+<include cwd lang="java" meta='title="documents/HistoryController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/documents/HistoryController.java
+</include>
+
+</Step>
+<Step>
+
+### Forms and their responses
+
+The public side takes no sign-in. The answers are checked by the checker against the
+**published** document, never the draft; a filled trap field is answered as a success
+and stored nowhere; and only the `values` the checker keeps are stored. The count goes
+up in the same statement that checks `maxResponses`, so two visitors cannot both take
+the last place. Your team's side lists the responses, triages them with `PATCH` and
+deletes them softly; only your retention job deletes them for good.
+
+<include cwd lang="java" meta='title="forms/FormResponses.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/FormResponses.java
+</include>
+
+<include cwd lang="java" meta='title="forms/FormController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/forms/FormController.java
+</include>
+
+</Step>
+<Step>
+
+### Cards
+
+A card is issued from the design's **published** version — `422` while it is a
+draft — and a member holds one valid card of a design at a time: a second is `409`
+until the first is revoked. Its number is random and never reused; a revoked card
+keeps it.
+
+<include cwd lang="java" meta='title="cards/CardIssues.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardIssues.java
+</include>
+
+<include cwd lang="java" meta='title="cards/CardIssueController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/cards/CardIssueController.java
+</include>
+
+</Step>
+<Step>
+
+### Popups
+
+Your team pauses a published popup and puts it back with
+`PATCH /api/popups/:id/pause` `{ paused }`; a draft is `409`. Your site asks which
+popups may show on a page: the published ones whose days include now, filtered by the
+page's path and language the way the kit's `pathMatches` and `languageMatches` do;
+`shouldShow` decides the rest in the browser. An event adds one to today's counter; a
+submission is checked by the checker against the published popup, `410` while it is
+paused or after its last day.
+
+<Tabs label="Popups">
+<Tab title="The work">
+
+<include cwd lang="java" meta='title="popups/PopupService.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/PopupService.java
+</include>
+
+</Tab>
+<Tab title="Pages and languages">
+
+<include cwd lang="java" meta='title="popups/PopupPages.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/PopupPages.java
+</include>
+
+</Tab>
+<Tab title="Routes">
+
+<include cwd lang="java" meta='title="popups/PopupController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/popups/PopupController.java
+</include>
+
+</Tab>
+</Tabs>
+
+Put a rate limit in front of the visitors' `POST` routes — your proxy, or a servlet
+filter such as Bucket4j's — answering `429`.
+
+</Step>
+<Step>
+
+### The library
+
+Saved sections, per builder — email, article and form; cards and popups keep none —
+and uploads. A section's nodes are held to the kit's element rules by the same JSON
+Schema as a document's. A file is known by its first bytes, never by its name, and the
+same bytes uploaded twice are one `media` row.
+
+<Tabs label="Library">
+<Tab title="The work">
+
+<include cwd lang="java" meta='title="library/Library.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/Library.java
+</include>
+
+<include cwd lang="java" meta='title="library/LibraryController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/LibraryController.java
+</include>
+
+</Tab>
+<Tab title="Storage">
+
+Files on the local disk, served by `WebConfig`. For S3 or similar, only `Storage`
+changes: a document holds a file's key, never its URL.
+
+<include cwd lang="java" meta='title="library/Storage.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/Storage.java
+</include>
+
+<include cwd lang="java" meta='title="library/StoredFile.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/StoredFile.java
+</include>
+
+<include cwd lang="java" meta='title="library/FileType.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/library/FileType.java
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### What leaves the server
+
+Your site's published article, and an email rendered for your mailer from the live
+document by the checker's `renderEmail`. The browser never sends HTML.
+
+<include cwd lang="java" meta='title="articles/PublicArticleController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/articles/PublicArticleController.java
+</include>
+
+<include cwd lang="java" meta='title="emails/EmailDeliveryController.java"'>
+  ./snippets/backends/spring-boot/src/main/java/com/example/builder/emails/EmailDeliveryController.java
+</include>
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+Start the checker, then the app with your database and `DEV_USER_EMAIL` set to a row of
+`app_user`. [`createRestHost`](/docs/guides/host#createresthost) takes the document's
+address, `/api/articles/<uuid>`: the row's `uuid`, its public id. For forms, the same
+file has the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+</Step>
+</Steps>

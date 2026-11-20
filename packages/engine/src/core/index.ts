@@ -26,6 +26,16 @@ export {
 export { domParser } from './dom-parser';
 export { type EditableTextField } from './editable';
 export {
+  frameBounds,
+  frameOf,
+  freeFrameSchema,
+  isPlaced,
+  normalizeAngle,
+  UNPLACED_FRAME,
+  type FreeFrame,
+  type FreeRect,
+} from './frame';
+export {
   History,
   type CommitOptions,
   type HistoryEntry,

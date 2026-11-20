@@ -1,15 +1,27 @@
 ---
 title: Python
-description: builderset for Python — check documents and form answers, and render emails, on a Python server as the TypeScript does.
+description: builderset for Python — check documents, form answers and popup submissions, apply a popup's display rules, fill a member's card, and render emails, on a Python server as the TypeScript does.
 ---
 
 _This page describes Builderset 0.4.0._
 
 `builderset` is the server side of the kits in Python. It checks an article, an
-email or a form with the same rules and the same issue codes as the TypeScript
-packages, checks a form's answers exactly as the browser did, and renders an email to
-the same HTML and text, byte for byte: the email you send is the one the editor
-showed. Python 3.11 or newer.
+email, a form, a card or a popup with the same rules and the same issue codes as the
+TypeScript packages; checks a form's answers and a popup's submissions exactly as the
+browser did; applies a popup's display rules as the page does; fills a card with a
+member's data; and renders an email to the same HTML and text, byte for byte: the
+email you send is the one the editor showed. Python 3.11 or newer.
+
+| Module                | For                                                                                    |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| `builderset.email`    | `check_email`, `render_email`                                                          |
+| `builderset.article`  | `check_article`                                                                        |
+| `builderset.form`     | `check_form`, `validate_answers`                                                       |
+| `builderset.card`     | `check_card`, `fields_used`, `fill_card`                                               |
+| `builderset.popup`    | `check_popup`, `should_show`, `why_hidden`, `pick_popup`, `validate_submission`        |
+
+There is no card or popup renderer in Python: both are React. A Python backend
+stores and checks the documents, and serves them to the page that draws them.
 
 ## Install
 
@@ -61,6 +73,58 @@ A form's own pattern (`checks.regex`) is compiled by Python's `re`, not by
 JavaScript. The two agree on what people write for a plate or a code; on exotic
 syntax (`\p{…}`, variable-length lookbehind) one of them may refuse what the other
 takes.
+
+## Cards
+
+`builderset.card` checks a card design before it is printed, and makes out one
+member's copy of it.
+
+<include cwd lang="python" meta='title="check_card.py"'>
+  ./snippets/python/check_card.py
+</include>
+
+- `check_card(document, *, fields, locales, check_media_key)` — every issue
+  `checkCard` reports, with the same codes: the tree, then the print rules on each
+  printed side. `fields` are your members' fields as `{"path": "member.plan", "kind":
+  "text"}` (`"photo"` for a picture); omitted, the default member fields. A variable
+  outside them is `variable.unknown`.
+- Words outside the safe area, type under 6 pt, a QR code under 15 mm and their kind
+  are warnings (`is_warning`, `WARNINGS`). A draft may still carry the codes in
+  `DRAFT_TOLERATES` (`is_draft_blocking`); printing refuses every error
+  (`is_print_blocking`).
+- `fields_used(document)` — the member fields the printed sides use, in order of
+  first use. `fill_card(document, record)` — a copy with one member's data written
+  into its words and codes, exactly as the renderer fills them on the page; store it
+  with the issued card. `fill_text(text, record)` fills one string.
+
+## Popups
+
+`builderset.popup` checks the popup a person builds, decides where it shows, and
+checks what a visitor sends.
+
+<include cwd lang="python" meta='title="popup_server.py"'>
+  ./snippets/python/popup_server.py
+</include>
+
+- `check_popup(document, *, locales, variables, check_media_key)` — every issue
+  `checkPopup` reports, with the same codes. `variables` are the paths your pages
+  fill in; omitted, the popup's defaults. Warnings (`is_warning`) never block; a
+  draft may carry `DRAFT_TOLERATES` (`is_draft_blocking`); going live refuses every
+  error (`is_publish_blocking`).
+- `should_show(document, context)` — the display rules as the popup applies them in
+  the browser. `context` has the TypeScript names: `path`, `device` (`desktop` or
+  `mobile`), `language`, `returning`, `now` (milliseconds since 1970), `today`
+  (`2026-11-30`; default: `now`'s date in this process's time zone), `seen` and
+  `session`. `why_hidden` names the rule that hides it (`HIDE_REASONS`), and
+  `pick_popup(popups, context)` returns the one with the highest priority that shows.
+- `validate_submission(document, values)` — the answers checked as the popup checked
+  them: `result.errors` holds, per input name, the first thing wrong (`code`, and
+  `limit` for `tooLong`); `result.values` the answers to keep — the popup's own
+  inputs only, trimmed. `as_dict()` gives the shape `validateSubmission` returns.
+
+The kits' fixtures — `show.json` and `submissions.json` for popups, `fields.json` and
+`filled.json` for cards — hold the TypeScript answers, and the Python tests are held
+to them.
 
 ## Media keys are your rule
 

@@ -1,12 +1,14 @@
 """What the routes take and what they answer. Answers are read from the rows;
 a row's ``uuid`` is its ``id`` here, and people are ``{ id, name }`` or null."""
 
-from datetime import datetime
+from datetime import date, datetime
 from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
-from pydantic import AliasPath, AwareDatetime, BaseModel, ConfigDict, Field
+from pydantic import AliasPath, AwareDatetime, BaseModel, ConfigDict, Field, StrictBool
+
+from app.models import Delivery, PopupEvent
 
 # ── Requests ────────────────────────────────────────────────────────────────
 
@@ -73,6 +75,40 @@ class Triage(BaseModel):
     note: str | None = None
 
 
+class NewCardIssue(BaseModel):
+    """Who a card is for, what is printed on it, and how it reaches them."""
+
+    #: Your member's id, as your system knows it.
+    member_ref: str = Field(min_length=1, max_length=120)
+    #: The member's fields: { "member.name": "Arben Hoxha" }.
+    data: dict[str, Any]
+    delivery: Delivery = Delivery.PRINT
+    valid_until: date | None = None
+
+
+class Revocation(BaseModel):
+    reason: str | None = Field(default=None, max_length=200)
+
+
+class PopupEventIn(BaseModel):
+    """What PopupView's onEvent sends."""
+
+    event: PopupEvent
+
+
+class PopupValues(BaseModel):
+    """What PopupView's onSubmit sends: the inputs' values, and the page they were on."""
+
+    values: dict[str, Any] = {}
+    path: str | None = Field(default=None, max_length=500)
+    locale: str | None = Field(default=None, max_length=10)
+
+
+class Pause(BaseModel):
+    #: True takes the popup off the site; false puts it back.
+    paused: StrictBool
+
+
 # ── Answers ─────────────────────────────────────────────────────────────────
 
 
@@ -112,6 +148,14 @@ class DocumentOut(Audit):
     locale: str | None = None
     scheduled_at: datetime | None = None
     response_count: int | None = None
+    format: str | None = None
+    width_mm: float | None = None
+    height_mm: float | None = None
+    sides: int | None = None
+    type: str | None = None
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+    priority: int | None = None
 
 
 class ListedDocument(Answer):
@@ -214,3 +258,45 @@ class ResponseSummary(Answer):
     total: int
     this_week: int
     latest: list[ResponseLine]
+
+
+class CardIssueOut(Audit):
+    """A card made out to a member. ``design`` is the design's public id."""
+
+    id: UUID = Field(validation_alias="uuid")
+    design: UUID = Field(validation_alias=AliasPath("card_design", "uuid"))
+    design_version: int
+    member_ref: str
+    number: str
+    data: dict[str, Any]
+    status: str
+    delivery: str
+    valid_until: date | None
+    printed_at: datetime | None
+    revoked_at: datetime | None
+    revoked_by: Person | None
+    revoke_reason: str | None
+
+
+class IssuedCard(CardIssueOut):
+    """What issuing answers: the card, and its document as it is printed."""
+
+    #: The design with this member's data written in, for the renderer or the printer.
+    document: dict[str, Any] = {}
+
+
+class CardIssuePage(Answer):
+    items: list[CardIssueOut]
+    total: int
+
+
+class PublicPopup(Answer):
+    """A popup as your site gets it: PopupView draws the document, shouldShow decides."""
+
+    id: UUID = Field(validation_alias="uuid")
+    version: int
+    document: dict[str, Any]
+
+
+class PopupStatus(Answer):
+    status: str

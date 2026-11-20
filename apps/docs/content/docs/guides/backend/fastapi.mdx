@@ -1,18 +1,19 @@
 ---
 title: FastAPI
-description: The three builders' backend in FastAPI — SQLAlchemy 2 models for every table with who made, changed and deleted each row, revisions and an activity log, soft deletes, the editor's routes for emails, articles and forms, and the form's public routes, checked by the builderset Python package.
+description: The five builders' backend in FastAPI — SQLAlchemy 2 models for every table with who made, changed and deleted each row, revisions and an activity log, soft deletes, the editor's routes for emails, articles, forms, card designs and popups, card issues, and the public routes of forms and popups, checked by the builderset Python package.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end a FastAPI app stores email templates, articles and forms with the whole
-audit trail of the [data model](/docs/guides/backend/data-model): who made, changed,
-published and deleted each row and when, a revision on every manual save and publish,
-and one activity line for everything that happens. It refuses an unsafe or stale save
-with the same issue codes as the editor, deletes softly so a row can be restored, and
-takes form responses checked exactly as the form in the browser checked them.
+At the end a FastAPI app stores email templates, articles, forms, card designs and
+popups with the whole audit trail of the [data model](/docs/guides/backend/data-model):
+who made, changed, published and deleted each row and when, a revision on every manual
+save and publish, and one activity line for everything that happens. It refuses an
+unsafe or stale save with the same issue codes as the editor, deletes softly so a row
+can be restored, takes form responses and popup submissions checked exactly as the
+browser checked them, and issues cards to members.
 [FastAPI and SQLAlchemy](/docs/guides/backend/fastapi-sqlalchemy) is the complete,
-tested backend for emails alone; this page builds all three builders in the same
+tested backend for emails alone; this page builds all five builders in the same
 style. The `builderset` package's install is in [Python](/docs/reference/python).
 
 The code is one package, `app`, with a file per concern. `app/__init__.py` and
@@ -58,10 +59,35 @@ An article's `name` is its `title`, so the list and search treat every document 
   ./snippets/backends/fastapi/app/models/forms.py
 </include>
 </Tab>
+<Tab title="Cards">
+
+A card design, its revisions, and the cards issued from it. A card freezes the
+design's version and the member's data, and its number is never reused.
+
+<include cwd lang="python" meta='title="app/models/cards.py"'>
+  ./snippets/backends/fastapi/app/models/cards.py
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions, what visitors sent through it, and its counters per day. The
+display rules stay in the document; the columns copy what the site's one query needs.
+
+<include cwd lang="python" meta='title="app/models/popups.py"'>
+  ./snippets/backends/fastapi/app/models/popups.py
+</include>
+
+</Tab>
 <Tab title="Library">
+
+`Kit` names every builder; saved sections are kept for emails, articles and forms
+only.
+
 <include cwd lang="python" meta='title="app/models/library.py"'>
   ./snippets/backends/fastapi/app/models/library.py
 </include>
+
 </Tab>
 <Tab title="Activity">
 <include cwd lang="python" meta='title="app/models/activity.py"'>
@@ -103,8 +129,8 @@ in:
 ### The checks
 
 One function checks every document: lenient for a draft, which may be unfinished but
-never unsafe, and strict for publishing. Each kit names what a draft may still carry,
-the same list the editor uses:
+never unsafe, and strict for publishing — for a card design, approving it for print.
+Each kit names what a draft may still carry, the same list the editor uses:
 
 <include cwd lang="python" meta='title="app/checks.py"'>
   ./snippets/backends/fastapi/app/checks.py
@@ -113,11 +139,13 @@ the same list the editor uses:
 </Step>
 <Step>
 
-### One set of routes for three builders
+### One set of routes for five builders
 
-The routes are written once, as `/api/{kind}/…`. What differs between emails,
-articles and forms is a small table: the model, its revision table, the kit, the
-columns copied from the document's meta:
+The routes are written once, as `/api/{kind}/…`. What differs between the builders is
+a small table: the model, its revision table, the kit, the columns copied from the
+document. A card design copies its format and size from its root node; a popup copies
+its dates and priority, widened to whole days anywhere in the world, so the site asks
+one indexed question. `/api/cards/sections` and `/api/popups/sections` answer `404`:
 
 <include cwd lang="python" meta='title="app/kinds.py"'>
   ./snippets/backends/fastapi/app/kinds.py
@@ -188,8 +216,9 @@ none until it is published:
 </Tab>
 <Tab title="Unpublish, delete, restore">
 
-Unpublishing leaves an email or an article a draft, and a form `closed`: its link
-keeps working and shows the closed message. A live document is not deleted —
+Unpublishing leaves a form `closed` — its link keeps working and shows the closed
+message — and anything else a draft, a paused popup too. A live document is not
+deleted —
 unpublish it first — and a restore whose address was taken meanwhile is `409`:
 
 <include cwd lang="python" meta='title="app/documents.py"'>
@@ -272,6 +301,41 @@ retention job is the one place a response is deleted for good:
 
 <include cwd lang="python" meta='title="app/routers/forms.py"'>
   ./snippets/backends/fastapi/app/routers/forms.py
+</include>
+
+</Step>
+<Step>
+
+### Cards
+
+A card is issued from a published design only — `422` while it is a draft — and from
+its live version: `fields_used` names the member's data it prints, every one is
+required, and only those are frozen into the issue. The answer carries the card as it
+is printed, the design filled in by `fill_card`. A member holds one card of a design
+that is not revoked: the partial unique index `card_issue_one_valid` refuses a second,
+answered `409`. Revoking keeps the row, so the number printed on the card still points
+at it:
+
+<include cwd lang="python" meta='title="app/routers/cards.py"'>
+  ./snippets/backends/fastapi/app/routers/cards.py
+</include>
+
+</Step>
+<Step>
+
+### Popups
+
+Your site asks which popups may show on a page; the server answers from the indexed
+columns, the dates, then the page and language rules with the kit's `path_matches` and
+`language_matches`, highest priority first. `should_show` — `shouldShow` in the
+browser — decides the rest: the audience, how often, the device. Events add to the
+day's counters in one upsert; a submission is checked with `validate_submission`
+against the live popup, and only its `values` are stored. Pausing takes `{ paused }`
+and changes only the status, so the document and `saved_at` stay as they are; a draft
+answers `409`:
+
+<include cwd lang="python" meta='title="app/routers/popups.py"'>
+  ./snippets/backends/fastapi/app/routers/popups.py
 </include>
 
 </Step>

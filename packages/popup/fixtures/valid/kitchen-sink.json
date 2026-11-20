@@ -1,0 +1,522 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 560,
+        "height": 520,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "except",
+          "rules": [
+            "/account/*"
+          ],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18",
+        "n19"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "w": 560,
+          "h": 120,
+          "r": 0
+        },
+        "fill": "#fdf1e9",
+        "radius": 0,
+        "stroke": "",
+        "strokeWidth": 1,
+        "opacity": 1
+      },
+      "name": "Band"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 480,
+          "y": 20,
+          "w": 60,
+          "h": 60,
+          "r": 0
+        },
+        "fill": "",
+        "stroke": "#e06a1b",
+        "strokeWidth": 2,
+        "opacity": 1
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 24,
+          "w": 150,
+          "h": 30,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "media": null,
+        "size": 22,
+        "weight": 800,
+        "color": "#111827"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 70,
+          "w": 28,
+          "h": 28,
+          "r": 0
+        },
+        "name": "gift",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64,
+          "y": 76,
+          "w": 300,
+          "h": 16,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "FREE VALUATION"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 136,
+          "w": 512,
+          "h": 34,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Hello {{visitor.first_name}}!"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 176,
+          "w": 512,
+          "h": 44,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Your offer for {{page.title}} ends {{offer.ends}}."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 228,
+          "w": 120,
+          "h": 80,
+          "r": 0
+        },
+        "media": {
+          "key": "popup-image/2026/11/car.jpg",
+          "width": 1200,
+          "height": 800
+        },
+        "alt": "A grey estate car",
+        "fit": "cover",
+        "radius": 8,
+        "opacity": 1,
+        "tone": "#2b3442"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 164,
+          "y": 228,
+          "w": 80,
+          "h": 80,
+          "r": 0
+        },
+        "data": "https://example.com/app",
+        "color": "#111827",
+        "background": "#ffffff"
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "countdown",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 264,
+          "y": 240,
+          "w": 272,
+          "h": 52,
+          "r": 0
+        },
+        "to": "2026-11-30T23:59",
+        "font": "sora",
+        "size": 24,
+        "color": "#111827"
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "line",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 320,
+          "w": 512,
+          "h": 1,
+          "r": 0
+        },
+        "color": "#d1d5db",
+        "opacity": 1
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 336,
+          "w": 248,
+          "h": 44,
+          "r": 0
+        },
+        "name": "plate",
+        "label": "Plate number",
+        "placeholder": "AA 123 BC",
+        "kind": "plate",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 288,
+          "y": 336,
+          "w": 248,
+          "h": 44,
+          "r": 0
+        },
+        "name": "email",
+        "label": "Email",
+        "placeholder": "name@example.com",
+        "kind": "email",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 388,
+          "w": 248,
+          "h": 44,
+          "r": 0
+        },
+        "name": "phone",
+        "label": "Phone",
+        "placeholder": "+355 69 …",
+        "kind": "tel",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 288,
+          "y": 388,
+          "w": 248,
+          "h": 44,
+          "r": 0
+        },
+        "name": "first_name",
+        "label": "First name",
+        "placeholder": "Ana",
+        "kind": "text",
+        "required": false,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 444,
+          "w": 248,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Send"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you!"
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 288,
+          "y": 444,
+          "w": 248,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "How it works"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "radius": 10,
+        "action": "link",
+        "url": "https://example.com/how",
+        "newTab": true,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 494,
+          "w": 512,
+          "h": 20,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Not now"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "",
+        "align": "center",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "close",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 518,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Kitchen sink"
+  }
+}

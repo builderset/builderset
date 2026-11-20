@@ -41,7 +41,7 @@
   --font-code: var(--font-jetbrains), ui-monospace, SFMono-Regular, Consolas, monospace;
 
   --top: 64px;
-  --wrap: 1200px;
+  --wrap: 1360px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 @media (prefers-color-scheme: dark) {
@@ -756,7 +756,7 @@ html.lp-anim [data-reveal]:not(.is-in) {
   perspective: 1800px;
 }
 .lp-product {
-  max-width: 1040px;
+  max-width: 1200px;
   margin: 0 auto;
   transform-origin: 50% 0%;
   transform: rotateX(calc((1 - var(--lift, 0)) * 18deg)) scale(calc(0.93 + var(--lift, 0) * 0.07));

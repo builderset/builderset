@@ -5,11 +5,9 @@ import { de } from '@builderset/email/locales/de';
 import { en } from '@builderset/email/locales/en';
 import { sq } from '@builderset/email/locales/sq';
 
-import type { HeroBlock } from '@/components/hero-build';
-
 /*
  * Everything this page says about the kits is read from the kits, at build
- * time: the version, the starter email, the editor's words, the issue texts.
+ * time: the version, the editor's words, the issue texts.
  */
 
 const read = (path: string) =>
@@ -21,40 +19,6 @@ const read = (path: string) =>
 export const VERSION = (
   JSON.parse(read('../../packages/email/package.json')) as { version: string }
 ).version;
-
-interface Node {
-  type: string;
-  props: Record<string, unknown>;
-}
-
-/** The props the hero shows for each block of the starter: a few, in the fixture's words. */
-const SHOWN: Record<string, string[]> = {
-  logo: ['width', 'align', 'href'],
-  heading: ['weight', 'text'],
-  text: ['text'],
-  button: ['label', 'href', 'background'],
-  divider: ['color', 'thickness', 'style'],
-  footer: ['text'],
-};
-
-const print = (value: unknown): string => {
-  const json = JSON.stringify(value);
-  return json.length > 30 ? `${json.slice(0, 26)}…${json.startsWith('[') ? ']' : ''}` : json;
-};
-
-/** The starter email's blocks, top to bottom, as the hero draws them. */
-export function heroBlocks(): HeroBlock[] {
-  const starter = JSON.parse(read('../../packages/email/fixtures/valid/starter.json')) as {
-    nodes: Record<string, Node>;
-  };
-  return Object.entries(starter.nodes)
-    .filter(([, node]) => node.type in SHOWN)
-    .map(([id, node]) => ({
-      id,
-      type: node.type,
-      props: (SHOWN[node.type] ?? []).map((key): [string, string] => [key, print(node.props[key])]),
-    }));
-}
 
 type Words = Record<string, unknown>;
 const word = (locale: typeof en, key: string): string => {

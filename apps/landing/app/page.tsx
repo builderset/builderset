@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  ArrowUp,
   ArrowUpRight,
   Braces,
   Database,
@@ -13,14 +14,15 @@ import type { CSSProperties } from 'react';
 import { Code } from '@/components/code';
 import { CopyButton } from '@/components/copy-button';
 import { Features, type Feature } from '@/components/features';
-import { HeroBuild } from '@/components/hero-build';
+import { FooterMark } from '@/components/footer-mark';
+import { HeroEditor } from '@/components/hero-editor';
 import { Horizon } from '@/components/horizon';
 import { LiveDemo } from '@/components/live-demo';
 import { Logo } from '@/components/logo';
 import { Nav } from '@/components/nav';
 import { Reveal } from '@/components/reveal';
 
-import { editorWords, heroBlocks, issues, VERSION } from './data';
+import { editorWords, issues, VERSION } from './data';
 import { LINKS } from './links';
 
 /** A button's label that rolls up to a copy of itself on hover. */
@@ -249,7 +251,7 @@ export default function Page() {
             </div>
           </div>
           <Horizon>
-            <HeroBuild blocks={heroBlocks()} />
+            <HeroEditor />
           </Horizon>
         </section>
 
@@ -480,31 +482,60 @@ export default function Page() {
       </main>
 
       <footer className="lp-footer">
-        <div className="lp-wrap lp-footer-in">
-          <div className="lp-footer-brand">
-            <a className="lp-brand" href="#top">
-              <Logo size={24} />
+        <div className="lp-wrap lp-footer-top">
+          <div className="lp-footer-lead">
+            <a className="lp-brand" href="#top" aria-label="Builderset, back to the top">
+              <Logo size={28} />
               <span>Builderset</span>
             </a>
-            <p>Visual editors for emails and articles, inside your own app.</p>
+            <p>
+              The editor, the renderer and the checker for emails and articles, inside your own
+              React app. Your theme, your language, your database.
+            </p>
+            <div className="lp-install">
+              <span className="lp-install-p" aria-hidden="true">
+                $
+              </span>
+              <code>{INSTALL}</code>
+              <CopyButton text={INSTALL} />
+            </div>
           </div>
+          <nav aria-label="Product">
+            <h4>Product</h4>
+            <a href="#editor">Live editor</a>
+            <a href="#how">How it fits</a>
+            <a href="#features">What every kit gets</a>
+            <a href="#kits">Kits</a>
+            <a href={LINKS.playground}>Playground</a>
+          </nav>
           <nav aria-label="Docs">
             <h4>Docs</h4>
-            <a href={LINKS.quickStart}>Quick start</a>
+            <a href={LINKS.quickStart}>Quick start: email</a>
+            <a href={LINKS.quickStartArticle}>Quick start: article</a>
             <a href={LINKS.install}>Install</a>
             <a href={LINKS.backend}>Backend setup</a>
-            <a href={LINKS.reference}>Reference</a>
+            <a href={LINKS.theme}>Theme</a>
           </nav>
-          <nav aria-label="Project">
-            <h4>Project</h4>
-            <a href={LINKS.playground}>Playground</a>
+          <nav aria-label="Reference">
+            <h4>Reference</h4>
+            <a href={LINKS.reference}>Props</a>
+            <a href={LINKS.issues}>Issue codes</a>
+            <a href={LINKS.python}>Python</a>
             <a href={LINKS.github}>GitHub</a>
             <a href={LINKS.npm}>npm</a>
           </nav>
         </div>
+        <FooterMark />
         <div className="lp-wrap lp-footer-base">
-          <span>MIT licence</span>
-          <span className="mono">v{VERSION}</span>
+          <span className="lp-footer-status">
+            <i aria-hidden="true" />
+            <span className="mono">v{VERSION}</span> · MIT licence · React 19 · Node 20+ · Python
+            3.11+
+          </span>
+          <span>© 2026 Builderset</span>
+          <a className="lp-footer-up" href="#top">
+            Back to top <ArrowUp size={14} />
+          </a>
         </div>
       </footer>
     </>

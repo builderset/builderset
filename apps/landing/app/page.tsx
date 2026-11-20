@@ -515,7 +515,7 @@ export default function Page() {
                 <li key={stack.name} style={delay(index)}>
                   <a className="lp-stack" href={stack.href}>
                     <span className="mark">
-                      <StackIcon icon={stack.icon} size={24} decorative />
+                      <StackIcon icon={stack.icon} size={32} decorative />
                     </span>
                     <span className="name">{stack.name}</span>
                     <span className="lang">

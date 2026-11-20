@@ -2330,13 +2330,16 @@ html.lp-anim .lp-stacks:not(.is-in) li {
 .lp-stack {
   position: relative;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  /* The logo tile is a square as tall as the name and its chips together. */
+  grid-template-columns: 56px minmax(0, 1fr);
   grid-template-areas:
     'mark name'
     'mark lang'
     'what what';
   column-gap: 14px;
   row-gap: 2px;
+  /* A taller card in the same row leaves its space below the text, not between the rows. */
+  align-content: start;
   height: 100%;
   padding: 20px 20px 22px;
   border: 1px solid var(--line);
@@ -2357,10 +2360,10 @@ html.lp-anim .lp-stacks:not(.is-in) li {
   grid-area: mark;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 13px;
   background: var(--bg-soft);
   transition:
     border-color 0.25s,

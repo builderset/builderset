@@ -1,7 +1,7 @@
 // A rendered article, on the server: no editor code reaches this page.
-import 'builderset/article/content.css';
+import '@builderset/article/content.css';
 
-import { ArticleRenderer, type ImageProps } from 'builderset/article/render';
+import { ArticleRenderer, type ImageProps } from '@builderset/article/render';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

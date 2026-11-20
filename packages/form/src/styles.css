@@ -1,0 +1,11 @@
+/*
+ * @builderset/form/styles.css — everything the form editor needs, in one
+ * file: the engine's stylesheet (theme, reset, the editor's UI), the classes
+ * of this kit's editor, and the form's own look (`form.css`), which the canvas
+ * draws with. A page that only shows a form loads `form.css` alone.
+ */
+@import '../../engine/src/theme/index.css';
+@import './form.css';
+
+@source './editor';
+@source './render';

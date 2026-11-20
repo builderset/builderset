@@ -1,0 +1,17 @@
+{
+  "title": "Reference",
+  "pages": [
+    "email",
+    "email-blocks",
+    "article",
+    "article-elements",
+    "form",
+    "form-fields",
+    "engine",
+    "host",
+    "props",
+    "css-variables",
+    "issues",
+    "python"
+  ]
+}

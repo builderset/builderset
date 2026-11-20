@@ -1,0 +1,52 @@
+---
+title: 'Next.js and Prisma'
+description: The same backend as the Drizzle one, with Prisma — the schema, the client with the pg adapter, and the routes. About 20 minutes.
+---
+
+The routes, the checks and the answers are the same as in
+[Next.js and Drizzle](/docs/guides/backend/next-drizzle), which explains each step;
+this page shows what Prisma changes. Every file is from
+[`examples/backends/next-prisma`](https://github.com/builderset/builderset/tree/development/examples/backends/next-prisma),
+tested against a real Postgres on each change.
+
+_This page describes Builderset 0.4.0._
+
+## The table
+
+<include cwd lang="prisma" meta='title="prisma/schema.prisma"'>
+  ../../examples/backends/next-prisma/prisma/schema.prisma
+</include>
+
+<include cwd lang="sql" meta='title="prisma/migrations/0001_email_template/migration.sql"'>
+  ../../examples/backends/next-prisma/prisma/migrations/0001_email_template/migration.sql
+</include>
+
+## The client
+
+<include cwd lang="ts" meta='title="lib/db.ts"'>
+  ../../examples/backends/next-prisma/lib/db.ts
+</include>
+
+## The check
+
+A document is JSON to Prisma; `toJson` and `storedEmail` are the only casts:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-prisma/lib/emails.ts
+</include>
+
+## Saving a draft
+
+`updateMany` with the `saved_at` just checked is the conditional write: a count of
+`0` means someone else saved in between.
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/draft/route.ts"'>
+  ../../examples/backends/next-prisma/app/api/emails/[id]/draft/route.ts
+</include>
+
+## The rest
+
+Publishing, sending and uploads are as in the Drizzle example, in
+[`app/api`](https://github.com/builderset/builderset/tree/development/examples/backends/next-prisma/app/api).
+The editor's host is the same:
+[the editor's side](/docs/guides/backend/next-drizzle#the-editors-side).

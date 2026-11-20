@@ -1,0 +1,537 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n4",
+        "n9",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Which product is it about?",
+        "key": "product",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Mobile app",
+          "Website",
+          "Desktop app",
+          "Something else"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How often do you use it?",
+        "key": "frequency",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Every day",
+          "A few times a week",
+          "A few times a month",
+          "Rarely"
+        ],
+        "layout": "list",
+        "defaultValue": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "scale",
+      "v": 1,
+      "props": {
+        "label": "How easy is it to use?",
+        "key": "ease",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "from": 1,
+        "to": 5,
+        "lowLabel": "Very hard",
+        "highLabel": "Very easy"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "The product"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3"
+      ]
+    },
+    "n5": {
+      "id": "n5",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What kind of feedback is it?",
+        "key": "kind",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "An idea",
+          "A bug",
+          "Praise",
+          "A question"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Your feedback",
+        "key": "feedback",
+        "help": "",
+        "required": true,
+        "lock": "Product feedback needs the feedback itself",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": 10,
+          "maxLength": 4000,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "What happened, or what would you like to see?",
+        "rows": 5
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Device and version",
+        "key": "device",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "kind",
+              "op": "is",
+              "value": "A bug"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "iPhone 15, iOS 18.2",
+        "defaultValue": ""
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "file",
+      "v": 1,
+      "props": {
+        "label": "Screenshots or a recording",
+        "key": "screenshots",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "kind",
+              "op": "is",
+              "value": "A bug"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "accept": [
+          "png",
+          "jpg",
+          "gif",
+          "mp4"
+        ],
+        "maxFiles": 3,
+        "maxMb": 25
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your feedback"
+      },
+      "children": [
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n10": {
+      "id": "n10",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "What describes you best?",
+        "key": "role",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Personal use",
+          "Small business",
+          "Larger company"
+        ],
+        "layout": "buttons",
+        "defaultValue": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Would you like to try new features before anyone else?",
+        "key": "beta",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "We send beta invitations here.",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "beta",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "beta",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "text": "I agree to receive beta invitations by email, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Stay in touch"
+      },
+      "children": [
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Product feedback",
+    "title": "Help us make it better",
+    "intro": "Found a bug, have an idea or just love something? We want to hear it.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "numbers",
+    "buttons": {
+      "submit": "Send feedback",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you — we got it",
+      "message": "Every piece of feedback goes to the people who build the product.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": false,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2563eb",
+      "font": "inter",
+      "fullWidthButtons": false
+    }
+  }
+}

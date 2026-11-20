@@ -1,0 +1,63 @@
+---
+title: Email
+description: The email document's shape, its variables and formats, and every option of renderEmail.
+---
+
+_This page describes Builderset 0.4.0. Every block, with its props, is in
+[Email blocks](/docs/reference/email-blocks)._
+
+## The document
+
+Every Builderset document is the same flat tree — a record of nodes by id, and the
+id of the root — so the operations, the history and the checks are shared:
+
+<include cwd lang="ts" meta='title="@builderset/engine — the node tree"'>
+  ../../packages/engine/src/core/document.ts#shape
+</include>
+
+An email adds its meta (subject, preheader) and settings (width, colours, fonts,
+dark mode):
+
+<include cwd lang="ts" meta='title="@builderset/email — EmailDocument"'>
+  ../../packages/email/src/core/document.ts#shape
+</include>
+
+The starter email, as stored:
+
+<include cwd lang="json" meta='title="fixtures/valid/starter.json"'>
+  ../../packages/email/fixtures/valid/starter.json
+</include>
+
+The kit's JSON Schema is `@builderset/email/schema.json`, for a backend in any
+language.
+
+## Variables
+
+A variable is a dotted path in double braces, optionally with a format:
+`{{ recipient.name }}`, `{{ order.total | money }}`. There is no expression
+language. An email type declares what a template may use; the system variables are
+always there:
+
+<include cwd lang="ts" meta='title="@builderset/email — EmailType"'>
+  ../../packages/email/src/core/variables.ts#types
+</include>
+
+The formats:
+
+<include cwd lang="ts" meta='title="@builderset/email — FORMATS"'>
+  ../../packages/email/src/core/variables.ts#formats
+</include>
+
+Dates and numbers are formatted for `sq`, `en` and `de`, in the `Europe/Tirane`
+time zone, in 0.4.0.
+
+## renderEmail
+
+`renderEmail(document, options)` from `@builderset/email/render` returns
+`{ subject, preheader, html, text, warnings }`. Its options:
+
+<include cwd lang="ts" meta='title="@builderset/email/render — RenderOptions"'>
+  ../../packages/email/src/render/context.ts#render-options
+</include>
+
+How to use it: [Sending email](/docs/guides/email).

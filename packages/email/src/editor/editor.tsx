@@ -11,9 +11,9 @@ import {
 } from '@builderset/engine/editor';
 import type { EmailDocument, EmailType } from '../core';
 import type { BrandKit } from '../render';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { EmailProvider } from './context';
+import { EmailProvider, type EmailView } from './context';
 import { en } from '../locales/en';
 import type { EmailLocale, EmailMessages, EmailWords } from './messages';
 import { emailProfile } from './profile';
@@ -79,6 +79,11 @@ export interface EmailEditorProps {
    * Content-Security-Policy allows no font host. Default: `true`.
    */
   fontPreviews?: boolean | undefined;
+  /**
+   * Adds "Send test" to the top bar: send the design as it is now to
+   * `address`, filled in with the type's sample. Resolve `true` once sent.
+   */
+  onSendTest?: ((document: EmailDocument, address: string) => Promise<boolean>) | undefined;
 }
 
 /**
@@ -108,6 +113,7 @@ export function EmailEditor({
   messages,
   contentLocales,
   defaultContentLocale: requestedContentLocale,
+  onSendTest,
 }: EmailEditorProps) {
   const htmlLang = useHtmlLang();
   const locale = requested === 'auto' ? htmlLang : (requested ?? 'en');
@@ -155,9 +161,16 @@ export function EmailEditor({
     ],
   );
   const sample = type?.samples.default ?? Object.values(type?.samples ?? {})[0] ?? {};
+  // How the canvas shows the email: the dock's switches.
+  const [view, setViewState] = useState<EmailView>({ exampleData: false, dark: false });
+  const setView = useCallback((patch: Partial<EmailView>) => {
+    setViewState((current) => ({ ...current, ...patch }));
+  }, []);
 
   return (
-    <EmailProvider value={{ type, brand, words, locale: contentLocale, sample }}>
+    <EmailProvider
+      value={{ type, brand, words, locale: contentLocale, sample, view, setView, onSendTest }}
+    >
       <BuilderEditor
         document={document}
         registry={registry}

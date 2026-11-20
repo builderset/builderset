@@ -54,6 +54,29 @@ A change starts on a short branch from `development` (`feat/…`, `fix/…`,
 5. **Docs in the same change.** If a change alters what a README or
    `BACKEND.md` says, that file changes in the same pull request.
 
+## Adding a language
+
+The editor's words live in three places, one file per language in each:
+
+| File                                     | Holds                                                     |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `packages/engine/src/locales/<code>.ts`  | The workspace, the inspector's fields, the issue messages |
+| `packages/email/src/locales/<code>.ts`   | The email kit's own words and its block names             |
+| `packages/article/src/locales/<code>.ts` | The article kit's own words and its element names         |
+
+1. Copy `de.ts` in each folder to `<code>.ts` (a BCP 47 code: `fr`, `pt-BR`) and
+   translate every string. Keep the keys; the type is English's.
+2. Add the language to the `it.each` list in each folder's `locales.test.ts`: it
+   fails on an empty or missing word.
+3. Run `pnpm build && pnpm check:packages`: the build makes an entry point of
+   every file in `src/locales/`, so `@builderset/email/locales/<code>` exists.
+4. A changeset (`pnpm changeset`, minor) for the three packages.
+
+Dates and numbers inside a rendered email are a separate matter: they are
+formatted for `sq`, `en` and `de` only, in both the TypeScript and the Python
+renderer, and a new language there needs the golden files regenerated. Ask in an
+issue first.
+
 ## Commit messages
 
 [Conventional Commits](https://www.conventionalcommits.org/): `feat(email): …`,

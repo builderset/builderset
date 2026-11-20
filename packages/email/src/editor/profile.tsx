@@ -8,26 +8,35 @@ import {
   type Fragment,
 } from '@builderset/engine';
 import type { EditorProfile } from '@builderset/engine/editor';
+import { Boxes, Braces } from 'lucide-react';
 import {
+  block,
   BRAND_COLORS,
+  buildEmail,
   checkEmail,
   EMAIL_CATEGORIES,
   EMAIL_FONTS,
   googleFontsUrl,
   parseEmail,
+  row,
   ROW_LAYOUTS,
+  section,
   variablesOf,
   type EmailDocument,
   type EmailType,
   type RowLayout,
 } from '../core';
 import { socialIconUrl, type BrandKit } from '../render';
-import { EmailCanvas, type EditableField } from './canvas';
 
-import { EmailSettingsPanel } from './settings-panel';
+import { EMAIL_TEMPLATE_CATEGORIES, EMAIL_TEMPLATES, toTemplateSpec } from '../templates';
+import { EmailDockItems, SendTest } from './canvas-actions';
+import { ColumnsIcon } from './columns-icon';
 import { ImportHtmlHost } from './import-html-host';
-import { ModulesPanel } from './modules-panel';
+import { EmailFrame, EmailReadOnly, MailHeader, type EmailDrawing } from './mail-frame';
 import type { EmailWords } from './messages';
+import { ModulesPanel } from './modules-panel';
+import { EmailSettingsPanel } from './settings-panel';
+import { VariablesPanel } from './variables-panel';
 
 /**
  * The email builder, as a profile of the shared editor: the canvas draws the
@@ -49,21 +58,6 @@ export interface EmailProfileOptions {
   contentLocales?: readonly string[] | undefined;
   /** Load the fonts from Google Fonts: on the canvas, and to preview the choices. Default: true. */
   fontPreviews?: boolean | undefined;
-}
-
-/** A row's column diagram, for the Structures tiles. */
-function ColumnsIcon({ widths }: { widths: readonly number[] }) {
-  return (
-    <span className="bst:flex bst:h-6 bst:w-16 bst:gap-0.5" aria-hidden="true">
-      {widths.map((width, index) => (
-        <span
-          key={index}
-          className="bst:rounded-[2px] bst:bg-muted-foreground/35 bst:transition-colors bst:group-hover:bg-primary/60"
-          style={{ flex: `${String(width)} 1 0` }}
-        />
-      ))}
-    </span>
-  );
 }
 
 /** A new section holding one row of `layout`, with empty columns. */
@@ -117,6 +111,26 @@ function syncColumns(draft: EmailDocument, id: string, registry: ElementRegistry
   }
 }
 
+/** The email templates as the editor's, built once. */
+const TEMPLATES = EMAIL_TEMPLATES.map(toTemplateSpec);
+
+/** Blocks that only make sense with something inside: their peek shows a text in them. */
+const WRAPPERS = new Set(['conditional', 'repeat']);
+
+/** One block in an email of its own, for the library's peek at it; null for the structure. */
+function sampleOf(registry: ElementRegistry, type: string): EmailDocument | null {
+  if (['section', 'row', 'column'].includes(type) || !registry.has(type)) return null;
+  try {
+    return buildEmail(registry, { stable: true }, [
+      section({}, [
+        row('100', [[block(type, {}, WRAPPERS.has(type) ? [block('text')] : undefined)]]),
+      ]),
+    ]);
+  } catch {
+    return null;
+  }
+}
+
 export function emailProfile({
   registry,
   type,
@@ -134,27 +148,43 @@ export function emailProfile({
     label: variable.label[locale] ?? variable.label.en ?? variable.path,
   }));
   const layouts: RowLayout[] = ['100', '50-50', '33-67', '67-33', '33-33-33', '25-25-25-25'];
+  const drawing: EmailDrawing = { brand, assetUrl, socialIcon, fontPreviews, locale };
 
   return {
     renderCanvas: ({ doc, editText, viewport, locale: writing }) => (
-      <EmailCanvas
-        document={doc}
-        editing
-        mobile={viewport === 'mobile'}
-        editText={editText as unknown as (field: EditableField) => React.ReactNode}
-        assetUrl={assetUrl}
-        brand={brand}
-        locale={writing ?? locale}
-        mode="preview-raw"
-        socialIcon={socialIcon}
-        fontPreviews={fontPreviews}
+      <EmailFrame
+        doc={doc}
+        editText={editText}
+        viewport={viewport}
+        drawing={writing ? { ...drawing, locale: writing } : drawing}
       />
     ),
+    renderPreview: ({ doc, viewport, locale: reading }) => (
+      <EmailReadOnly doc={doc} viewport={viewport} locale={reading} drawing={drawing} />
+    ),
+    sampleOf: (blockType) => sampleOf(registry, blockType),
     canvasFrame: 'bare',
+    canvasHeader: MailHeader,
     canvasWidths: { desktop: 760, tablet: 680, mobile: 390 },
     settingsPanel: EmailSettingsPanel,
     overlays: ImportHtmlHost,
+    // The third tab is Modules: imports, templates, this email's sections, saved ones.
     templatesPanel: ModulesPanel,
+    templatesTab: { icon: <Boxes aria-hidden="true" /> },
+    templates: TEMPLATES,
+    templateCategories: EMAIL_TEMPLATE_CATEGORIES,
+    // Pictures are chosen in the image block itself; the fourth tab is Variables.
+    mediaTab: false,
+    sideTabs: [
+      {
+        id: 'variables',
+        label: words.email.variables,
+        icon: <Braces aria-hidden="true" />,
+        panel: VariablesPanel,
+      },
+    ],
+    dockItems: EmailDockItems,
+    topBarActions: SendTest,
     check: (doc) => checkEmail(doc, registry, type, { locales: contentLocales }),
     parse: (raw) => parseEmail(raw, registry),
     categories: EMAIL_CATEGORIES.filter((category) => category !== 'structure'),

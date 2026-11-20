@@ -14,6 +14,7 @@ import {
   type MouseEvent,
 } from 'react';
 
+import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { languageName } from '../messages';
 import { InlineText } from '../text/inline-text';
@@ -74,11 +75,14 @@ function nodeElement(target: EventTarget | null): HTMLElement | null {
 export function Canvas() {
   const { registry, messages, store, profile } = useEditorContext();
   const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
-  const bare = profile.canvasFrame === 'bare';
+  // `none`: the kit draws its own card (a form); `bare`: the page without padding (an email).
+  const frameless = profile.canvasFrame === 'none';
+  const bare = profile.canvasFrame === 'bare' || frameless;
   const doc = useEditor((state) => state.doc);
   // What is drawn: the document in the language being written.
   const view = useEditor((state) => state.view);
   const lang = useEditor((state) => state.lang);
+  const multilingual = useEditor((state) => state.doc.i18n?.enabled === true);
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -104,7 +108,7 @@ export function Canvas() {
     () => profile.renderCanvas({ doc: view, editText, viewport, locale: lang ?? undefined }),
     [view, lang, editText, profile, viewport],
   );
-  const Header = bare ? undefined : profile.canvasHeader;
+  const Header = profile.canvasHeader;
 
   const empty = (doc.nodes[doc.root]?.children?.length ?? 0) === 0;
 
@@ -179,7 +183,11 @@ export function Canvas() {
     if (!payload || !target) return;
     const state = store.getState();
     if (payload.kind === 'type') {
-      state.insertElement(payload.type, { parentId: target.parentId, index: target.index });
+      state.insertElement(
+        payload.type,
+        { parentId: target.parentId, index: target.index },
+        payload.props,
+      );
     } else if (payload.kind === 'fragment') {
       state.insertFragment(payload.build(), { parentId: target.parentId, index: target.index });
     } else {
@@ -190,32 +198,37 @@ export function Canvas() {
   return (
     <div
       ref={scrollRef}
-      className="bld-canvas bst:relative bst:h-full bst:overflow-x-hidden bst:overflow-y-auto bst:bg-muted/40"
+      className="bld-canvas bst:relative bst:h-full bst:overflow-x-hidden bst:overflow-y-auto"
       onClick={(event) => {
         if (event.target === event.currentTarget) store.getState().select([]);
       }}
     >
       {lang ? (
-        <p
-          role="status"
-          className="bst:sticky bst:top-3 bst:z-20 bst:mx-auto bst:mt-3 bst:w-fit bst:max-w-[90%] bst:rounded-full bst:border bst:border-primary/30 bst:bg-primary/10 bst:px-4 bst:py-1.5 bst:text-center bst:text-xs bst:font-medium bst:text-primary bst:shadow-xs bst:backdrop-blur"
-        >
+        <p role="status" className="bst:sr-only">
           {messages.writingIn(languageName(lang, messages.languages))}
         </p>
       ) : null}
       <motion.div
-        className="bst:mx-auto bst:py-6"
+        className={cn('bst:mx-auto bst:pb-[130px]', multilingual ? 'bst:pt-[60px]' : 'bst:pt-8')}
         initial={false}
         animate={{ width: pageWidth * scale }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
       >
         <div
           style={{ width: pageWidth, zoom: scale }}
-          className={
-            bare
-              ? 'bst:min-h-[70vh] bst:overflow-hidden bst:rounded-card bst:border bst:border-border bst:shadow-sm'
-              : 'bst:min-h-[70vh] bst:rounded-card bst:border bst:border-border bst:bg-background bst:shadow-sm'
-          }
+          data-device={viewport}
+          className={cn(
+            'bld-page bst:min-h-[70vh] bst:transition-[border-radius] bst:duration-400',
+            !frameless &&
+              'bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)]',
+            frameless ? '' : bare ? 'bst:overflow-hidden' : 'bst:bg-background',
+            !frameless &&
+              viewport === 'tablet' &&
+              'bst:rounded-[22px] bst:shadow-[0_0_0_7px_#0c0d10,0_0_0_8px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
+            !frameless &&
+              viewport === 'mobile' &&
+              'bst:rounded-[30px] bst:shadow-[0_0_0_8px_#0c0d10,0_0_0_9px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
+          )}
         >
           <div
             ref={pageRef}

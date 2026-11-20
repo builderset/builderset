@@ -1,0 +1,57 @@
+---
+title: Form
+description: The form document's shape, its logic and checks, the answers a visitor sends, and the words they read.
+---
+
+_This page describes Builderset 0.4.0, where the form kit is new. Every field, with its
+props, is in [Form fields](/docs/reference/form-fields)._
+
+## The document
+
+A form is the engine's tree with steps under the root and fields under the steps.
+It adds its meta (a working name, the title, an intro, its address) and settings
+(the buttons, what happens after it is sent, spam rules, limits, privacy, the look):
+
+<include cwd lang="ts" meta='title="@builderset/form — FormDocument"'>
+  ../../packages/form/src/core/document.ts#shape
+</include>
+
+## Logic
+
+A field shows only when earlier answers match its rules, all of them or any. A
+field the visitor never saw is never required, and its answer is not kept:
+
+<include cwd lang="ts" meta='title="@builderset/form — logic"'>
+  ../../packages/form/src/core/fields/common.ts#logic
+</include>
+
+## Checks
+
+What an answer must look like. Each field type uses the checks that make sense for
+it — lengths for text, a range for numbers, how many choices for multiple choice:
+
+<include cwd lang="ts" meta='title="@builderset/form — checks"'>
+  ../../packages/form/src/core/fields/common.ts#checks
+</include>
+
+## Answers
+
+`validateAnswers(form, answers)` from `@builderset/form` returns
+`{ ok, errors, values }`: by field key, the first thing wrong with each answer, and
+the answers to keep — shown fields only, numbers as numbers. Run it on the server
+for every submission; the renderer runs the same function before each step. Why an
+answer is refused:
+
+<include cwd lang="ts" meta='title="@builderset/form — AnswerError"'>
+  ../../packages/form/src/core/answers.ts#errors
+</include>
+
+## What visitors read
+
+The buttons and the thank-you message are the form's own settings. The rest —
+yes and no, the parts of a name, the progress line, the errors — are built in for
+English, Albanian and German; pass `words` to `FormView` for another language:
+
+<include cwd lang="ts" meta='title="@builderset/form/render — FormWords"'>
+  ../../packages/form/src/render/words.ts#words
+</include>

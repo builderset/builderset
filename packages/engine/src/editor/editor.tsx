@@ -13,11 +13,12 @@ import {
   ConfirmDialog,
   DateTimeField,
   Label,
+  SegmentedTabs,
   Sheet,
   TooltipProvider,
   useMediaQuery,
 } from './ui';
-import { Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
+import { Image, Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   useCallback,
@@ -27,6 +28,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentType,
   type ReactNode,
 } from 'react';
 
@@ -34,14 +36,18 @@ import { Canvas } from './canvas/canvas';
 import { PortalProvider } from './ui/portal';
 import { HistorySheet } from './chrome/history-sheet';
 import { SideDrawer } from './chrome/side-drawer';
-import { StatusBar } from './chrome/status-bar';
+import { CommandPalette } from './chrome/command-palette';
+import { Dock } from './chrome/dock';
+import { DragLayer } from './chrome/drag-layer';
+import { PreviewOverlay } from './chrome/preview';
+import { LanguageBar } from './chrome/language-switch';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
 import { registerEngine } from './one-engine';
 import {
   EditorProvider,
   useEditor,
-  useProfile,
+  useEditorContext,
   type EditorContextValue,
   type RecordFacts,
 } from './context';
@@ -53,6 +59,7 @@ import { useHtmlLang } from './locale';
 import { resolveMessages, type DeepPartial, type EditorMessages } from './messages';
 import { AddPanel } from './panels/add-panel';
 import { LayersPanel } from './panels/layers-panel';
+import { MediaPanel } from './panels/media-panel';
 import { TemplatesPanel } from './panels/templates-panel';
 import { createEditorStore, type EditorStore, type LeftTab } from './store';
 
@@ -208,6 +215,9 @@ export function BuilderEditor<
       document: props.document,
       registry: props.registry,
       onNodeUpdated: props.profile.onNodeUpdated,
+      defaultParent: props.profile.defaultParent,
+      canRemove: props.profile.canRemove,
+      onNodesAdded: props.profile.onNodesAdded,
       onRefused: (code) => {
         hostRef.current.toast(
           'error',
@@ -299,6 +309,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const leftTab = useEditor((state) => state.leftTab);
+  const railTabs = useRailTabs(messages);
   const desktop = useMediaQuery('(min-width: 1024px)', true);
   const phone = !useMediaQuery('(min-width: 640px)', true);
 
@@ -307,6 +318,26 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   const [scheduling, setScheduling] = useState(false);
   const [history, setHistory] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
+  const [command, setCommand] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  // Focus mode: both panels away, and back as they were.
+  const [focus, setFocus] = useState<{ left: boolean; right: boolean } | null>(null);
+  const toggleFocus = useCallback(() => {
+    const state = store.getState();
+    if (focus) {
+      state.toggleLeft(focus.left);
+      state.toggleRight(focus.right);
+      setFocus(null);
+    } else {
+      setFocus({ left: state.leftOpen, right: state.rightOpen });
+      state.toggleLeft(false);
+      state.toggleRight(false);
+    }
+  }, [focus, store]);
+  // A panel opened by hand ends focus mode.
+  useEffect(() => {
+    if (focus && (leftOpen || rightOpen)) setFocus(null);
+  }, [focus, leftOpen, rightOpen]);
   const [leaving, setLeaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [restoreOffer, setRestoreOffer] = useState<TDoc | null>(null);
@@ -465,7 +496,16 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
       const typing = isTyping(event.target);
       const key = event.key.toLowerCase();
 
-      if (mod && key === 'z' && !event.shiftKey) {
+      if (mod && event.shiftKey && key === 'p') {
+        event.preventDefault();
+        setPreviewing(true);
+      } else if (mod && key === 'k') {
+        event.preventDefault();
+        setCommand(true);
+      } else if (mod && key === '\\') {
+        event.preventDefault();
+        toggleFocus();
+      } else if (mod && key === 'z' && !event.shiftKey) {
         event.preventDefault();
         state.undo();
       } else if (mod && ((key === 'z' && event.shiftKey) || key === 'y')) {
@@ -509,6 +549,13 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         state.toggleRight();
       } else if (key === '?') {
         setShortcuts(true);
+      } else if (key === '/') {
+        event.preventDefault();
+        state.setLeftTab('add');
+        state.toggleLeft(true);
+        requestAnimationFrame(() => {
+          document.querySelector<HTMLInputElement>('[data-library-search]')?.focus();
+        });
       }
     };
     window.addEventListener('keydown', onKey);
@@ -534,6 +581,9 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
     <div className="bst:fixed bst:inset-0 bst:z-40 bst:flex bst:flex-col bst:bg-background bst:text-foreground">
       <TopBar
         busy={busy}
+        onCommand={() => {
+          setCommand(true);
+        }}
         onBack={back}
         onSave={() => void save('manual')}
         onPublish={() => void publish()}
@@ -541,7 +591,9 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
           setScheduling(true);
         }}
         onUnpublish={unpublish ? () => void unpublish() : undefined}
-        onPreview={preview ? () => void preview() : undefined}
+        onPreview={() => {
+          setPreviewing(true);
+        }}
         onDuplicate={onDuplicate}
         onDelete={
           onDelete
@@ -559,23 +611,49 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         }
       />
 
-      <div className="bst:relative bst:flex bst:min-h-0 bst:flex-1">
+      <div className="bst:relative bst:flex bst:min-h-0 bst:flex-1 bst:pb-2.5">
         {desktop ? (
           <>
             <SidePanel open={leftOpen} side="left">
               {leftPanel}
             </SidePanel>
-            <main className="bst:min-w-0 bst:flex-1">
+            <section
+              className={cn(
+                'bld-board bst:relative bst:min-w-0 bst:flex-1 bst:overflow-hidden bst:rounded-2xl bst:border bst:border-border bst:bg-muted bst:shadow-[inset_0_1px_3px_rgb(20_23_30/0.05)] bst:transition-[margin] bst:duration-[450ms] bst:ease-[cubic-bezier(.2,.8,.2,1)]',
+                !leftOpen && 'bst:ml-2.5',
+                !rightOpen && 'bst:mr-2.5',
+              )}
+            >
               <Canvas />
-            </main>
+              <LanguageBar />
+              <Dock
+                issues={issues}
+                focus={focus !== null}
+                onFocus={toggleFocus}
+                onShortcuts={() => {
+                  setShortcuts(true);
+                }}
+              />
+            </section>
             <SidePanel open={rightOpen} side="right">
               {rightPanel}
             </SidePanel>
           </>
         ) : (
           <>
-            <main className="bst:min-w-0 bst:flex-1">
+            <main className="bst:relative bst:mx-2 bst:min-w-0 bst:flex-1 bst:overflow-hidden bst:rounded-2xl bst:border bst:border-border bst:bg-muted">
               <Canvas />
+              <LanguageBar />
+              {phone ? null : (
+                <Dock
+                  issues={issues}
+                  focus={focus !== null}
+                  onFocus={toggleFocus}
+                  onShortcuts={() => {
+                    setShortcuts(true);
+                  }}
+                />
+              )}
             </main>
             {phone ? (
               <>
@@ -584,7 +662,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
                   onClose={() => {
                     setMobilePanel(null);
                   }}
-                  title={messages[leftTab]}
+                  title={railTabs.find((tab) => tab.value === leftTab)?.label ?? messages.add}
                 >
                   <div className="bld-panel bst:h-[60vh]">{leftPanel}</div>
                 </Sheet>
@@ -669,16 +747,40 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
             <Redo2 />
           </BottomAction>
         </nav>
-      ) : (
-        <StatusBar
-          issues={issues}
-          onShortcuts={() => {
-            setShortcuts(true);
-          }}
-        />
-      )}
+      ) : null}
+
+      <DragLayer />
+      <PreviewOverlay
+        open={previewing}
+        onClose={() => {
+          setPreviewing(false);
+        }}
+        onOpenSite={preview ? () => void preview() : undefined}
+      />
 
       {/* ── Dialogs ── */}
+      <CommandPalette
+        open={command}
+        onClose={() => {
+          setCommand(false);
+        }}
+        actions={{
+          onPublish: () => void publish(),
+          onSave: () => void save('manual'),
+          onFocus: toggleFocus,
+          onShortcuts: () => {
+            setShortcuts(true);
+          },
+          onPreview: () => {
+            setPreviewing(true);
+          },
+          onHistory: host.loadRevisions
+            ? () => {
+                setHistory(true);
+              }
+            : undefined,
+        }}
+      />
       <ConfirmDialog
         open={blocking !== null}
         onOpenChange={(open) => {
@@ -803,10 +905,52 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   );
 }
 
-/** The left rail's third tab: the profile's, or the templates and saved sections. */
-function ThirdTab() {
-  const Panel = useProfile().templatesPanel ?? TemplatesPanel;
-  return <Panel />;
+interface RailTab {
+  value: LeftTab;
+  label: string;
+  icon: ReactNode;
+  Panel: ComponentType;
+}
+
+/**
+ * The left rail's tabs, in order: Add, Layers, the third tab (templates, or
+ * the profile's own panel under its own name), Media when pictures can be
+ * placed, then the profile's `sideTabs`.
+ */
+function useRailTabs(messages: EditorMessages): RailTab[] {
+  const { registry, profile } = useEditorContext();
+  const withMedia = profile.mediaTab ?? registry.has('image');
+  return [
+    { value: 'add', label: messages.add, icon: <Plus aria-hidden="true" />, Panel: AddPanel },
+    {
+      value: 'layers',
+      label: messages.layers,
+      icon: <Layers aria-hidden="true" />,
+      Panel: LayersPanel,
+    },
+    {
+      value: 'templates',
+      label: profile.templatesTab?.label ?? messages.templates,
+      icon: profile.templatesTab?.icon ?? <LayoutTemplate aria-hidden="true" />,
+      Panel: profile.templatesPanel ?? TemplatesPanel,
+    },
+    ...(withMedia
+      ? [
+          {
+            value: 'media',
+            label: messages.media,
+            icon: <Image aria-hidden="true" />,
+            Panel: MediaPanel,
+          },
+        ]
+      : []),
+    ...(profile.sideTabs ?? []).map((tab) => ({
+      value: tab.id,
+      label: tab.label,
+      icon: tab.icon,
+      Panel: tab.panel,
+    })),
+  ];
 }
 
 function LeftRail({
@@ -818,63 +962,38 @@ function LeftRail({
   onTab: (tab: LeftTab) => void;
   messages: EditorMessages;
 }) {
-  const tabs: { value: LeftTab; label: string; icon: ReactNode }[] = [
-    { value: 'add', label: messages.add, icon: <Plus className="bst:size-4" aria-hidden="true" /> },
-    {
-      value: 'layers',
-      label: messages.layers,
-      icon: <Layers className="bst:size-4" aria-hidden="true" />,
-    },
-    {
-      value: 'templates',
-      label: messages.templates,
-      icon: <LayoutTemplate className="bst:size-4" aria-hidden="true" />,
-    },
-  ];
+  const tabs = useRailTabs(messages);
+  const current = tabs.find((item) => item.value === tab) ?? tabs[0];
+  const order = tabs.map((item) => item.value);
+  const [from, setFrom] = useState(tab);
+  // Which way the new pane slides in: from the side of the tab it came from.
+  const direction = Math.sign(order.indexOf(tab) - order.indexOf(from)) || 1;
+  const Panel = current?.Panel ?? AddPanel;
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
-      <div
-        role="tablist"
-        className="bst:mx-3 bst:mt-1 bst:grid bst:shrink-0 bst:grid-cols-[1fr_1fr_1.35fr] bst:border-b bst:border-border"
-      >
-        {tabs.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            role="tab"
-            aria-selected={tab === item.value}
-            onClick={() => {
-              onTab(item.value);
-            }}
-            className={cn(
-              'bst:relative bst:flex bst:h-7 bst:min-w-0 bst:cursor-pointer bst:items-center bst:justify-center bst:gap-1 bst:px-1.5 bst:text-xs bst:font-medium bst:whitespace-nowrap bst:transition-colors bst:[&_svg]:size-3.5 bst:[&_svg]:shrink-0',
-              tab === item.value
-                ? 'bst:text-foreground'
-                : 'bst:text-muted-foreground bst:hover:text-foreground',
-            )}
-          >
-            {item.icon}
-            {item.label}
-            {tab === item.value ? (
-              <motion.span
-                layoutId="bld-left-tab"
-                className="bst:absolute bst:inset-x-0 bst:-bottom-px bst:h-0.5 bst:rounded-full bst:bg-primary"
-              />
-            ) : null}
-          </button>
-        ))}
-      </div>
-      <div className="bst:min-h-0 bst:flex-1">
-        <AnimatePresence mode="wait" initial={false}>
+      <SegmentedTabs
+        aria-label={messages.add}
+        stacked
+        value={current?.value ?? 'add'}
+        onValueChange={(value) => {
+          setFrom(tab);
+          onTab(value);
+        }}
+        tabs={tabs.map(({ value, label, icon }) => ({ value, label, icon }))}
+        className="bst:mx-3 bst:mt-0.5 bst:mb-3 bst:shrink-0"
+      />
+      <div className="bst:relative bst:min-h-0 bst:flex-1 bst:overflow-hidden">
+        <AnimatePresence mode="popLayout" initial={false} custom={direction}>
           <motion.div
-            key={tab}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.12 }}
+            key={current?.value ?? 'add'}
+            custom={direction}
+            initial={{ opacity: 0, x: direction * 26 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: direction * -26 }}
+            transition={{ duration: 0.36, ease: [0.2, 0.8, 0.2, 1] }}
             className="bst:h-full"
           >
-            {tab === 'add' ? <AddPanel /> : tab === 'layers' ? <LayersPanel /> : <ThirdTab />}
+            <Panel />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -891,17 +1010,13 @@ function SidePanel({
   side: 'left' | 'right';
   children: ReactNode;
 }) {
-  const width = side === 'left' ? 288 : 336;
+  const width = side === 'left' ? 316 : 348;
   return (
     <motion.aside
       initial={false}
-      animate={{ width: open ? width : 0 }}
-      transition={{ duration: 0.22, ease: [0.2, 0, 0, 1] }}
-      className={cn(
-        'bst:shrink-0 bst:overflow-hidden bst:border-border bst:bg-sidebar',
-        side === 'left' ? 'bst:border-r' : 'bst:border-l',
-        !open && 'bst:border-0',
-      )}
+      animate={{ width: open ? width : 0, opacity: open ? 1 : 0 }}
+      transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+      className="bst:shrink-0 bst:overflow-hidden bst:bg-background"
     >
       <div style={{ width }} className="bld-panel bst:h-full">
         {children}

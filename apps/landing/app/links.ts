@@ -1,0 +1,28 @@
+/** Where the page sends people. The docs are their own site (apps/docs). */
+const DOCS = 'https://docs-builderset.vercel.app';
+
+export const LINKS = {
+  docs: `${DOCS}/docs`,
+  quickStart: `${DOCS}/docs/quick-start/email`,
+  quickStartArticle: `${DOCS}/docs/quick-start/article`,
+  install: `${DOCS}/docs/install`,
+  theme: `${DOCS}/docs/guides/theme`,
+  language: `${DOCS}/docs/guides/language`,
+  backend: `${DOCS}/docs/guides/backend`,
+  drizzle: `${DOCS}/docs/guides/backend/next-drizzle`,
+  prisma: `${DOCS}/docs/guides/backend/next-prisma`,
+  fastapi: `${DOCS}/docs/guides/backend/fastapi-sqlalchemy`,
+  dataModel: `${DOCS}/docs/guides/backend/data-model`,
+  sql: `${DOCS}/docs/guides/backend/sql`,
+  supabase: `${DOCS}/docs/guides/backend/supabase`,
+  django: `${DOCS}/docs/guides/backend/django`,
+  fastapiAll: `${DOCS}/docs/guides/backend/fastapi`,
+  express: `${DOCS}/docs/guides/backend/express`,
+  form: `${DOCS}/docs/reference/form`,
+  issues: `${DOCS}/docs/reference/issues`,
+  python: `${DOCS}/docs/reference/python`,
+  reference: `${DOCS}/docs/reference/props`,
+  playground: `${DOCS}/playground`,
+  github: 'https://github.com/builderset/builderset',
+  npm: 'https://www.npmjs.com/org/builderset',
+} as const;

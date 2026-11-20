@@ -1,0 +1,467 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n5",
+        "n13"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "Volunteer shifts are sent to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Are you 18 or older?",
+        "key": "adult",
+        "help": "Some roles are only open to adults.",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "About you"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n6": {
+      "id": "n6",
+      "type": "checkbox",
+      "v": 1,
+      "props": {
+        "label": "Where would you like to help?",
+        "key": "areas",
+        "help": "",
+        "required": true,
+        "lock": "Volunteers are placed by the areas they choose",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 1,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Events",
+          "Fundraising",
+          "Office & admin",
+          "Social media",
+          "Driving",
+          "Mentoring"
+        ],
+        "layout": "cards"
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Do you have a driving licence?",
+        "key": "licence",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "areas",
+              "op": "is",
+              "value": "Driving"
+            }
+          ]
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "checkbox",
+      "v": 1,
+      "props": {
+        "label": "When are you free?",
+        "key": "availability",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Weekday mornings",
+          "Weekday afternoons",
+          "Weekday evenings",
+          "Weekends"
+        ],
+        "layout": "buttons"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "slider",
+      "v": 1,
+      "props": {
+        "label": "Hours a month",
+        "key": "hours",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "min": 2,
+        "max": 40,
+        "step": 2,
+        "defaultValue": 8,
+        "unit": "h"
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Any skills or experience we should know about?",
+        "key": "skills",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to organise volunteering, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "How you can help"
+      },
+      "children": [
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Volunteer sign-up",
+    "title": "Become a volunteer",
+    "intro": "Every hour counts. Tell us how you would like to help and we will find the right place for you.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Sign me up",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you, {{name}}!",
+      "message": "We will be in touch within a week about helping with {{areas}}.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Thank you for volunteering, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for offering your time. Our volunteer coordinator will call or write within a week to find the right place for you.\n\nWith gratitude,\nThe team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "warm",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#16a34a",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

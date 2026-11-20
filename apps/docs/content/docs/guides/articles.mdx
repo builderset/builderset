@@ -1,0 +1,48 @@
+---
+title: Showing articles
+description: Render a published article on your site, on the server, with your own links and images, its stylesheet, and the data search engines read. About 10 minutes.
+---
+
+At the end a published article is a page of your site, rendered on the server, with
+no editor code in it.
+
+_This page describes Builderset 0.4.0._
+
+## The page
+
+`ArticleRenderer` is a React component with no browser code: render it in a Server
+Component, a static page, or `renderToString`. `content.css` styles the article's
+elements and nothing else:
+
+<include cwd lang="tsx" meta='title="app/blog/[slug]/page.tsx"'>
+  ../../examples/next-shadcn/app/blog/[slug]/page.tsx
+</include>
+
+- `resolveMedia` turns a stored media key into the address of the file.
+- `linkComponent` and `imageComponent` let the article use your framework's own
+  `Link` and `Image`, so its links are client-side and its pictures optimised.
+- `locale` picks the language, for an article written in several.
+
+## Styling
+
+`@builderset/article/content.css` is the article's typography and layout, scoped
+to the article. It reads the same `--builderset-*` variables as the editor, so the
+article on your site and the one on the canvas match. Set them to your site's
+tokens ([Theme](/docs/guides/theme)), or override the article's own classes.
+
+## Search engines
+
+`structuredData` builds the article's schema.org data — headline, author, dates,
+image — from the document; `jsonLdString` writes it safely into a script tag:
+
+<include cwd lang="tsx" meta='title="article-page.tsx"'>
+  ./snippets/guides/structured-data.tsx
+</include>
+
+## Embeds
+
+A YouTube, Vimeo, X, Instagram, TikTok, Spotify or Google Maps embed is built from
+the id in an allow-listed address, sandboxed, and loads only when the reader clicks:
+a reader who never presses play never talks to the provider. Your
+Content-Security-Policy must allow the frames — see
+[Security](/docs/guides/security#content-security-policy).

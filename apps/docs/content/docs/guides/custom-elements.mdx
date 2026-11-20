@@ -1,0 +1,57 @@
+---
+title: Custom elements
+description: Add an element of your own to the article kit — its props, its form in the editor, how your site draws it, and what your server checks. About 15 minutes.
+---
+
+At the end your writers can insert an element only your project has — a price, a
+product card, a booking widget — and your site draws it. It is one definition,
+shared by the editor, the renderer and the server.
+
+_This page describes Builderset 0.4.0._
+
+<Callout type="warn" title="Known limits in 0.4.0">
+  The article editor has no `elements` prop yet, so the canvas draws nothing for a custom element
+  while the writer edits it; its form in the inspector and your site show it fully. The email kit's
+  `renderEmail` draws only its own blocks, so custom elements are for articles today. Both are
+  planned.
+</Callout>
+
+## Define it
+
+`defineElement` takes a type name, a version, a zod schema for its props and their
+defaults. The schema is the contract: the editor builds the element's form from it,
+and the checks refuse any document whose props do not match.
+
+<include cwd lang="tsx" meta='title="price-tag.tsx"'>
+  ./snippets/guides/custom-element.tsx#define
+</include>
+
+`z` is the zod the editor itself validates with; import it from `@builderset/engine`
+so the two agree. When the props change shape, raise `version` and give the definition a `migrate`
+that turns the old props into the new: stored documents are brought forward when
+they are read ([Upgrading](/docs/guides/upgrading#stored-documents)).
+
+## Register it
+
+The standard elements and yours, in one registry. Give the same registry to the
+editor (`registry` prop), the renderer, and your server's `checkArticle`:
+
+<include cwd lang="tsx" meta='title="price-tag.tsx"'>
+  ./snippets/guides/custom-element.tsx#register
+</include>
+
+## Draw it on your site
+
+A component receives the element's props, already checked against the schema.
+Pass it to the renderer by its type: `elements={{ 'price-tag': PriceTagView }}`.
+
+<include cwd lang="tsx" meta='title="price-tag.tsx"'>
+  ./snippets/guides/custom-element.tsx#render
+</include>
+
+## On your server
+
+Nothing new: `parseArticle(body.document, registry)` and `checkArticle(document,
+registry)` with the registry above validate your element's props like any other.
+A document that carries an element your registry does not know is refused with
+`element.unknown`.

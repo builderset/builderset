@@ -26,6 +26,7 @@ import { SlashMenu, slashMatches } from './slash-menu';
 import { TextToolbar } from './text-toolbar';
 import { FontMark } from './font-mark';
 import { VariableMark } from './variable-mark';
+import { forgetText, rememberText } from './last-text';
 import {
   fromTiptap,
   joinRichText,
@@ -254,7 +255,8 @@ export function InlineText({ field }: { field: EditableTextField }) {
         return false;
       },
     },
-    onFocus() {
+    onFocus({ editor: instance }) {
+      rememberText(instance);
       const state = store.getState();
       if (state.selection.length !== 1 || state.selection[0] !== nodeId) state.select([nodeId]);
       if (state.editingId !== nodeId) state.setEditing(nodeId);
@@ -294,6 +296,12 @@ export function InlineText({ field }: { field: EditableTextField }) {
   });
 
   editorRef.current = editor;
+  useEffect(
+    () => () => {
+      if (editor) forgetText(editor);
+    },
+    [editor],
+  );
 
   function chooseSlash(type: string) {
     setSlash(null);

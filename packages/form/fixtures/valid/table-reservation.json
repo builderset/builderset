@@ -1,0 +1,499 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Your table"
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "date",
+      "v": 1,
+      "props": {
+        "label": "Date",
+        "key": "date",
+        "help": "",
+        "required": true,
+        "lock": "A reservation needs a date",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "time",
+      "v": 1,
+      "props": {
+        "label": "Time",
+        "key": "time",
+        "help": "",
+        "required": true,
+        "lock": "A reservation needs a time",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "number",
+      "v": 1,
+      "props": {
+        "label": "Guests",
+        "key": "guests",
+        "help": "",
+        "required": true,
+        "lock": "We need to know how many to seat",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 1,
+          "max": 12,
+          "pattern": "none",
+          "regex": "",
+          "message": "For more than 12 guests, please call us."
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "unit": "",
+        "defaultValue": 2
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Seating",
+        "key": "seating",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "No preference",
+          "Inside",
+          "Terrace",
+          "At the bar"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Is it a special occasion?",
+        "key": "occasion",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "What are you celebrating?",
+        "key": "occasion_note",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "occasion",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "A birthday, an anniversary…",
+        "defaultValue": ""
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Your details"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "The confirmation goes to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Allergies or requests",
+        "key": "requests",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to manage my reservation, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Reservation"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Table reservation",
+    "title": "Reserve a table",
+    "intro": "Book your table online. For groups larger than twelve, please call us.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Reserve a table",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "A table for {{guests}} on {{date}}",
+      "message": "Thank you, {{name}}. We will confirm your table for {{time}} by email shortly.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Your table for {{guests}} on {{date}}",
+      "body": "Hello {{name}},\n\nThank you for your reservation: a table for {{guests}} on {{date}} at {{time}}. We will confirm it shortly. If your plans change, just reply to this email.\n\nWe look forward to welcoming you."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "warm",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#b45309",
+      "font": "georgia",
+      "fullWidthButtons": false
+    }
+  }
+}

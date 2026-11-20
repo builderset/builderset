@@ -13,6 +13,7 @@ PYTHON_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = PYTHON_ROOT.parent
 EMAIL_FIXTURES = REPOSITORY / "packages" / "email" / "fixtures"
 ARTICLE_FIXTURES = REPOSITORY / "packages" / "article" / "fixtures"
+FORM_FIXTURES = REPOSITORY / "packages" / "form" / "fixtures"
 
 # The package reads its schemas from inside itself; in the repository they are
 # copied there from `packages/`, as a build does. Fresh for every run.

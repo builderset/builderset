@@ -13,7 +13,7 @@
     "test:python": "uv run --project python pytest python/tests",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md,css,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md,css,yml,yaml}\"",
-    "check:packages": "node tooling/check-dist.mjs && pnpm --filter \"./packages/*\" exec publint --strict && pnpm --filter \"./packages/*\" exec attw --pack . --profile esm-only --exclude-entrypoints styles.css content.css article/content.css theme/shadcn.css theme/shadcn-hsl.css --format table-flipped",
+    "check:packages": "node tooling/check-dist.mjs && pnpm --filter \"./packages/*\" exec publint --strict && pnpm --filter \"./packages/*\" exec attw --pack . --profile esm-only --exclude-entrypoints styles.css content.css article/content.css form.css form/form.css theme/shadcn.css theme/shadcn-hsl.css --format table-flipped",
     "readme:props": "node tooling/readme-props.mjs",
     "clean": "turbo clean && rm -rf node_modules",
     "version-packages": "changeset version && node tooling/sync-python-version.mjs"

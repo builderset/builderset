@@ -8,8 +8,9 @@ import {
   createArticleRegistry,
   kitchenSinkDocument,
   type ArticleDocument,
-} from 'builderset/article';
+} from '@builderset/article';
 
+// #region stored-email
 export interface StoredEmail {
   document: EmailDocument;
   draft_document: EmailDocument | null;
@@ -17,6 +18,7 @@ export interface StoredEmail {
   status: 'draft' | 'published';
   published_at: string | null;
 }
+// #endregion stored-email
 
 export const emailRegistry = createEmailRegistry();
 export const articleRegistry = createArticleRegistry();

@@ -1,0 +1,470 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n8",
+        "n14"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Overall, how satisfied are you?",
+        "key": "satisfaction",
+        "help": "",
+        "required": true,
+        "lock": "The survey is built on this rating",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How did you buy from us?",
+        "key": "channel",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Online",
+          "In a store",
+          "By phone"
+        ],
+        "layout": "buttons",
+        "defaultValue": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "paragraph",
+      "v": 1,
+      "props": {
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "How would you rate us on…"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Quality of the product",
+        "key": "quality",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Speed of delivery",
+        "key": "delivery",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Friendliness of our team",
+        "key": "service",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "rating",
+      "v": 1,
+      "props": {
+        "label": "Value for money",
+        "key": "value",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "stars": 5
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your experience"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    },
+    "n9": {
+      "id": "n9",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Did something go wrong?",
+        "key": "problem",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Details of the problem",
+        "key": "problem_details",
+        "help": "What happened, and when? We look into every problem.",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "problem",
+              "op": "is",
+              "value": "yes"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 4
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Would you buy from us again?",
+        "key": "again",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "textarea",
+      "v": 1,
+      "props": {
+        "label": "Anything else you would like to tell us?",
+        "key": "comments",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "rows": 3
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Tell us more"
+      },
+      "children": [
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Customer satisfaction",
+    "title": "How was your experience?",
+    "intro": "Tell us how we did. Your answers are anonymous and take about two minutes.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send answers",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you!",
+      "message": "Your answers help us do better — for you and for everyone else.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": false,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "device",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#e06a1b",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

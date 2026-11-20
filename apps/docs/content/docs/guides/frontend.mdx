@@ -1,0 +1,79 @@
+---
+title: Frontend setup
+description: Put an editor on a page of a Next.js or Vite app, load it only where it is used, and decide how much of the window it takes. About 10 minutes.
+---
+
+At the end you know where the editor's code runs, how to keep it out of the pages
+that do not edit, and how to fit it into your layout. Every file below is built and
+type-checked with the docs.
+
+_This page describes Builderset 0.4.0._
+
+## Where each part runs
+
+| Part                                            | Runs                                         |
+| ----------------------------------------------- | -------------------------------------------- |
+| The editors (`@builderset/*/editor`)            | In the browser only                          |
+| The renderers (`@builderset/*/render`)          | Anywhere: a Server Component, a route, Node  |
+| The documents, registries and checks (the root) | Anywhere                                     |
+| The hosts (`@builderset/*/host`)                | Anywhere; the editor calls it in the browser |
+
+So the editor is the only part that needs a client boundary, and it is the heavy
+part: load it only on the pages that edit.
+
+## Next.js
+
+The page is a Server Component. It reads the document and hands it to a client
+component:
+
+<include cwd lang="tsx" meta='title="app/emails/[id]/edit/page.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/page.tsx
+</include>
+
+The client component loads the editor with `next/dynamic` and `ssr: false`, so its
+code is fetched only when this page opens:
+
+<include cwd lang="tsx" meta='title="app/emails/[id]/edit/email-edit.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/email-edit.tsx
+</include>
+
+The article editor is the same, in
+[`app/articles/[id]/edit`](https://github.com/builderset/builderset/tree/development/examples/next-shadcn/app/articles/%5Bid%5D/edit).
+
+## Vite, or any React app
+
+`React.lazy` does what `next/dynamic` does. Load the stylesheet in the same import,
+so a page that never edits never downloads it either:
+
+<include cwd lang="tsx" meta='title="src/main.tsx"'>
+  ./snippets/guides/vite-main.tsx
+</include>
+
+No Tailwind is needed: the stylesheet is complete on its own, and it does not touch
+your page's elements.
+
+## The editor and your layout
+
+The editor fills the window: its root is `position: fixed; inset: 0`, under
+nothing and over everything, and `onBack` is how the writer leaves it. That is the
+right default for a page whose only job is editing.
+
+To keep your own header or sidebar around it, give its box a size and
+`contain: layout`, and the editor's root `className="h-full"`:
+
+<include cwd lang="tsx" meta='title="editor-box.tsx"'>
+  ./snippets/guides/contained.tsx
+</include>
+
+The [playground](/playground) is built this way. Two limits apply to the box:
+
+- No `transform` or `filter` on it or above it — an animated route transition is
+  the usual one. The editor's menus are placed against the window, and those
+  properties would move them.
+- A page rule with an id (`#app button`) outranks the editor's rules. Write it as
+  `:where(#app) button`.
+
+## Next
+
+- [Theme](/docs/guides/theme): your colours, fonts and dark mode.
+- [The host adapter](/docs/guides/host): how the editor reaches your API.

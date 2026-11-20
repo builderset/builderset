@@ -1,12 +1,13 @@
 'use client';
 
-// Everything from the all-in-one package: one stylesheet for every editor.
-import 'builderset/styles.css';
-import 'builderset/theme/shadcn.css';
+// The article kit's own package — the one a project installs today (the all-in-one
+// `builderset` package comes to npm with the launch; /styled still uses it).
+import '@builderset/article/styles.css';
+import '@builderset/article/theme/shadcn.css';
 
-import type { ArticleDocument } from 'builderset/article';
-import { ArticleEditor } from 'builderset/article/editor';
-import { createMemoryHost } from 'builderset/article/host';
+import type { ArticleDocument } from '@builderset/article';
+import { ArticleEditor } from '@builderset/article/editor';
+import { createMemoryHost } from '@builderset/article/host';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 

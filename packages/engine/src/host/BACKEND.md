@@ -19,7 +19,7 @@ Any database with a JSON column works. One row per document, with:
 | ----------------- | ------------------------------------------------------------------------------------------ |
 | `document`        | The live document: what the site renders or the mailer sends                               |
 | `draft_document`  | Autosaves and work in progress. May be unfinished; never unsafe                            |
-| `draft_saved_at`  | The editor sends back the value it last saw; a different value on the server is a conflict |
+| `saved_at`        | The editor sends back the value it last saw; a different value on the server is a conflict |
 | `status`          | `draft`, `published` (and `scheduled`, `archived` where they apply)                        |
 | `version`         | Counts publishes                                                                           |
 | a revisions table | `document`, `kind` (`autosave`, `manual`, `publish`), `label`, author, time                |
@@ -45,7 +45,8 @@ if (issues.some(isDraftBlocking)) refuse(issues); // on an autosave
 if (issues.some(isPublishBlocking)) refuse(issues); // on publish
 ```
 
-The lists are `ARTICLE_DRAFT_TOLERATES` and `EMAIL_DRAFT_TOLERATES`, and each
+The lists are `ARTICLE_DRAFT_TOLERATES`, `EMAIL_DRAFT_TOLERATES` and
+`FORM_DRAFT_TOLERATES`, and each
 kit ships its list as a file too, `fixtures/draft.json`, for a backend in
 another language.
 
@@ -58,8 +59,9 @@ revision, exactly as if the editor did not exist.
   email at all), then `checkEmail(document, registry, type, { locales })`; or
   `parseArticle(body.document, registry)` (which also runs migrations), then
   `checkArticle(result.doc, registry, { locales })`.
-- **Python**: a port of both kits' checks exists and becomes the `builderset`
-  package on PyPI in step 15 of the plan; until then, follow the next point.
+- **Python**: the `builderset` package. `check_email` (`builderset.email`)
+  and `check_article` (`builderset.article`) give the same answers, with the
+  same issue codes, as the Node kits.
 - **Any other language**: validate against the kit's `schema.json` (JSON
   Schema, draft 2020-12), then apply the structural rules. The invalid
   fixtures (`fixtures/invalid/`) are one broken document each, and
@@ -89,8 +91,9 @@ editor and the email that is sent come from the same function.
 
 ## 6. Examples
 
-Two complete examples come with the docs site (step 16): Next.js route
-handlers, and a FastAPI router.
+Three complete backends, each tested against a real Postgres, are in
+`examples/backends/`: Next.js route handlers with Drizzle, the same with
+Prisma, and a FastAPI router with SQLAlchemy.
 
 ## The REST shape `createRestHost` speaks
 

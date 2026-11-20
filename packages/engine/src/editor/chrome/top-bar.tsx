@@ -1,10 +1,7 @@
 'use client';
 
-import type { Breakpoint } from '../../core';
 import {
-  Badge,
   Button,
-  SegmentedControl,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,36 +13,30 @@ import {
   AlertTriangle,
   ArrowLeft,
   CalendarClock,
-  Check,
   ChevronDown,
   CloudOff,
   Copy,
   Eye,
   History,
-  Loader2,
-  Monitor,
   PanelLeft,
   PanelRight,
-  Redo2,
   Rocket,
   Save,
-  Smartphone,
-  Tablet,
+  Search,
   Trash2,
-  Undo2,
   Undo,
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type ReactNode } from 'react';
 
+import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
-import { LanguageSwitch } from './language-switch';
 
 export interface TopBarActions {
   onBack: () => void;
   onSave: () => void;
   onPublish: () => void;
   onSchedule: () => void;
+  onCommand: () => void;
   onUnpublish?: (() => void) | undefined;
   onPreview?: (() => void) | undefined;
   onDuplicate?: (() => void) | undefined;
@@ -53,14 +44,6 @@ export interface TopBarActions {
   onHistory?: (() => void) | undefined;
   busy: boolean;
 }
-
-const DEVICES: { value: Breakpoint; icon: ReactNode }[] = [
-  { value: 'desktop', icon: <Monitor className="bst:size-4" aria-hidden="true" /> },
-  { value: 'tablet', icon: <Tablet className="bst:size-4" aria-hidden="true" /> },
-  { value: 'mobile', icon: <Smartphone className="bst:size-4" aria-hidden="true" /> },
-];
-
-const ZOOMS = [50, 75, 100, 125, 150];
 
 function useNow(intervalMs: number): number {
   const [now, setNow] = useState(() => Date.now());
@@ -75,7 +58,7 @@ function useNow(intervalMs: number): number {
   return now;
 }
 
-/** "Saved · 2 min ago", "Saving…", "Conflict" — with a small pop on each change. */
+/** A dot and a few words: saved (green), unsaved or saving (amber), failed (red). */
 function SaveIndicator() {
   const { messages, locale } = useEditorContext();
   const saveState = useEditor((state) => state.saveState);
@@ -83,22 +66,20 @@ function SaveIndicator() {
   const lastSavedAt = useEditor((state) => state.lastSavedAt);
   const now = useNow(30_000);
 
-  let icon: ReactNode;
+  let dot = 'bst:bg-ok';
   let text: string;
-  let tone = 'bst:text-muted-foreground';
+  let icon: ReactNode = null;
   if (saveState === 'saving') {
-    icon = <Loader2 className="bst:size-3.5 bst:animate-spin" aria-hidden="true" />;
+    dot = 'bst:bg-warn bst:animate-pulse';
     text = messages.saveSaving;
   } else if (saveState === 'conflict') {
-    icon = <AlertTriangle className="bst:size-3.5" aria-hidden="true" />;
+    icon = <AlertTriangle className="bst:size-3.5 bst:text-destructive" aria-hidden="true" />;
     text = messages.saveConflict;
-    tone = 'bst:text-destructive';
   } else if (saveState === 'error') {
-    icon = <CloudOff className="bst:size-3.5" aria-hidden="true" />;
+    icon = <CloudOff className="bst:size-3.5 bst:text-warn" aria-hidden="true" />;
     text = messages.saveError;
-    tone = 'bst:text-warn';
   } else if (dirty) {
-    icon = <span className="bst:size-2 bst:rounded-full bst:bg-warn" aria-hidden="true" />;
+    dot = 'bst:bg-warn';
     text = messages.saveDirty;
   } else if (lastSavedAt) {
     const minutes = Math.floor((now - lastSavedAt) / 60_000);
@@ -110,10 +91,8 @@ function SaveIndicator() {
         : minutes < 60
           ? relative.format(-minutes, 'minute')
           : relative.format(-Math.floor(minutes / 60), 'hour');
-    icon = <Check className="bst:size-3.5 bst:text-ok" aria-hidden="true" />;
     text = messages.savedAgo(when);
   } else {
-    icon = <Check className="bst:size-3.5" aria-hidden="true" />;
     text = messages.saveIdle;
   }
 
@@ -121,218 +100,165 @@ function SaveIndicator() {
     <span
       role="status"
       aria-live="polite"
-      className={`bst:hidden bst:items-center bst:gap-1.5 bst:text-xs bst:lg:flex ${tone}`}
+      className="bst:hidden bst:items-center bst:gap-1.5 bst:px-2 bst:text-xs bst:whitespace-nowrap bst:text-muted-foreground bst:lg:inline-flex"
     >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={`${saveState}-${String(dirty)}`}
-          initial={{ scale: 0.6, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.6, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 26 }}
-          className="bst:flex"
-        >
-          {icon}
-        </motion.span>
-      </AnimatePresence>
-      <span className="bst:whitespace-nowrap">{text}</span>
+      {icon ?? (
+        <span
+          className={cn('bst:size-[7px] bst:rounded-full bst:transition-colors', dot)}
+          aria-hidden="true"
+        />
+      )}
+      <span className="bst:hidden bst:xl:inline">{text}</span>
     </span>
   );
 }
 
+/** Where the document is: draft, scheduled, live — and live with changes not out yet. */
+function StatusPill() {
+  const { messages, record } = useEditorContext();
+  const dirty = useEditor((state) => state.revision !== state.savedRevision);
+  const published = record.status === 'published';
+  const scheduled = !published && !!record.scheduledAt;
+  const base =
+    'bst:hidden bst:h-[22px] bst:shrink-0 bst:items-center bst:gap-[5px] bst:rounded-full bst:px-2 bst:text-[11.5px] bst:font-semibold bst:whitespace-nowrap bst:sm:inline-flex';
+  if (scheduled) {
+    return (
+      <span className={cn(base, 'bst:bg-warn/14 bst:text-warn')}>
+        <CalendarClock className="bst:size-3" aria-hidden="true" />
+        {messages.status_scheduled}
+      </span>
+    );
+  }
+  if (published) {
+    return (
+      <span
+        className={cn(base, dirty ? 'bst:bg-warn/14 bst:text-warn' : 'bst:bg-ok/12 bst:text-ok')}
+      >
+        <i className="bst:size-1.5 bst:rounded-full bst:bg-current" aria-hidden="true" />
+        {dirty ? messages.publishedEdited : messages.status_published}
+      </span>
+    );
+  }
+  return (
+    <span className={cn(base, 'bst:bg-muted bst:text-muted-foreground')}>
+      {messages.status_draft}
+    </span>
+  );
+}
+
+const iconButton = 'bst:size-8 bst:rounded-lg bst:text-muted-foreground bst:hover:text-foreground';
+
+/**
+ * The top bar: where you are (back, the blocks panel, "Articles / title" and
+ * its state) on the left; what you do with it (saved, the command menu,
+ * history, preview, publish, the settings panel) on the right. How you look at
+ * the page — undo, the device, the zoom — is on the dock over the canvas.
+ */
 export function TopBar(actions: TopBarActions) {
-  const { store, messages, record } = useEditorContext();
-  const canUndo = useEditor((state) => state.canUndo);
-  const canRedo = useEditor((state) => state.canRedo);
-  const undoLabel = useEditor((state) => state.undoLabel);
-  const redoLabel = useEditor((state) => state.redoLabel);
-  const viewport = useEditor((state) => state.viewport);
-  const zoom = useEditor((state) => state.zoom);
-  const { profile } = useEditorContext();
+  const { store, messages, record, profile } = useEditorContext();
   const title = useEditor((state) => profile.titleOf(state.view));
-  const multilingual = useEditor((state) => state.doc.i18n?.enabled === true);
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const published = record.status === 'published';
-  const scheduled = !published && !!record.scheduledAt;
-  const statusKey = scheduled ? 'status_scheduled' : (`status_${record.status}` as 'status_draft');
+  const Actions = profile.topBarActions;
 
   return (
-    // Three zones: where you are (left), how you are looking at it (center),
-    // what you do with it (right). The outer two share the leftover width
-    // equally, so the center group sits in the true middle of the window.
-    <header className="bst:grid bst:h-14 bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] bst:items-center bst:gap-3 bst:border-b bst:border-border bst:bg-sidebar bst:px-2 bst:sm:px-3">
-      {/* ── Left: navigation and identity ── */}
-      <div className="bst:flex bst:min-w-0 bst:items-center bst:gap-1">
-        <Tooltip content={messages.back}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={messages.back}
-            onClick={actions.onBack}
-          >
-            <ArrowLeft aria-hidden="true" />
-          </Button>
-        </Tooltip>
-        <Divider />
-        <Tooltip content={`${messages.add} · [`}>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={messages.add}
-            aria-pressed={leftOpen}
-            className="bst:hidden bst:md:inline-flex"
-            onClick={() => {
-              store.getState().toggleLeft();
-            }}
-          >
-            <PanelLeft aria-hidden="true" />
-          </Button>
-        </Tooltip>
-        <div className="bst:ml-1 bst:flex bst:min-w-0 bst:items-center bst:gap-2">
-          <span className="bst:truncate bst:text-sm bst:font-semibold">
-            {title || messages.untitled}
-          </span>
-          <Badge
-            tone={published ? 'published' : scheduled ? 'scheduled' : 'draft'}
-            className="bst:hidden bst:shrink-0 bst:sm:inline-flex"
-          >
-            {messages[statusKey]}
-          </Badge>
-        </div>
-      </div>
-
-      {/* ── Center: view controls, one group ── */}
-      <div className="bst:flex bst:items-center bst:gap-0.5 bst:rounded-control bst:border bst:border-border bst:bg-background/70 bst:p-0.5 bst:shadow-xs">
-        <Tooltip
-          content={canUndo ? `${messages.undo}: ${undoLabel ?? ''}` : messages.nothingToUndo}
+    <header className="bst:relative bst:z-30 bst:flex bst:h-[58px] bst:shrink-0 bst:items-center bst:gap-2 bst:bg-background bst:px-3">
+      <Tooltip content={messages.back} side="bottom">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={messages.back}
+          className={iconButton}
+          onClick={actions.onBack}
         >
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={messages.undo}
-            disabled={!canUndo}
-            onClick={() => {
-              store.getState().undo();
-            }}
-          >
-            <Undo2 aria-hidden="true" />
-          </Button>
-        </Tooltip>
-        <Tooltip
-          content={canRedo ? `${messages.redo}: ${redoLabel ?? ''}` : messages.nothingToRedo}
-        >
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={messages.redo}
-            disabled={!canRedo}
-            onClick={() => {
-              store.getState().redo();
-            }}
-          >
-            <Redo2 aria-hidden="true" />
-          </Button>
-        </Tooltip>
-        {multilingual ? (
-          <>
-            <span className="bst:mx-1 bst:h-5 bst:w-px bst:bg-border" aria-hidden="true" />
-            <LanguageSwitch className="bst:border-0 bst:bg-transparent bst:p-0" />
-          </>
-        ) : null}
-        <span
-          className="bst:mx-1 bst:hidden bst:h-5 bst:w-px bst:bg-border bst:md:block"
-          aria-hidden="true"
-        />
-        <SegmentedControl
-          aria-label={messages.breakpoint}
-          value={viewport}
-          onValueChange={(value) => {
-            store.getState().setViewport(value);
+          <ArrowLeft aria-hidden="true" />
+        </Button>
+      </Tooltip>
+      <Tooltip content={`${messages.add} · [`} side="bottom">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={messages.add}
+          aria-pressed={leftOpen}
+          className={cn(
+            iconButton,
+            'bst:hidden bst:md:inline-flex',
+            leftOpen && 'bst:bg-primary/12 bst:text-primary bst:hover:text-primary',
+          )}
+          onClick={() => {
+            store.getState().toggleLeft();
           }}
-          options={DEVICES.map((device) => ({
-            value: device.value,
-            label: device.icon,
-            ariaLabel: messages[device.value],
-          }))}
-          className="bst:hidden bst:border-0 bst:bg-transparent bst:p-0 bst:md:flex"
-        />
-        <span
-          className="bst:mx-1 bst:hidden bst:h-5 bst:w-px bst:bg-border bst:lg:block"
-          aria-hidden="true"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              aria-label={messages.zoom}
-              className="bst:hidden bst:w-[4.5rem] bst:justify-between bst:tabular-nums bst:lg:inline-flex"
-            >
-              {zoom}%
-              <ChevronDown aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            {ZOOMS.map((value) => (
-              <DropdownMenuItem
-                key={value}
-                onSelect={() => {
-                  store.getState().setZoom(value);
-                }}
-              >
-                {value}%
-                {value === zoom ? (
-                  <Check className="bst:ml-auto bst:size-4" aria-hidden="true" />
-                ) : null}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        >
+          <PanelLeft aria-hidden="true" />
+        </Button>
+      </Tooltip>
+
+      {/* "Articles / Title" and the state it is in. */}
+      <div className="bst:ml-1 bst:flex bst:min-w-0 bst:items-center bst:gap-1.5 bst:text-[12.5px] bst:text-muted-foreground">
+        <span className="bst:hidden bst:whitespace-nowrap bst:2xl:inline">{messages.back}</span>
+        <span className="bst:hidden bst:text-muted-foreground/60 bst:2xl:inline">/</span>
+        <b className="bst:max-w-[280px] bst:truncate bst:text-[13.5px] bst:font-semibold bst:text-foreground">
+          {title || messages.untitled}
+        </b>
+        <StatusPill />
       </div>
 
-      {/* ── Right: saving and publishing ── */}
-      <div className="bst:flex bst:min-w-0 bst:items-center bst:justify-end bst:gap-1">
+      <div className="bst:ml-auto bst:flex bst:min-w-0 bst:items-center bst:gap-1">
         <SaveIndicator />
+        <button
+          type="button"
+          onClick={actions.onCommand}
+          aria-label={messages.commandSearch}
+          className="bld-focus bst:mx-1 bst:inline-flex bst:h-[34px] bst:w-[34px] bst:cursor-pointer bst:items-center bst:justify-center bst:gap-2 bst:rounded-[10px] bst:border bst:border-border bst:bg-card bst:text-[12.5px] bst:text-muted-foreground bst:transition-colors bst:hover:border-border-strong bst:hover:text-foreground bst:2xl:w-auto bst:2xl:min-w-[250px] bst:2xl:justify-start bst:2xl:pr-1.5 bst:2xl:pl-[11px]"
+        >
+          <Search className="bst:size-4 bst:shrink-0" aria-hidden="true" />
+          <span className="bst:hidden bst:flex-1 bst:text-left bst:2xl:inline">
+            {messages.commandSearch}
+          </span>
+          <kbd className="bst:hidden bst:rounded-[5px] bst:border bst:border-border bst:bg-background bst:px-[5px] bst:py-[3px] bst:font-mono bst:text-[11px] bst:leading-none bst:text-muted-foreground bst:2xl:inline">
+            Ctrl K
+          </kbd>
+        </button>
         {actions.onHistory ? (
-          <Tooltip content={messages.revisions}>
+          <Tooltip content={messages.revisions} side="bottom">
             <Button
               type="button"
               variant="ghost"
               size="icon"
               aria-label={messages.revisions}
+              className={iconButton}
               onClick={actions.onHistory}
             >
               <History aria-hidden="true" />
             </Button>
           </Tooltip>
         ) : null}
+        {Actions ? <Actions /> : null}
         {actions.onPreview ? (
-          <Tooltip content={messages.preview}>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label={messages.preview}
-              onClick={actions.onPreview}
-            >
-              <Eye aria-hidden="true" />
-            </Button>
-          </Tooltip>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            icon={<Eye aria-hidden="true" />}
+            onClick={actions.onPreview}
+            className="bst:h-8 bst:rounded-[9px] bst:bg-card"
+          >
+            <span className="bst:hidden bst:lg:inline">{messages.preview}</span>
+          </Button>
         ) : null}
-        <div className="bst:ml-1 bst:flex bst:items-center">
+
+        {/* Publish, and everything else you can do with the document. */}
+        <div className="bst:ml-1 bst:flex bst:items-center bst:overflow-hidden bst:rounded-[9px] bst:shadow-[0_1px_2px_rgb(0_0_0/0.15)]">
           <Button
             type="button"
             size="sm"
             loading={actions.busy}
             icon={<Rocket aria-hidden="true" />}
             onClick={actions.onPublish}
-            className="bst:rounded-r-none"
+            className="bst:h-8 bst:min-w-[104px] bst:rounded-none bst:font-semibold"
           >
             {published ? messages.update : messages.publish}
           </Button>
@@ -342,7 +268,7 @@ export function TopBar(actions: TopBarActions) {
                 type="button"
                 size="icon-sm"
                 aria-label={messages.moreOptions}
-                className="bst:rounded-l-none bst:border-l bst:border-primary-foreground/20"
+                className="bst:h-8 bst:w-[30px] bst:rounded-none bst:border-l bst:border-primary-foreground/25"
                 disabled={actions.busy}
               >
                 <ChevronDown aria-hidden="true" />
@@ -384,15 +310,19 @@ export function TopBar(actions: TopBarActions) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <Divider />
-        <Tooltip content={`${messages.settings} · ]`}>
+
+        <Tooltip content={`${messages.settings} · ]`} side="bottom">
           <Button
             type="button"
             variant="ghost"
             size="icon"
             aria-label={messages.settings}
             aria-pressed={rightOpen}
-            className="bst:hidden bst:md:inline-flex"
+            className={cn(
+              iconButton,
+              'bst:ml-0.5 bst:hidden bst:md:inline-flex',
+              rightOpen && 'bst:bg-primary/12 bst:text-primary bst:hover:text-primary',
+            )}
             onClick={() => {
               store.getState().toggleRight();
             }}
@@ -402,14 +332,5 @@ export function TopBar(actions: TopBarActions) {
         </Tooltip>
       </div>
     </header>
-  );
-}
-
-function Divider() {
-  return (
-    <span
-      className="bst:mx-1 bst:hidden bst:h-6 bst:w-px bst:bg-border bst:md:block"
-      aria-hidden="true"
-    />
   );
 }

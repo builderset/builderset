@@ -23,5 +23,5 @@ reaches readers. The most serious problems are therefore:
 
 ## Supported versions
 
-Nothing is released yet. From the first release, fixes go to the latest
-version.
+Fixes go to the latest release only. Before 1.0 that means the latest minor
+version (`0.x`): upgrading is the fix.

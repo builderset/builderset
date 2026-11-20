@@ -1,0 +1,41 @@
+{
+  "name": "docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The Builderset documentation site and playground — the fourth example app.",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev -p 5300",
+    "build": "node scripts/generate-reference.mjs && next build",
+    "start": "next start -p 5300",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "node scripts/check-links.mjs && node scripts/generate-reference.mjs --check"
+  },
+  "dependencies": {
+    "@builderset/article": "workspace:*",
+    "@builderset/email": "workspace:*",
+    "@builderset/engine": "workspace:*",
+    "@builderset/form": "workspace:*",
+    "fumadocs-core": "16.19.4",
+    "fumadocs-mdx": "15.6.3",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.19.4",
+    "lucide-react": "1.32.0",
+    "next": "16.4.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/express": "5.0.6",
+    "@types/mdx": "2.0.14",
+    "@types/node": "26.2.0",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "express": "5.3.0",
+    "pg": "8.23.1",
+    "postcss": "8.5.26",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
+  }
+}

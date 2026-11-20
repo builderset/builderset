@@ -1,0 +1,280 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n7"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "A newsletter needs an address to send to",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "you@example.com"
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "First name",
+        "key": "first_name",
+        "help": "So we can greet you properly.",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "checkbox",
+      "v": 1,
+      "props": {
+        "label": "What would you like to hear about?",
+        "key": "topics",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "News",
+          "Offers",
+          "Events",
+          "Tips & guides"
+        ],
+        "layout": "buttons"
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How often?",
+        "key": "frequency",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Weekly",
+          "Monthly"
+        ],
+        "layout": "buttons",
+        "defaultValue": "Monthly"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "Yes, send me the newsletter. I can unsubscribe at any time; see the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Subscribe"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Newsletter",
+    "title": "Subscribe to our newsletter",
+    "intro": "The best of what we do, straight to your inbox. No spam — unsubscribe whenever you like.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Subscribe",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "optional",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "You’re subscribed!",
+      "message": "Thank you, {{first_name}}. The first issue is on its way to {{email}}.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Welcome to our newsletter",
+      "body": "Hello {{first_name}},\n\nThank you for subscribing. You will hear from us {{frequency}}, about: {{topics}}.\n\nYou can unsubscribe at any time with the link at the bottom of every email.\n\nSee you in your inbox!"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": true,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "email",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 480,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": true
+    }
+  }
+}

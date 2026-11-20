@@ -18,6 +18,7 @@ export const DOCUMENT_SCHEMA = 'builder/document' as const;
 /** Bump on every breaking change to the document shape, with a migration. */
 export const DOCUMENT_VERSION = 1;
 
+// #region shape
 export const seoSchema = z
   .object({
     title: z.string().max(70),
@@ -48,6 +49,7 @@ export type ArticleMeta = z.infer<typeof articleMetaSchema>;
 export interface ArticleDocument extends EngineDocument<ArticleMeta> {
   schema: typeof DOCUMENT_SCHEMA;
 }
+// #endregion shape
 
 export const articleShapeSchema = z.object({
   schema: z.literal(DOCUMENT_SCHEMA),

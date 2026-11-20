@@ -1,0 +1,436 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n3",
+        "n12"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "The account signs in with this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "password",
+      "v": 1,
+      "props": {
+        "label": "Password",
+        "key": "password",
+        "help": "At least 8 characters.",
+        "required": true,
+        "lock": "An account needs a password",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": 8,
+          "maxLength": 128,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your account"
+      },
+      "children": [
+        "n1",
+        "n2"
+      ]
+    },
+    "n4": {
+      "id": "n4",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "phone",
+      "v": 1,
+      "props": {
+        "label": "Phone",
+        "key": "phone",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "prefix": ""
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Country",
+        "key": "country",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Albania",
+          "Kosovo",
+          "North Macedonia",
+          "Germany",
+          "Austria",
+          "Switzerland",
+          "Italy",
+          "United Kingdom",
+          "United States",
+          "Other"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How will you use it?",
+        "key": "use",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "For myself",
+          "For my team",
+          "For a client"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "number",
+      "v": 1,
+      "props": {
+        "label": "How many people are in your team?",
+        "key": "team_size",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 2,
+          "max": 1000,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "use",
+              "op": "is",
+              "value": "For my team"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "unit": "people",
+        "defaultValue": null
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Send me product news now and then",
+        "key": "product_news",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I accept the terms of service and the privacy policy.",
+        "linkText": "terms of service",
+        "linkUrl": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "About you"
+      },
+      "children": [
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Create an account",
+    "title": "Create your account",
+    "intro": "It takes a minute. You can change everything later in your settings.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Create account",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Welcome, {{name}}!",
+      "message": "Your account for {{email}} is ready. Check your inbox to confirm the address.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Confirm your email address",
+      "body": "Hello {{name}},\n\nWelcome aboard! Please confirm your email address with the link in the next email, and your account is ready to use.\n\nIf you did not create this account, you can ignore this message."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "checkbox",
+      "honeypot": true,
+      "blockDisposable": true,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "email",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

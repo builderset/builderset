@@ -1,0 +1,18 @@
+{
+  "title": "Guides",
+  "defaultOpen": true,
+  "pages": [
+    "frontend",
+    "theme",
+    "language",
+    "host",
+    "backend",
+    "email",
+    "articles",
+    "custom-elements",
+    "content-types",
+    "security",
+    "upgrading",
+    "going-live"
+  ]
+}

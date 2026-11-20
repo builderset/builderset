@@ -2,11 +2,13 @@
 
 import {
   BREAKPOINTS,
+  parentOf,
   replaceableTypes,
   resolveStyle,
   setStyleValue,
   styleValuesSchema,
   type Breakpoint,
+  type Fragment,
   type MediaKind,
   type NodeId,
   type StyleValues,
@@ -18,14 +20,27 @@ import {
   SegmentedControl,
   ToggleFlag,
   Select,
+  SegmentedTabs,
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '../ui';
-import { Copy, Monitor, RotateCcw, Smartphone, Tablet, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  EyeOff,
+  Monitor,
+  Paintbrush,
+  Pilcrow,
+  RotateCcw,
+  SlidersHorizontal,
+  Smartphone,
+  Tablet,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useId, useMemo, useState, type ReactNode } from 'react';
+import { Fragment as Keyed, useId, useMemo, useState, type ReactNode } from 'react';
 import { z } from 'zod';
 
 import { cn } from '../cn';
@@ -71,12 +86,78 @@ function Settings() {
   return Panel ? <Panel /> : null;
 }
 
+/** Several blocks: keep them as a section, or act on all of them at once. */
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
-  const { store, messages } = useEditorContext();
+  const { store, messages, host } = useEditorContext();
+  const [name, setName] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const saveSection = async () => {
+    if (!host.saveSection || !name.trim()) return;
+    setSaving(true);
+    try {
+      const { doc } = store.getState();
+      const nodes: Fragment['nodes'] = {};
+      const collect = (id: string) => {
+        const node = doc.nodes[id];
+        if (!node) return;
+        nodes[id] = node;
+        node.children?.forEach(collect);
+      };
+      ids.forEach(collect);
+      if (await host.saveSection(name.trim(), { roots: [...ids], nodes })) {
+        setName('');
+        host.toast('success', messages.saved);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="bst:space-y-3 bst:p-4">
-      <p className="bst:text-sm bst:font-medium">{label}</p>
-      <div className="bst:flex bst:gap-2">
+    <div className="bst:grid bst:gap-4 bst:px-4 bst:pt-2 bst:pb-6">
+      <div className="bst:grid bst:grid-cols-[minmax(0,1fr)_auto] bst:items-start bst:gap-2">
+        <div>
+          <p className="bst:text-[13.5px] bst:font-semibold">{label}</p>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={messages.close}
+          onClick={() => {
+            store.getState().select([]);
+          }}
+        >
+          <X aria-hidden="true" />
+        </Button>
+      </div>
+      {host.saveSection ? (
+        <form
+          className="bst:grid bst:gap-1.5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void saveSection();
+          }}
+        >
+          <Label className="bst:text-xs bst:font-semibold">{messages.saveAsSection}</Label>
+          <div className="bst:flex bst:gap-1.5">
+            <Input
+              value={name}
+              maxLength={120}
+              placeholder={messages.sectionName}
+              aria-label={messages.sectionName}
+              onChange={(event) => {
+                setName(event.target.value);
+              }}
+            />
+            <Button type="submit" size="sm" loading={saving} disabled={!name.trim()}>
+              {messages.saveSection}
+            </Button>
+          </div>
+        </form>
+      ) : null}
+      <div className="bst:grid bst:gap-1.5 bst:border-t bst:border-border bst:pt-3">
         <Button
           type="button"
           variant="outline"
@@ -85,6 +166,19 @@ function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
           onClick={() => store.getState().duplicateNodes(ids)}
         >
           {messages.duplicate}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          icon={<EyeOff aria-hidden="true" />}
+          onClick={() => {
+            for (const id of ids) {
+              store.getState().updateNode(id, { hidden: true }, messages.hideFromReaders);
+            }
+          }}
+        >
+          {messages.hideFromReaders}
         </Button>
         <Button
           type="button"
@@ -107,90 +201,153 @@ function NodeInspector({ id }: { id: NodeId }) {
   const storedTab = useEditor((state) => state.rightTab);
   const showStyle = profile.styleTab !== false;
   const tab = !showStyle && storedTab === 'style' ? 'content' : storedTab;
+  // The containers it sits in, outermost first, by the names the layers show.
+  // (As one string, so the panel redraws only when the chain itself changes.)
+  const chain = useEditor((state) => {
+    const steps: { id: NodeId; label: string }[] = [];
+    let parent = parentOf(state.view, id);
+    while (parent && parent.id !== state.view.root) {
+      steps.unshift({
+        id: parent.id,
+        label: parent.name ?? messages.elements[parent.type]?.name ?? parent.type,
+      });
+      parent = parentOf(state.view, parent.id);
+    }
+    return JSON.stringify(steps);
+  });
+  const ancestors = useMemo(() => JSON.parse(chain) as { id: NodeId; label: string }[], [chain]);
   if (!node) return null;
   const definition = registry.get(node.type);
   const schema = propsSchema(registry, node.type);
+  // A kit's own editors for this block, when it has them.
+  const own = profile.nodePanel?.({ id, type: node.type }) ?? null;
 
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
-      <div className="bst:flex bst:h-11 bst:shrink-0 bst:items-center bst:gap-2 bst:border-b bst:border-border bst:px-3">
-        <span className="bst:flex bst:size-7 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-md bst:bg-primary/10 bst:text-primary">
-          <ElementIcon name={definition?.icon ?? 'box'} className="bst:size-4" />
+      {/* Document › Section › Column › Text: the way back up, a step at a time. */}
+      <nav
+        aria-label={messages.layers}
+        className="bst:flex bst:shrink-0 bst:items-center bst:gap-1 bst:overflow-hidden bst:px-4 bst:pt-1 bst:text-xs bst:text-muted-foreground"
+      >
+        {[{ id: null, label: messages.document }, ...ancestors].map((step) => (
+          <Keyed key={step.id ?? 'document'}>
+            <button
+              type="button"
+              className="bst:min-w-0 bst:shrink bst:cursor-pointer bst:truncate bst:font-medium bst:text-primary bst:hover:underline"
+              onClick={() => {
+                store.getState().select(step.id ? [step.id] : []);
+              }}
+            >
+              {step.label}
+            </button>
+            <ChevronRight className="bst:size-3.5 bst:shrink-0" aria-hidden="true" />
+          </Keyed>
+        ))}
+        <span className="bst:shrink-0 bst:truncate">
+          {messages.elements[node.type]?.name ?? node.type}
         </span>
+      </nav>
+      <div className="bst:grid bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto] bst:items-start bst:gap-2 bst:px-4 bst:pt-2">
         <div className="bst:min-w-0">
-          <p className="bst:truncate bst:text-sm bst:font-semibold">
+          <p className="bst:flex bst:items-center bst:gap-2 bst:truncate bst:text-[13.5px] bst:font-semibold">
+            <ElementIcon
+              name={definition?.icon ?? 'box'}
+              className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+            />
             {node.name ?? messages.elements[node.type]?.name ?? node.type}
           </p>
-          <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
+          <p className="bst:mt-0.5 bst:text-xs bst:text-muted-foreground">
             {messages.elements[node.type]?.description}
           </p>
         </div>
-      </div>
-      <Tabs
-        value={tab}
-        onValueChange={(value) => {
-          store.getState().setRightTab(value as RightTab);
-        }}
-        className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
-      >
-        <TabsList
-          className={cn(
-            'bst:mx-3 bst:grid bst:shrink-0 bst:gap-0',
-            showStyle ? 'bst:grid-cols-3' : 'bst:grid-cols-2',
-          )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={messages.close}
+          onClick={() => {
+            store.getState().select([]);
+          }}
         >
-          <TabsTrigger value="content" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.content}
-          </TabsTrigger>
-          {showStyle ? (
-            <TabsTrigger value="style" className="bst:px-2 bst:py-1.5 bst:text-xs">
-              {messages.style}
-            </TabsTrigger>
-          ) : null}
-          <TabsTrigger value="advanced" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.advanced}
-          </TabsTrigger>
-        </TabsList>
-        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
-          <TabsContent value="content" className="bst:p-4">
-            {schema && Object.keys(schema.properties ?? {}).length ? (
-              <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
-                <ObjectFields
-                  schema={schema}
-                  value={node.props}
-                  mediaKind={MEDIA_KIND[node.type] ?? 'image'}
-                  onChange={(props) => {
-                    const changed = Object.keys(props).find(
-                      (key) => props[key] !== node.props[key],
-                    );
-                    const patch: Record<string, unknown> = { ...props };
-                    // A freshly uploaded picture replaces one still waiting to be.
-                    if (node.type === 'image' && changed === 'media' && props.media) {
-                      patch.pendingUrl = null;
-                    }
-                    store
-                      .getState()
-                      .updateNode(
-                        id,
-                        { props: patch },
-                        `Edit ${changed ?? 'block'}`,
-                        `prop:${id}:${changed ?? ''}`,
+          <X aria-hidden="true" />
+        </Button>
+      </div>
+      {own ? (
+        <div className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col">{own}</div>
+      ) : (
+        <Tabs
+          value={tab}
+          onValueChange={(value) => {
+            store.getState().setRightTab(value as RightTab);
+          }}
+          className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
+        >
+          <SegmentedTabs
+            aria-label={messages.settings}
+            value={tab}
+            onValueChange={(value) => {
+              store.getState().setRightTab(value);
+            }}
+            tabs={[
+              { value: 'content', label: messages.content, icon: <Pilcrow aria-hidden="true" /> },
+              ...(showStyle
+                ? [
+                    {
+                      value: 'style' as const,
+                      label: messages.style,
+                      icon: <Paintbrush aria-hidden="true" />,
+                    },
+                  ]
+                : []),
+              {
+                value: 'advanced',
+                label: messages.advanced,
+                icon: <SlidersHorizontal aria-hidden="true" />,
+              },
+            ]}
+            className="bst:mx-4 bst:mt-3.5 bst:mb-1 bst:shrink-0"
+          />
+          <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+            <TabsContent value="content" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              {schema && Object.keys(schema.properties ?? {}).length ? (
+                <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
+                  <ObjectFields
+                    schema={schema}
+                    value={node.props}
+                    mediaKind={MEDIA_KIND[node.type] ?? 'image'}
+                    onChange={(props) => {
+                      const changed = Object.keys(props).find(
+                        (key) => props[key] !== node.props[key],
                       );
-                  }}
-                />
-              </fieldset>
-            ) : (
-              <p className="bst:text-sm bst:text-muted-foreground">—</p>
-            )}
-          </TabsContent>
-          <TabsContent value="style" className="bst:p-4">
-            <StylePanel id={id} />
-          </TabsContent>
-          <TabsContent value="advanced" className="bst:p-4">
-            <AdvancedPanel id={id} />
-          </TabsContent>
-        </div>
-      </Tabs>
+                      const patch: Record<string, unknown> = { ...props };
+                      // A freshly uploaded picture replaces one still waiting to be.
+                      if (node.type === 'image' && changed === 'media' && props.media) {
+                        patch.pendingUrl = null;
+                      }
+                      store
+                        .getState()
+                        .updateNode(
+                          id,
+                          { props: patch },
+                          `Edit ${changed ?? 'block'}`,
+                          `prop:${id}:${changed ?? ''}`,
+                        );
+                    }}
+                  />
+                </fieldset>
+              ) : (
+                <p className="bst:text-sm bst:text-muted-foreground">—</p>
+              )}
+            </TabsContent>
+            <TabsContent value="style" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              <StylePanel id={id} />
+            </TabsContent>
+            <TabsContent value="advanced" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              <AdvancedPanel id={id} />
+            </TabsContent>
+          </div>
+        </Tabs>
+      )}
     </div>
   );
 }
@@ -213,6 +370,9 @@ const STYLE_GROUPS: {
   { title: 'appearance', keys: ['background', 'borderWidth', 'borderColor', 'radius', 'shadow'] },
 ];
 
+/** The segmented controls' "Auto": no value set (Radix reads '' as nothing chosen). */
+const UNSET = '__unset';
+
 const DEVICE_ICON: Record<Breakpoint, ReactNode> = {
   desktop: <Monitor className="bst:size-4" aria-hidden="true" />,
   tablet: <Tablet className="bst:size-4" aria-hidden="true" />,
@@ -224,6 +384,17 @@ function StylePanel({ id }: { id: NodeId }) {
   const node = useEditor((state) => state.doc.nodes[id]);
   const viewport = useEditor((state) => state.viewport);
   const resolved = useMemo(() => resolveStyle(node?.style, viewport), [node?.style, viewport]);
+  const [closed, setClosed] = useState<Set<string>>(
+    () => new Set(['appearance', 'image', 'visibility']),
+  );
+  const toggle = (group: string) => {
+    setClosed((current) => {
+      const next = new Set(current);
+      if (next.has(group)) next.delete(group);
+      else next.add(group);
+      return next;
+    });
+  };
   if (!node) return null;
   const own = node.style?.[viewport] ?? {};
 
@@ -239,7 +410,7 @@ function StylePanel({ id }: { id: NodeId }) {
   };
 
   return (
-    <div className="bst:space-y-5">
+    <div className="bst:grid bst:gap-4">
       <div className="bst:space-y-1.5">
         <Label className="bst:text-xs bst:font-medium">{messages.breakpoint}</Label>
         <SegmentedControl
@@ -258,12 +429,19 @@ function StylePanel({ id }: { id: NodeId }) {
       </div>
 
       {STYLE_GROUPS.map((group) => (
-        <section key={group.title} className="bst:space-y-3">
-          <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-            {messages[group.title]}
-          </h4>
+        <StyleGroup
+          key={group.title}
+          title={messages[group.title]}
+          open={!closed.has(group.title)}
+          onToggle={() => {
+            toggle(group.title);
+          }}
+        >
           {group.keys.map((key) => {
             const options = (STYLE_SCHEMA.properties?.[key]?.enum ?? []).map(String);
+            const value = (resolved[key] as string | undefined) ?? '';
+            // A choice that is itself 'auto' stands for the default; no second Auto.
+            const hasAuto = options.includes('auto');
             return (
               <StyleRow
                 key={key}
@@ -276,27 +454,52 @@ function StylePanel({ id }: { id: NodeId }) {
                 resetLabel={messages.reset}
                 inheritedLabel={messages.inherited}
               >
-                {(controlId) => (
-                  <Select
-                    id={controlId}
-                    value={(resolved[key] as string | undefined) ?? ''}
-                    placeholder="—"
-                    onValueChange={(value) => {
-                      set(key, value as never);
-                    }}
-                    options={options.map((option) => ({ value: option, label: humanize(option) }))}
-                  />
-                )}
+                {(controlId) =>
+                  // A few choices: all in view, "Auto" first. Many: a select.
+                  options.length <= 5 ? (
+                    <SegmentedControl
+                      aria-label={messages.styleKeys[key] ?? humanize(key)}
+                      value={value || (hasAuto ? 'auto' : UNSET)}
+                      onValueChange={(next) => {
+                        set(key, (next === UNSET ? undefined : next) as never);
+                      }}
+                      options={[
+                        ...(hasAuto ? [] : [{ value: UNSET, label: messages.styleAuto }]),
+                        ...options.map((option) => ({
+                          value: option,
+                          label: option === 'auto' ? messages.styleAuto : humanize(option),
+                        })),
+                      ]}
+                      className="bst:w-full bst:[&>*]:flex-1"
+                    />
+                  ) : (
+                    <Select
+                      id={controlId}
+                      value={value || undefined}
+                      placeholder={messages.styleAuto}
+                      onValueChange={(next) => {
+                        set(key, next as never);
+                      }}
+                      options={options.map((option) => ({
+                        value: option,
+                        label: humanize(option),
+                      }))}
+                    />
+                  )
+                }
               </StyleRow>
             );
           })}
-        </section>
+        </StyleGroup>
       ))}
 
-      <section className="bst:space-y-3">
-        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-          {messages.styleKeys.background ?? 'Background'} · {messages.chooseImage}
-        </h4>
+      <StyleGroup
+        title={`${messages.styleKeys.background ?? 'Background'} · ${messages.chooseImage}`}
+        open={!closed.has('image')}
+        onToggle={() => {
+          toggle('image');
+        }}
+      >
         <MediaField
           kind="image"
           value={resolved.backgroundImage?.media ?? null}
@@ -322,12 +525,15 @@ function StylePanel({ id }: { id: NodeId }) {
             className="bst:w-full bst:accent-primary"
           />
         ) : null}
-      </section>
+      </StyleGroup>
 
-      <section className="bst:space-y-3">
-        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-          {messages.visibility}
-        </h4>
+      <StyleGroup
+        title={messages.visibility}
+        open={!closed.has('visibility')}
+        onToggle={() => {
+          toggle('visibility');
+        }}
+      >
         <ToggleFlag
           title={messages.hideAt}
           description={messages[viewport]}
@@ -336,8 +542,42 @@ function StylePanel({ id }: { id: NodeId }) {
             set('hidden', checked ? true : undefined);
           }}
         />
-      </section>
+      </StyleGroup>
     </div>
+  );
+}
+
+/** A group of style settings under a header that folds it away. */
+function StyleGroup({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section className="bst:grid bst:gap-3 bst:border-t bst:border-border bst:pt-3">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={onToggle}
+        className="bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:justify-between bst:text-left bst:text-xs bst:font-semibold bst:text-foreground"
+      >
+        {title}
+        <ChevronDown
+          className={cn(
+            'bst:size-[15px] bst:text-muted-foreground bst:transition-transform bst:duration-200',
+            !open && 'bst:-rotate-90',
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      {open ? <div className="bst:grid bst:gap-3">{children}</div> : null}
+    </section>
   );
 }
 

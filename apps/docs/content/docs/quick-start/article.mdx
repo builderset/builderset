@@ -1,0 +1,72 @@
+---
+title: 'Quick start: article'
+description: An article editor in a Next.js app, and the article shown on your site by a Server Component. About 10 minutes.
+---
+
+At the end you have an article editor on a page of your Next.js app, and a page of
+your site that shows the article — rendered on the server, with your links and your
+images. Every file below is from
+[`examples/next-shadcn`](https://github.com/builderset/builderset/tree/development/examples/next-shadcn),
+which is built and tested on every change.
+
+_This page describes Builderset 0.4.0._
+
+<Steps>
+<Step>
+
+### Install
+
+Until Builderset is public, its packages are on GitHub Packages. Set up the `.npmrc`
+from the [email quick start](/docs/quick-start/email#install), then:
+
+<include cwd lang="bash">
+  ./snippets/install-article.sh
+</include>
+
+</Step>
+<Step>
+
+### The editor page
+
+As for an email, the page reads the article on the server and hands it to the editor:
+
+<include cwd lang="tsx" meta='title="app/articles/[id]/edit/page.tsx"'>
+  ../../examples/next-shadcn/app/articles/[id]/edit/page.tsx
+</include>
+
+This one keeps the article **in memory** with `createMemoryHost`: nothing is saved, so
+you can see the editor before you write any route. To save, use `createRestHost` and
+the routes from the [email quick start](/docs/quick-start/email#your-routes) — the
+article kit speaks the same REST shape.
+
+<include cwd lang="tsx" meta='title="app/articles/[id]/edit/article-edit.tsx"'>
+  ../../examples/next-shadcn/app/articles/[id]/edit/article-edit.tsx
+</include>
+
+`record` is what the editor shows around the document: its status, its address
+(`slug`), its language. `siteUrl` is where your articles are published, for the
+editor's search preview.
+
+</Step>
+<Step>
+
+### Show it on your site
+
+`ArticleRenderer` renders the article in a Server Component: no editor code reaches
+this page. Pass `next/link` and `next/image`, and import `content.css`, the
+article's own stylesheet:
+
+<include cwd lang="tsx" meta='title="app/blog/[slug]/page.tsx"'>
+  ../../examples/next-shadcn/app/blog/[slug]/page.tsx
+</include>
+
+`resolveMedia` turns a stored picture's key into its address — your CDN or your
+storage's public URL.
+
+</Step>
+</Steps>
+
+## Done
+
+Open `/articles/kitchen-sink/edit` for the editor with every element, and
+`/blog/kitchen-sink` for the same article as your readers see it.

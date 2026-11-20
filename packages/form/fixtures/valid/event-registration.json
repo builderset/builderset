@@ -1,0 +1,442 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n5",
+        "n12"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "name",
+      "v": 1,
+      "props": {
+        "label": "Your name",
+        "key": "name",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "email",
+      "v": 1,
+      "props": {
+        "label": "Email",
+        "key": "email",
+        "help": "",
+        "required": true,
+        "lock": "The ticket is sent to this address",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "name@example.com"
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Organisation",
+        "key": "organisation",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Job title",
+        "key": "job_title",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "half",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "You"
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n6": {
+      "id": "n6",
+      "type": "radio",
+      "v": 1,
+      "props": {
+        "label": "How will you attend?",
+        "key": "ticket",
+        "help": "",
+        "required": true,
+        "lock": "Registration needs a ticket type",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "In person",
+          "Online"
+        ],
+        "layout": "cards",
+        "defaultValue": ""
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "checkbox",
+      "v": 1,
+      "props": {
+        "label": "Which sessions will you join?",
+        "key": "sessions",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": 1,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "Morning keynote",
+          "Workshops",
+          "Panel discussion",
+          "Evening networking"
+        ],
+        "layout": "list"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "select",
+      "v": 1,
+      "props": {
+        "label": "Dietary needs",
+        "key": "diet",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "ticket",
+              "op": "is",
+              "value": "In person"
+            }
+          ]
+        },
+        "hideFromVisitors": false,
+        "options": [
+          "None",
+          "Vegetarian",
+          "Vegan",
+          "Gluten-free",
+          "Halal",
+          "Other"
+        ],
+        "defaultValue": ""
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "yes-no",
+      "v": 1,
+      "props": {
+        "label": "Do you need step-free access?",
+        "key": "access",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": true,
+          "match": "all",
+          "rules": [
+            {
+              "key": "ticket",
+              "op": "is",
+              "value": "In person"
+            }
+          ]
+        },
+        "hideFromVisitors": false
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree that my details are stored to organise the event, as described in the privacy policy.",
+        "linkText": "privacy policy",
+        "linkUrl": ""
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "hidden",
+      "v": 1,
+      "props": {
+        "label": "Source",
+        "key": "source",
+        "value": "",
+        "prefill": "utm_source"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "Your place"
+      },
+      "children": [
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11"
+      ]
+    }
+  },
+  "meta": {
+    "name": "Event registration",
+    "title": "Register for the event",
+    "intro": "Save your place in a minute. Your ticket arrives by email right after you register.",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Register",
+      "next": "Next",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "You’re in, {{name}}!",
+      "message": "Your {{ticket}} ticket is on its way to {{email}}. We look forward to seeing you.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "email",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "Your ticket: {{ticket}}",
+      "body": "Hello {{name}},\n\nYou are registered. Your place is saved for: {{sessions}}.\n\nWe will send the programme and the practical details a week before the event.\n\nSee you there,\nThe team"
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "email",
+      "maxResponses": 200,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "Registration is closed — every place is taken. Thank you for your interest!"
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#7c3aed",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

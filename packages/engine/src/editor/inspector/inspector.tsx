@@ -7,6 +7,7 @@ import {
   setStyleValue,
   styleValuesSchema,
   type Breakpoint,
+  type Fragment,
   type MediaKind,
   type NodeId,
   type StyleValues,
@@ -26,6 +27,7 @@ import {
   ChevronDown,
   ChevronRight,
   Copy,
+  EyeOff,
   Monitor,
   Paintbrush,
   Pilcrow,
@@ -83,12 +85,78 @@ function Settings() {
   return Panel ? <Panel /> : null;
 }
 
+/** Several blocks: keep them as a section, or act on all of them at once. */
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
-  const { store, messages } = useEditorContext();
+  const { store, messages, host } = useEditorContext();
+  const [name, setName] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const saveSection = async () => {
+    if (!host.saveSection || !name.trim()) return;
+    setSaving(true);
+    try {
+      const { doc } = store.getState();
+      const nodes: Fragment['nodes'] = {};
+      const collect = (id: string) => {
+        const node = doc.nodes[id];
+        if (!node) return;
+        nodes[id] = node;
+        node.children?.forEach(collect);
+      };
+      ids.forEach(collect);
+      if (await host.saveSection(name.trim(), { roots: [...ids], nodes })) {
+        setName('');
+        host.toast('success', messages.saved);
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="bst:space-y-3 bst:p-4">
-      <p className="bst:text-sm bst:font-medium">{label}</p>
-      <div className="bst:flex bst:gap-2">
+    <div className="bst:grid bst:gap-4 bst:px-4 bst:pt-2 bst:pb-6">
+      <div className="bst:grid bst:grid-cols-[minmax(0,1fr)_auto] bst:items-start bst:gap-2">
+        <div>
+          <p className="bst:text-[13.5px] bst:font-semibold">{label}</p>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={messages.close}
+          onClick={() => {
+            store.getState().select([]);
+          }}
+        >
+          <X aria-hidden="true" />
+        </Button>
+      </div>
+      {host.saveSection ? (
+        <form
+          className="bst:grid bst:gap-1.5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void saveSection();
+          }}
+        >
+          <Label className="bst:text-xs bst:font-semibold">{messages.saveAsSection}</Label>
+          <div className="bst:flex bst:gap-1.5">
+            <Input
+              value={name}
+              maxLength={120}
+              placeholder={messages.sectionName}
+              aria-label={messages.sectionName}
+              onChange={(event) => {
+                setName(event.target.value);
+              }}
+            />
+            <Button type="submit" size="sm" loading={saving} disabled={!name.trim()}>
+              {messages.saveSection}
+            </Button>
+          </div>
+        </form>
+      ) : null}
+      <div className="bst:grid bst:gap-1.5 bst:border-t bst:border-border bst:pt-3">
         <Button
           type="button"
           variant="outline"
@@ -97,6 +165,19 @@ function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
           onClick={() => store.getState().duplicateNodes(ids)}
         >
           {messages.duplicate}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          icon={<EyeOff aria-hidden="true" />}
+          onClick={() => {
+            for (const id of ids) {
+              store.getState().updateNode(id, { hidden: true }, messages.hideFromReaders);
+            }
+          }}
+        >
+          {messages.hideFromReaders}
         </Button>
         <Button
           type="button"

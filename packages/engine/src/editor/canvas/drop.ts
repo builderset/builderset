@@ -19,7 +19,8 @@ import {
  */
 
 export type DragPayload =
-  | { kind: 'type'; type: string }
+  /** A new block; `props` start it filled in (an image from the media library). */
+  | { kind: 'type'; type: string; props?: Record<string, unknown> | undefined }
   | { kind: 'nodes'; ids: NodeId[] }
   /** A ready-made piece of layout (an email structure), built on drop. */
   | { kind: 'fragment'; rootType: string; build: () => Fragment };
@@ -143,8 +144,41 @@ export function readPayload(data: DataTransfer | null): DragPayload | null {
  */
 let active: DragPayload | null = null;
 
+/** What the drag ghost shows: an icon, a name, a line under it, how many. */
+export interface DragGhost {
+  label: string;
+  icon?: string | undefined;
+  detail?: string | undefined;
+  count?: number | undefined;
+}
+
+let ghost: DragGhost | null = null;
+const listeners = new Set<() => void>();
+let snapshot: { payload: DragPayload | null; ghost: DragGhost | null } = {
+  payload: null,
+  ghost: null,
+};
+function notify() {
+  snapshot = { payload: active, ghost };
+  for (const listener of listeners) listener();
+}
+
+/** For the drag layer: told whenever a drag starts, changes or ends. */
+export function subscribeDrag(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+export function dragSnapshot(): { payload: DragPayload | null; ghost: DragGhost | null } {
+  return snapshot;
+}
+
 export function setActiveDrag(payload: DragPayload | null): void {
   active = payload;
+  if (!payload) ghost = null;
+  notify();
   // The blocks being moved fade where they are, so the writer sees what is
   // travelling and where the gap it leaves will be.
   for (const element of document.querySelectorAll('[data-dragging]')) {
@@ -162,35 +196,26 @@ export function setActiveDrag(payload: DragPayload | null): void {
 }
 
 /**
- * The picture that follows the pointer: a small labelled chip instead of the
- * browser's ghost of the whole block, which for a gallery is half the screen.
- *
- * It is drawn on `<body>`, outside the editor, so it sees a `--builderset-*`
- * value only when the page sets one on its root; the fallbacks are the light
- * defaults.
+ * The picture that follows the pointer is drawn by the editor (the drag
+ * layer), not by the browser: a card with the block's icon, name and a line
+ * under it, that trails and tilts behind the pointer. The browser's own image
+ * is set to an empty pixel, so it does not draw a second one.
  */
-export function setDragChip(data: DataTransfer, label: string): void {
-  const chip = document.createElement('div');
-  chip.textContent = label;
-  chip.style.cssText = [
-    'position:fixed',
-    'top:-100px',
-    'left:-100px',
-    'padding:6px 12px',
-    'border-radius:999px',
-    'font:600 12px/1.2 var(--builderset-font, system-ui, sans-serif)',
-    'color:var(--builderset-primary-foreground, #fff)',
-    'background:var(--builderset-primary, oklch(0.55 0.19 258))',
-    'box-shadow:0 8px 24px rgb(0 0 0 / 0.18)',
-    'white-space:nowrap',
-    'pointer-events:none',
-  ].join(';');
-  document.body.appendChild(chip);
-  data.setDragImage(chip, 14, 14);
-  // The browser snapshots the chip synchronously; it can go right after.
+export function setDragChip(
+  data: DataTransfer,
+  label: string,
+  details: Omit<DragGhost, 'label'> = {},
+): void {
+  const blank = document.createElement('div');
+  blank.style.cssText = 'position:fixed;top:-10px;left:-10px;width:1px;height:1px;opacity:0.01';
+  document.body.appendChild(blank);
+  data.setDragImage(blank, 0, 0);
+  // The browser snapshots it synchronously; it can go right after.
   setTimeout(() => {
-    chip.remove();
+    blank.remove();
   }, 0);
+  ghost = { label: label.replace(/^\+ /, ''), ...details };
+  notify();
 }
 
 export function activeDrag(): DragPayload | null {

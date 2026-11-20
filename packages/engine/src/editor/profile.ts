@@ -8,14 +8,32 @@ import type {
 } from '../core';
 import type { ComponentType, ReactNode } from 'react';
 
+/** One block of a template: its type, and the props that differ from the element's defaults. */
+export interface TemplateBlock {
+  type: string;
+  props?: Record<string, unknown>;
+}
+
+/** A group the templates panel lists templates under: Newsletters, Guides, … */
+export interface TemplateCategory {
+  id: string;
+  /** By language code; English is the fallback. */
+  name: Record<string, string>;
+}
+
 /**
- * A starting layout the left rail's third tab offers: blocks inserted as one
- * fragment, so one undo takes it back out. `name` is per editor language.
+ * A starting layout the templates panel offers, under one category: blocks
+ * inserted as one fragment (one undo takes them out), or replacing the page.
  */
 export interface TemplateSpec {
   id: string;
+  /** The `id` of one of the profile's `templateCategories`. */
+  category: string;
+  /** By language code; English is the fallback. */
   name: Record<string, string>;
-  blocks: { type: string; props?: Record<string, unknown> }[];
+  /** One line on what it is for, by language code. */
+  description?: Record<string, string> | undefined;
+  blocks: TemplateBlock[];
 }
 
 /**
@@ -44,6 +62,16 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
    * backdrop). Default: `page`.
    */
   canvasFrame?: 'page' | 'bare' | undefined;
+  /**
+   * Draws a document as readers see it — no editing: the preview over the
+   * editor, and the library's peek at a block. Without one, the canvas
+   * renderer draws it with its text shown plain.
+   */
+  renderPreview?:
+    | ((args: { doc: TDoc; viewport: Breakpoint; locale?: string | undefined }) => ReactNode)
+    | undefined;
+  /** A small document showing one block filled in, for the library's peek at it. */
+  sampleOf?: ((type: string) => TDoc | null) | undefined;
   /** Drawn above the blocks on a `page` canvas, even while it is empty: an article's title. */
   canvasHeader?: ComponentType | undefined;
   /** The widest the page gets per device. */
@@ -54,6 +82,8 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   templatesPanel?: ComponentType | undefined;
   /** The starting layouts the default third tab offers, above the saved sections. */
   templates?: readonly TemplateSpec[] | undefined;
+  /** The templates' categories, in the order the panel lists them. */
+  templateCategories?: readonly TemplateCategory[] | undefined;
   /** What blocks publishing. */
   check: (doc: TDoc) => Issue[];
   /** Reads a stored document (the crash-safety copy); null when it is not one. */

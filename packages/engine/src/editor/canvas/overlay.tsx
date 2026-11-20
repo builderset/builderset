@@ -341,6 +341,11 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
             ids.length > 1
               ? messages.multipleSelected(ids.length)
               : (node.name ?? messages.elements[node.type]?.name ?? node.type),
+            {
+              icon: definition?.icon,
+              detail: messages.elements[node.type]?.description,
+              count: ids.length,
+            },
           );
           // After the browser has taken its snapshot, or the fade would be in it.
           requestAnimationFrame(() => {

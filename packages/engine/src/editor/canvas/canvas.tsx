@@ -181,7 +181,11 @@ export function Canvas() {
     if (!payload || !target) return;
     const state = store.getState();
     if (payload.kind === 'type') {
-      state.insertElement(payload.type, { parentId: target.parentId, index: target.index });
+      state.insertElement(
+        payload.type,
+        { parentId: target.parentId, index: target.index },
+        payload.props,
+      );
     } else if (payload.kind === 'fragment') {
       state.insertFragment(payload.build(), { parentId: target.parentId, index: target.index });
     } else {

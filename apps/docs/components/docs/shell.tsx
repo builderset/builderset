@@ -296,7 +296,7 @@ function Sections({ pathname, reading }: { pathname: string; reading: Reading })
     setSections(
       (both ? pageHeadings() : h2).map((heading) => ({
         id: heading.id,
-        label: (heading.textContent ?? '').replace(/#\s*$/, '').trim(),
+        label: heading.textContent.replace(/#\s*$/, '').trim(),
       })),
     );
   }, [pathname]);

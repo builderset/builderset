@@ -29,6 +29,19 @@ export function DocsShell({
 }) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+
+  // The top bar lifts off the page once it scrolls.
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 4);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     try {
@@ -73,18 +86,9 @@ export function DocsShell({
 
   return (
     <>
-      <header className="bs-top">
+      <header className="bs-top" data-scrolled={scrolled}>
         <div className="bs-top-in">
           <div className="bs-top-left">
-            <button
-              type="button"
-              className="bs-iconbtn"
-              aria-label="Show or hide the navigation"
-              aria-expanded={expanded}
-              onClick={toggle}
-            >
-              <Icon name="panel" />
-            </button>
             <Link className="bs-brand" href="/docs">
               <Logo size={26} />
               <span className="name">Builderset</span>
@@ -93,6 +97,15 @@ export function DocsShell({
             <span className="bs-version" title={`These pages describe Builderset ${version}`}>
               {version}
             </span>
+            <button
+              type="button"
+              className="bs-iconbtn bs-fold"
+              aria-label="Show or hide the navigation"
+              aria-expanded={expanded}
+              onClick={toggle}
+            >
+              <Icon name="panel" />
+            </button>
           </div>
           <Search />
           <div className="bs-top-right">
@@ -137,8 +150,8 @@ function Sidebar({ groups, pathname }: { groups: NavGroup[]; pathname: string })
 
   // Bring the current page into view in a long sidebar.
   useEffect(() => {
-    const current = document.querySelector<HTMLElement>('.bs-side [aria-current="page"]');
-    const box = document.querySelector<HTMLElement>('.bs-side');
+    const current = document.querySelector<HTMLElement>('.bs-nav [aria-current="page"]');
+    const box = document.querySelector<HTMLElement>('.bs-nav');
     side.current = box;
     if (!current || !box) return;
     const c = current.getBoundingClientRect();
@@ -156,43 +169,46 @@ function Sidebar({ groups, pathname }: { groups: NavGroup[]; pathname: string })
     );
 
   return (
-    <nav className="bs-nav">
-      {groups.map((group) => {
-        const open = !closed[group.name];
-        return (
-          <div
-            key={group.name}
-            className={contains(group) ? 'bs-group has-current' : 'bs-group'}
-            data-open={open}
-          >
-            <button
-              type="button"
-              className="bs-group-h"
-              aria-expanded={open}
-              onClick={() => {
-                setClosed((current) => ({ ...current, [group.name]: open }));
-              }}
+    <>
+      <nav className="bs-nav">
+        {groups.map((group) => {
+          const open = !closed[group.name];
+          return (
+            <div
+              key={group.name}
+              className={contains(group) ? 'bs-group has-current' : 'bs-group'}
+              data-open={open}
             >
-              <span className="ico">
-                <Icon name={GROUP_ICON[group.icon]} />
-              </span>
-              <span className="lbl">{group.name}</span>
-              <Icon name="chevron" className="chev" />
-            </button>
-            <div className="bs-collapse">
-              <div>
-                {group.items.map((item) =>
-                  item.kind === 'page' ? (
-                    <Item key={item.url} page={item} pathname={pathname} reading={reading} />
-                  ) : (
-                    <Folder key={item.name} folder={item} pathname={pathname} reading={reading} />
-                  ),
-                )}
+              <button
+                type="button"
+                className="bs-group-h"
+                aria-expanded={open}
+                onClick={() => {
+                  setClosed((current) => ({ ...current, [group.name]: open }));
+                }}
+              >
+                <span className="ico">
+                  <Icon name={GROUP_ICON[group.icon]} />
+                </span>
+                <span className="lbl">{group.name}</span>
+                <Icon name="chevron" className="chev" />
+              </button>
+              <div className="bs-collapse">
+                <div>
+                  {group.items.map((item) =>
+                    item.kind === 'page' ? (
+                      <Item key={item.url} page={item} pathname={pathname} reading={reading} />
+                    ) : (
+                      <Folder key={item.name} folder={item} pathname={pathname} reading={reading} />
+                    ),
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </nav>
+      {/* Stays at the foot of the sidebar while the list above it scrolls. */}
       <div className="bs-side-foot">
         <Link href="/playground">
           <Icon name="play" />
@@ -203,7 +219,7 @@ function Sidebar({ groups, pathname }: { groups: NavGroup[]; pathname: string })
           builderset.vercel.app
         </a>
       </div>
-    </nav>
+    </>
   );
 }
 

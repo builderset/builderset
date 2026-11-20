@@ -248,10 +248,17 @@ body::before {
   top: env(safe-area-inset-top, 0px);
   z-index: 30;
   height: var(--top);
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: saturate(1.4) blur(12px);
-  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  /* Frosted glass: the page shows through, blurred, as it scrolls under. */
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  backdrop-filter: saturate(1.8) blur(18px);
   border-bottom: 1px solid var(--line);
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
+}
+.bs-top[data-scrolled='true'] {
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  box-shadow: 0 6px 24px -14px rgb(15 23 42 / 0.35);
 }
 .bs-top-in {
   height: 100%;
@@ -404,24 +411,30 @@ body.bs-folded .bs-side {
   position: sticky;
   top: calc(var(--top) + env(safe-area-inset-top, 0px));
   height: calc(100vh - var(--top) - env(safe-area-inset-top, 0px));
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-right: 1px solid var(--line);
   background: var(--bg-soft);
-  padding: 14px 10px 40px max(10px, env(safe-area-inset-left, 0px));
   transition:
     transform 0.4s var(--ease),
     opacity 0.3s;
 }
-.bs-side::-webkit-scrollbar,
+.bs-nav::-webkit-scrollbar,
 .bs-toc::-webkit-scrollbar {
   display: none;
 }
 .bs-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
   display: grid;
+  align-content: start;
   gap: 4px;
+  padding: 14px 10px 24px max(10px, env(safe-area-inset-left, 0px));
 }
 .bs-group-h {
   all: unset;
@@ -645,11 +658,13 @@ body.bs-folded .bs-side {
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .bs-side-foot {
-  margin: 18px 8px 0;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+  flex: none;
   display: grid;
   gap: 2px;
+  padding: 10px 10px calc(12px + env(safe-area-inset-bottom, 0px))
+    max(10px, env(safe-area-inset-left, 0px));
+  border-top: 1px solid var(--line);
+  background: var(--bg-soft);
 }
 .bs-side-foot a {
   display: flex;
@@ -683,7 +698,7 @@ body.bs-folded .bs-side {
   padding: 36px clamp(20px, 3.4vw, 52px) 80px;
 }
 .bs-article {
-  max-width: 780px;
+  max-width: 1040px;
   margin: 0 auto;
   animation: bs-enter 0.5s var(--ease) both;
 }

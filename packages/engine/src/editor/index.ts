@@ -20,7 +20,13 @@ export {
 } from './context';
 export type { EditorProfile, TemplateSpec } from './profile';
 export type { EditableTextField } from '../core';
-export { LanguageSwitch, MultilingualToggle, useBaseLocale } from './chrome/language-switch';
+export { IssueList, ReadyCard, useIssues, useJumpToIssue } from './chrome/issues';
+export {
+  LanguageBar,
+  LanguageSwitch,
+  MultilingualToggle,
+  useBaseLocale,
+} from './chrome/language-switch';
 export { MediaField } from './inspector/media-field';
 export { ColorField, SpacingField } from './inspector/special-fields';
 export { AlignButtons, FontField } from './inspector/type-fields';

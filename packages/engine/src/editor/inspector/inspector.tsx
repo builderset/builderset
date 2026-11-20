@@ -18,12 +18,24 @@ import {
   SegmentedControl,
   ToggleFlag,
   Select,
+  SegmentedTabs,
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '../ui';
-import { Copy, Monitor, RotateCcw, Smartphone, Tablet, Trash2 } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Monitor,
+  Paintbrush,
+  Pilcrow,
+  RotateCcw,
+  SlidersHorizontal,
+  Smartphone,
+  Tablet,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import { z } from 'zod';
@@ -113,18 +125,44 @@ function NodeInspector({ id }: { id: NodeId }) {
 
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
-      <div className="bst:flex bst:h-11 bst:shrink-0 bst:items-center bst:gap-2 bst:border-b bst:border-border bst:px-3">
-        <span className="bst:flex bst:size-7 bst:shrink-0 bst:items-center bst:justify-center bst:rounded-md bst:bg-primary/10 bst:text-primary">
-          <ElementIcon name={definition?.icon ?? 'box'} className="bst:size-4" />
-        </span>
+      {/* Document › Paragraph: the way back to the document's settings. */}
+      <div className="bst:flex bst:shrink-0 bst:items-center bst:gap-1.5 bst:px-4 bst:pt-1 bst:text-xs bst:text-muted-foreground">
+        <button
+          type="button"
+          className="bst:cursor-pointer bst:font-medium bst:text-primary bst:hover:underline"
+          onClick={() => {
+            store.getState().select([]);
+          }}
+        >
+          {messages.document}
+        </button>
+        <ChevronRight className="bst:size-3.5" aria-hidden="true" />
+        <span className="bst:truncate">{messages.elements[node.type]?.name ?? node.type}</span>
+      </div>
+      <div className="bst:grid bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto] bst:items-start bst:gap-2 bst:px-4 bst:pt-2">
         <div className="bst:min-w-0">
-          <p className="bst:truncate bst:text-sm bst:font-semibold">
+          <p className="bst:flex bst:items-center bst:gap-2 bst:truncate bst:text-[13.5px] bst:font-semibold">
+            <ElementIcon
+              name={definition?.icon ?? 'box'}
+              className="bst:size-4 bst:shrink-0 bst:text-muted-foreground"
+            />
             {node.name ?? messages.elements[node.type]?.name ?? node.type}
           </p>
-          <p className="bst:truncate bst:text-xs bst:text-muted-foreground">
+          <p className="bst:mt-0.5 bst:text-xs bst:text-muted-foreground">
             {messages.elements[node.type]?.description}
           </p>
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={messages.close}
+          onClick={() => {
+            store.getState().select([]);
+          }}
+        >
+          <X aria-hidden="true" />
+        </Button>
       </div>
       <Tabs
         value={tab}
@@ -133,26 +171,33 @@ function NodeInspector({ id }: { id: NodeId }) {
         }}
         className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
       >
-        <TabsList
-          className={cn(
-            'bst:mx-3 bst:grid bst:shrink-0 bst:gap-0',
-            showStyle ? 'bst:grid-cols-3' : 'bst:grid-cols-2',
-          )}
-        >
-          <TabsTrigger value="content" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.content}
-          </TabsTrigger>
-          {showStyle ? (
-            <TabsTrigger value="style" className="bst:px-2 bst:py-1.5 bst:text-xs">
-              {messages.style}
-            </TabsTrigger>
-          ) : null}
-          <TabsTrigger value="advanced" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.advanced}
-          </TabsTrigger>
-        </TabsList>
+        <SegmentedTabs
+          aria-label={messages.settings}
+          value={tab}
+          onValueChange={(value) => {
+            store.getState().setRightTab(value);
+          }}
+          tabs={[
+            { value: 'content', label: messages.content, icon: <Pilcrow aria-hidden="true" /> },
+            ...(showStyle
+              ? [
+                  {
+                    value: 'style' as const,
+                    label: messages.style,
+                    icon: <Paintbrush aria-hidden="true" />,
+                  },
+                ]
+              : []),
+            {
+              value: 'advanced',
+              label: messages.advanced,
+              icon: <SlidersHorizontal aria-hidden="true" />,
+            },
+          ]}
+          className="bst:mx-4 bst:mt-3.5 bst:mb-1 bst:shrink-0"
+        />
         <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
-          <TabsContent value="content" className="bst:p-4">
+          <TabsContent value="content" className="bst:px-4 bst:pt-3.5 bst:pb-6">
             {schema && Object.keys(schema.properties ?? {}).length ? (
               <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
                 <ObjectFields
@@ -183,10 +228,10 @@ function NodeInspector({ id }: { id: NodeId }) {
               <p className="bst:text-sm bst:text-muted-foreground">—</p>
             )}
           </TabsContent>
-          <TabsContent value="style" className="bst:p-4">
+          <TabsContent value="style" className="bst:px-4 bst:pt-3.5 bst:pb-6">
             <StylePanel id={id} />
           </TabsContent>
-          <TabsContent value="advanced" className="bst:p-4">
+          <TabsContent value="advanced" className="bst:px-4 bst:pt-3.5 bst:pb-6">
             <AdvancedPanel id={id} />
           </TabsContent>
         </div>
@@ -213,6 +258,9 @@ const STYLE_GROUPS: {
   { title: 'appearance', keys: ['background', 'borderWidth', 'borderColor', 'radius', 'shadow'] },
 ];
 
+/** The segmented controls' "Auto": no value set (Radix reads '' as nothing chosen). */
+const UNSET = '__unset';
+
 const DEVICE_ICON: Record<Breakpoint, ReactNode> = {
   desktop: <Monitor className="bst:size-4" aria-hidden="true" />,
   tablet: <Tablet className="bst:size-4" aria-hidden="true" />,
@@ -224,6 +272,17 @@ function StylePanel({ id }: { id: NodeId }) {
   const node = useEditor((state) => state.doc.nodes[id]);
   const viewport = useEditor((state) => state.viewport);
   const resolved = useMemo(() => resolveStyle(node?.style, viewport), [node?.style, viewport]);
+  const [closed, setClosed] = useState<Set<string>>(
+    () => new Set(['appearance', 'image', 'visibility']),
+  );
+  const toggle = (group: string) => {
+    setClosed((current) => {
+      const next = new Set(current);
+      if (next.has(group)) next.delete(group);
+      else next.add(group);
+      return next;
+    });
+  };
   if (!node) return null;
   const own = node.style?.[viewport] ?? {};
 
@@ -239,7 +298,7 @@ function StylePanel({ id }: { id: NodeId }) {
   };
 
   return (
-    <div className="bst:space-y-5">
+    <div className="bst:grid bst:gap-4">
       <div className="bst:space-y-1.5">
         <Label className="bst:text-xs bst:font-medium">{messages.breakpoint}</Label>
         <SegmentedControl
@@ -258,12 +317,19 @@ function StylePanel({ id }: { id: NodeId }) {
       </div>
 
       {STYLE_GROUPS.map((group) => (
-        <section key={group.title} className="bst:space-y-3">
-          <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-            {messages[group.title]}
-          </h4>
+        <StyleGroup
+          key={group.title}
+          title={messages[group.title]}
+          open={!closed.has(group.title)}
+          onToggle={() => {
+            toggle(group.title);
+          }}
+        >
           {group.keys.map((key) => {
             const options = (STYLE_SCHEMA.properties?.[key]?.enum ?? []).map(String);
+            const value = (resolved[key] as string | undefined) ?? '';
+            // A choice that is itself 'auto' stands for the default; no second Auto.
+            const hasAuto = options.includes('auto');
             return (
               <StyleRow
                 key={key}
@@ -276,27 +342,52 @@ function StylePanel({ id }: { id: NodeId }) {
                 resetLabel={messages.reset}
                 inheritedLabel={messages.inherited}
               >
-                {(controlId) => (
-                  <Select
-                    id={controlId}
-                    value={(resolved[key] as string | undefined) ?? ''}
-                    placeholder="—"
-                    onValueChange={(value) => {
-                      set(key, value as never);
-                    }}
-                    options={options.map((option) => ({ value: option, label: humanize(option) }))}
-                  />
-                )}
+                {(controlId) =>
+                  // A few choices: all in view, "Auto" first. Many: a select.
+                  options.length <= 5 ? (
+                    <SegmentedControl
+                      aria-label={messages.styleKeys[key] ?? humanize(key)}
+                      value={value || (hasAuto ? 'auto' : UNSET)}
+                      onValueChange={(next) => {
+                        set(key, (next === UNSET ? undefined : next) as never);
+                      }}
+                      options={[
+                        ...(hasAuto ? [] : [{ value: UNSET, label: messages.styleAuto }]),
+                        ...options.map((option) => ({
+                          value: option,
+                          label: option === 'auto' ? messages.styleAuto : humanize(option),
+                        })),
+                      ]}
+                      className="bst:w-full bst:[&>*]:flex-1"
+                    />
+                  ) : (
+                    <Select
+                      id={controlId}
+                      value={value || undefined}
+                      placeholder={messages.styleAuto}
+                      onValueChange={(next) => {
+                        set(key, next as never);
+                      }}
+                      options={options.map((option) => ({
+                        value: option,
+                        label: humanize(option),
+                      }))}
+                    />
+                  )
+                }
               </StyleRow>
             );
           })}
-        </section>
+        </StyleGroup>
       ))}
 
-      <section className="bst:space-y-3">
-        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-          {messages.styleKeys.background ?? 'Background'} · {messages.chooseImage}
-        </h4>
+      <StyleGroup
+        title={`${messages.styleKeys.background ?? 'Background'} · ${messages.chooseImage}`}
+        open={!closed.has('image')}
+        onToggle={() => {
+          toggle('image');
+        }}
+      >
         <MediaField
           kind="image"
           value={resolved.backgroundImage?.media ?? null}
@@ -322,12 +413,15 @@ function StylePanel({ id }: { id: NodeId }) {
             className="bst:w-full bst:accent-primary"
           />
         ) : null}
-      </section>
+      </StyleGroup>
 
-      <section className="bst:space-y-3">
-        <h4 className="bst:text-[11px] bst:font-semibold bst:tracking-wider bst:text-muted-foreground bst:uppercase">
-          {messages.visibility}
-        </h4>
+      <StyleGroup
+        title={messages.visibility}
+        open={!closed.has('visibility')}
+        onToggle={() => {
+          toggle('visibility');
+        }}
+      >
         <ToggleFlag
           title={messages.hideAt}
           description={messages[viewport]}
@@ -336,8 +430,42 @@ function StylePanel({ id }: { id: NodeId }) {
             set('hidden', checked ? true : undefined);
           }}
         />
-      </section>
+      </StyleGroup>
     </div>
+  );
+}
+
+/** A group of style settings under a header that folds it away. */
+function StyleGroup({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <section className="bst:grid bst:gap-3 bst:border-t bst:border-border bst:pt-3">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={onToggle}
+        className="bst:flex bst:w-full bst:cursor-pointer bst:items-center bst:justify-between bst:text-left bst:text-xs bst:font-semibold bst:text-foreground"
+      >
+        {title}
+        <ChevronDown
+          className={cn(
+            'bst:size-[15px] bst:text-muted-foreground bst:transition-transform bst:duration-200',
+            !open && 'bst:-rotate-90',
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      {open ? <div className="bst:grid bst:gap-3">{children}</div> : null}
+    </section>
   );
 }
 

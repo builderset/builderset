@@ -289,7 +289,7 @@ function ToolbarButton({
         'bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:transition-[transform,background-color] bst:active:scale-95 bst:disabled:opacity-40 bst:[&_svg]:size-3.5',
         danger
           ? 'bst:hover:bg-destructive bst:hover:text-destructive-foreground'
-          : 'bst:hover:bg-white/15',
+          : 'bst:hover:bg-accent',
       )}
     >
       {children}
@@ -321,7 +321,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.14 }}
-      className="bst:pointer-events-auto bst:absolute bst:z-20 bst:flex bst:items-center bst:gap-0.5 bst:rounded-lg bst:bg-foreground bst:p-0.5 bst:text-background bst:shadow-lg"
+      className="bst:pointer-events-auto bst:absolute bst:z-20 bst:flex bst:animate-[bst-rise_220ms_var(--bst-ease-enter)] bst:items-center bst:gap-0.5 bst:rounded-[10px] bst:border bst:border-border bst:bg-card bst:p-[3px] bst:text-foreground bst:shadow-[0_1px_2px_rgb(20_23_30/0.06),0_8px_24px_rgb(20_23_30/0.08)]"
       style={{
         left: box.left,
         top: above ? box.top - 38 : box.top + box.height + 6,
@@ -350,16 +350,16 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
         onDragEnd={() => {
           setActiveDrag(null);
         }}
-        className="bst:flex bst:h-7 bst:cursor-grab bst:items-center bst:gap-1.5 bst:rounded-md bst:px-1.5 bst:text-xs bst:font-medium bst:active:cursor-grabbing"
+        className="bst:flex bst:h-7 bst:cursor-grab bst:items-center bst:gap-1.5 bst:rounded-md bst:px-2 bst:text-xs bst:font-semibold bst:hover:bg-accent bst:active:cursor-grabbing"
         title={messages.dragToMove}
       >
-        <GripVertical className="bst:size-3.5 bst:opacity-70" aria-hidden="true" />
+        <GripVertical className="bst:size-3.5 bst:text-muted-foreground" aria-hidden="true" />
         <ElementIcon name={definition?.icon ?? 'box'} className="bst:size-3.5" />
         {node.name ?? messages.elements[node.type]?.name ?? node.type}
         {node.locked ? <Lock className="bst:size-3" aria-hidden="true" /> : null}
         {node.hidden ? <EyeOff className="bst:size-3" aria-hidden="true" /> : null}
       </span>
-      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-border" aria-hidden="true" />
       <ToolbarButton
         label={messages.moveUp}
         disabled={index <= 0 || !!node.locked}
@@ -374,7 +374,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
       >
         <ArrowDown />
       </ToolbarButton>
-      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-border" aria-hidden="true" />
       <ToolbarButton label={messages.duplicate} onClick={() => state().duplicateNodes([id])}>
         <Copy />
       </ToolbarButton>
@@ -388,10 +388,10 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
           <ArrowUpLeft />
         </ToolbarButton>
       ) : null}
-      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
+      <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-border" aria-hidden="true" />
       {alignOptions.length && !node.locked ? (
         <>
-          <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-white/20" aria-hidden="true" />
+          <span className="bst:mx-0.5 bst:h-4 bst:w-px bst:bg-border" aria-hidden="true" />
           <AlignButtons
             tone="toolbar"
             label={messages.align}
@@ -412,7 +412,7 @@ function NodeToolbar({ id, box }: { id: NodeId; box: Box }) {
             onMouseDown={(event) => {
               event.preventDefault();
             }}
-            className="bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:hover:bg-white/15 bst:[&_svg]:size-3.5"
+            className="bst:flex bst:size-7 bst:items-center bst:justify-center bst:rounded-md bst:hover:bg-accent bst:[&_svg]:size-3.5"
           >
             <MoreHorizontal />
           </button>

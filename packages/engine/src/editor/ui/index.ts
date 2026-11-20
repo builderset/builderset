@@ -62,6 +62,7 @@ export { PortalProvider, usePortalContainer } from './portal';
 export { Select, type SelectOption, type SelectProps } from './select';
 export { Sheet, SheetAction, SheetOption, type SheetOptionProps, type SheetProps } from './sheet';
 export { EmptyState, type EmptyStateProps } from './states';
+export { SegmentedTabs, type SegmentedTab, type SegmentedTabsProps } from './segmented-tabs';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { ToggleFlag, type ToggleFlagProps } from './toggle-flag';
 export {

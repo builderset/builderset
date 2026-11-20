@@ -10,6 +10,17 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { CSSProperties } from 'react';
+import {
+  siDjango,
+  siExpress,
+  siFastapi,
+  siNextdotjs,
+  siPostgresql,
+  siPython,
+  siSupabase,
+  siTypescript,
+  type SimpleIcon,
+} from 'simple-icons';
 
 import { Code } from '@/components/code';
 import { CopyButton } from '@/components/copy-button';
@@ -18,6 +29,7 @@ import { FooterMark } from '@/components/footer-mark';
 import { HeroEditor } from '@/components/hero-editor';
 import { Horizon } from '@/components/horizon';
 import { LiveDemo } from '@/components/live-demo';
+import { StackIcon } from '@/components/stack-icon';
 import { Logo } from '@/components/logo';
 import { Nav } from '@/components/nav';
 import { Reveal } from '@/components/reveal';
@@ -67,50 +79,63 @@ const FLOW: { icon: LucideIcon; title: string; code: string; text: string }[] = 
 ];
 
 /** The stacks the backend guides cover: what a team already runs, not a new one to learn. */
-const STACKS: { mark: string; name: string; language: string; what: string; href: string }[] = [
+const STACKS: {
+  icon: SimpleIcon;
+  name: string;
+  languages: Language[];
+  what: string;
+  href: string;
+}[] = [
   {
-    mark: 'SQL',
+    icon: siPostgresql,
     name: 'PostgreSQL',
-    language: 'SQL',
-    what: 'One schema for every builder: documents, responses, revisions, media.',
+    languages: ['SQL'],
+    what: 'One schema for every builder: documents, history, responses, media — audited and soft-deleted.',
     href: LINKS.sql,
   },
   {
-    mark: 'Sb',
+    icon: siSupabase,
     name: 'Supabase',
-    language: 'SQL · TypeScript',
+    languages: ['SQL', 'TypeScript'],
     what: 'The tables with row-level security, Storage, and Edge Functions for the checks.',
     href: LINKS.supabase,
   },
   {
-    mark: 'Dj',
+    icon: siDjango,
     name: 'Django',
-    language: 'Python',
+    languages: ['Python'],
     what: 'Models and REST framework views, checked by the builderset package.',
     href: LINKS.django,
   },
   {
-    mark: 'Fa',
+    icon: siFastapi,
     name: 'FastAPI',
-    language: 'Python',
+    languages: ['Python'],
     what: 'SQLAlchemy models and one router for all three builders.',
     href: LINKS.fastapiAll,
   },
   {
-    mark: 'Ex',
-    name: 'Node.js',
-    language: 'TypeScript',
+    icon: siExpress,
+    name: 'Node.js and Express',
+    languages: ['TypeScript'],
     what: 'Express and pg, with the kits’ own checks.',
     href: LINKS.express,
   },
   {
-    mark: 'Nx',
+    icon: siNextdotjs,
     name: 'Next.js',
-    language: 'TypeScript',
+    languages: ['TypeScript'],
     what: 'Route handlers with Drizzle or Prisma, tested against a real Postgres.',
     href: LINKS.drizzle,
   },
 ];
+
+type Language = 'SQL' | 'TypeScript' | 'Python';
+const LANGUAGE_ICONS: Record<Language, SimpleIcon> = {
+  SQL: siPostgresql,
+  TypeScript: siTypescript,
+  Python: siPython,
+};
 
 const KITS: {
   name: string;
@@ -489,11 +514,18 @@ export default function Page() {
               {STACKS.map((stack, index) => (
                 <li key={stack.name} style={delay(index)}>
                   <a className="lp-stack" href={stack.href}>
-                    <span className="mark" aria-hidden="true">
-                      {stack.mark}
+                    <span className="mark">
+                      <StackIcon icon={stack.icon} size={24} decorative />
                     </span>
                     <span className="name">{stack.name}</span>
-                    <code className="lang">{stack.language}</code>
+                    <span className="lang">
+                      {stack.languages.map((language) => (
+                        <code key={language}>
+                          <StackIcon icon={LANGUAGE_ICONS[language]} size={12} decorative />
+                          {language}
+                        </code>
+                      ))}
+                    </span>
                     <span className="what">{stack.what}</span>
                     <ArrowUpRight className="go" size={16} />
                   </a>

@@ -1,35 +1,100 @@
 ---
 title: FastAPI
-description: The three builders' backend in FastAPI — SQLAlchemy 2 models for every table, one router for emails, articles and forms, and the form's public routes, checked by the builderset Python package.
+description: The three builders' backend in FastAPI — SQLAlchemy 2 models for every table with who made, changed and deleted each row, revisions and an activity log, soft deletes, the editor's routes for emails, articles and forms, and the form's public routes, checked by the builderset Python package.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end a FastAPI app stores email templates, articles and forms, refuses an
-unsafe or stale save with the same issue codes as the editor, and takes form
-responses checked exactly as the form in the browser checked them. The tables and
-routes are the ones in [Data model and API](/docs/guides/backend/data-model).
+At the end a FastAPI app stores email templates, articles and forms with the whole
+audit trail of the [data model](/docs/guides/backend/data-model): who made, changed,
+published and deleted each row and when, a revision on every manual save and publish,
+and one activity line for everything that happens. It refuses an unsafe or stale save
+with the same issue codes as the editor, deletes softly so a row can be restored, and
+takes form responses checked exactly as the form in the browser checked them.
 [FastAPI and SQLAlchemy](/docs/guides/backend/fastapi-sqlalchemy) is the complete,
-tested backend for emails alone, with uploads, sending and its tests; this page
-builds all three builders in the same style. The `builderset` package's install is in
-[Python](/docs/reference/python).
+tested backend for emails alone; this page builds all three builders in the same
+style. The `builderset` package's install is in [Python](/docs/reference/python).
+
+The code is one package, `app`, with a file per concern. `app/__init__.py` and
+`app/routers/__init__.py` are empty.
 
 <Steps>
 <Step>
 
 ### The tables
 
-The [SQL schema](/docs/guides/backend/sql) as SQLAlchemy models, with its table and
-column names. `alembic revision --autogenerate` writes the migration:
+The [SQL schema](/docs/guides/backend/sql) as SQLAlchemy 2 models, one file per
+group: the same tables, columns, partial indexes and constraint names, so
+`alembic revision --autogenerate` writes the migration. Every table builds on the
+audit mixins in `base.py`:
 
-<include cwd lang="python" meta='title="app/models.py"'>
-  ./snippets/backends/fastapi/models.py
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The two ids, the audit columns, soft delete, and what every document and revision
+has. `User` stands in for your users table.
+
+<include cwd lang="python" meta='title="app/models/base.py"'>
+  ./snippets/backends/fastapi/app/models/base.py
 </include>
 
-The session is the example's, one per request:
+</Tab>
+<Tab title="Email templates">
+<include cwd lang="python" meta='title="app/models/emails.py"'>
+  ./snippets/backends/fastapi/app/models/emails.py
+</include>
+</Tab>
+<Tab title="Articles">
+
+An article's `name` is its `title`, so the list and search treat every document alike.
+
+<include cwd lang="python" meta='title="app/models/articles.py"'>
+  ./snippets/backends/fastapi/app/models/articles.py
+</include>
+
+</Tab>
+<Tab title="Forms">
+<include cwd lang="python" meta='title="app/models/forms.py"'>
+  ./snippets/backends/fastapi/app/models/forms.py
+</include>
+</Tab>
+<Tab title="Library">
+<include cwd lang="python" meta='title="app/models/library.py"'>
+  ./snippets/backends/fastapi/app/models/library.py
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="python" meta='title="app/models/activity.py"'>
+  ./snippets/backends/fastapi/app/models/activity.py
+</include>
+</Tab>
+</Tabs>
+
+The package imports every model, so `Base.metadata` knows them all:
+
+<include cwd lang="python" meta='title="app/models/__init__.py"'>
+  ./snippets/backends/fastapi/app/models/\_\_init\_\_.py
+</include>
+
+`updated_at` is kept by the ORM (`onupdate`). If anything else writes to these
+tables — a job in plain SQL, someone in `psql` — add the `touch_updated_at` trigger
+from the SQL schema in a migration as well. One session per request:
 
 <include cwd lang="python" meta='title="app/db.py"'>
-  ../../examples/backends/fastapi-sqlalchemy/app/db.py
+  ./snippets/backends/fastapi/app/db.py
+</include>
+
+</Step>
+<Step>
+
+### Who is signed in
+
+Every write is stamped with the signed-in user, never with an id from the request
+body. Your auth decides who that is; the dependency below is the one place to plug it
+in:
+
+<include cwd lang="python" meta='title="app/deps.py"'>
+  ./snippets/backends/fastapi/app/deps.py
 </include>
 
 </Step>
@@ -42,26 +107,34 @@ never unsafe, and strict for publishing. Each kit names what a draft may still c
 the same list the editor uses:
 
 <include cwd lang="python" meta='title="app/checks.py"'>
-  ./snippets/backends/fastapi/checks.py
+  ./snippets/backends/fastapi/app/checks.py
 </include>
 
 </Step>
 <Step>
 
-### One router for three builders
+### One set of routes for three builders
 
-The routes are written once, in `document_router(kind)`. What differs between emails,
-articles and forms is a small table: the model, the kit, the columns copied from the
-document's meta, what a new row needs:
+The routes are written once, as `/api/{kind}/…`. What differs between emails,
+articles and forms is a small table: the model, its revision table, the kit, the
+columns copied from the document's meta:
 
-<include cwd lang="python" meta='title="app/documents.py"'>
-  ./snippets/backends/fastapi/documents.py#kinds
+<include cwd lang="python" meta='title="app/kinds.py"'>
+  ./snippets/backends/fastapi/app/kinds.py
 </include>
 
-The app mounts it once per builder, after the form's public routes:
+</Step>
+<Step>
 
-<include cwd lang="python" meta='title="app/main.py"'>
-  ./snippets/backends/fastapi/main.py
+### The audit trail
+
+The work every write shares, for any table: find a live row (a deleted one is `404`),
+stamp who changed it, append an activity line, delete softly and restore. None of
+them commits: the route commits once, so the row, its revision and its activity are
+written together or not at all:
+
+<include cwd lang="python" meta='title="app/audit.py"'>
+  ./snippets/backends/fastapi/app/audit.py
 </include>
 
 </Step>
@@ -69,14 +142,14 @@ The app mounts it once per builder, after the form's public routes:
 
 ### Saving a draft
 
-The editor sends back the `saved_at` it last saw. A different one on the row means
-someone else saved in between: `409`, and the editor offers to reload or keep its
-own. The update is conditional, so two saves at the same instant cannot both win. The
-column keeps milliseconds, as JavaScript does, so the value the editor sends back is
-exactly the one stored:
+The editor sends back the `saved_at` it last saw. The update is filtered on it, so if
+someone else saved in between it changes no row and the answer is `409`; the editor
+offers to reload or keep its own. The column keeps milliseconds, as JavaScript does,
+so the value the editor sends back is exactly the one stored. A manual save is kept
+as a revision and logged; an autosave is neither:
 
 <include cwd lang="python" meta='title="app/documents.py"'>
-  ./snippets/backends/fastapi/documents.py#draft
+  ./snippets/backends/fastapi/app/documents.py#draft
 </include>
 
 </Step>
@@ -84,20 +157,105 @@ exactly the one stored:
 
 ### Publishing
 
-The strict check, then the document goes live with its meta copied to the columns.
-Publishing is its own permission. An email type keeps one active design; an article
-with a future `scheduled_at` waits for a job of yours to set it live; a form's address
-taken by another is refused on `meta.slug`, where the editor shows it:
+The strict check, then the document goes live with its meta copied to the columns,
+in the order of [what each write does](/docs/guides/backend/data-model#what-each-write-does):
+the row, a `publish` revision, a `published` line (and `renamed` when a name or slug
+changed). An email type keeps one active design; an article with a future
+`scheduled_at` waits for a job of yours to set it live; a form's address taken by
+another is refused on `meta.slug`, where the editor shows it:
 
 <include cwd lang="python" meta='title="app/documents.py"'>
-  ./snippets/backends/fastapi/documents.py#publish
+  ./snippets/backends/fastapi/app/documents.py#publish
 </include>
 
-Creating, reading, the list and unpublishing are in the same router. Unpublishing
-leaves an email or an article a draft, and a form `closed`: its link keeps working
-and shows the closed message. Revisions and saved sections have their models; their
-routes are a list and an insert with the same check, and until you add them the
-editor hides those features.
+Publishing is usually its own permission: check it in `deps.py`'s stand-in.
+
+</Step>
+<Step>
+
+### Creating, unpublishing, deleting, restoring
+
+<Tabs label="Writes">
+<Tab title="Create">
+
+A new row is a draft. An article's address is chosen when it is made; a form has
+none until it is published:
+
+<include cwd lang="python" meta='title="app/documents.py"'>
+  ./snippets/backends/fastapi/app/documents.py#create
+</include>
+
+</Tab>
+<Tab title="Unpublish, delete, restore">
+
+Unpublishing leaves an email or an article a draft, and a form `closed`: its link
+keeps working and shows the closed message. A live document is not deleted —
+unpublish it first — and a restore whose address was taken meanwhile is `409`:
+
+<include cwd lang="python" meta='title="app/documents.py"'>
+  ./snippets/backends/fastapi/app/documents.py#lifecycle
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The routes
+
+Each route does the HTTP part and leaves the write to `app/documents.py` or
+`app/audit.py`. Answers are Pydantic models read from the rows: a row's `uuid` is its
+`id`, and people are `{ id, name }`.
+
+<Tabs label="Routes">
+<Tab title="Documents">
+<include cwd lang="python" meta='title="app/routers/documents.py"'>
+  ./snippets/backends/fastapi/app/routers/documents.py
+</include>
+</Tab>
+<Tab title="History">
+
+Revisions for the editor's history panel, and the activity for a timeline of yours:
+
+<include cwd lang="python" meta='title="app/routers/history.py"'>
+  ./snippets/backends/fastapi/app/routers/history.py
+</include>
+
+</Tab>
+<Tab title="Library">
+
+Saved sections, and uploads. An upload checks the file by its first bytes and its
+size, and the same bytes uploaded twice are one `Media` row:
+
+<include cwd lang="python" meta='title="app/routers/library.py"'>
+  ./snippets/backends/fastapi/app/routers/library.py
+</include>
+
+</Tab>
+<Tab title="Answers">
+<include cwd lang="python" meta='title="app/schemas.py"'>
+  ./snippets/backends/fastapi/app/schemas.py
+</include>
+</Tab>
+</Tabs>
+
+A route raises an error from `errors.py`, and the app turns it into its answer in one
+place. The library's routes are mounted first, so `/api/emails/sections` is not read
+as a document:
+
+<Tabs label="App">
+<Tab title="main.py">
+<include cwd lang="python" meta='title="app/main.py"'>
+  ./snippets/backends/fastapi/app/main.py
+</include>
+</Tab>
+<Tab title="errors.py">
+<include cwd lang="python" meta='title="app/errors.py"'>
+  ./snippets/backends/fastapi/app/errors.py
+</include>
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -109,21 +267,24 @@ draft; a filled trap field is answered as a success and stored nowhere; and only
 `values` that `validate_answers` keeps are stored, so an answer to a question the
 visitor was not shown never reaches the table. The count goes up in the same
 statement that checks `maxResponses`, so two visitors cannot both take the last
-place:
+place. Your team triages responses with `PATCH` and deletes them softly; the
+retention job is the one place a response is deleted for good:
 
-<include cwd lang="python" meta='title="app/forms.py"'>
-  ./snippets/backends/fastapi/forms.py
+<include cwd lang="python" meta='title="app/routers/forms.py"'>
+  ./snippets/backends/fastapi/app/routers/forms.py
 </include>
 
 </Step>
 <Step>
 
-### Uploads
+### Where the files go
 
-An upload checks the file's type by its first bytes and its size, stores it under a
-new key, and answers with the key and its address. The email example's
-[upload route](/docs/guides/backend/fastapi-sqlalchemy#the-routes) is the one to copy;
-here it would also write a `Media` row.
+Uploads are kept on the local disk under a key of the server's choosing. Documents
+store the key, never the URL, so moving to S3 or a CDN changes this file alone:
+
+<include cwd lang="python" meta='title="app/storage.py"'>
+  ./snippets/backends/fastapi/app/storage.py
+</include>
 
 </Step>
 <Step>
@@ -131,8 +292,8 @@ here it would also write a `Media` row.
 ### Point the editor at it
 
 [`createRestHost`](/docs/guides/host#createresthost) with the document's address,
-`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
-the Responses tab's loader and the public page's `onSubmit`:
+`/api/articles/<uuid>`. For forms, the same file has the Responses tab's loader and
+the public page's `onSubmit`:
 
 <include cwd lang="ts" meta='title="host.ts"'>
   ./snippets/backends/host.ts

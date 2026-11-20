@@ -1,40 +1,102 @@
 ---
 title: Django
-description: The three builders' backend in Django — models for every table, Django REST framework views, and the builderset Python package checking each document and form response with the editor's own codes.
+description: The three builders' backend in Django — models for every table with who made, changed and deleted each row, revisions and an activity log, Django REST framework views, and the builderset Python package checking each document and form response with the editor's own codes.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end a Django app stores email templates, articles and forms, refuses an
-unsafe or stale save with the same issue codes as the editor, and takes form
-responses checked exactly as the form in the browser checked them. The tables and
-routes are the ones in [Data model and API](/docs/guides/backend/data-model); the
-checks come from the `builderset` package, whose install is in
-[Python](/docs/reference/python):
+At the end a Django app stores email templates, articles and forms, with who made,
+changed and deleted each row and when; keeps their revisions and a log of what
+happened to them; refuses an unsafe or stale save with the same issue codes as the
+editor; and takes form responses checked exactly as the form in the browser checked
+them. The tables and routes are the ones in
+[Data model and API](/docs/guides/backend/data-model); the checks come from the
+`builderset` package, whose install is in [Python](/docs/reference/python):
 
 <include cwd lang="sh" meta='title="Terminal"'>
   ./snippets/backends/django/install.sh
 </include>
 
-The files below are one Django app, `documents`, with `rest_framework` and
-`documents` in `INSTALLED_APPS`.
+The files below are two Django apps: `accounts`, your users, and `documents`, the
+rest. They need Django 6.0 or later, whose foreign keys can let the database itself
+set a removed user's columns to null. Add to your settings:
+
+<include cwd lang="python" meta='title="settings.py"'>
+  ./snippets/backends/django/settings.py
+</include>
 
 <Steps>
 <Step>
 
-### The tables
+### Your users
 
-The [SQL schema](/docs/guides/backend/sql) as models, with its table and column
-names. `makemigrations` writes the migration:
+Every answer names people by a public id, never the internal one, so the user model
+needs a `uuid`. Django recommends a custom user model from a project's first
+migration; this is that model:
 
-<include cwd lang="python" meta='title="documents/models.py"'>
-  ./snippets/backends/django/models.py
+<include cwd lang="python" meta='title="accounts/models.py"'>
+  ./snippets/backends/django/accounts/models.py
 </include>
 
-Two differences from the SQL: Django keeps timestamps to the microsecond, so the
-views write `saved_at` to the millisecond, as JavaScript reads it; and each builder
-has a `publish_*` permission beside Django's own add, change and view, because
-writing a draft and putting it in front of readers are different trust.
+On a project already past its first migration with Django's own `User`, keep the
+`uuid` on a one-to-one profile and read it from there in `PersonField`.
+
+</Step>
+<Step>
+
+### The tables
+
+The [SQL schema](/docs/guides/backend/sql) as models, one file per group, with its
+table, column, constraint and index names. `makemigrations` writes the migration:
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns every table carries, the document columns every builder shares, and
+a queryset where every query says which rows it means: `live()` or `deleted()`.
+
+<include cwd lang="python" meta='title="documents/models/base.py"'>
+  ./snippets/backends/django/documents/models/base.py
+</include>
+
+</Tab>
+<Tab title="Email templates">
+<include cwd lang="python" meta='title="documents/models/emails.py"'>
+  ./snippets/backends/django/documents/models/emails.py
+</include>
+</Tab>
+<Tab title="Articles">
+<include cwd lang="python" meta='title="documents/models/articles.py"'>
+  ./snippets/backends/django/documents/models/articles.py
+</include>
+</Tab>
+<Tab title="Forms">
+<include cwd lang="python" meta='title="documents/models/forms.py"'>
+  ./snippets/backends/django/documents/models/forms.py
+</include>
+</Tab>
+<Tab title="Library">
+<include cwd lang="python" meta='title="documents/models/library.py"'>
+  ./snippets/backends/django/documents/models/library.py
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="python" meta='title="documents/models/activity.py"'>
+  ./snippets/backends/django/documents/models/activity.py
+</include>
+</Tab>
+</Tabs>
+
+And `documents/models/__init__.py` imports each model, so `from .models import Form`
+works anywhere in the app.
+
+Where the tables differ from the SQL: Django keeps `updated_at` itself, `auto_now` on
+`save()` and `update_by()` on a queryset update, so there is no trigger, and a change
+made in `psql` leaves it as it was. Its `Now()` is `statement_timestamp()`, not
+`now()`; `sha256` is a `varchar(64)`; the revision index of email templates is
+`email_template_revision_hist`, because Django caps index names at 30 characters;
+and its foreign keys are checked at commit. Each builder also has a `publish_*`
+permission beside Django's own add, change, delete and view.
 
 </Step>
 <Step>
@@ -46,8 +108,40 @@ never unsafe, and strict for publishing. Each kit names what a draft may still c
 the same list the editor uses:
 
 <include cwd lang="python" meta='title="documents/checks.py"'>
-  ./snippets/backends/django/checks.py
+  ./snippets/backends/django/documents/checks.py
 </include>
+
+</Step>
+<Step>
+
+### The audit work
+
+Every write does the same four things in one transaction: checks the document,
+writes the row with who did it, keeps a revision on a manual save or a publish, and
+appends an activity. The last three, and deleting and restoring, live in one file;
+refusals live in another, which is the only place they become HTTP answers:
+
+<Tabs label="Audit">
+<Tab title="Audit">
+
+The signed-in user comes from the request's session, never from its body.
+
+<include cwd lang="python" meta='title="documents/audit.py"'>
+  ./snippets/backends/django/documents/audit.py
+</include>
+
+</Tab>
+<Tab title="Errors">
+
+The views raise; DRF's exception handler answers `404`, `409`, `410`, `413`, `415`
+or `422` with the body the editor reads.
+
+<include cwd lang="python" meta='title="documents/errors.py"'>
+  ./snippets/backends/django/documents/errors.py
+</include>
+
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -55,18 +149,43 @@ the same list the editor uses:
 ### One set of views for three builders
 
 What differs between emails, articles and forms is a small table: the model, the
-kit, the columns copied from the document's meta:
+kit, the columns copied from the document's meta, and what publishing and
+unpublishing also change:
 
-<include cwd lang="python" meta='title="documents/views.py"'>
-  ./snippets/backends/django/views.py#kinds
+<include cwd lang="python" meta='title="documents/kinds.py"'>
+  ./snippets/backends/django/documents/kinds.py
 </include>
 
 A path converter turns `emails`, `articles` or `forms` in the address into its row of
-that table, so the views are written once:
+that table, so the views are written once. Ids in paths are the rows' `uuid`:
 
+<Tabs label="Routes">
+<Tab title="Routes">
 <include cwd lang="python" meta='title="documents/urls.py"'>
-  ./snippets/backends/django/urls.py
+  ./snippets/backends/django/documents/urls.py
 </include>
+</Tab>
+<Tab title="Permissions">
+
+Each view needs Django's permission for its action on its model; publishing needs
+`publish_*`.
+
+<include cwd lang="python" meta='title="documents/permissions.py"'>
+  ./snippets/backends/django/documents/permissions.py
+</include>
+
+</Tab>
+<Tab title="Answers">
+
+The serializers write every answer: the `uuid` as `id`, people as `{ id, name }`, a
+list as `{ items, total }`.
+
+<include cwd lang="python" meta='title="documents/serializers.py"'>
+  ./snippets/backends/django/documents/serializers.py
+</include>
+
+</Tab>
+</Tabs>
 
 The views are Django REST framework's `APIView`s: DRF parses the JSON body, checks
 the permissions per view, keeps the session's CSRF check, and throttles the public
@@ -80,10 +199,11 @@ route. Plain Django views would do each of those by hand.
 The editor sends back the `saved_at` it last saw. A different one on the row means
 someone else saved in between: `409`, and the editor offers to reload or keep its
 own. The `update()` is filtered on the `saved_at` read, so two saves at the same
-instant cannot both win:
+instant cannot both win. An autosave is not history; a manual save keeps a revision
+and logs `saved`:
 
-<include cwd lang="python" meta='title="documents/views.py"'>
-  ./snippets/backends/django/views.py#draft
+<include cwd lang="python" meta='title="documents/views/documents.py"'>
+  ./snippets/backends/django/documents/views/documents.py#draft
 </include>
 
 </Step>
@@ -91,49 +211,102 @@ instant cannot both win:
 
 ### Publishing
 
-The strict check, then the document goes live with its meta copied to the columns.
+The strict check, then the document goes live with its meta copied to the columns,
+its `version` counted, a `publish` revision kept and the change of status logged.
 An email type keeps one active design; an article with a future `scheduled_at` waits
 for a job of yours to set it live; a form's address taken by another is refused on
 `meta.slug`, where the editor shows it:
 
-<include cwd lang="python" meta='title="documents/views.py"'>
-  ./snippets/backends/django/views.py#publish
+<include cwd lang="python" meta='title="documents/views/documents.py"'>
+  ./snippets/backends/django/documents/views/documents.py#publish
 </include>
 
 Unpublishing leaves an email or an article a draft, and a form `closed`: its link
-keeps working and shows the closed message. Revisions and saved sections have their
-models; their views are a list and an insert with the same check, and until you add
-them the editor hides those features.
+keeps working and shows the closed message. A live document cannot be deleted —
+`DELETE` answers `409` until it is unpublished — and a deleted one answers `404`
+everywhere but `restore`.
 
 </Step>
 <Step>
 
 ### The form's public routes
 
-No sign-in, so no session and no CSRF check. The answers are checked against the
-**published** document, never the draft; a filled trap field is answered as a
-success and stored nowhere; and only the `values` that `validate_answers` keeps are
-stored, so an answer to a question the visitor was not shown never reaches the table.
-The count and the insert share a transaction, so `maxResponses` holds when two
-visitors send the last response at once:
+The answers are checked against the **published** document, never the draft; a
+filled trap field is answered as a success and stored nowhere; and only the `values`
+that `validate_answers` keeps are stored, so an answer to a question the visitor was
+not shown never reaches the table. A signed-in visitor is named in `created_by`. The
+count and the insert share a transaction, so `maxResponses` holds when two visitors
+send the last response at once:
 
-<include cwd lang="python" meta='title="documents/views.py"'>
-  ./snippets/backends/django/views.py#public
+<include cwd lang="python" meta='title="documents/views/forms.py"'>
+  ./snippets/backends/django/documents/views/forms.py#public
 </include>
 
-The throttle answers `429` past the rate you set in
-`REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["form_responses"]`, such as `"10/minute"`.
+The throttle answers `429` past the rate in
+`REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["form_responses"]`.
 
 </Step>
 <Step>
 
-### Uploads
+### Every view
 
-An upload is a `POST /api/uploads` that checks the file's type by its first bytes and
-its size, stores it under a new key, and writes a `Media` row. The FastAPI example's
-[upload route](/docs/guides/backend/fastapi-sqlalchemy#the-routes) is the same in a
-Django view, with `request.FILES["file"]` and Django's storage API in place of the
-local disk.
+The views, one file per concern, whole:
+
+<Tabs label="Views">
+<Tab title="Documents">
+
+The list and the trash, a new document, its draft, publishing, deleting and restoring.
+
+<include cwd lang="python" meta='title="documents/views/documents.py"'>
+  ./snippets/backends/django/documents/views/documents.py
+</include>
+
+</Tab>
+<Tab title="History">
+
+The editor's version list, and the document's timeline from the activity log.
+
+<include cwd lang="python" meta='title="documents/views/history.py"'>
+  ./snippets/backends/django/documents/views/history.py
+</include>
+
+</Tab>
+<Tab title="Forms and responses">
+
+The public routes, and your team's inbox: the Responses tab's counts, the triage, the
+trash.
+
+<include cwd lang="python" meta='title="documents/views/forms.py"'>
+  ./snippets/backends/django/documents/views/forms.py
+</include>
+
+</Tab>
+<Tab title="Library">
+
+Saved sections, and uploads checked by their first bytes, stored with Django's
+storage API and kept once per file.
+
+<include cwd lang="python" meta='title="documents/views/library.py"'>
+  ./snippets/backends/django/documents/views/library.py
+</include>
+
+</Tab>
+<Tab title="Each builder's own">
+
+An email rendered for your mailer or sent as a test, and the published article for
+your site.
+
+<include cwd lang="python" meta='title="documents/views/builders.py"'>
+  ./snippets/backends/django/documents/views/builders.py
+</include>
+
+</Tab>
+<Tab title="Helpers">
+<include cwd lang="python" meta='title="documents/views/common.py"'>
+  ./snippets/backends/django/documents/views/common.py
+</include>
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
@@ -141,8 +314,8 @@ local disk.
 ### Point the editor at it
 
 [`createRestHost`](/docs/guides/host#createresthost) with the document's address,
-`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
-the Responses tab's loader and the public page's `onSubmit`:
+`/api/articles/<uuid>`. For forms, the same file has the Responses tab's loader and
+the public page's `onSubmit`:
 
 <include cwd lang="ts" meta='title="host.ts"'>
   ./snippets/backends/host.ts

@@ -1,28 +1,134 @@
 ---
 title: Node.js and Express
-description: The three builders' backend in Node.js — Express routes over Postgres with pg and plain SQL, checked by the kits' own functions, one router for emails, articles and forms.
+description: The three builders' backend in Node.js — Express 5 over Postgres with pg and plain SQL, every row audited and soft-deleted, revisions and an activity log written in the same transaction, checked by the kits' own functions.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end an Express server stores email templates, articles and forms, refuses an
-unsafe or stale save with the editor's own issue codes, and takes form responses
-checked by the same `validateAnswers` the form ran in the browser. There is no ORM:
-the queries are written against the tables of the [SQL schema](/docs/guides/backend/sql),
-and the routes are the ones in [Data model and API](/docs/guides/backend/data-model).
-It needs `express`, `pg` and the three kits from npm. For the same routes as Next.js
-route handlers with an ORM, see [Next.js and Drizzle](/docs/guides/backend/next-drizzle).
+At the end an Express server stores email templates, articles and forms with
+everything the [data model](/docs/guides/backend/data-model) asks of a real app: who
+made, changed and deleted each row and when, a trash to restore from, a revision on
+every manual save and publish, and an activity line for everything that happens. It
+refuses an unsafe or stale save with the editor's own issue codes, and takes form
+responses checked by the same `validateAnswers` the form ran in the browser.
+
+There is no ORM: the queries are written against the tables of the
+[SQL schema](/docs/guides/backend/sql), in TypeScript, with `pg`. It needs `express`
+5, `pg` and the three kits from npm. For the same routes as Next.js route handlers
+with an ORM, see [Next.js and Drizzle](/docs/guides/backend/next-drizzle).
+
+```txt title="src/"
+db.ts         the pool, transaction(), insert and update helpers
+http.ts       HttpError and the one error middleware
+auth.ts       who is signed in: a stand-in for yours
+checks.ts     the kits' checks, draft or publish
+audit.ts      actor columns, activity, revisions, soft delete and restore
+storage.ts    uploaded files on disk
+models/       one file per group of tables
+routes/       documents, history, forms, library, delivery
+server.ts     the app
+```
 
 <Steps>
 <Step>
 
 ### The tables
 
-Run [`schema.sql`](/docs/guides/backend/sql) as your first migration. The server
-holds one pool:
+Run the six migrations of the [SQL page](/docs/guides/backend/sql), `01_base.sql` to
+`06_activity.sql`, in order. The server holds one pool, and every write goes through
+`transaction()`: the row, its revision and its activity line are written together or
+not at all.
 
-<include cwd lang="ts" meta='title="db.ts"'>
-  ./snippets/backends/express/db.ts
+<include cwd lang="ts" meta='title="src/db.ts"'>
+  ./snippets/backends/express/src/db.ts
+</include>
+
+</Step>
+<Step>
+
+### The models
+
+One file per group of tables: the row types, the statuses as constants, and for each
+builder a model — what the shared routes need to know about it. Table and column
+names in the SQL come only from these files, never from a request.
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns every row has, the soft-delete filter every query names, and
+people answered as `{ id, name }`:
+
+<include cwd lang="ts" meta='title="src/models/base.ts"'>
+  ./snippets/backends/express/src/models/base.ts
+</include>
+
+What the three document tables add, their revisions, and the shape of a builder's
+model:
+
+<include cwd lang="ts" meta='title="src/models/document.ts"'>
+  ./snippets/backends/express/src/models/document.ts
+</include>
+
+</Tab>
+<Tab title="Email templates">
+
+Publishing a design moves the one before it, for the same email type, back to draft:
+
+<include cwd lang="ts" meta='title="src/models/emails.ts"'>
+  ./snippets/backends/express/src/models/emails.ts
+</include>
+
+</Tab>
+<Tab title="Articles">
+
+An article's address is chosen when it is made; a future `scheduled_at` waits for a
+job of yours:
+
+<include cwd lang="ts" meta='title="src/models/articles.ts"'>
+  ./snippets/backends/express/src/models/articles.ts
+</include>
+
+</Tab>
+<Tab title="Forms">
+
+A form, its revisions and its responses. Unpublishing closes a form: its link keeps
+working and shows the closed message.
+
+<include cwd lang="ts" meta='title="src/models/forms.ts"'>
+  ./snippets/backends/express/src/models/forms.ts
+</include>
+
+</Tab>
+<Tab title="Library">
+<include cwd lang="ts" meta='title="src/models/library.ts"'>
+  ./snippets/backends/express/src/models/library.ts
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="ts" meta='title="src/models/activity.ts"'>
+  ./snippets/backends/express/src/models/activity.ts
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Who, and what went wrong
+
+The audit columns are set from the signed-in user, never from the request body. Your
+session puts the user on `req.user`; the one here is a stand-in so the example runs.
+Publishing is its own permission:
+
+<include cwd lang="ts" meta='title="src/auth.ts"'>
+  ./snippets/backends/express/src/auth.ts
+</include>
+
+Handlers throw; one middleware turns what they throw into `404`, `409` or `422`.
+Express 5 hands a rejected async handler to it by itself, so there is no wrapper:
+
+<include cwd lang="ts" meta='title="src/http.ts"'>
+  ./snippets/backends/express/src/http.ts
 </include>
 
 </Step>
@@ -32,10 +138,24 @@ holds one pool:
 
 Every document is checked before it is stored, with the editor's own rules: a draft
 may be unfinished but never unsafe, and publishing refuses every error. A refusal
-carries the issue codes, so the editor shows each problem on its block:
+carries the issue codes, so the editor shows each problem on its block. A saved
+section is read the way a paste is, against the kit's own elements:
 
-<include cwd lang="ts" meta='title="checks.ts"'>
-  ./snippets/backends/express/checks.ts
+<include cwd lang="ts" meta='title="src/checks.ts"'>
+  ./snippets/backends/express/src/checks.ts
+</include>
+
+</Step>
+<Step>
+
+### The audit work
+
+What every write shares, called inside its transaction: the actor columns, the
+activity line, the revision, and the soft delete and its undoing. An autosave becomes
+a revision at most every ten minutes and is never logged:
+
+<include cwd lang="ts" meta='title="src/audit.ts"'>
+  ./snippets/backends/express/src/audit.ts
 </include>
 
 </Step>
@@ -43,81 +163,131 @@ carries the issue codes, so the editor shows each problem on its block:
 
 ### One router for three builders
 
-The routes are written once, in `documentRouter(kind)`. What differs between emails,
-articles and forms is a small table: the table name, the kit's check, the columns
-copied from the document's meta, what a new row needs. The table and column names in
-the SQL come only from here, never from a request:
+`documentRouter(model)` is written once and mounted for emails, articles and forms.
+Each handler reads the request and answers; the work is in a function below it. Lists
+answer `{ items, total }`, with `?status=`, `?q=`, `?limit=`, `?offset=`, and
+`?deleted=true` for the trash.
 
-<include cwd lang="ts" meta='title="documents.ts"'>
-  ./snippets/backends/express/documents.ts#kinds
+<Tabs label="Document routes">
+<Tab title="Save a draft">
+
+The editor sends back the `saved_at` it last saw. The row is locked first, so the
+`saved_at` compared is the one overwritten: a different one means someone else saved
+in between, `409`, and the editor offers to reload or keep its own:
+
+<include cwd lang="ts" meta='title="src/routes/documents.ts"'>
+  ./snippets/backends/express/src/routes/documents.ts#draft
 </include>
 
-The server mounts it once per builder, behind your sign-in:
+</Tab>
+<Tab title="Publish">
 
-<include cwd lang="ts" meta='title="server.ts"'>
-  ./snippets/backends/express/server.ts
+The strict check, then the document goes live with its meta copied to the columns, a
+`publish` revision and an activity line, in one transaction. A form's address taken
+by another is refused on `meta.slug`, where the editor shows it:
+
+<include cwd lang="ts" meta='title="src/routes/documents.ts"'>
+  ./snippets/backends/express/src/routes/documents.ts#publish
+</include>
+
+</Tab>
+<Tab title="Delete and restore">
+
+A soft delete. A published document is refused — unpublish it first — and a restore
+whose address another live row took meanwhile fails on the partial unique index, which
+the error middleware answers as `409`:
+
+<include cwd lang="ts" meta='title="src/routes/documents.ts"'>
+  ./snippets/backends/express/src/routes/documents.ts#delete
+</include>
+
+</Tab>
+<Tab title="The whole file">
+<include cwd lang="ts" meta='title="src/routes/documents.ts"'>
+  ./snippets/backends/express/src/routes/documents.ts
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### History
+
+A document's revisions — what it said — for the editor's version panel, and its
+activity — what happened to it — for a timeline of yours:
+
+<include cwd lang="ts" meta='title="src/routes/history.ts"'>
+  ./snippets/backends/express/src/routes/history.ts
 </include>
 
 </Step>
 <Step>
 
-### Saving a draft
+### Forms and their responses
 
-The editor sends back the `saved_at` it last saw. A different one on the row means
-someone else saved in between: `409`, and the editor offers to reload or keep its
-own. The update is conditional, so two saves at the same instant cannot both win:
+The public side takes no sign-in. The answers are checked against the **published**
+document, never the draft; a filled trap field is answered as a success and stored
+nowhere; and only the `values` that `validateAnswers` keeps are stored. The count goes
+up in the same statement that checks `maxResponses`, so two visitors cannot both take
+the last place. Your team's side lists the responses, triages them with `PATCH` and
+deletes them softly; only your retention job deletes them for good.
 
-<include cwd lang="ts" meta='title="documents.ts"'>
-  ./snippets/backends/express/documents.ts#draft
+<include cwd lang="ts" meta='title="src/routes/forms.ts"'>
+  ./snippets/backends/express/src/routes/forms.ts
 </include>
 
 </Step>
 <Step>
 
-### Publishing
+### The library
 
-The strict check, then the document goes live with its meta copied to the columns,
-in one transaction. Publishing is its own permission. An email type keeps one active
-design; an article with a future `scheduled_at` waits for a job of yours to set it
-live; a form's address taken by another is refused on `meta.slug`, where the editor
-shows it:
+Saved sections, per builder, and uploads. A file is known by its first bytes, never
+by its name, and the same bytes uploaded twice are one `media` row. Node's own
+`FormData` reads the multipart body, so there is no upload library to add.
 
-<include cwd lang="ts" meta='title="documents.ts"'>
-  ./snippets/backends/express/documents.ts#publish
+<Tabs label="Library">
+<Tab title="Routes">
+<include cwd lang="ts" meta='title="src/routes/library.ts"'>
+  ./snippets/backends/express/src/routes/library.ts
+</include>
+</Tab>
+<Tab title="Storage">
+
+Files on the local disk. For S3 or similar, only this file changes: a document holds
+a file's key, never its URL.
+
+<include cwd lang="ts" meta='title="src/storage.ts"'>
+  ./snippets/backends/express/src/storage.ts
 </include>
 
-Creating, reading, the list and unpublishing are in the same router. Unpublishing
-leaves an email or an article a draft, and a form `closed`: its link keeps working
-and shows the closed message. Revisions and saved sections have their tables; their
-routes are a list and an insert with the same check, and until you add them the
-editor hides those features.
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
 
-### The form's public routes
+### What leaves the server
 
-No sign-in. The answers are checked against the **published** document, never the
-draft; a filled trap field is answered as a success and stored nowhere; and only the
-`values` that `validateAnswers` keeps are stored, so an answer to a question the
-visitor was not shown never reaches the table. The count goes up in the same
-statement that checks `maxResponses`, so two visitors cannot both take the last
-place:
+Your site's published article, and an email rendered for your mailer from the live
+document with `renderEmail`. The browser never sends HTML. A test send of the draft
+is your mailer's: render the draft with the same function and send it to one address.
 
-<include cwd lang="ts" meta='title="forms.ts"'>
-  ./snippets/backends/express/forms.ts
+<include cwd lang="ts" meta='title="src/routes/delivery.ts"'>
+  ./snippets/backends/express/src/routes/delivery.ts
 </include>
 
 </Step>
 <Step>
 
-### Uploads
+### The server
 
-An upload checks the file's type by its first bytes and its size, stores it under a
-new key, and answers with the key and its address. The Next.js example's
-[`lib/uploads.ts`](/docs/guides/backend/next-drizzle#uploads) is plain Node and works
-here as it is, behind a multipart parser such as `multer`; a `media` row records
-each file.
+Visitors' routes first, then your sign-in in front of everything else. Each builder
+gets its library, its history and its documents:
+
+<include cwd lang="ts" meta='title="src/server.ts"'>
+  ./snippets/backends/express/src/server.ts
+</include>
 
 </Step>
 <Step>
@@ -125,7 +295,7 @@ each file.
 ### Point the editor at it
 
 [`createRestHost`](/docs/guides/host#createresthost) with the document's address,
-`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
+`/api/articles/<uuid>`: the row's `uuid`, its public id. For forms, the same file has
 the Responses tab's loader and the public page's `onSubmit`:
 
 <include cwd lang="ts" meta='title="host.ts"'>

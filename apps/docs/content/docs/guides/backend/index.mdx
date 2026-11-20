@@ -13,14 +13,16 @@ _This page describes Builderset 0.4.0._
 ## Pick your stack
 
 The tables and routes for email templates, articles and forms are on one page,
-[Data model and API](/docs/guides/backend/data-model). Each stack below builds them:
+[Data model and API](/docs/guides/backend/data-model): every row records who made,
+changed and deleted it and when, deleting is a soft delete that can be undone, and
+each document keeps its revisions and an activity log. Each stack below builds them:
 
 <Cards>
   <Card title="Data model and API" href="/docs/guides/backend/data-model">
-    Every table, field by field, and the routes each builder answers. Start here.
+    Every table, field by field, with its audit columns, history and routes. Start here.
   </Card>
   <Card title="SQL" href="/docs/guides/backend/sql">
-    The PostgreSQL schema for every builder, and why it is shaped that way.
+    The PostgreSQL schema in six migrations, the queries that matter, and why.
   </Card>
   <Card title="Supabase" href="/docs/guides/backend/supabase">
     The tables with row-level security, Storage for media, Edge Functions for the checks.
@@ -73,11 +75,13 @@ Write the copies from `document.meta` in the same transaction on every save and
 every publish, so the two never disagree: the document is the source, the columns an
 index of it.
 
-## Revisions, sections and the brand
+## Revisions, activity, sections and the brand
 
-- **Revisions**: record one on every manual save and every publish. Keep few
-  autosaves — one every ten minutes, or the last twenty — or the table grows by a
-  whole document every few seconds of typing.
+- **Revisions** keep what a document said: one on every manual save and every
+  publish, and few autosaves — one every ten minutes, or the last twenty — or the
+  table grows by a whole document every few seconds of typing.
+- **Activity** keeps what happened to it: created, published, unpublished, deleted,
+  restored — with who and when, appended in the same transaction and never edited.
 - **Saved sections**: `name` and `fragment`, the piece of a document the editor
   hands you. An email section can be `synced`: a change to it changes every
   template that uses it.

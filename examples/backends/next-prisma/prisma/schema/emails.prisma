@@ -1,0 +1,64 @@
+// Email templates and their revisions. `status` and `kind` are text, as in
+// the SQL schema; the migration adds the checks that keep them to their values.
+
+model EmailTemplate {
+  id BigInt @id @default(autoincrement())
+
+  // What it is
+  name    String  @db.VarChar(120) // document.meta.name
+  typeKey String? @map("type_key") @db.VarChar(60) // password_reset, newsletter: its variables
+  status  String  @default("draft") @db.VarChar(16) // draft · published
+
+  // The document
+  document      Json // live: what the mailer sends
+  draftDocument Json?     @map("draft_document") // null when there is no draft
+  // Milliseconds, like a JavaScript Date: the `saved_at` the editor sends
+  // back must compare equal to the one stored.
+  savedAt       DateTime  @default(now()) @map("saved_at") @db.Timestamptz(3)
+  version       Int       @default(0) // counts publishes
+  publishedAt   DateTime? @map("published_at") @db.Timestamptz(6)
+  publishedById BigInt?   @map("published_by_id")
+
+  // Audit
+  uuid        String    @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById BigInt?   @map("created_by_id")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  updatedById BigInt?   @map("updated_by_id")
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+  deletedById BigInt?   @map("deleted_by_id")
+
+  publishedBy AppUser?                @relation("EmailTemplatePublishedBy", fields: [publishedById], references: [id], onDelete: SetNull)
+  createdBy   AppUser?                @relation("EmailTemplateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy   AppUser?                @relation("EmailTemplateUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedBy   AppUser?                @relation("EmailTemplateDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  revisions   EmailTemplateRevision[]
+
+  // One active design per email type: the one the mailer sends. The condition
+  // is written as Postgres prints it back, so `prisma migrate dev` finds
+  // nothing to change.
+  @@unique([typeKey], map: "email_template_one_active_per_type", where: raw("(((status)::text = 'published'::text) AND (deleted_at IS NULL))"))
+  // The list: newest change first.
+  @@index([updatedAt(sort: Desc)], map: "email_template_list", where: { deletedAt: null })
+  @@map("email_template")
+}
+
+/// A version to go back to: every manual save and publish. Written once and
+/// never changed, so it has no `updated*` or `deleted*`.
+model EmailTemplateRevision {
+  id              BigInt   @id @default(autoincrement())
+  uuid            String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  emailTemplateId BigInt   @map("email_template_id")
+  kind            String   @db.VarChar(16) // autosave · manual · publish
+  label           String?  @db.VarChar(120) // "Before the legal review"
+  version         Int // the template's version then
+  document        Json
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById     BigInt?  @map("created_by_id")
+
+  emailTemplate EmailTemplate @relation(fields: [emailTemplateId], references: [id], onDelete: Cascade)
+  createdBy     AppUser?      @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([emailTemplateId, createdAt(sort: Desc)], map: "email_template_revision_history")
+  @@map("email_template_revision")
+}

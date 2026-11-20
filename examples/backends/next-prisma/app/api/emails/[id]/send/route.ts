@@ -1,23 +1,23 @@
 import { renderEmail } from '@builderset/email/render';
 
-import { findEmail, notFound, storedEmail } from '@/lib/emails';
-
-type Context = { params: Promise<{ id: string }> };
+import { currentUser } from '@/lib/auth';
+import { storedEmail } from '@/lib/email-check';
+import { findLive } from '@/lib/emails';
+import { conflict, readJson, route } from '@/lib/http';
 
 /**
  * POST /api/emails/:id/send: what your mailer does, rendered on the server
  * from the live document. Answers with the email instead of sending it.
  */
-export async function POST(request: Request, { params }: Context) {
-  const row = await findEmail((await params).id);
-  if (!row) return notFound();
+export const POST = route<{ id: string }>(async (request, { id }) => {
+  await currentUser(request);
+  const template = await findLive(id);
   // A draft is never sent.
-  if (row.status !== 'published')
-    return Response.json({ message: 'Only a published template is sent.' }, { status: 409 });
-  const body = (await request.json()) as { data?: Record<string, unknown> };
+  if (template.status !== 'published') throw conflict('Only a published template is sent.');
+  const body = await readJson(request);
   const origin = new URL(request.url).origin;
-  const email = renderEmail(storedEmail(row.document), {
-    data: body.data ?? {},
+  const email = renderEmail(storedEmail(template.document), {
+    data: (body.data ?? {}) as Record<string, unknown>,
     locale: 'en',
     // A mail client has no page to resolve a path against: every URL is absolute.
     assetUrl: (key) => `${origin}/api/uploads/${key}`,
@@ -30,4 +30,4 @@ export async function POST(request: Request, { params }: Context) {
     text: email.text,
     warnings: email.warnings,
   });
-}
+});

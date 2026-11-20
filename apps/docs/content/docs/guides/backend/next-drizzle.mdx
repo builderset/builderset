@@ -1,33 +1,77 @@
 ---
 title: 'Next.js and Drizzle'
-description: The email editor's backend as Next.js route handlers over Postgres with Drizzle — the table, the checks, the conflict rule, sending. About 20 minutes.
+description: The email editor's backend as Next.js route handlers over Postgres with Drizzle — the audited tables, revisions and activity, the checks, the conflict rule, the trash, sending. About 30 minutes.
 ---
 
-At the end your Next.js app stores email templates in Postgres, refuses an unsafe or
+At the end your Next.js app stores email templates in Postgres with who made, changed
+and deleted each one, keeps their revisions and an activity log, refuses an unsafe or
 stale save, and renders a published template to send. Every file below is from
 [`examples/backends/next-drizzle`](https://github.com/builderset/builderset/tree/development/examples/backends/next-drizzle),
 whose tests run every route against a real Postgres on each change. The same routes
 are in [Prisma](/docs/guides/backend/next-prisma) and in
-[FastAPI](/docs/guides/backend/fastapi-sqlalchemy).
+[FastAPI](/docs/guides/backend/fastapi-sqlalchemy); the tables are the email part of
+the [data model](/docs/guides/backend/data-model).
 
 _This page describes Builderset 0.4.0._
 
 <Steps>
 <Step>
 
-### The table
+### The tables
 
-One row per template: the live document, the working draft, and `saved_at`, which
-changes on every write and catches two people saving the same template:
+The [SQL schema](/docs/guides/backend/sql) as Drizzle tables, one file per group, with
+its table, column, check and index names. `db/schema/index.ts` exports them all for
+drizzle-kit:
 
-<include cwd lang="ts" meta='title="db/schema.ts"'>
-  ../../examples/backends/next-drizzle/db/schema.ts
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+Your users, and the audit columns every table spreads in: `auditColumns()`. `isLive`
+is the filter every query on live rows uses.
+
+<include cwd lang="ts" meta='title="db/schema/base.ts"'>
+  ../../examples/backends/next-drizzle/db/schema/base.ts
 </include>
 
-`drizzle-kit generate` writes the migration from it:
+</Tab>
+<Tab title="Email templates">
 
-<include cwd lang="sql" meta='title="drizzle/0000_email_template.sql"'>
-  ../../examples/backends/next-drizzle/drizzle/0000_email_template.sql
+The live document, the draft, and `saved_at`, which changes on every document write
+and catches two people saving the same template. Beside it, its revisions.
+
+<include cwd lang="ts" meta='title="db/schema/emails.ts"'>
+  ../../examples/backends/next-drizzle/db/schema/emails.ts
+</include>
+
+</Tab>
+<Tab title="Activity">
+<include cwd lang="ts" meta='title="db/schema/activity.ts"'>
+  ../../examples/backends/next-drizzle/db/schema/activity.ts
+</include>
+</Tab>
+</Tabs>
+
+`drizzle-kit generate` writes the migration from them:
+
+<include cwd lang="sql" meta='title="drizzle/0000_email_templates.sql"'>
+  ../../examples/backends/next-drizzle/drizzle/0000_email_templates.sql
+</include>
+
+Where the tables differ from the SQL: Drizzle keeps `updated_at` itself
+(`$onUpdate`), so there is no trigger, and a change made in `psql` leaves it as it
+was; unique constraints are named `…_unique` rather than `…_key`.
+
+</Step>
+<Step>
+
+### Who is signed in
+
+Every write records who made it, from the signed-in user, never from the request's
+body. The example's stand-in trusts a header so it runs without a login; yours reads
+your session and returns the same row:
+
+<include cwd lang="ts" meta='title="lib/auth.ts"'>
+  ../../examples/backends/next-drizzle/lib/auth.ts
 </include>
 
 </Step>
@@ -39,18 +83,54 @@ Every document is checked before it is stored, with the editor's own rules: a dr
 may be unfinished but never unsafe, and publishing refuses every error. A refusal
 carries the issue codes, so the editor shows the problem on its block:
 
-<include cwd lang="ts" meta='title="lib/emails.ts"'>
-  ../../examples/backends/next-drizzle/lib/emails.ts
+<include cwd lang="ts" meta='title="lib/email-check.ts"'>
+  ../../examples/backends/next-drizzle/lib/email-check.ts
 </include>
+
+</Step>
+<Step>
+
+### The audit work
+
+Every write does the same four things in one transaction: checks the document,
+writes the row with who did it, keeps a revision on a manual save or a publish, and
+appends an activity. The stamps and the log are in one file; refusals are thrown,
+and one wrapper is the only place they become HTTP answers:
+
+<Tabs label="Audit">
+<Tab title="Audit">
+<include cwd lang="ts" meta='title="lib/audit.ts"'>
+  ../../examples/backends/next-drizzle/lib/audit.ts
+</include>
+</Tab>
+<Tab title="Errors">
+
+`route()` wraps every handler: an `HttpError` becomes its `404`, `409` or `422`, and a
+unique index's refusal a `409`.
+
+<include cwd lang="ts" meta='title="lib/http.ts"'>
+  ../../examples/backends/next-drizzle/lib/http.ts
+</include>
+
+</Tab>
+</Tabs>
 
 </Step>
 <Step>
 
 ### Saving a draft
 
-The editor sends back the `saved_at` it last saw. A different one on the row means
-someone else saved in between: `409`, and the editor offers to reload or keep its
-own. The update is conditional, so two saves at the same instant cannot both win:
+The editor sends back the `saved_at` it last saw. A different one on the row, or
+none, means someone else may have saved in between: `409`, and the editor offers to
+reload or keep its own (`force`). The row is locked first, so two saves at the same
+moment take turns. A manual save also keeps a revision and an activity; an autosave
+keeps neither:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-drizzle/lib/emails.ts#draft
+</include>
+
+The route only reads the request and calls it:
 
 <include cwd lang="ts" meta='title="app/api/emails/[id]/draft/route.ts"'>
   ../../examples/backends/next-drizzle/app/api/emails/[id]/draft/route.ts
@@ -61,12 +141,43 @@ own. The update is conditional, so two saves at the same instant cannot both win
 
 ### Publishing
 
-<include cwd lang="ts" meta='title="app/api/emails/[id]/publish/route.ts"'>
-  ../../examples/backends/next-drizzle/app/api/emails/[id]/publish/route.ts
+The strictly checked document goes live as the next `version`, with its `publish`
+revision and its activity. One design per email type is active: the one before it
+goes back to draft, and its timeline says what replaced it:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-drizzle/lib/emails.ts#publish
 </include>
 
-Reading, unpublishing and creating follow the same pattern, in
-[`app/api/emails`](https://github.com/builderset/builderset/tree/development/examples/backends/next-drizzle/app/api/emails).
+Unpublishing changes the status, not the document, so `saved_at` stays. Reading,
+listing and creating are in the same file, and every route in
+[`app/api/emails`](https://github.com/builderset/builderset/tree/development/examples/backends/next-drizzle/app/api/emails)
+is a few lines like the draft's.
+
+</Step>
+<Step>
+
+### The trash
+
+Deleting stamps `deleted_at` and `deleted_by`; the row stays, and answers `404`
+everywhere but `restore`. A published template is what the mailer sends, so it is
+unpublished first. `GET /api/emails?deleted=true` lists the trash:
+
+<include cwd lang="ts" meta='title="lib/emails.ts"'>
+  ../../examples/backends/next-drizzle/lib/emails.ts#trash
+</include>
+
+</Step>
+<Step>
+
+### History
+
+The revisions are what the editor's history panel lists and opens; `author` is a
+name, which it shows as it is. The activity is your timeline, people as `{ id, name }`:
+
+<include cwd lang="ts" meta='title="lib/history.ts"'>
+  ../../examples/backends/next-drizzle/lib/history.ts
+</include>
 
 </Step>
 <Step>
@@ -97,7 +208,8 @@ Only a published template is sent, rendered on the server from the live document
 
 ### The editor's side
 
-The host for this API:
+The host for this API. `id` is the template's `uuid`; revisions are on, and the
+features this API has no route for are off:
 
 <include cwd lang="ts" meta='title="host.ts"'>
   ./snippets/guides/backend-host.ts
@@ -108,9 +220,11 @@ The host for this API:
 
 ## The tests
 
-Create, save, a stale save (`409`), publish, send, every invalid document of the
-email kit's fixtures (`422` with its code), an unfinished draft that saves but cannot
-publish, and uploads:
+Create, an autosave, a stale save and one without `saved_at` (`409`), a manual save,
+publish, send, the revisions and the timeline each write leaves, one active design
+per type, the trash (`409` while published, `404` once deleted, restore), the list,
+every invalid document of the email kit's fixtures (`422` with its code), an
+unfinished draft that saves but cannot publish, and uploads:
 
 <include cwd lang="ts" meta='title="tests/emails.test.ts"'>
   ../../examples/backends/next-drizzle/tests/emails.test.ts

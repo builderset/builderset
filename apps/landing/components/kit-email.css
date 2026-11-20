@@ -1,0 +1,7 @@
+/*
+ * The email kit's stylesheet, inside the `builderset` layer. Each kit's sheet
+ * carries the engine's reset, and several kits load on this page, in whatever
+ * order the visitor meets them: layered, a later reset can only reach other
+ * layered rules.
+ */
+@import '@builderset/email/styles.css' layer(builderset);

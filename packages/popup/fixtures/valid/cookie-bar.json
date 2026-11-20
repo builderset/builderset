@@ -1,0 +1,167 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "barbottom",
+        "width": 1100,
+        "height": 64,
+        "position": "center",
+        "background": "#111827",
+        "radius": 0,
+        "shadow": "soft",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "load",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "until",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "up",
+          "duration": 280,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": false,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 24,
+          "y": 18,
+          "w": 28,
+          "h": 28,
+          "r": 0
+        },
+        "name": "cookie",
+        "color": "#f5a25d",
+        "strokeWidth": 2
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64,
+          "y": 12,
+          "w": 640,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Përdorim cookies për të matur vizitat dhe për ta bërë faqen më të mirë. Zgjidhni ç’na lejoni."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#d1d5db",
+        "align": "left",
+        "lineHeight": 1.4,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 720,
+          "y": 12,
+          "w": 176,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Vetëm të nevojshmet"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#1f2937",
+        "radius": 10,
+        "action": "close",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      },
+      "name": "Necessary only"
+    },
+    "n4": {
+      "id": "n4",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 908,
+          "y": 12,
+          "w": 168,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Pranoj të gjitha"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "close",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      },
+      "name": "Accept all"
+    }
+  },
+  "meta": {
+    "name": "Shiriti i cookies"
+  }
+}

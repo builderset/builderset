@@ -47,6 +47,20 @@ const DOORS = {
     host: ['host.d.ts', false],
     editor: ['editor/index.d.ts', true],
   },
+  // A card renders anywhere — a page, a print sheet, a server: no client door.
+  card: {
+    index: ['core/index.d.ts', false],
+    render: ['render/index.d.ts', false],
+    host: ['host.d.ts', false],
+    editor: ['editor/index.d.ts', true],
+  },
+  // The popup's render door is the working popup, with its own state: a client door.
+  popup: {
+    index: ['core/index.d.ts', false],
+    render: ['render/index.d.ts', true],
+    host: ['host.d.ts', false],
+    editor: ['editor/index.d.ts', true],
+  },
 };
 
 const specifier = (kit, door) => `@builderset/${kit}${door === 'index' ? '' : `/${door}`}`;

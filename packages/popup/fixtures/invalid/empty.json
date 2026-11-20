@@ -1,0 +1,53 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": []
+    }
+  },
+  "meta": {
+    "name": "Nothing on it"
+  }
+}

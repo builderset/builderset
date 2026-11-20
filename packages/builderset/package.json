@@ -2,7 +2,7 @@
   "name": "builderset",
   "version": "0.4.0",
   "private": true,
-  "description": "Block builders for React: email, article and form editors on one engine, with a typed JSON document any backend can validate and render.",
+  "description": "Builders for React: email, article, form, card and popup editors on one engine, with a typed JSON document any backend can validate and render.",
   "license": "MIT",
   "keywords": [
     "block-editor",
@@ -12,7 +12,9 @@
     "page-builder",
     "drag-and-drop",
     "react",
-    "json-schema"
+    "json-schema",
+    "card-builder",
+    "popup-builder"
   ],
   "homepage": "https://github.com/builderset/builderset/tree/development/packages/builderset#readme",
   "bugs": "https://github.com/builderset/builderset/issues",
@@ -109,9 +111,51 @@
       "types": "./dist/form/locales/*.d.ts",
       "default": "./dist/form/locales/*.js"
     },
+    "./card": {
+      "types": "./dist/card/index.d.ts",
+      "default": "./dist/card/index.js"
+    },
+    "./card/render": {
+      "types": "./dist/card/render.d.ts",
+      "default": "./dist/card/render.js"
+    },
+    "./card/host": {
+      "types": "./dist/card/host.d.ts",
+      "default": "./dist/card/host.js"
+    },
+    "./card/editor": {
+      "types": "./dist/card/editor.d.ts",
+      "default": "./dist/card/editor.js"
+    },
+    "./card/locales/*": {
+      "types": "./dist/card/locales/*.d.ts",
+      "default": "./dist/card/locales/*.js"
+    },
+    "./popup": {
+      "types": "./dist/popup/index.d.ts",
+      "default": "./dist/popup/index.js"
+    },
+    "./popup/render": {
+      "types": "./dist/popup/render.d.ts",
+      "default": "./dist/popup/render.js"
+    },
+    "./popup/host": {
+      "types": "./dist/popup/host.d.ts",
+      "default": "./dist/popup/host.js"
+    },
+    "./popup/editor": {
+      "types": "./dist/popup/editor.d.ts",
+      "default": "./dist/popup/editor.js"
+    },
+    "./popup/locales/*": {
+      "types": "./dist/popup/locales/*.d.ts",
+      "default": "./dist/popup/locales/*.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./article/content.css": "./dist/article/content.css",
     "./form/form.css": "./dist/form/form.css",
+    "./card/card.css": "./dist/card/card.css",
+    "./popup/popup.css": "./dist/popup/popup.css",
     "./theme/shadcn.css": "./dist/theme/shadcn.css",
     "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
     "./package.json": "./package.json"
@@ -128,9 +172,11 @@
   },
   "dependencies": {
     "@builderset/article": "workspace:*",
+    "@builderset/card": "workspace:*",
     "@builderset/email": "workspace:*",
     "@builderset/engine": "workspace:*",
-    "@builderset/form": "workspace:*"
+    "@builderset/form": "workspace:*",
+    "@builderset/popup": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.0.0",

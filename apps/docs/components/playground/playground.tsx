@@ -3,6 +3,8 @@
 import '@builderset/email/styles.css';
 import '@builderset/article/styles.css';
 import '@builderset/form/styles.css';
+import '@builderset/card/styles.css';
+import '@builderset/popup/styles.css';
 
 import {
   createArticleRegistry,
@@ -41,6 +43,32 @@ import { createMemoryHost as formMemoryHost } from '@builderset/form/host';
 import { de as formDe } from '@builderset/form/locales/de';
 import { sq as formSq } from '@builderset/form/locales/sq';
 import { FormView } from '@builderset/form/render';
+import {
+  createCardDocument,
+  createCardRegistry,
+  EXAMPLE_MEMBERS,
+  parseCard,
+  printedFaces,
+  type CardDocument,
+} from '@builderset/card';
+import { buildTemplateCard, CARD_TEMPLATES, CardEditor } from '@builderset/card/editor';
+import { createMemoryHost as cardMemoryHost } from '@builderset/card/host';
+import { de as cardDe } from '@builderset/card/locales/de';
+import { sq as cardSq } from '@builderset/card/locales/sq';
+import { CardView } from '@builderset/card/render';
+import {
+  createPopupDocument,
+  createPopupRegistry,
+  exampleData,
+  formatOf as popupFormatOf,
+  parsePopup,
+  type PopupDocument,
+} from '@builderset/popup';
+import { buildTemplatePopup, POPUP_TEMPLATES, PopupEditor } from '@builderset/popup/editor';
+import { createMemoryHost as popupMemoryHost } from '@builderset/popup/host';
+import { de as popupDe } from '@builderset/popup/locales/de';
+import { sq as popupSq } from '@builderset/popup/locales/sq';
+import { memoryStore, PopupView } from '@builderset/popup/render';
 import { themeVariables } from '@builderset/engine';
 import {
   Badge,
@@ -60,11 +88,13 @@ import {
   TooltipProvider,
 } from '@builderset/engine/ui';
 import {
+  AppWindow,
   ArrowLeft,
   Check,
   Code2,
   ClipboardList,
   Copy,
+  CreditCard,
   Mail,
   Newspaper,
   PanelRight,
@@ -96,6 +126,8 @@ import {
 const emailRegistry = createEmailRegistry();
 const articleRegistry = createArticleRegistry();
 const formRegistry = createFormRegistry();
+const cardRegistry = createCardRegistry();
+const popupRegistry = createPopupRegistry();
 
 /** A template's document, or the one this browser kept from last time. */
 function startingEmail(template: string): EmailDocument {
@@ -121,6 +153,24 @@ function startingForm(template: string): FormDocument {
   return chosen
     ? buildTemplateForm(formRegistry, chosen, { meta: { slug: chosen.id } })
     : createFormDocument({ name: 'New form', title: 'A new form', slug: 'new-form' });
+}
+
+function startingCard(template: string): CardDocument {
+  const kept = parseCard(readDocument('card', template), cardRegistry);
+  if (kept) return kept;
+  const chosen = CARD_TEMPLATES.find((candidate) => candidate.id === template);
+  return chosen
+    ? buildTemplateCard(cardRegistry, chosen, { meta: { name: chosen.name.en } })
+    : createCardDocument({ meta: { name: 'New card' } });
+}
+
+function startingPopup(template: string): PopupDocument {
+  const kept = parsePopup(readDocument('popup', template), popupRegistry);
+  if (kept) return kept;
+  const chosen = POPUP_TEMPLATES.find((candidate) => candidate.id === template);
+  return chosen
+    ? buildTemplatePopup(popupRegistry, chosen, { meta: { name: chosen.name.en } })
+    : createPopupDocument({ name: 'New popup' });
 }
 
 /** A picture this tab uploaded, or the site's sample for the templates' made-up keys. */
@@ -193,15 +243,23 @@ export function Playground() {
     startingArticle(settings.template.article),
   );
   const [form, setForm] = useState<FormDocument>(() => startingForm(settings.template.form));
+  const [card, setCard] = useState<CardDocument>(() => startingCard(settings.template.card));
+  const [popup, setPopup] = useState<PopupDocument>(() => startingPopup(settings.template.popup));
+  const [cardRecord, setCardRecord] = useState(RECORD);
+  const [popupRecord, setPopupRecord] = useState(RECORD);
   // Made once per editor: the document it starts from, and every save kept here.
   const hosts = useMemo(() => {
     const emailStart = startingEmail(settings.template.email);
     const articleStart = startingArticle(settings.template.article);
     const formStart = startingForm(settings.template.form);
+    const cardStart = startingCard(settings.template.card);
+    const popupStart = startingPopup(settings.template.popup);
     return {
       emailStart,
       articleStart,
       formStart,
+      cardStart,
+      popupStart,
       email: withSampleMedia(
         emailMemoryHost<EmailDocument>({
           document: emailStart,
@@ -229,6 +287,24 @@ export function Playground() {
           },
         }),
       ),
+      card: withSampleMedia(
+        cardMemoryHost<CardDocument>({
+          document: cardStart,
+          onSave: (document) => {
+            setCard(document);
+            writeDocument('card', settings.template.card, document);
+          },
+        }),
+      ),
+      popup: withSampleMedia(
+        popupMemoryHost<PopupDocument>({
+          document: popupStart,
+          onSave: (document) => {
+            setPopup(document);
+            writeDocument('popup', settings.template.popup, document);
+          },
+        }),
+      ),
     };
     // Once per editorKey: the templates it names are part of it.
   }, [editorKey]);
@@ -237,11 +313,13 @@ export function Playground() {
     setEmail(hosts.emailStart);
     setArticle(hosts.articleStart);
     setForm(hosts.formStart);
+    setCard(hosts.cardStart);
+    setPopup(hosts.popupStart);
   }, [hosts]);
 
   // One function per editor, so the rendered email is not redone on every render.
   const resolveMedia = useMemo(() => {
-    const host = kit === 'email' ? hosts.email : kit === 'form' ? hosts.form : hosts.article;
+    const host = hosts[kit];
     return (key: string) => host.resolveMedia(key);
   }, [kit, hosts]);
 
@@ -291,6 +369,36 @@ export function Playground() {
         locales={{ sq: formSq, de: formDe }}
         publicUrl={(slug) => `https://example.com/f/${slug}`}
         storageKey={`builderset-playground:recovery:form:${template}`}
+      />
+    ) : kit === 'card' ? (
+      <CardEditor
+        key={editorKey}
+        {...common}
+        document={hosts.cardStart}
+        registry={cardRegistry}
+        host={hosts.card}
+        record={cardRecord}
+        onRecordChange={(patch) => {
+          setCardRecord((current) => ({ ...current, ...patch }));
+        }}
+        locales={{ sq: cardSq, de: cardDe }}
+        memberCount={248}
+        storageKey={`builderset-playground:recovery:card:${template}`}
+      />
+    ) : kit === 'popup' ? (
+      <PopupEditor
+        key={editorKey}
+        {...common}
+        document={hosts.popupStart}
+        registry={popupRegistry}
+        host={hosts.popup}
+        record={popupRecord}
+        onRecordChange={(patch) => {
+          setPopupRecord((current) => ({ ...current, ...patch }));
+        }}
+        locales={{ sq: popupSq, de: popupDe }}
+        colors={BRAND_COLOURS.map((colour) => ({ ...colour, hex: colour.value }))}
+        storageKey={`builderset-playground:recovery:popup:${template}`}
       />
     ) : (
       <ArticleEditor
@@ -350,6 +458,8 @@ export function Playground() {
                     email={email}
                     article={article}
                     form={form}
+                    card={card}
+                    popup={popup}
                     settings={settings}
                     set={set}
                     copied={copied}
@@ -428,6 +538,24 @@ function Bar({
                 <span className="pg-seg">
                   <ClipboardList aria-hidden="true" />
                   Form
+                </span>
+              ),
+            },
+            {
+              value: 'card',
+              label: (
+                <span className="pg-seg">
+                  <CreditCard aria-hidden="true" />
+                  Card
+                </span>
+              ),
+            },
+            {
+              value: 'popup',
+              label: (
+                <span className="pg-seg">
+                  <AppWindow aria-hidden="true" />
+                  Popup
                 </span>
               ),
             },
@@ -659,13 +787,26 @@ const LABELS = {
   text: 'Plain text',
   page: 'Page',
   form: 'Live form',
+  card: 'Card',
+  popup: 'Live popup',
 } as const;
+
+/** The output's tabs, per kit: the document, and what a reader or visitor gets. */
+const OUTPUT_TABS = {
+  email: ['json', 'html', 'text'],
+  article: ['json', 'page'],
+  form: ['json', 'form'],
+  card: ['json', 'card'],
+  popup: ['json', 'popup'],
+} as const satisfies Record<Kit, readonly Settings['output'][]>;
 
 function Output({
   kit,
   email,
   article,
   form,
+  card,
+  popup,
   settings,
   set,
   copied,
@@ -676,18 +817,15 @@ function Output({
   email: EmailDocument;
   article: ArticleDocument;
   form: FormDocument;
+  card: CardDocument;
+  popup: PopupDocument;
   settings: Settings;
   set: (patch: Partial<Settings>) => void;
   copied: string | null;
   onCopy: (what: string, text: string) => Promise<void>;
   resolveMedia: (key: string) => string;
 }) {
-  const tabs =
-    kit === 'email'
-      ? (['json', 'html', 'text'] as const)
-      : kit === 'form'
-        ? (['json', 'form'] as const)
-        : (['json', 'page'] as const);
+  const tabs = OUTPUT_TABS[kit];
   const active = (tabs as readonly string[]).includes(settings.output) ? settings.output : 'json';
   const rendered = useMemo(
     () =>
@@ -697,8 +835,8 @@ function Output({
     [kit, email, resolveMedia],
   );
   const json = useMemo(
-    () => JSON.stringify(kit === 'email' ? email : kit === 'form' ? form : article, null, 2),
-    [kit, email, article, form],
+    () => JSON.stringify({ email, article, form, card, popup }[kit], null, 2),
+    [kit, email, article, form, card, popup],
   );
   const dark = settings.theme === 'dark' || (settings.theme === 'auto' && settings.pageDark);
   const copyable =
@@ -773,6 +911,8 @@ function Output({
             <FormView document={form} locale="en" assetUrl={resolveMedia} onSubmit={() => true} />
           </div>
         ) : null}
+        {active === 'card' ? <CardOutput card={card} resolveMedia={resolveMedia} /> : null}
+        {active === 'popup' ? <PopupOutput popup={popup} resolveMedia={resolveMedia} /> : null}
         {active === 'page' ? (
           // The page around the article, in the theme the article is shown in.
           <div className={dark ? 'pg-page dark' : 'pg-page light'}>
@@ -796,5 +936,163 @@ function Output({
         </span>
       </footer>
     </aside>
+  );
+}
+
+// ── the card and the popup, as people get them ────────────────────────────
+
+/** The card's sides at a size that fits the output, filled in for an example member. */
+function CardOutput({
+  card,
+  resolveMedia,
+}: {
+  card: CardDocument;
+  resolveMedia: (key: string) => string;
+}) {
+  const [member, setMember] = useState(0);
+  const record = EXAMPLE_MEMBERS[member] ?? EXAMPLE_MEMBERS[0];
+  const root = card.nodes[card.root]?.props;
+  const width = typeof root?.width === 'number' ? root.width : 85.6;
+  // Pixels per millimetre: as large as the panel allows, never past 4.4.
+  const scale = Math.min(4.4, 380 / width);
+  return (
+    <div className="pg-card-out">
+      <SegmentedControl
+        aria-label="Example member"
+        value={String(member)}
+        onValueChange={(value) => {
+          setMember(Number(value));
+        }}
+        options={EXAMPLE_MEMBERS.map((example, index) => ({
+          value: String(index),
+          label: (example['member.name'] ?? '').split(' ')[0] ?? String(index + 1),
+        }))}
+      />
+      {printedFaces(card).map((face) => (
+        <figure key={face} className="pg-card-face">
+          <CardView
+            document={card}
+            face={face}
+            record={record}
+            scale={scale}
+            assetUrl={resolveMedia}
+            style={{ boxShadow: '0 10px 30px rgb(15 23 42 / 0.18)' }}
+          />
+          <figcaption>{face === 'front' ? 'Front' : 'Back'}</figcaption>
+        </figure>
+      ))}
+      <p className="pg-note">
+        <code>CardView</code>, filled in for one member. <code>CardPrintSheet</code> prints every
+        member&rsquo;s card at real size, with bleed and crop marks.
+      </p>
+    </div>
+  );
+}
+
+/** What a click trigger listens for here: the made-up page's own button. */
+const CLICK_TARGET = '[data-pg-popup-target]';
+
+const OPENS = {
+  load: () => 'Opens as the page loads.',
+  delay: (seconds: number) => `Opens after ${String(seconds)} s — shortened here.`,
+  scroll: (percent: number) => `Opens at ${String(percent)} % scrolled: scroll the page.`,
+  exit: () => 'Opens when the mouse leaves the page at the top.',
+  click: () => 'Opens on a click on the page’s button.',
+};
+
+/**
+ * The popup on a made-up page, as a visitor meets it — its trigger, motion,
+ * closing, inputs and thank-you — with the display rules off, as the editor's
+ * preview has them. Nothing is sent.
+ */
+function PopupOutput({
+  popup,
+  resolveMedia,
+}: {
+  popup: PopupDocument;
+  resolveMedia: (key: string) => string;
+}) {
+  const [run, setRun] = useState(0);
+  const [scope, setScope] = useState<HTMLDivElement | null>(null);
+  const format = popupFormatOf(popup);
+  const { display } = format;
+  // A fresh memory for every showing, so "Show again" always shows it.
+  const store = useMemo(() => memoryStore({}, { session: String(run) }), [run]);
+  const shown = useMemo<PopupDocument>(() => {
+    const root = popup.nodes[popup.root];
+    if (display.trigger !== 'click' || !root) return popup;
+    return {
+      ...popup,
+      nodes: {
+        ...popup.nodes,
+        [popup.root]: {
+          ...root,
+          props: { ...format, display: { ...display, selector: CLICK_TARGET } },
+        },
+      },
+    };
+  }, [popup, format, display]);
+  const value = display.trigger === 'delay' ? display.delay : display.scroll;
+  const view = scope ? (
+    <PopupView
+      key={run}
+      document={shown}
+      locale="en"
+      data={exampleData()}
+      assetUrl={resolveMedia}
+      store={store}
+      rules={false}
+      maxDelay={700}
+      contained
+      scope={scope}
+    />
+  ) : null;
+  const inline = format.type === 'inline';
+
+  return (
+    <div className="pg-popup-out">
+      <div className="pg-popup-bar">
+        <span>{OPENS[display.trigger](value)}</span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setRun((count) => count + 1);
+          }}
+        >
+          <RotateCcw />
+          Show again
+        </Button>
+      </div>
+      <div className="pg-site">
+        <div ref={setScope} className="pg-site-scroll">
+          <div className="pg-site-nav">
+            <strong>Your site</strong>
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="pg-site-hero">
+            <h3>A page of your site</h3>
+            <p>The popup comes in over it as a visitor would see it.</p>
+            <button type="button" data-pg-popup-target="">
+              Get the offer
+            </button>
+          </div>
+          {inline ? <div className="pg-site-inline">{view}</div> : null}
+          <div className="pg-site-cards">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="pg-site-lines">
+            {Array.from({ length: 14 }, (_, index) => (
+              <span key={index} style={{ width: `${String(60 + ((index * 37) % 40))}%` }} />
+            ))}
+          </div>
+        </div>
+        {inline ? null : view}
+      </div>
+    </div>
   );
 }

@@ -23,7 +23,8 @@
  * Then fails on what must never ship:
  * - any `@layer`: a page's own layers, or its unlayered rules, would reorder it;
  * - a class that is not the product's: `.builderset…`, `.bst\:…`, `.bld-…`, the
- *   form's own stylesheet (`.bsf…`, every modifier included),
+ *   form's, card's and popup's own stylesheets (`.bsf…`, `.bsc…`, `.bsp…`,
+ *   every modifier included),
  *   the rich-text editor's own `.ProseMirror` and `.is-editor-empty`, and the
  *   page's `.dark` and `.light` markers, which `theme="auto"` reads;
  * - a Tailwind theme variable without the prefix (`--color-…`, `--spacing`).
@@ -35,7 +36,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 // `.dark` and `.light` are the page's own markers on an ancestor, which
 // `theme="auto"` follows (scheme.css): read, never set.
 const ALLOWED_CLASSES =
-  /^(builderset(-content)?|bst|bld-[\w-]+|bsf(-[\w-]+)?|ProseMirror|is-editor-empty|dark|light)$/;
+  /^(builderset(-content)?|bst|bld-[\w-]+|bs[fcp](-[\w-]+)?|ProseMirror|is-editor-empty|dark|light)$/;
 const THEME_NAMESPACES =
   /^--(color|spacing|text|font|font-weight|radius|shadow|inset-shadow|drop-shadow|ease|animate|container|breakpoint|tracking|leading|blur|perspective|aspect|default)(-|$)/;
 

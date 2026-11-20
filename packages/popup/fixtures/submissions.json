@@ -1,0 +1,339 @@
+{
+  "cases": [
+    {
+      "name": "everything right",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "nothing sent: the required plate",
+      "popup": "kitchen-sink",
+      "values": {},
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "not an object of answers",
+      "popup": "kitchen-sink",
+      "values": [
+        "AA 123 BC"
+      ],
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "null",
+      "popup": "kitchen-sink",
+      "values": null,
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "blank strings are no answer",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "   ",
+        "email": " ",
+        "first_name": ""
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "required"
+          }
+        },
+        "values": {}
+      }
+    },
+    {
+      "name": "answers are trimmed; names the popup does not ask are dropped",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "  TR-482-KL ",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567",
+        "first_name": " Ana ",
+        "utm_source": "mail"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "plate": "TR-482-KL",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567",
+          "first_name": "Ana"
+        }
+      }
+    },
+    {
+      "name": "an email in the wrong shape",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "email": {
+            "code": "email"
+          }
+        },
+        "values": {
+          "plate": "AA 123 BC",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "a phone in the wrong shape",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "06x 123"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "phone": {
+            "code": "phone"
+          }
+        },
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com"
+        }
+      }
+    },
+    {
+      "name": "plates: letters and digits, single spaces or hyphens between",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA  123",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "plate"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "a plate of one character",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "A",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "plate"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "a plate too long",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "ABCDEFGHIJKLM",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "plate"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "a plate with a letter outside ASCII",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "ÇA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "plate": {
+            "code": "plate"
+          }
+        },
+        "values": {
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "a number is not text",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567",
+        "first_name": 42
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "first_name": {
+            "code": "text"
+          }
+        },
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "false is not text",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": false,
+        "phone": "+355 69 123 4567"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "email": {
+            "code": "text"
+          }
+        },
+        "values": {
+          "plate": "AA 123 BC",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "too long, in UTF-16 units as the browser counts",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567",
+        "first_name": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+      },
+      "expected": {
+        "ok": false,
+        "errors": {
+          "first_name": {
+            "code": "tooLong",
+            "limit": 500
+          }
+        },
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    },
+    {
+      "name": "just long enough",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567",
+        "first_name": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567",
+          "first_name": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀"
+        }
+      }
+    },
+    {
+      "name": "a name like an Object member is an ordinary name",
+      "popup": "kitchen-sink",
+      "values": {
+        "plate": "AA 123 BC",
+        "email": "ana@example.com",
+        "phone": "+355 69 123 4567",
+        "constructor": "x",
+        "toString": "y"
+      },
+      "expected": {
+        "ok": true,
+        "errors": {},
+        "values": {
+          "plate": "AA 123 BC",
+          "email": "ana@example.com",
+          "phone": "+355 69 123 4567"
+        }
+      }
+    }
+  ]
+}

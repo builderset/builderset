@@ -12,16 +12,18 @@ const text = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const code = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' });
 
 const DESCRIPTION =
-  'Let your users design emails and articles inside your own React app. The editor, the renderer and the checker; your theme, your language, your database.';
+  'Let your users design articles, emails, forms, cards and popups inside your own React app. The editor, the renderer and the checker; your theme, your language, your database.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://builderset.vercel.app'),
-  title: 'Builderset — visual editors for emails and articles, inside your app',
+  title:
+    'Builderset — visual editors for articles, emails, forms, cards and popups, inside your app',
   description: DESCRIPTION,
   applicationName: 'Builderset',
   openGraph: {
     title: 'Builderset',
-    description: 'Visual editors for emails and articles, inside your own app.',
+    description:
+      'Visual editors for articles, emails, forms, cards and popups, inside your own app.',
     url: 'https://builderset.vercel.app',
     siteName: 'Builderset',
     type: 'website',

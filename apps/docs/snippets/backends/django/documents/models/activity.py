@@ -17,6 +17,10 @@ class SubjectType(models.TextChoices):
     ARTICLE = "article"
     FORM = "form"
     FORM_RESPONSE = "form_response"
+    CARD_DESIGN = "card_design"
+    CARD_ISSUE = "card_issue"
+    POPUP = "popup"
+    POPUP_SUBMISSION = "popup_submission"
     SAVED_SECTION = "saved_section"
     MEDIA = "media"
 
@@ -29,6 +33,9 @@ class Action(models.TextChoices):
     SCHEDULED = "scheduled"  # set to go live later
     UNPUBLISHED = "unpublished"  # back to draft
     CLOSED = "closed"  # a form stopped taking responses
+    PAUSED = "paused"  # a popup taken off the site, kept as it is
+    ISSUED = "issued"  # a card made out to a member
+    REVOKED = "revoked"  # a member's card cancelled
     REVERTED = "reverted"  # a revision restored
     STATUS_CHANGED = "status_changed"  # a response's triage
     DELETED = "deleted"  # soft-deleted

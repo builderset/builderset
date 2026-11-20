@@ -2,13 +2,14 @@ import type { EngineDocument } from '@builderset/engine';
 import { createRestHost } from '@builderset/engine/host';
 import type { FormResponses } from '@builderset/form/editor';
 import type { FormSubmission } from '@builderset/form/render';
+import type { PopupEvent } from '@builderset/popup/render';
 
-/** The three builders' routes differ only in this segment: /api/emails/<uuid>, /api/forms/<uuid>. */
-export type DocumentKind = 'emails' | 'articles' | 'forms';
+/** The five builders' routes differ only in this segment: /api/emails/<uuid>, /api/cards/<uuid>. */
+export type DocumentKind = 'emails' | 'articles' | 'forms' | 'cards' | 'popups';
 
 /**
  * The editor's host for a backend built from the data model: the same for
- * emails, articles and forms. `id` is the row's uuid, its public id; `savedAt`
+ * every builder. `id` is the row's uuid, its public id; `savedAt`
  * is the row's, as the page loaded it: the first save sends it back.
  */
 export function documentHost<TDoc extends EngineDocument>(
@@ -29,7 +30,12 @@ export function documentHost<TDoc extends EngineDocument>(
       toast(message);
     },
     // Revisions and sections are in the data model; oEmbed and previews are yours to add.
-    paths: { oembed: null, preview: null },
+    // A card or a popup sits on a free canvas and has no saved sections.
+    paths: {
+      oembed: null,
+      preview: null,
+      ...(kind === 'cards' || kind === 'popups' ? { sections: null } : {}),
+    },
   });
   // No route here imports an image from a link (POST {uploadUrl}/import, which must
   // fetch only public addresses): without the method, the editor hides that option.
@@ -73,5 +79,37 @@ export async function loadResponses(formId: string): Promise<FormResponses> {
       // The tab shows "when" as words; the server sends the instant.
       when: new Date(row.when).toLocaleString(),
     })),
+  };
+}
+
+/**
+ * `PopupView`'s callbacks on your site, for a popup from GET /api/public/popups:
+ * `<PopupView document={popup.document} {...popupHandlers(popup.id)} />`.
+ * Events only add to a daily counter, so a lost one is not worth a retry.
+ */
+export function popupHandlers(popupId: string) {
+  const base = `/api/public/popups/${encodeURIComponent(popupId)}`;
+  return {
+    onEvent: (event: PopupEvent) => {
+      void fetch(`${base}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event }),
+        keepalive: true,
+      }).catch(() => undefined);
+    },
+    onSubmit: async (values: Record<string, string>) => {
+      const response = await fetch(`${base}/submissions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          values,
+          path: window.location.pathname,
+          locale: document.documentElement.lang || null,
+        }),
+      });
+      // false keeps the popup open, answers and all.
+      return response.ok;
+    },
   };
 }

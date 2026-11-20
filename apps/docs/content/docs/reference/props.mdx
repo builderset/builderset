@@ -37,6 +37,7 @@ Generated from the built type files (the same tables are in each package's READM
 | `tokens`               | `Partial<Record<"font" \| "background" \| "surface" \| "foreground" \| "…` |          | Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`.                                                                                                                         |
 | `className`            | `string`                                                                   |          | Applied to the editor's root element, the one that carries the theme.                                                                                                                                               |
 | `fontPreviews`         | `boolean`                                                                  |          | Load fonts from Google Fonts: the ones the email uses, on the canvas, and previews of the choices in the font menu. `false`: never — for a page whose Content-Security-Policy allows no font host. Default: `true`. |
+| `onSendTest`           | `(document: EmailDocument, address: string) => Promise<boolean>`           |          | Adds "Send test" to the top bar: send the design as it is now to `address`, filled in with the type's sample. Resolve `true` once sent.                                                                             |
 
 #### `EmailCanvas`
 
@@ -145,6 +146,65 @@ Generated from the built type files (the same tables are in each package's READM
 | `context` | `RenderContext`                                         | yes      | The render context, for links, footnote numbers and editing in place.    |
 | `field`   | `{ node: string; path: string; placeholder?: string; }` |          | Which prop this is — lets the editor edit it in place.                   |
 
+## `@builderset/card` — CardEditor
+
+#### `CardEditor`
+
+| Prop                   | Type                                                                       | Required | What it does                                                                                                                                                                                                |
+| ---------------------- | -------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `document`             | `CardDocument`                                                             | yes      | The design to edit. Read once, when the editor mounts: to load another, remount it (a new `key`).                                                                                                           |
+| `registry`             | `ElementRegistry`                                                          | yes      | The elements a card can hold — usually `createCardRegistry()`.                                                                                                                                              |
+| `host`                 | `BuilderHost<CardDocument>`                                                | yes      | The adapter for everything that leaves the browser: saving, approving, uploads, media URLs, notices.                                                                                                        |
+| `record`               | `RecordFacts`                                                              | yes      | `status: 'published'` means the design is approved for print.                                                                                                                                               |
+| `onRecordChange`       | `(patch: Partial<RecordFacts>) => void`                                    |          | Called with the facts the designer changed (approving, withdrawing). Keep them and pass them back as `record`.                                                                                              |
+| `onBack`               | `() => void`                                                               | yes      | Called to leave the editor (the back button). The editor does not navigate by itself.                                                                                                                       |
+| `onDuplicate`          | `() => void`                                                               |          | Adds "Duplicate design" to the approve menu.                                                                                                                                                                |
+| `onDelete`             | `() => Promise<boolean>`                                                   |          | Adds "Delete design" to the approve menu; resolve `true` once it is deleted.                                                                                                                                |
+| `fields`               | `readonly CardField[]`                                                     |          | The member fields a design may use, each a path, a label and its kind (`text`, or `photo` for a picture). Default: the member's name, number, tier, since, valid until, QR value and photo (`CARD_FIELDS`). |
+| `records`              | `readonly Readonly<Record<string, string>>[]`                              |          | Members to design with: the example data, the preview's switch. Default: three example members.                                                                                                             |
+| `memberCount`          | `number`                                                                   |          | How many members the chosen list holds: "248 in Anëtarët aktivë", "Print 248 cards".                                                                                                                        |
+| `onPrint`              | `(document: CardDocument) => void`                                         |          | Print the cards: the host's own print run, one card per member. Without one, "Print-ready sheet" opens the sheet of the example members in a window and the browser's print dialog over it.                 |
+| `locale`               | `string`                                                                   |          | The editor's own language. `'auto'` follows `<html lang>`. Default: `'en'`.                                                                                                                                 |
+| `locales`              | `Readonly<Record<string, CardLocale \| undefined>>`                        |          | Other languages, by code: `{ sq }` from `@builderset/card/locales/sq`. English is built in.                                                                                                                 |
+| `messages`             | `{ code?: string \| undefined; engine?: { back?: string \| undefined; …`   |          | Replace single words, in whatever language is active.                                                                                                                                                       |
+| `contentLocales`       | `readonly string[]`                                                        |          | The languages a design can be written in. One: no language switch.                                                                                                                                          |
+| `defaultContentLocale` | `string`                                                                   |          | The language a new design is written in. Default: the first of `contentLocales`.                                                                                                                            |
+| `storageKey`           | `string`                                                                   |          | Where the crash-safety copy is kept in localStorage; omit to disable.                                                                                                                                       |
+| `savedAt`              | `string \| null`                                                           |          | When the server copy was last saved: a newer local copy is offered back.                                                                                                                                    |
+| `theme`                | `"auto" \| "dark" \| "light"`                                              |          | 'light' (the default), 'dark', or 'auto' to follow the page.                                                                                                                                                |
+| `tokens`               | `Partial<Record<"font" \| "background" \| "surface" \| "foreground" \| "…` |          | Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`.                                                                                                                 |
+| `className`            | `string`                                                                   |          | Applied to the editor's root element, the one that carries the theme.                                                                                                                                       |
+| `fontPreviews`         | `boolean`                                                                  |          | Load the card's web fonts (Poppins, Sora, Inter, Geist Mono) from Google Fonts. `false`: never — for a page that loads them itself or whose Content-Security-Policy allows no font host. Default: `true`.   |
+
+## `@builderset/card` — CardView, CardPrintSheet
+
+#### `CardView`
+
+| Prop            | Type                                       | Required | What it does                                                                                 |
+| --------------- | ------------------------------------------ | -------- | -------------------------------------------------------------------------------------------- |
+| `document`      | `CardDocument`                             | yes      | The card to draw.                                                                            |
+| `face`          | `"back" \| "front"`                        |          | Which side. Default: the front.                                                              |
+| `scale`         | `number \| string`                         |          | Pixels per millimetre, or a CSS length (`'1mm'` to print). Default: actual size on a screen. |
+| `record`        | `Readonly<Record<string, string>> \| null` |          | The member the card is filled in for. Without one, variables show as written.                |
+| `markVariables` | `boolean`                                  |          | Mark each `{{variable}}` where it is not filled in.                                          |
+| `bleed`         | `number`                                   |          | Draw this many millimetres past the cut line, for printing. Default: none — the card as cut. |
+| `assetUrl`      | `(key: string) => string`                  |          | A media key's address: side pictures, images and logo files.                                 |
+| `words`         | `CardWords`                                |          | The words for screen readers. Default: English.                                              |
+| `label`         | `string`                                   |          | The name a screen reader hears. Default: the side's ("Front").                               |
+| `className`     | `string`                                   |          | Added to the card's own `bsc` class.                                                         |
+| `style`         | `CSSProperties`                            |          | Merged over the card's variables: a position, a shadow.                                      |
+
+#### `CardPrintSheet`
+
+| Prop        | Type                                          | Required | What it does                                                                |
+| ----------- | --------------------------------------------- | -------- | --------------------------------------------------------------------------- |
+| `document`  | `CardDocument`                                | yes      | The card to print: its printed sides, at its own size and bleed.            |
+| `records`   | `readonly Readonly<Record<string, string>>[]` |          | One card per member, in order. Default: one card, its variables as written. |
+| `assetUrl`  | `(key: string) => string`                     |          | A media key's address: side pictures, images and logo files.                |
+| `cropMarks` | `boolean`                                     |          | Crop marks at the corners. Default: on.                                     |
+| `words`     | `CardWords`                                   |          | The words for screen readers. Default: English.                             |
+| `className` | `string`                                      |          | Added to the sheet's own `bsc-sheet` class.                                 |
+
 ## `@builderset/engine` — editor/index
 
 #### `AlignButtons`
@@ -191,6 +251,16 @@ Generated from the built type files (the same tables are in each package's READM
 | `onChange` | `(value: string \| null) => void` | yes      | Called with a hex value, a token's value, or `null` for none.                    |
 | `nullable` | `boolean`                         | yes      | Offers a "none" swatch first, which clears the colour.                           |
 
+#### `DockToggle`
+
+| Prop              | Type                         | Required | What it does |
+| ----------------- | ---------------------------- | -------- | ------------ |
+| `label`           | `string`                     | yes      |              |
+| `keys`            | `string`                     |          |              |
+| `pressed`         | `boolean`                    | yes      |              |
+| `onPressedChange` | `(pressed: boolean) => void` | yes      |              |
+| `children`        | `ReactNode`                  | yes      | The icon.    |
+
 #### `FontField`
 
 | Prop       | Type                              | Required | What it does                                                                       |
@@ -198,6 +268,58 @@ Generated from the built type files (the same tables are in each package's READM
 | `value`    | `string \| null`                  | yes      | The selected font's key, from the profile's fonts; empty means the inherited font. |
 | `onChange` | `(value: string \| null) => void` | yes      | Called with the picked font's key, or `null` for the inherited font.               |
 | `nullable` | `boolean`                         | yes      | Offers the inherited font at the top of the list, which clears the choice.         |
+
+#### `FreeArrange`
+
+| Prop       | Type                | Required | What it does                                                                          |
+| ---------- | ------------------- | -------- | ------------------------------------------------------------------------------------- |
+| `ids`      | `readonly string[]` | yes      | The selected elements.                                                                |
+| `artboard` | `FreeBoard`         | yes      | The artboard they sit on: one element aligns to it.                                   |
+| `title`    | `ReactNode`         |          | Replaces the alignment heading ("Align to card").                                     |
+| `decimals` | `number`            |          | The unit's decimals, so aligned frames are rounded as the kit keeps them. Default: 2. |
+
+#### `FreeLayersPanel`
+
+| Prop         | Type                               | Required | What it does                                                           |
+| ------------ | ---------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `artboardId` | `string`                           | yes      | The artboard whose elements are listed.                                |
+| `summary`    | `ReactNode`                        |          | Over the rows, on the left: "Front · 12 layers". Default: "12 layers". |
+| `hint`       | `ReactNode`                        |          | Under the rows. Default: how to restack and rename.                    |
+| `iconOf`     | `(node: BuilderNode) => ReactNode` |          | A row's icon. Default: the element's registry icon.                    |
+| `previewOf`  | `(node: BuilderNode) => string`    |          | A row's text after the name. Default: `props.text` as plain text.      |
+
+#### `FreeLayoutFields`
+
+| Prop   | Type       | Required | What it does |
+| ------ | ---------- | -------- | ------------ |
+| `id`   | `string`   | yes      |              |
+| `unit` | `FreeUnit` | yes      |              |
+
+#### `FreeStage`
+
+| Prop            | Type                                                     | Required | What it does                                                                                                       |
+| --------------- | -------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| `artboard`      | `FreeArtboard`                                           | yes      |                                                                                                                    |
+| `unit`          | `FreeUnit`                                               | yes      |                                                                                                                    |
+| `renderElement` | `(node: BuilderNode, args: FreeRenderArgs) => ReactNode` | yes      | The element's content, filling its frame (a box of `w × px` by `h × px` CSS pixels).                               |
+| `editable`      | `(node: BuilderNode) => boolean`                         |          | Double-click or Enter starts editing its text (sets the store's `editingId`). Default: never.                      |
+| `keepRatio`     | `(node: BuilderNode) => boolean`                         |          | Resizing keeps its proportions without Shift (a QR code, a photo). Default: never.                                 |
+| `sizeOf`        | `FreeSizeOf`                                             | yes      | A new element's size when dropped from the library.                                                                |
+| `guides`        | `boolean`                                                | yes      | Draw the pink snap guides while moving, and snap to `snapX`/`snapY`. Edges, centre and other elements always snap. |
+| `caption`       | `ReactNode`                                              |          | Above / below the artboard: "Front · working view, not to scale" / "Flip to back · F".                             |
+| `footer`        | `ReactNode`                                              |          |                                                                                                                    |
+| `label`         | `string`                                                 |          | The stage region's accessible name. Default: the editor's `free.stage` word.                                       |
+| `snapThreshold` | `number`                                                 |          | How close, in SCREEN pixels, an edge must come to a line to snap to it. Default: 6.                                |
+
+#### `IssueList`
+
+| Prop     | Type               | Required | What it does |
+| -------- | ------------------ | -------- | ------------ |
+| `issues` | `readonly Issue[]` | yes      |              |
+
+#### `LanguageBar`
+
+No props.
 
 #### `LanguageSwitch`
 
@@ -237,6 +359,13 @@ No props.
 | `size`          | `"md" \| "sm"`                    |          | `sm` is a shorter box with narrower buttons, for tight rows. Default: `'md'`.                                         |
 | `className`     | `string`                          |          | Applied to the outer box.                                                                                             |
 
+#### `ReadyCard`
+
+| Prop     | Type               | Required | What it does |
+| -------- | ------------------ | -------- | ------------ |
+| `issues` | `readonly Issue[]` | yes      |              |
+| `action` | `string`           | yes      |              |
+
 #### `RichTextInput`
 
 | Prop        | Type                        | Required | What it does                                                                |
@@ -253,6 +382,13 @@ No props.
 | `name`     | `string`                   | yes      | The prop's name, which picks the field's label.                               |
 | `value`    | `Padding`                  | yes      | The four sides, in pixels.                                                    |
 | `onChange` | `(value: Padding) => void` | yes      | Called with all four sides on each change, each a whole number from 0 to 160. |
+
+#### `TemplateGallery`
+
+| Prop    | Type               | Required | What it does                                                                                                                                                                                             |
+| ------- | ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `look`  | `"grid" \| "list"` |          | `list`: a row per template with a sketch of its blocks (an article's). `grid`: two columns of cards showing the template itself, scaled down (an email's, where the look is the point). Default: `list`. |
+| `title` | `string`           |          | Above the gallery. Default: the editor's "Start from a template".                                                                                                                                        |
 
 ## `@builderset/engine` — editor/ui/index
 
@@ -455,6 +591,17 @@ Plus the props of the element it draws (React).
 | `options`       | `readonly SegmentedOption<T>[]` | yes      | The choices, in order.                                                                     |
 | `className`     | `string`                        |          | Applied to the group.                                                                      |
 | `aria-label`    | `string`                        |          | The accessible name, when there is no visible label.                                       |
+
+#### `SegmentedTabs`
+
+| Prop            | Type                         | Required | What it does                                                           |
+| --------------- | ---------------------------- | -------- | ---------------------------------------------------------------------- |
+| `value`         | `T`                          | yes      |                                                                        |
+| `onValueChange` | `(value: T) => void`         | yes      |                                                                        |
+| `tabs`          | `readonly SegmentedTab<T>[]` | yes      |                                                                        |
+| `stacked`       | `boolean`                    |          | The icon above the label rather than beside it: a panel's main switch. |
+| `className`     | `string`                     |          |                                                                        |
+| `aria-label`    | `string`                     |          |                                                                        |
 
 #### `Select`
 

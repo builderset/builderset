@@ -1,0 +1,15 @@
+{
+  "tolerates": [
+    "popup.empty",
+    "popup.noClose",
+    "action.linkMissing",
+    "input.nameMissing",
+    "input.nameDuplicate",
+    "display.noDevice",
+    "display.selectorMissing",
+    "display.pagesMissing",
+    "display.ruleInvalid",
+    "display.datesInvalid",
+    "i18n.locale.unknown"
+  ]
+}

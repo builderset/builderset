@@ -1,0 +1,141 @@
+{
+  "unsafe-qr-link.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "unsafe-qr-hidden-scheme.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "unsafe-qr-data-url.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "unknown-variable.json": {
+    "errors": [
+      "variable.unknown"
+    ],
+    "warnings": []
+  },
+  "photo-unknown-field.json": {
+    "errors": [
+      "variable.unknown"
+    ],
+    "warnings": []
+  },
+  "element-in-root.json": {
+    "errors": [
+      "container.full",
+      "placement.notAllowed"
+    ],
+    "warnings": []
+  },
+  "side-in-side.json": {
+    "errors": [
+      "placement.notAllowed"
+    ],
+    "warnings": []
+  },
+  "one-side.json": {
+    "errors": [
+      "container.minimum"
+    ],
+    "warnings": []
+  },
+  "two-fronts.json": {
+    "errors": [
+      "card.sidesInvalid"
+    ],
+    "warnings": []
+  },
+  "unknown-element.json": {
+    "errors": [
+      "element.unknown"
+    ],
+    "warnings": []
+  },
+  "missing-child.json": {
+    "errors": [
+      "document.missingChild"
+    ],
+    "warnings": []
+  },
+  "orphan.json": {
+    "errors": [
+      "document.orphan"
+    ],
+    "warnings": []
+  },
+  "props-wrong-type.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "frame-missing.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "frame-negative-width.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "unplaced.json": {
+    "errors": [
+      "variable.unknown"
+    ],
+    "warnings": [
+      "frame.unplaced"
+    ]
+  },
+  "format-malformed.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "print-malformed.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "not-a-card.json": {
+    "errors": [
+      "document.malformed"
+    ],
+    "warnings": []
+  },
+  "translation-too-long.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "every-warning.json": {
+    "errors": [
+      "variable.unknown"
+    ],
+    "warnings": [
+      "barcode.unencodable",
+      "card.chipMissing",
+      "card.outsideSafe",
+      "card.qrTooSmall",
+      "card.textTooSmall",
+      "code.empty",
+      "image.missing",
+      "meta.nameMissing",
+      "side.empty"
+    ]
+  }
+}

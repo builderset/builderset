@@ -1,0 +1,500 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "recycled-pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Anëtarët aktivë"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#f9fafb",
+        "image": null
+      },
+      "children": [
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": -3,
+          "w": 4.5,
+          "h": 59.98,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Edge"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 4.5,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#111827",
+        "media": null
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 62.3,
+          "y": 4.5,
+          "w": 19.3,
+          "h": 4.7,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "center",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "#111827",
+        "backgroundRadius": 2.3
+      },
+      "name": "Tier"
+    },
+    "n4": {
+      "id": "n4",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 24,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtari",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 27.3,
+          "w": 60,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 11.3,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member name"
+    },
+    "n6": {
+      "id": "n6",
+      "type": "line",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 35.5,
+          "w": 75.6,
+          "h": 0.3,
+          "r": 0
+        },
+        "color": "#e5e7eb",
+        "opacity": 1
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 38.5,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Nr. anëtarësie",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 6,
+          "y": 42,
+          "w": 33.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member number"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 42,
+          "y": 38.5,
+          "w": 18.3,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtar që nga",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 42,
+          "y": 42,
+          "w": 18.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.since}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member since"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 63,
+          "y": 38.5,
+          "w": 18.6,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Vlen deri",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 63,
+          "y": 42,
+          "w": 18.6,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.valid_until}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Valid until"
+    },
+    "n13": {
+      "id": "n13",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 4,
+          "w": 20,
+          "h": 20,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n14": {
+      "id": "n14",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 4.5,
+          "w": 50,
+          "h": 5,
+          "r": 0
+        },
+        "text": "Mirë se erdhët në klub",
+        "font": "sora",
+        "size": 9,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 28,
+          "y": 10.5,
+          "w": 53.6,
+          "h": 12,
+          "r": 0
+        },
+        "text": "Skanoni kodin në pikën e kontrollit: vlerësimi falas dhe radha me përparësi janë të përfshira.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 29,
+          "w": 45,
+          "h": 7,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "sign",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 39.5,
+          "w": 45,
+          "h": 7,
+          "r": 0
+        },
+        "label": "Nënshkrimi",
+        "color": "#9ca3af"
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 53,
+          "y": 39.5,
+          "w": 28.6,
+          "h": 7.5,
+          "r": 0
+        },
+        "text": "marrimauto.com\n+355 69 400 2026",
+        "font": "poppins",
+        "size": 6.3,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.35,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "E bardhë e pastër"
+  }
+}

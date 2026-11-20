@@ -165,7 +165,8 @@ export function Dock({
         </Button>
       </Tooltip>
       <Rule />
-      {DEVICES.map((device) => (
+      {/* A free canvas (a card, a popup) has one size: no devices to switch between. */}
+      {(profile.stage ? [] : DEVICES).map((device) => (
         <Tooltip key={device.value} content={`${messages[device.value]} · ${device.keys}`}>
           <Button
             type="button"

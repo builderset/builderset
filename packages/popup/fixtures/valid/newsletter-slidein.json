@@ -1,0 +1,258 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "slidein",
+        "width": 360,
+        "height": 220,
+        "position": "bottom-right",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "scroll",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 14,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "up",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 22,
+          "w": 200,
+          "h": 14,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "BULETINI"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 42,
+          "w": 290,
+          "h": 28,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Çmimet e tregut, çdo muaj"
+          }
+        ],
+        "font": "sora",
+        "size": 20,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 76,
+          "w": 320,
+          "h": 40,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Një email në muaj me çmimet reale të makinave të përdorura në Shqipëri."
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 126,
+          "w": 196,
+          "h": 42,
+          "r": 0
+        },
+        "name": "email",
+        "label": "Email",
+        "placeholder": "emri@shembull.com",
+        "kind": "email",
+        "required": true,
+        "size": 14,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 126,
+          "w": 116,
+          "h": 42,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Abonohu"
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Faleminderit! Emaili i parë vjen në fillim të muajit."
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 20,
+          "y": 180,
+          "w": 320,
+          "h": 20,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Pa spam. Çabonohuni kur të doni."
+          }
+        ],
+        "font": "poppins",
+        "size": 12,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 320,
+          "y": 12,
+          "w": 28,
+          "h": 28,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Buletini i çmimeve"
+  }
+}

@@ -7,21 +7,37 @@ description: "Every issue code the checkers report, in the browser and on the se
 
 _Generated from Builderset 0.4.0._
 
-The editor shows these to the writer; `checkEmail` and `checkArticle` return them, and so does the Python package — a server can answer with the same codes and the editor shows them in the same words. A draft may still carry the codes in `DRAFT_TOLERATES`; publishing refuses them all.
+The editor shows these to the writer; `checkEmail`, `checkArticle`, `checkForm`, `checkCard` and `checkPopup` return them, and so does the Python package — a server can answer with the same codes and the editor shows them in the same words. A draft may still carry the codes its kit tolerates (`DRAFT_TOLERATES`, `CARD_DRAFT_TOLERATES`, `POPUP_DRAFT_TOLERATES`); publishing a document, or printing a card, refuses every error.
 
 | Code | Message | Kit |
 | --- | --- | --- |
+| `action.linkMissing` | A link goes nowhere | Popup |
 | `after.redirectMissing` | The page to go to after sending is missing | Form |
 | `anchor.duplicate` | Two blocks share an anchor | Every kit |
 | `anchor.invalid` | Invalid anchor | Every kit |
 | `autoReply.noEmailField` | The auto-reply has no email field to go to | Form |
+| `barcode.unencodable` | A barcode with characters it cannot encode | Card |
 | `button.labelMissing` | A button without a label | Every kit, Email |
 | `button.linkMissing` | A button without a link | Email |
+| `card.chipMissing` | A bank card without a chip on the front | Card |
+| `card.outsideSafe` | Outside the safe area: printers can cut it off | Card |
+| `card.qrTooSmall` | A QR code under 15 mm: phones may not scan it | Card |
+| `card.sidesInvalid` | The card needs one front and one back | Card |
+| `card.textTooSmall` | Text smaller than 6 pt: hard to read once printed | Card |
+| `code.empty` | A code with nothing to encode | Card |
 | `compliance.unsubscribeMissing` | No unsubscribe link (marketing email) | Email |
 | `conditional.empty` | A conditional block has no condition | Email |
 | `consent.missing` | Personal data without a consent box | Form |
 | `consent.textMissing` | A consent box says nothing | Form |
 | `container.minimum` | A container has too few blocks | Every kit |
+| `display.datesInvalid` | It ends before it starts | Popup |
+| `display.everyVisit` | Shown on every visit | Popup |
+| `display.interstitial` | Covers the page the moment it opens | Popup |
+| `display.noDevice` | Shown on no device | Popup |
+| `display.pagesMissing` | Shown on no page | Popup |
+| `display.ruleInvalid` | A page address that cannot match | Popup |
+| `display.selectorMissing` | Opens on a click, but on what? | Popup |
+| `element.outside` | An element is outside the popup | Popup |
 | `embed.notAllowed` | That embed is not allowed | Every kit |
 | `embed.providerMismatch` | Embed URL does not match its provider | Every kit |
 | `field.keyDuplicate` | Two fields save to the same key | Form |
@@ -31,33 +47,51 @@ The editor shows these to the writer; `checkEmail` and `checkArticle` return the
 | `field.rangeInvalid` | A slider ends before it starts | Form |
 | `footnote.missing` | A footnote reference points nowhere | Every kit |
 | `form.noFields` | The form has no fields | Form |
+| `frame.unplaced` | An element that was never placed | Card |
 | `heading.empty` | Empty heading | Every kit |
 | `heading.skippedLevel` | A heading skips a level | Every kit |
 | `i18n.structureInBase` | Add or remove items in the base language — a translation changes the words only. | Every kit |
-| `image.altMissing` | Image without a description | Every kit, Email, Form |
+| `image.altMissing` | Image without a description | Every kit, Email, Form, Popup |
+| `image.missing` | An image frame without a picture | Card |
+| `input.labelMissing` | An input has no label | Popup |
+| `input.nameDuplicate` | Two inputs share a field name | Popup |
+| `input.nameMissing` | An input has no field name | Popup |
+| `input.noSubmit` | Inputs, but no button sends them | Popup |
 | `link.textMissing` | A link without text | Every kit |
 | `logic.unknownField` | A rule reads a field that is not before it | Form |
 | `media.external` | Picture not uploaded yet | Every kit |
 | `media.missing` | An image not chosen yet | Email |
 | `meta.coverMissing` | No cover image | Every kit |
 | `meta.excerptMissing` | No excerpt | Every kit |
+| `meta.nameMissing` | The design has no name | Card |
 | `meta.preheaderMissing` | No preheader | Email |
 | `meta.slugMissing` | The form has no address (slug) yet | Form |
 | `meta.slugTaken` | Another form already has this address | Form |
 | `meta.subjectMissing` | No subject line | Email |
-| `meta.titleMissing` | No title | Every kit, Form |
+| `meta.titleMissing` | No title | Every kit |
+| `meta.titleMissing` | The form has no title | Form |
 | `node.locked` | This field is needed by the template: it can be reworded and moved, not removed. | Form |
 | `notify.noRecipients` | Team notifications go to nobody | Form |
 | `paragraph.empty` | Empty paragraph | Every kit |
 | `paragraph.long` | Very long paragraph | Every kit |
-| `placement.notAllowed` | A block is in the wrong place | Email, Form |
-| `props.invalid` | A block has invalid settings | Every kit, Email, Form |
+| `placement.notAllowed` | A block is in the wrong place | Email |
+| `placement.notAllowed` | A field is in the wrong place | Form |
+| `placement.notAllowed` | An element is in the wrong place | Card, Popup |
+| `popup.empty` | The popup is empty | Popup |
+| `popup.noClose` | No way to close it | Popup |
+| `props.invalid` | A block has invalid settings | Every kit, Email |
+| `props.invalid` | A field has invalid settings | Form |
+| `props.invalid` | An element has invalid settings | Card, Popup |
 | `row.columnsMismatch` | A row has the wrong number of columns | Email |
 | `seo.descriptionLength` | Search description length | Every kit |
 | `seo.titleLength` | Search title length | Every kit |
+| `side.empty` | A printed side with nothing on it | Card |
 | `spam.none` | No spam protection | Form |
 | `step.empty` | An empty step | Form |
 | `text.empty` | Empty text | Email |
-| `url.unsafe` | Unsafe link | Every kit, Email, Form |
+| `url.unsafe` | Unsafe link | Every kit, Email, Form, Popup |
+| `url.unsafe` | A QR code with an unsafe link | Card |
 | `variable.mustUse` | A required variable is not used | Email |
 | `variable.unknown` | A variable this email does not have | Email |
+| `variable.unknown` | A field the member data does not have | Card |
+| `variable.unknown` | A field your pages do not fill in | Popup |

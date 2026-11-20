@@ -13,7 +13,8 @@ const code = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' }
 export const metadata: Metadata = {
   metadataBase: new URL('https://docs-builderset.vercel.app'),
   title: { default: 'Builderset Docs', template: '%s — Builderset Docs' },
-  description: 'Visual editors for emails and articles that fit into your project.',
+  description:
+    'Visual editors for emails, articles, forms, cards and popups that fit into your project.',
 };
 
 export const viewport: Viewport = {

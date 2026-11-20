@@ -1,5 +1,5 @@
 """What every table shares: the two ids, who made, changed and deleted each row
-and when, and the columns the three builders' documents and revisions have in
+and when, and the columns every builder's documents and revisions have in
 common. The tables themselves are in the files next to this one."""
 
 from collections.abc import Iterable
@@ -30,6 +30,8 @@ class Status(StrEnum):
     PUBLISHED = "published"
     ARCHIVED = "archived"
     CLOSED = "closed"
+    #: A popup taken off the site, kept as it is.
+    PAUSED = "paused"
 
 
 class RevisionKind(StrEnum):

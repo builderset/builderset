@@ -11,12 +11,13 @@ _This page describes Builderset 0.4.0._
 
 ## Where each part runs
 
-| Part                                            | Runs                                         |
-| ----------------------------------------------- | -------------------------------------------- |
-| The editors (`@builderset/*/editor`)            | In the browser only                          |
-| The renderers (`@builderset/*/render`)          | Anywhere: a Server Component, a route, Node  |
-| The documents, registries and checks (the root) | Anywhere                                     |
-| The hosts (`@builderset/*/host`)                | Anywhere; the editor calls it in the browser |
+| Part                                                         | Runs                                                                   |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| The editors (`@builderset/*/editor`)                         | In the browser only                                                    |
+| The renderers of emails, articles and cards (`*/render`)     | Anywhere: a Server Component, a route, Node                            |
+| `FormView` and `PopupView`                                   | In the visitor's browser: they answer clicks, check inputs, wait for triggers |
+| The documents, registries and checks (the root)              | Anywhere                                                               |
+| The hosts (`@builderset/*/host`)                             | Anywhere; the editor calls it in the browser                           |
 
 So the editor is the only part that needs a client boundary, and it is the heavy
 part: load it only on the pages that edit.
@@ -38,7 +39,9 @@ code is fetched only when this page opens:
 </include>
 
 The article editor is the same, in
-[`app/articles/[id]/edit`](https://github.com/builderset/builderset/tree/development/examples/next-shadcn/app/articles/%5Bid%5D/edit).
+[`app/articles/[id]/edit`](https://github.com/builderset/builderset/tree/development/examples/next-shadcn/app/articles/%5Bid%5D/edit),
+and so are the form, card and popup editors ([Cards](/docs/guides/card),
+[Popups](/docs/guides/popup)).
 
 ## Vite, or any React app
 

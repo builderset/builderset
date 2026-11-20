@@ -1,11 +1,12 @@
-"""What differs between emails, articles and forms is a small table: the
-model, the kit, the columns copied from the document, what publishing and
-unpublishing also change. The views are written once, for whichever row of
-it the path names."""
+"""What differs between the five builders is a small table: the model, the
+kit, the columns copied from the document, what publishing and unpublishing
+also change. The views are written once, for whichever row of it the path
+names."""
 
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, date, datetime, time, timedelta
 from typing import Any
 from uuid import UUID
 
@@ -14,12 +15,24 @@ from django.utils import timezone
 from .audit import Actor, record_activity, stamp
 from .checks import EMAIL_TYPES, LOCALES
 from .errors import Refused, find
-from .models import Action, Article, DocumentModel, EmailTemplate, Form, Kit, Status
+from .models import (
+    Action,
+    Article,
+    CardDesign,
+    DocumentModel,
+    EmailTemplate,
+    Form,
+    Kit,
+    Popup,
+    Status,
+)
 from .serializers import (
     ArticleSerializer,
+    CardDesignSerializer,
     DocumentSerializer,
     EmailTemplateSerializer,
     FormSerializer,
+    PopupSerializer,
 )
 
 Document = dict[str, Any]
@@ -37,7 +50,7 @@ class Kind:
     noun: str
     #: The column your list shows as each row's name, and ``q`` searches.
     name_column: str
-    #: Copies of the live document's meta, for lists and search.
+    #: Copies of the live document, for lists, search and the site's queries.
     copies: Callable[[Document], dict[str, Any]]
     #: The columns a new row takes from the request body and the signed-in user.
     new_columns: Callable[[dict[str, Any], Actor], dict[str, Any]]
@@ -54,6 +67,17 @@ class Kind:
         """The row the path names: live, or for restore, deleted."""
         rows = self.model.objects.deleted() if deleted else self.model.objects.live()
         return find(rows.select_for_update() if lock else rows, self.noun, uuid=id)
+
+
+def _root_props(document: Document) -> dict[str, Any]:
+    """A card or a popup keeps its own settings on the root node."""
+    props: dict[str, Any] = document["nodes"][document["root"]]["props"]
+    return props
+
+
+def _from_document(_body: dict[str, Any], _actor: Actor) -> dict[str, Any]:
+    # Everything a new card design or popup has is in its document.
+    return {}
 
 
 # ── Emails ──────────────────────────────────────────────────────────────────
@@ -137,6 +161,53 @@ def _close(row: Form, actor: Actor) -> None:
     row.closed_by = actor
 
 
+# ── Cards ───────────────────────────────────────────────────────────────────
+
+
+def _card_copies(document: Document) -> dict[str, Any]:
+    card = _root_props(document)
+    return {
+        "name": document["meta"]["name"],
+        "format": card["format"],
+        "width_mm": card["width"],
+        "height_mm": card["height"],
+        "sides": card["sides"],
+    }
+
+
+# ── Popups ──────────────────────────────────────────────────────────────────
+
+
+def _midnight(day: str) -> datetime | None:
+    """The start of a YYYY-MM-DD day in UTC, or None when there is none."""
+    try:
+        return datetime.combine(date.fromisoformat(day), time(), tzinfo=UTC) if day else None
+    except ValueError:  # well formed, but no such day: 2026-02-30
+        return None
+
+
+def _popup_copies(document: Document) -> dict[str, Any]:
+    popup = _root_props(document)
+    display = popup["display"]
+    # The display rules keep whole days in the visitor's own time zone. A day
+    # begins and ends at different instants around the world, so the columns
+    # hold the widest window: from where the first day begins (UTC+14) to
+    # where the last day ends (UTC-12). shouldShow decides by the visitor's day.
+    first, last = _midnight(display["starts"]), _midnight(display["ends"])
+    starts_at = first - timedelta(hours=14) if first else None
+    ends_at = last + timedelta(days=1, hours=12) if last else None
+    # A draft may still end before it starts (display.datesInvalid): no window yet.
+    if starts_at and ends_at and ends_at <= starts_at:
+        starts_at = ends_at = None
+    return {
+        "name": document["meta"]["name"],
+        "type": popup["type"],
+        "starts_at": starts_at,
+        "ends_at": ends_at,
+        "priority": display["priority"],
+    }
+
+
 KINDS: dict[str, Kind] = {
     kind.path: kind
     for kind in (
@@ -181,6 +252,26 @@ KINDS: dict[str, Kind] = {
             on_unpublish=_close,
             # A closed form keeps its link and shows its closed message.
             unpublished=Status.CLOSED,
+        ),
+        Kind(
+            path="cards",
+            kit=Kit.CARD,
+            model=CardDesign,
+            serializer=CardDesignSerializer,
+            noun="card design",
+            name_column="name",
+            copies=_card_copies,
+            new_columns=_from_document,
+        ),
+        Kind(
+            path="popups",
+            kit=Kit.POPUP,
+            model=Popup,
+            serializer=PopupSerializer,
+            noun="popup",
+            name_column="name",
+            copies=_popup_copies,
+            new_columns=_from_document,
         ),
     )
 }

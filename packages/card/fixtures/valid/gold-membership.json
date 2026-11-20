@@ -1,0 +1,522 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Anëtarët aktivë"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8",
+        "n9",
+        "n10",
+        "n11",
+        "n12"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n13",
+        "n14",
+        "n15",
+        "n16",
+        "n17",
+        "n18",
+        "n19",
+        "n20"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 57.3,
+          "y": -18.3,
+          "w": 50,
+          "h": 50,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 1
+      },
+      "name": "Orange circle"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 65.6,
+          "y": -10,
+          "w": 33.3,
+          "h": 33.3,
+          "r": 0
+        },
+        "fill": "",
+        "stroke": "#ffffff",
+        "strokeWidth": 0.25,
+        "opacity": 0.35
+      },
+      "name": "Ring"
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 3.7,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 64.3,
+          "y": 3.7,
+          "w": 17.3,
+          "h": 4.7,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 700,
+        "color": "#111827",
+        "align": "center",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "#ffffff",
+        "backgroundRadius": 2.3
+      },
+      "name": "Tier"
+    },
+    "n5": {
+      "id": "n5",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 25,
+          "w": 26.7,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtari",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 28.3,
+          "w": 55,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 11.3,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member name"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 38,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Nr. anëtarësie",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 42,
+          "w": 33.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.05,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member number"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 39.3,
+          "y": 38,
+          "w": 18.3,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Vlen deri",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 39.3,
+          "y": 42,
+          "w": 18.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.valid_until}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Valid until"
+    },
+    "n11": {
+      "id": "n11",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 67.6,
+          "y": 32.6,
+          "w": 14,
+          "h": 17.3,
+          "r": 0
+        },
+        "bind": "member.photo",
+        "radius": 1.7,
+        "tone": "#374151"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "nfc",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 58.7,
+          "y": 41.7,
+          "w": 3.7,
+          "h": 3.7,
+          "r": 0
+        },
+        "color": "#9ca3af"
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": -3,
+          "w": 91.6,
+          "h": 13.7,
+          "r": 0
+        },
+        "fill": "#111827",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Top band"
+    },
+    "n14": {
+      "id": "n14",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 3.3,
+          "w": 43.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Karta e anëtarësisë",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n15": {
+      "id": "n15",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 62.6,
+          "y": 3,
+          "w": 20,
+          "h": 4.3,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 8.5,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n16": {
+      "id": "n16",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 14.3,
+          "w": 18.7,
+          "h": 18.7,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n17": {
+      "id": "n17",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 14,
+          "w": 55,
+          "h": 11,
+          "r": 0
+        },
+        "text": "Paraqiteni këtë kartë në çdo pikë kontrolli marrimauto për përparësi në takim dhe vlerësim falas.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n18": {
+      "id": "n18",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 26,
+          "y": 26.3,
+          "w": 38.3,
+          "h": 6.7,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n19": {
+      "id": "n19",
+      "type": "sign",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 35.3,
+          "w": 43.7,
+          "h": 7,
+          "r": 0
+        },
+        "label": "Nënshkrimi",
+        "color": "#9ca3af"
+      }
+    },
+    "n20": {
+      "id": "n20",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 44.3,
+          "w": 77.6,
+          "h": 6,
+          "r": 0
+        },
+        "text": "Karta është personale. Nëse e gjeni, kthejeni në çdo pikë kontrolli ose në marrimauto.com.",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.35,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Anëtarësi Gold"
+  }
+}

@@ -1,9 +1,9 @@
 """What the views read from a request, the same way everywhere."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_date, parse_datetime
 from rest_framework.request import Request
 
 
@@ -17,6 +17,14 @@ def instant(value: Any) -> datetime | None:
     try:
         return parse_datetime(value) if isinstance(value, str) else None
     except ValueError:  # well formed, but no such date: 2026-02-30
+        return None
+
+
+def day(value: Any) -> date | None:
+    """A YYYY-MM-DD date from the body, or None when it is missing or not one."""
+    try:
+        return parse_date(value) if isinstance(value, str) else None
+    except ValueError:
         return None
 
 

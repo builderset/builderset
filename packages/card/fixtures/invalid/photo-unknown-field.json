@@ -1,0 +1,124 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n9"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n2"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 20,
+          "w": 50,
+          "h": 6,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "poppins",
+        "size": 9,
+        "weight": 600,
+        "color": "",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 5,
+          "w": 20,
+          "h": 20,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 60,
+          "y": 20,
+          "w": 14,
+          "h": 17,
+          "r": 0
+        },
+        "bind": "member.name",
+        "radius": 1.7,
+        "tone": "#374151"
+      }
+    }
+  },
+  "meta": {
+    "name": "Broken on purpose"
+  }
+}

@@ -9,6 +9,6 @@ REST_FRAMEWORK = {
     # Every refusal is answered in one place: documents/errors.py.
     "EXCEPTION_HANDLER": "documents.errors.answer",
     "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
-    # Responses to a public form, per visitor address: 429 past it.
-    "DEFAULT_THROTTLE_RATES": {"form_responses": "10/minute"},
+    # What visitors send — a form's responses, a popup's inputs — per address: 429 past it.
+    "DEFAULT_THROTTLE_RATES": {"form_responses": "10/minute", "popup_submissions": "10/minute"},
 }

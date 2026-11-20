@@ -78,7 +78,7 @@ def _take_a_place(db: Session, form: Form) -> None:
         raise GoneError(form.document["settings"]["limits"]["closedMessage"])
 
 
-def _ip_of(request: Request) -> IPv4Address | IPv6Address | None:
+def ip_of(request: Request) -> IPv4Address | IPv6Address | None:
     """The visitor's address. Behind a proxy, run uvicorn with --proxy-headers."""
     try:
         return ip_address(request.client.host) if request.client else None
@@ -121,7 +121,7 @@ def respond(
         # Only the shown fields' answers, numbers as numbers: never the raw body.
         answers=result.values,
         locale=body.locale,
-        ip=_ip_of(request) if store_ip else None,
+        ip=ip_of(request) if store_ip else None,
         created_by=visitor,
     )
     db.add(response)

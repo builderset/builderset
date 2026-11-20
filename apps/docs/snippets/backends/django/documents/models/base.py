@@ -21,6 +21,8 @@ class Status(models.TextChoices):
     PUBLISHED = "published"
     ARCHIVED = "archived"
     CLOSED = "closed"
+    #: A popup taken off the site, kept as it is.
+    PAUSED = "paused"
 
 
 class RevisionKind(models.TextChoices):

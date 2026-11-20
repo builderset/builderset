@@ -1,0 +1,184 @@
+{
+  "cases": [
+    {
+      "name": "the default fields: the gym card names two unknown",
+      "card": "gym",
+      "fields": null,
+      "issues": [
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n2",
+          "path": "text",
+          "params": {
+            "path": "member.plan"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n3",
+          "path": "bind",
+          "params": {
+            "path": "member.avatar"
+          }
+        }
+      ]
+    },
+    {
+      "name": "the gym fields: only member.number is unknown",
+      "card": "gym",
+      "fields": [
+        {
+          "path": "member.name",
+          "label": {
+            "en": "Name"
+          },
+          "kind": "text"
+        },
+        {
+          "path": "member.plan",
+          "label": {
+            "en": "Plan"
+          },
+          "kind": "text"
+        },
+        {
+          "path": "member.avatar",
+          "label": {
+            "en": "Picture"
+          },
+          "kind": "photo"
+        }
+      ],
+      "issues": [
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n4",
+          "path": "data",
+          "params": {
+            "path": "member.number"
+          }
+        }
+      ]
+    },
+    {
+      "name": "the gym fields: the kitchen sink is mostly unknown",
+      "card": "kitchen-sink",
+      "fields": [
+        {
+          "path": "member.name",
+          "label": {
+            "en": "Name"
+          },
+          "kind": "text"
+        },
+        {
+          "path": "member.plan",
+          "label": {
+            "en": "Plan"
+          },
+          "kind": "text"
+        },
+        {
+          "path": "member.avatar",
+          "label": {
+            "en": "Picture"
+          },
+          "kind": "photo"
+        }
+      ],
+      "issues": [
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n10",
+          "path": "text",
+          "params": {
+            "path": "member.tier"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n14",
+          "path": "bind",
+          "params": {
+            "path": "member.photo"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n17",
+          "path": "data",
+          "params": {
+            "path": "member.qr"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n18",
+          "path": "data",
+          "params": {
+            "path": "member.qr"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n19",
+          "path": "data",
+          "params": {
+            "path": "member.number"
+          }
+        }
+      ]
+    },
+    {
+      "name": "no fields at all: every variable is unknown",
+      "card": "gym",
+      "fields": [],
+      "issues": [
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n1",
+          "path": "text",
+          "params": {
+            "path": "member.name"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n2",
+          "path": "text",
+          "params": {
+            "path": "member.plan"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n3",
+          "path": "bind",
+          "params": {
+            "path": "member.avatar"
+          }
+        },
+        {
+          "code": "variable.unknown",
+          "severity": "error",
+          "nodeId": "n4",
+          "path": "data",
+          "params": {
+            "path": "member.number"
+          }
+        }
+      ]
+    }
+  ]
+}

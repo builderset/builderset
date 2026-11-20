@@ -12,11 +12,16 @@ import {
 import type { CSSProperties } from 'react';
 import {
   siDjango,
+  siDotnet,
   siExpress,
   siFastapi,
+  siLaravel,
   siNextdotjs,
+  siOpenjdk,
+  siPhp,
   siPostgresql,
   siPython,
+  siSpringboot,
   siSupabase,
   siTypescript,
   type SimpleIcon,
@@ -27,6 +32,7 @@ import { CopyButton } from '@/components/copy-button';
 import { Features, type Feature } from '@/components/features';
 import { FooterMark } from '@/components/footer-mark';
 import { HeroEditor } from '@/components/hero-editor';
+import { HeroKits, KitInstall, KitTabs, KitWord } from '@/components/hero-kits';
 import { Horizon } from '@/components/horizon';
 import { LiveDemo } from '@/components/live-demo';
 import { StackIcon } from '@/components/stack-icon';
@@ -111,7 +117,7 @@ const STACKS: {
     icon: siFastapi,
     name: 'FastAPI',
     languages: ['Python'],
-    what: 'SQLAlchemy models and one router for all three builders.',
+    what: 'SQLAlchemy models and one router for all five builders.',
     href: LINKS.fastapiAll,
   },
   {
@@ -122,6 +128,27 @@ const STACKS: {
     href: LINKS.express,
   },
   {
+    icon: siLaravel,
+    name: 'Laravel',
+    languages: ['PHP'],
+    what: 'Eloquent models with soft deletes, form requests and API resources.',
+    href: LINKS.laravel,
+  },
+  {
+    icon: siSpringboot,
+    name: 'Spring Boot',
+    languages: ['Java'],
+    what: 'JPA entities with auditing, Flyway migrations and one controller per concern.',
+    href: LINKS.springBoot,
+  },
+  {
+    icon: siDotnet,
+    name: 'ASP.NET Core',
+    languages: ['C#'],
+    what: 'EF Core with an audit interceptor, soft-delete filters and minimal APIs.',
+    href: LINKS.aspnet,
+  },
+  {
     icon: siNextdotjs,
     name: 'Next.js',
     languages: ['TypeScript'],
@@ -130,11 +157,15 @@ const STACKS: {
   },
 ];
 
-type Language = 'SQL' | 'TypeScript' | 'Python';
+type Language = 'SQL' | 'TypeScript' | 'Python' | 'PHP' | 'Java' | 'C#';
 const LANGUAGE_ICONS: Record<Language, SimpleIcon> = {
   SQL: siPostgresql,
   TypeScript: siTypescript,
   Python: siPython,
+  PHP: siPhp,
+  Java: siOpenjdk,
+  // Simple Icons has no C# mark: .NET's stands for it.
+  'C#': siDotnet,
 };
 
 const KITS: {
@@ -162,12 +193,23 @@ const KITS: {
     href: LINKS.form,
   },
   {
+    name: '@builderset/card',
+    what: 'Membership, ID, bank and business cards in millimetres, front and back: the editor, print-ready sheets and the print checks.',
+    status: 'Available',
+    href: LINKS.card,
+  },
+  {
+    name: '@builderset/popup',
+    what: 'Modals, slide-ins, bars, drawers and full screens, with display rules and motion: the editor, the popup for your site, and the same rules on your server.',
+    status: 'Available',
+    href: LINKS.popup,
+  },
+  {
     name: 'builderset',
-    what: 'For Python servers: the same checks for every kit, the same email HTML, form answers checked.',
+    what: 'For Python servers: the same checks for every kit, the same email HTML, form answers and popup submissions checked.',
     status: 'Available',
     href: LINKS.python,
   },
-  { name: 'Popups', what: 'Banners and dialogs for your site.', status: 'Coming' },
   { name: 'Pages', what: 'Landing pages, built from your own sections.', status: 'Coming' },
 ];
 
@@ -291,49 +333,56 @@ export default function Page() {
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <section className="lp-hero">
           <div className="lp-hero-sky" aria-hidden="true" />
-          <div className="lp-wrap lp-hero-copy">
-            <a className="lp-pill lp-rise" href={LINKS.docs} style={delay(0)}>
-              <span className="dot" aria-hidden="true" />
-              <span>
-                <b>{VERSION}</b> · Email and article kits
-              </span>
-              <ArrowRight size={14} />
-            </a>
-            <h1 className="lp-h1">
-              <span className="lp-rise" style={delay(1)}>
-                Let your users design emails and articles,
-              </span>{' '}
-              <span className="lp-rise accent" style={delay(2)}>
-                inside your own app.
-              </span>
-            </h1>
-            <p className="lp-lead lp-rise" style={delay(3)}>
-              Builderset is the editor, the renderer and the checker: React components and a server
-              library. You bring the theme, the language and the database.
-            </p>
-            <div className="lp-actions center lp-rise" style={delay(4)}>
-              <a className="lp-button light" href={LINKS.quickStart}>
-                <Roll>Get started</Roll> <ArrowRight className="arrow" size={17} />
+          <HeroKits>
+            <div className="lp-wrap lp-hero-copy">
+              <a className="lp-pill lp-rise" href={LINKS.docs} style={delay(0)}>
+                <span className="dot" aria-hidden="true" />
+                <span>
+                  <b>{VERSION}</b> · Article, email, form, card and popup kits
+                </span>
+                <ArrowRight size={14} />
               </a>
-              <a className="lp-button glass" href={LINKS.playground}>
-                <Roll>Open the playground</Roll>
-              </a>
+              <h1 className="lp-h1">
+                <span className="lp-rise" style={delay(1)}>
+                  Let your users{' '}
+                  <span className="lp-nowrap">
+                    design <KitWord />,
+                  </span>
+                </span>{' '}
+                <span className="lp-rise lp-h1-line" style={delay(2)}>
+                  inside your own app.
+                </span>
+              </h1>
+              <p className="lp-lead lp-rise" style={delay(3)}>
+                Builderset is the editor, the renderer and the checker: React components and a
+                server library. You bring the theme, the language and the database.
+              </p>
+              <div className="lp-actions center lp-rise" style={delay(4)}>
+                <a className="lp-button light" href={LINKS.quickStart}>
+                  <Roll>Get started</Roll> <ArrowRight className="arrow" size={17} />
+                </a>
+                <a className="lp-button glass" href={LINKS.playground}>
+                  <Roll>Open the playground</Roll>
+                </a>
+              </div>
+              <div className="lp-install lp-rise" style={delay(5)}>
+                <span className="lp-install-p" aria-hidden="true">
+                  $
+                </span>
+                <KitInstall />
+              </div>
             </div>
-            <div className="lp-install lp-rise" style={delay(5)}>
-              <span className="lp-install-p" aria-hidden="true">
-                $
-              </span>
-              <code>{INSTALL}</code>
-              <CopyButton text={INSTALL} />
-            </div>
-          </div>
-          <Horizon>
-            <HeroEditor />
-          </Horizon>
+            <Horizon bar={<KitTabs />}>
+              <HeroEditor />
+            </Horizon>
+          </HeroKits>
         </section>
 
         <div className="lp-facts-band">
           <ul className="lp-wrap lp-facts">
+            <li>
+              <b>Five kits</b> on one engine
+            </li>
             <li>
               <b>React 19</b> components
             </li>
@@ -588,7 +637,7 @@ export default function Page() {
               Read the docs, or just try it.
             </h2>
             <p className="lp-sub">
-              The playground runs all three editors in your browser. The docs take you from install
+              The playground runs all five editors in your browser. The docs take you from install
               to going live.
             </p>
             <div className="lp-actions center">
@@ -611,8 +660,8 @@ export default function Page() {
               <span>Builderset</span>
             </a>
             <p>
-              The editor, the renderer and the checker for emails and articles, inside your own
-              React app. Your theme, your language, your database.
+              The editor, the renderer and the checker for articles, emails, forms, cards and
+              popups, inside your own React app. Your theme, your language, your database.
             </p>
             <div className="lp-install">
               <span className="lp-install-p" aria-hidden="true">
@@ -634,6 +683,9 @@ export default function Page() {
             <h4>Docs</h4>
             <a href={LINKS.quickStart}>Quick start: email</a>
             <a href={LINKS.quickStartArticle}>Quick start: article</a>
+            <a href={LINKS.form}>Form reference</a>
+            <a href={LINKS.card}>Card guide</a>
+            <a href={LINKS.popup}>Popup guide</a>
             <a href={LINKS.install}>Install</a>
             <a href={LINKS.backend}>Backend setup</a>
             <a href={LINKS.theme}>Theme</a>

@@ -1,12 +1,15 @@
 import type { Fragment, MediaKind } from '@builderset/engine';
 
-import type { Kit } from '../checks';
 import type { Audited } from './base';
+
+/** The builders with a library of saved sections. A card or a popup is one free canvas: no sections. */
+export const SECTION_KITS = ['email', 'article', 'form'] as const;
+export type SectionKit = (typeof SECTION_KITS)[number];
 
 /** A row of saved_section: a piece of a document saved to reuse. */
 export interface SavedSection extends Audited {
   /** Which builder's library it belongs to. */
-  kit: Kit;
+  kit: SectionKit;
   /** What the editor lists it as. */
   name: string;
   /** The editor's { roots, nodes }. */

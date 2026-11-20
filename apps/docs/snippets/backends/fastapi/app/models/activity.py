@@ -19,6 +19,10 @@ class SubjectType(StrEnum):
     ARTICLE = "article"
     FORM = "form"
     FORM_RESPONSE = "form_response"
+    CARD_DESIGN = "card_design"
+    CARD_ISSUE = "card_issue"
+    POPUP = "popup"
+    POPUP_SUBMISSION = "popup_submission"
     SAVED_SECTION = "saved_section"
     MEDIA = "media"
 
@@ -34,6 +38,12 @@ class Action(StrEnum):
     UNPUBLISHED = "unpublished"
     #: A form stopped taking responses.
     CLOSED = "closed"
+    #: A popup taken off the site, kept as it is.
+    PAUSED = "paused"
+    #: A card made out to a member.
+    ISSUED = "issued"
+    #: A member's card cancelled.
+    REVOKED = "revoked"
     #: A revision restored.
     REVERTED = "reverted"
     #: A response's triage.

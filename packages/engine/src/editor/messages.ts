@@ -252,6 +252,58 @@ export interface EditorMessages {
   saveAsSection: string;
   /** The chip that shows every category. */
   all: string;
+  /** The free canvas (a card, a popup): see `free/README.md`. */
+  free: FreeMessages;
+}
+
+/** The free canvas's words: the stage, its handles, the layers, arrange and layout. */
+export interface FreeMessages {
+  /** The stage region's name. */
+  stage: string;
+  /** The list of elements on the artboard, for a screen reader. */
+  elementsList: string;
+  /** Read out with the list: how to work it from the keyboard. */
+  keyboardHelp: string;
+  /** The tag under a selection of several. */
+  selectedCount: (count: number) => string;
+  locked: string;
+  /** The handles, by compass point, and the rotate handle. */
+  handles: Record<'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w', string>;
+  rotate: string;
+  /** Read out after a change, with the numbers already in the unit ("12.5 mm"). */
+  movedTo: (x: string, y: string) => string;
+  resizedTo: (w: string, h: string) => string;
+  rotatedTo: (degrees: string) => string;
+  /** The drop box while dragging from the library. */
+  dropHere: string;
+  /** Layers: "12 layers", the hint beside it and under the rows, and an empty board. */
+  layerCount: (count: number) => string;
+  topFirst: string;
+  layersHint: string;
+  noLayers: string;
+  /** Read out after a row is dragged. */
+  restacked: string;
+  /** Arrange: one element aligns to the board, several to each other. */
+  alignToBoard: string;
+  alignToEachOther: string;
+  align: Record<'left' | 'hcenter' | 'right' | 'top' | 'vcenter' | 'bottom', string>;
+  spread: string;
+  spreadAcross: string;
+  spreadDown: string;
+  spreadHint: string;
+  order: string;
+  bringForward: string;
+  sendBackward: string;
+  bringToFront: string;
+  sendToBack: string;
+  /** Layout fields. */
+  x: string;
+  y: string;
+  width: string;
+  height: string;
+  rotation: string;
+  position: string;
+  size: string;
 }
 
 /** Any part of a set of words, at any depth: what a host overrides. */

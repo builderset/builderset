@@ -4,13 +4,21 @@
  * stylesheets imported side by side would each repeat the engine's rules.
  *
  * A site that only shows articles imports builderset/article/content.css,
- * which is much smaller; one that only shows forms, builderset/form/form.css.
+ * which is much smaller; one that only shows forms, builderset/form/form.css;
+ * cards, builderset/card/card.css; popups, builderset/popup/popup.css.
  */
 @import '../../engine/src/theme/index.css';
-/* The form's own look: the form editor's canvas draws with it. */
+/* The form's, card's and popup's own looks: their editors' canvases draw with them. */
 @import '../../form/src/form.css';
+@import '../../card/src/card.css';
+@import '../../card/src/editor/editor.css';
+@import '../../popup/src/popup.css';
 
 @source '../../email/src/editor';
 @source '../../article/src/editor';
 @source '../../article/src/render';
 @source '../../form/src/editor';
+@source '../../card/src/editor';
+@source '../../card/src/render';
+@source '../../popup/src/editor';
+@source '../../popup/src/render';

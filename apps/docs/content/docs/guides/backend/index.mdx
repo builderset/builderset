@@ -31,12 +31,25 @@ each document keeps its revisions and an activity log. Each stack below builds t
     Models, Django REST framework views and the builderset Python package.
   </Card>
   <Card title="FastAPI" href="/docs/guides/backend/fastapi">
-    SQLAlchemy models and one router for all three builders.
+    SQLAlchemy models and one router for all five builders.
   </Card>
   <Card title="Node.js" href="/docs/guides/backend/express">
     Express and pg, with the kits' own checks.
   </Card>
+  <Card title="Laravel" href="/docs/guides/backend/laravel">
+    PHP: Eloquent models with soft deletes, form requests, API resources and the checker.
+  </Card>
+  <Card title="Spring Boot" href="/docs/guides/backend/spring-boot">
+    Java: JPA entities with auditing, Flyway migrations and the checker.
+  </Card>
+  <Card title="ASP.NET Core" href="/docs/guides/backend/aspnet-core">
+    C#: EF Core with an audit interceptor, minimal APIs and the checker.
+  </Card>
 </Cards>
+
+Laravel, Spring Boot and ASP.NET Core check a document's structure in-process with the
+kit's JSON Schema, and run the kits' own checks through the
+[Builderset checker](/docs/guides/backend/checker), a small Node service beside the app.
 
 <include cwd>../../packages/engine/src/host/BACKEND.md#1-what-to-store</include>
 

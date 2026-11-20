@@ -1,0 +1,284 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "delay",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "except",
+          "rules": [
+            "/vleresim",
+            "/llogaria/*"
+          ],
+          "audience": "new",
+          "language": "all",
+          "frequency": "days",
+          "days": 7,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "scale",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "image",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "w": 200,
+          "h": 340,
+          "r": 0
+        },
+        "media": null,
+        "alt": "",
+        "fit": "cover",
+        "radius": 0,
+        "opacity": 1,
+        "tone": "#1f2937"
+      },
+      "name": "Car photo"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 38,
+          "w": 200,
+          "h": 14,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "VLERËSIM FALAS"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 58,
+          "w": 272,
+          "h": 34,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Sa vlen makina juaj?"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.15,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 100,
+          "w": 272,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Merrni një ofertë me shkrim brenda 24 orësh. Pa detyrime, pa pazare."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "input",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 162,
+          "w": 272,
+          "h": 44,
+          "r": 0
+        },
+        "name": "plate",
+        "label": "Targa e makinës",
+        "placeholder": "Targa, p.sh. AA 123 BC",
+        "kind": "plate",
+        "required": true,
+        "size": 15,
+        "color": "#111827",
+        "fill": "#ffffff",
+        "border": "#d1d5db",
+        "radius": 10
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 216,
+          "w": 272,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Vlerëso makinën"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "submit",
+        "url": "",
+        "newTab": false,
+        "thanks": "Faleminderit! Ju kontaktojmë brenda 24 orësh."
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 224,
+          "y": 276,
+          "w": 272,
+          "h": 20,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Jo tani"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "center",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "close",
+        "url": "",
+        "newTab": false
+      },
+      "name": "Not now"
+    },
+    "n8": {
+      "id": "n8",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 12,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Vlerësim falas"
+  }
+}

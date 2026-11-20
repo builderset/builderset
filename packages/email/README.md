@@ -124,6 +124,7 @@ The social block's icons are in the package's `icons/social/` folder: 96px PNGs,
 | `tokens`               | `Partial<Record<"font" \| "background" \| "surface" \| "foreground" \| "…` |          | Theme values by the public variables' names without their prefix: `{ primary: '#da6c1e' }`.                                                                                                                         |
 | `className`            | `string`                                                                   |          | Applied to the editor's root element, the one that carries the theme.                                                                                                                                               |
 | `fontPreviews`         | `boolean`                                                                  |          | Load fonts from Google Fonts: the ones the email uses, on the canvas, and previews of the choices in the font menu. `false`: never — for a page whose Content-Security-Policy allows no font host. Default: `true`. |
+| `onSendTest`           | `(document: EmailDocument, address: string) => Promise<boolean>`           |          | Adds "Send test" to the top bar: send the design as it is now to `address`, filled in with the type's sample. Resolve `true` once sent.                                                                             |
 
 #### `EmailCanvas`
 

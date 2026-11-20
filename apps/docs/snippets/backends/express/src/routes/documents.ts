@@ -19,9 +19,9 @@ import { answerOf, getRow, person, sideFilter, type Side } from '../models/base'
 import { PUBLISHED, UNPUBLISHABLE, type DocumentModel, type DocumentRow } from '../models/document';
 
 /**
- * The routes every builder shares, written once: /api/emails, /api/articles
- * and /api/forms differ only in their model. Handlers read the request and
- * answer; the work is in the functions below them.
+ * The routes every builder shares, written once: /api/emails, /api/articles,
+ * /api/forms, /api/cards and /api/popups differ only in their model. Handlers
+ * read the request and answer; the work is in the functions below them.
  */
 export function documentRouter<D extends EngineDocument, R extends DocumentRow<D>>(
   model: DocumentModel<D, R>,

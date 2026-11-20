@@ -1,0 +1,361 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "badge",
+        "width": 53.98,
+        "height": 85.6,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": "Anëtarët aktivë"
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n9",
+        "n10",
+        "n11",
+        "n12",
+        "n13"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": -3,
+          "y": -3,
+          "w": 59.98,
+          "h": 28,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 0,
+        "opacity": 1
+      },
+      "name": "Top band"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 21.3,
+          "y": 3.7,
+          "w": 11.3,
+          "h": 2,
+          "r": 0
+        },
+        "fill": "#ffffff",
+        "stroke": "",
+        "strokeWidth": 0,
+        "radius": 1,
+        "opacity": 0.85
+      },
+      "name": "Lanyard slot"
+    },
+    "n3": {
+      "id": "n3",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 11,
+          "w": 46,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "photo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 16.6,
+          "y": 25,
+          "w": 20.7,
+          "h": 25,
+          "r": 0
+        },
+        "bind": "member.photo",
+        "radius": 2.3,
+        "tone": "#374151"
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 3.3,
+          "y": 53,
+          "w": 47.3,
+          "h": 5.7,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 10.4,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member name"
+    },
+    "n6": {
+      "id": "n6",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 17,
+          "y": 60,
+          "w": 20,
+          "h": 4.7,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 700,
+        "color": "#111827",
+        "align": "center",
+        "valign": "middle",
+        "lineHeight": 1.45,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "#ffffff",
+        "backgroundRadius": 2.3
+      },
+      "name": "Tier"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 3.3,
+          "y": 70,
+          "w": 47.3,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Nr. anëtarësie",
+        "font": "poppins",
+        "size": 6.1,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 3.3,
+          "y": 73.3,
+          "w": 47.3,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7,
+        "weight": 500,
+        "color": "#ffffff",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.05,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member number"
+    },
+    "n9": {
+      "id": "n9",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 5,
+          "w": 46,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 9.5,
+        "color": "#111827",
+        "media": null
+      }
+    },
+    "n10": {
+      "id": "n10",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 13.7,
+          "y": 16.7,
+          "w": 26.7,
+          "h": 26.7,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n11": {
+      "id": "n11",
+      "type": "barcode",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 47.7,
+          "w": 44,
+          "h": 7.3,
+          "r": 0
+        },
+        "data": "{{member.number}}",
+        "color": "#111827"
+      }
+    },
+    "n12": {
+      "id": "n12",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 58.7,
+          "w": 46,
+          "h": 11.7,
+          "r": 0
+        },
+        "text": "Paraqiteni këtë kartë në hyrje dhe në çdo pikë kontrolli marrimauto.",
+        "font": "poppins",
+        "size": 6.6,
+        "weight": 400,
+        "color": "#374151",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n13": {
+      "id": "n13",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 4,
+          "y": 74.7,
+          "w": 46,
+          "h": 3.7,
+          "r": 0
+        },
+        "text": "Vlen deri {{member.valid_until}}",
+        "font": "mono",
+        "size": 6.6,
+        "weight": 600,
+        "color": "#6b7280",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Bexh anëtari"
+  }
+}

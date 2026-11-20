@@ -1,10 +1,13 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Builderset — visual editors for emails and articles, inside your own app';
+export const alt =
+  'Builderset — visual editors for articles, emails, forms, cards and popups, inside your own app';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-/** The link preview: the mark and the one sentence, ink on cool paper. */
+const KITS = ['Article', 'Email', 'Form', 'Card', 'Popup'];
+
+/** The link preview: the mark, the five kits and the one sentence, ink on cool paper. */
 export default function OpenGraphImage() {
   const block = (x: number, y: number, w: number, color: string) => (
     <div
@@ -13,8 +16,8 @@ export default function OpenGraphImage() {
         left: x,
         top: y,
         width: w,
-        height: 88,
-        borderRadius: 20,
+        height: 70,
+        borderRadius: 16,
         background: color,
       }}
     />
@@ -35,17 +38,36 @@ export default function OpenGraphImage() {
         color: '#10131a',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-        <div style={{ position: 'relative', width: 192, height: 192, display: 'flex' }}>
-          {block(0, 0, 88, '#10131a')}
-          {block(104, 0, 88, '#2a5bd7')}
-          {block(0, 104, 192, '#10131a')}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ position: 'relative', width: 152, height: 152, display: 'flex' }}>
+          {block(0, 0, 70, '#10131a')}
+          {block(82, 0, 70, '#2a5bd7')}
+          {block(0, 82, 152, '#10131a')}
+        </div>
+        <div style={{ display: 'flex', gap: 12 }}>
+          {KITS.map((kit) => (
+            <div
+              key={kit}
+              style={{
+                display: 'flex',
+                padding: '10px 20px',
+                borderRadius: 999,
+                border: '2px solid rgba(42,91,215,0.28)',
+                background: 'rgba(42,91,215,0.07)',
+                color: '#2149b0',
+                fontSize: 26,
+                fontWeight: 600,
+              }}
+            >
+              {kit}
+            </div>
+          ))}
         </div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div style={{ fontSize: 34, fontWeight: 600, color: '#2a5bd7' }}>Builderset</div>
-        <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>
-          Let your users design emails and articles, inside your own app.
+        <div style={{ fontSize: 60, fontWeight: 700, lineHeight: 1.06, letterSpacing: -2 }}>
+          Let your users design articles, emails, forms, cards and popups, inside your own app.
         </div>
       </div>
     </div>,

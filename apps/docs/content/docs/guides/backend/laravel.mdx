@@ -1,0 +1,737 @@
+---
+title: Laravel
+description: The five builders' backend in PHP — Laravel 12 with Eloquent over Postgres, every row audited and soft-deleted, revisions and an activity log written in the same transaction, documents checked by the kits' JSON Schemas and the Builderset checker.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end a Laravel app stores email templates, articles, forms, card designs and
+popups with everything the [data model](/docs/guides/backend/data-model) asks of a real
+app: who made, changed, published and deleted each row and when, a trash to restore
+from, a revision on every manual save and publish, and an activity line for everything
+that happens. It refuses an unsafe or stale save with the editor's own issue codes,
+takes form responses and popup submissions checked exactly as the browser checked them,
+and issues cards to members.
+
+Tested with Laravel 12.73 on PHP 8.3.37, opis/json-schema 2.6.2, PostgreSQL 18, and
+the checker on Node 26. About 25 minutes to read.
+
+There is no Builderset package for PHP, so every document is checked in two layers. Its
+**structure** is checked in-process, against the kit's JSON Schema, with
+`opis/json-schema`. The **kits' own rules** — an unsafe link, a variable the email type
+does not have, a form's answers — run in the
+[Builderset checker](/docs/guides/backend/checker), a small Node service beside the
+app that runs the same functions the editor runs. When the checker cannot be reached,
+the app answers `503` and stores nothing.
+
+The files below go into a new Laravel app, at the paths their titles give:
+
+```txt title="my-app/"
+config/builderset.php      the checker's address, your email types
+bootstrap/app.php          the API routes, and the one place errors become answers
+database/migrations/       one migration per group of tables
+app/Database/              the audit columns, written once for the migrations
+app/Enums/                 statuses, revision kinds, actions, the five kinds
+app/Models/                one model per table, on a shared Audited trait
+app/Builderset/            the JSON Schemas, the checker's client, the two together
+app/Services/Documents.php what every write to a document does
+app/Http/                  the stand-in sign-in, form requests, resources, controllers
+app/Policies/              who may publish
+routes/api.php             the routes, grouped per concern
+```
+
+<Steps>
+<Step>
+
+### The project
+
+A new Laravel 12 app, `opis/json-schema` for the structure check, and the checker in a
+`checker/` folder beside it, set up as [its page](/docs/guides/backend/checker) says.
+The five kits' JSON Schemas are copied from the checker's `node_modules` into
+`resources/schemas`, so the structure checked here and the rules the checker runs come
+from the same version of the kits:
+
+<include cwd lang="sh" meta='title="Terminal"'>
+  ./snippets/backends/laravel/install.sh
+</include>
+
+What the app needs to know about the checker and your project. Each value can come
+from `.env`: `BUILDERSET_CHECKER_URL`, `BUILDERSET_DEV_USER`:
+
+<include cwd lang="php" meta='title="config/builderset.php"'>
+  ./snippets/backends/laravel/config/builderset.php
+</include>
+
+Point `DB_CONNECTION` at Postgres in `.env`, then:
+
+```sh title="Terminal"
+php artisan migrate
+php artisan storage:link
+(cd checker && node --experimental-strip-types server.ts) &
+BUILDERSET_DEV_USER=you@example.com php artisan serve
+```
+
+</Step>
+<Step>
+
+### The tables
+
+The [SQL schema](/docs/guides/backend/sql) as migrations, one per group of tables, run
+after Laravel's own `users` migration. The schema builder has no method for a check
+constraint, a partial index or a trigger, so `AuditColumns` writes those three in SQL —
+in one place, beside the audit columns every table shares:
+
+<Tabs label="Migrations">
+<Tab title="Shared columns">
+
+The audit columns, the document columns, a builder's revisions table, and the three
+things only SQL says:
+
+<include cwd lang="php" meta='title="app/Database/AuditColumns.php"'>
+  ./snippets/backends/laravel/app/Database/AuditColumns.php
+</include>
+
+A public id on your users, and the function the touch triggers call:
+
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000001_create_audit_base.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000001_create_audit_base.php
+</include>
+
+</Tab>
+<Tab title="Email templates">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000002_create_email_templates.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000002_create_email_templates.php
+</include>
+</Tab>
+<Tab title="Articles">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000003_create_articles.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000003_create_articles.php
+</include>
+</Tab>
+<Tab title="Forms">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000004_create_forms.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000004_create_forms.php
+</include>
+</Tab>
+<Tab title="Cards">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000007_create_cards.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000007_create_cards.php
+</include>
+</Tab>
+<Tab title="Popups">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000008_create_popups.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000008_create_popups.php
+</include>
+</Tab>
+<Tab title="Library">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000005_create_library.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000005_create_library.php
+</include>
+</Tab>
+<Tab title="Activity">
+<include cwd lang="php" meta='title="database/migrations/2026_11_01_000006_create_activity.php"'>
+  ./snippets/backends/laravel/database/migrations/2026_11_01_000006_create_activity.php
+</include>
+</Tab>
+</Tabs>
+
+The tables are the SQL page's, column for column, with the same types, defaults,
+checks, partial indexes, foreign keys and triggers. Where they differ: the audit
+columns point at Laravel's `users`, not `app_user`; a unique column's index is named
+`<table>_<column>_unique`, not `_key`; and a timestamp's default reads
+`CURRENT_TIMESTAMP`, which is `now()`.
+
+</Step>
+<Step>
+
+### The models
+
+One Eloquent model per table, grouped as the tables are. Each says what is its own —
+the copies of its meta, where publishing and unpublishing leave it — and inherits the
+rest. A JSON column is cast to a PHP object, never an array: an array cannot tell the
+JSON `{}` from `[]`, and an editor document has both.
+
+<Tabs label="Models">
+<Tab title="Shared columns">
+
+The audit columns as a trait: the public uuid, who made and changed the row, set from
+the signed-in user in the model's events, and SoftDeletes with who deleted it.
+
+<include cwd lang="php" meta='title="app/Models/Concerns/Audited.php"'>
+  ./snippets/backends/laravel/app/Models/Concerns/Audited.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/Concerns/PreciseDates.php"'>
+  ./snippets/backends/laravel/app/Models/Concerns/PreciseDates.php
+</include>
+
+What the five document tables share, and their revisions:
+
+<include cwd lang="php" meta='title="app/Models/Document.php"'>
+  ./snippets/backends/laravel/app/Models/Document.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/Revision.php"'>
+  ./snippets/backends/laravel/app/Models/Revision.php
+</include>
+
+The statuses and the revision kinds:
+
+<include cwd lang="php" meta='title="app/Enums/Status.php"'>
+  ./snippets/backends/laravel/app/Enums/Status.php
+</include>
+
+<include cwd lang="php" meta='title="app/Enums/RevisionKind.php"'>
+  ./snippets/backends/laravel/app/Enums/RevisionKind.php
+</include>
+
+Laravel's user, with the public id every answer names a person by:
+
+<include cwd lang="php" meta='title="app/Models/User.php"'>
+  ./snippets/backends/laravel/app/Models/User.php
+</include>
+
+</Tab>
+<Tab title="Email templates">
+
+Publishing a design moves the one before it, for the same email type, back to draft:
+
+<include cwd lang="php" meta='title="app/Models/EmailTemplate.php"'>
+  ./snippets/backends/laravel/app/Models/EmailTemplate.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/EmailTemplateRevision.php"'>
+  ./snippets/backends/laravel/app/Models/EmailTemplateRevision.php
+</include>
+
+</Tab>
+<Tab title="Articles">
+
+An article's address is chosen when it is made; a future `scheduled_at` waits for a
+job of yours:
+
+<include cwd lang="php" meta='title="app/Models/Article.php"'>
+  ./snippets/backends/laravel/app/Models/Article.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/ArticleRevision.php"'>
+  ./snippets/backends/laravel/app/Models/ArticleRevision.php
+</include>
+
+</Tab>
+<Tab title="Forms">
+
+A form, its revisions and its responses. Unpublishing closes a form: its link keeps
+working and shows the closed message.
+
+<include cwd lang="php" meta='title="app/Models/Form.php"'>
+  ./snippets/backends/laravel/app/Models/Form.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/FormRevision.php"'>
+  ./snippets/backends/laravel/app/Models/FormRevision.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/FormResponse.php"'>
+  ./snippets/backends/laravel/app/Models/FormResponse.php
+</include>
+
+</Tab>
+<Tab title="Cards">
+
+A card design, its revisions, and the cards issued from it. A card freezes the
+design's version and the member's data, and its number is never reused:
+
+<include cwd lang="php" meta='title="app/Models/CardDesign.php"'>
+  ./snippets/backends/laravel/app/Models/CardDesign.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/CardDesignRevision.php"'>
+  ./snippets/backends/laravel/app/Models/CardDesignRevision.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/CardIssue.php"'>
+  ./snippets/backends/laravel/app/Models/CardIssue.php
+</include>
+
+<include cwd lang="php" meta='title="app/Enums/CardIssueStatus.php"'>
+  ./snippets/backends/laravel/app/Enums/CardIssueStatus.php
+</include>
+
+<include cwd lang="php" meta='title="app/Enums/CardDelivery.php"'>
+  ./snippets/backends/laravel/app/Enums/CardDelivery.php
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions and what visitors sent through it. The display rules stay in
+the document; the columns copy what the site's one query needs, and the page rules a
+server can answer are the kit's own, in PHP:
+
+<include cwd lang="php" meta='title="app/Models/Popup.php"'>
+  ./snippets/backends/laravel/app/Models/Popup.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/PopupRevision.php"'>
+  ./snippets/backends/laravel/app/Models/PopupRevision.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/PopupSubmission.php"'>
+  ./snippets/backends/laravel/app/Models/PopupSubmission.php
+</include>
+
+The counters per day have no model: one upsert adds to them.
+
+<include cwd lang="php" meta='title="app/Enums/PopupEvent.php"'>
+  ./snippets/backends/laravel/app/Enums/PopupEvent.php
+</include>
+
+</Tab>
+<Tab title="Library">
+<include cwd lang="php" meta='title="app/Models/SavedSection.php"'>
+  ./snippets/backends/laravel/app/Models/SavedSection.php
+</include>
+
+<include cwd lang="php" meta='title="app/Models/Media.php"'>
+  ./snippets/backends/laravel/app/Models/Media.php
+</include>
+</Tab>
+<Tab title="Activity">
+
+The log names a row by its table through Laravel's morph map, so `subject_type` holds
+the same words as the SQL: `article`, `card_issue`.
+
+<include cwd lang="php" meta='title="app/Models/Activity.php"'>
+  ./snippets/backends/laravel/app/Models/Activity.php
+</include>
+
+<include cwd lang="php" meta='title="app/Enums/Action.php"'>
+  ./snippets/backends/laravel/app/Enums/Action.php
+</include>
+
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Who, and what went wrong
+
+The audit columns are set from the signed-in user, never from the request body: the
+`Audited` trait reads `Auth::id()`. Your team's routes sit behind a sign-in; the one
+here is a stand-in so the example runs. Publishing is its own permission, a policy:
+
+<Tabs label="Auth">
+<Tab title="Your auth here">
+
+It sits in front of your team's routes only, so the visitors' routes behave as they will
+behind your real sign-in:
+
+<include cwd lang="php" meta='title="app/Http/Middleware/SignInStandIn.php"'>
+  ./snippets/backends/laravel/app/Http/Middleware/SignInStandIn.php
+</include>
+
+</Tab>
+<Tab title="Publishing">
+<include cwd lang="php" meta='title="app/Policies/DocumentPolicy.php"'>
+  ./snippets/backends/laravel/app/Policies/DocumentPolicy.php
+</include>
+</Tab>
+<Tab title="The service provider">
+
+The policy, the morph map, the checker as a singleton, and the visitors' rate limits:
+
+<include cwd lang="php" meta='title="app/Providers/AppServiceProvider.php"'>
+  ./snippets/backends/laravel/app/Providers/AppServiceProvider.php
+</include>
+
+</Tab>
+</Tabs>
+
+Controllers and services throw; `bootstrap/app.php` is the one place an exception
+becomes an answer: `404`, `409`, `410`, `413`, `415`, `422` with the issues the editor
+reads, and `503` when the checker is away. A form request's refusal becomes issues too,
+one per field:
+
+<Tabs label="Errors">
+<Tab title="bootstrap/app.php">
+<include cwd lang="php" meta='title="bootstrap/app.php"'>
+  ./snippets/backends/laravel/bootstrap/app.php
+</include>
+</Tab>
+<Tab title="ApiError">
+<include cwd lang="php" meta='title="app/Exceptions/ApiError.php"'>
+  ./snippets/backends/laravel/app/Exceptions/ApiError.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The checks
+
+Every document is checked before it is stored, with the editor's own rules: a draft may
+be unfinished but never unsafe, and publishing refuses every error. A refusal carries
+the issue codes, so the editor shows each problem on its block.
+
+<Tabs label="Checks">
+<Tab title="Both layers">
+<include cwd lang="php" meta='title="app/Builderset/Checks.php"'>
+  ./snippets/backends/laravel/app/Builderset/Checks.php
+</include>
+</Tab>
+<Tab title="JSON Schemas">
+
+A document that is not the kit's shape stops here, without a trip to the checker. A
+saved section is checked against the kit's own node schema, by reference:
+
+<include cwd lang="php" meta='title="app/Builderset/Schemas.php"'>
+  ./snippets/backends/laravel/app/Builderset/Schemas.php
+</include>
+
+</Tab>
+<Tab title="The checker's client">
+
+Laravel's HTTP client with a short timeout. A checker that is down, slow, or too old to
+know a kit is an `ApiError` answered `503`:
+
+<include cwd lang="php" meta='title="app/Builderset/Checker.php"'>
+  ./snippets/backends/laravel/app/Builderset/Checker.php
+</include>
+
+</Tab>
+<Tab title="Issues and levels">
+<include cwd lang="php" meta='title="app/Builderset/Issue.php"'>
+  ./snippets/backends/laravel/app/Builderset/Issue.php
+</include>
+
+<include cwd lang="php" meta='title="app/Builderset/Level.php"'>
+  ./snippets/backends/laravel/app/Builderset/Level.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### One set of routes for five builders
+
+What the shared routes ask of a builder, by the word in its URL:
+
+<include cwd lang="php" meta='title="app/Enums/DocumentKind.php"'>
+  ./snippets/backends/laravel/app/Enums/DocumentKind.php
+</include>
+
+`DocumentController` is written once; Laravel binds `{kind}` to the enum, and an unknown
+one is a `404`. Each method reads the request and answers; the work is in `Documents`,
+which does what every write does in one transaction: write the row with who did it,
+keep a revision on a manual save or a publish, append an activity line. The checker is
+asked before the transaction starts, so no row stays locked while it answers. Lists
+answer `{ items, total }`, with `?status=`, `?q=`, `?limit=`, `?offset=`, and
+`?deleted=true` for the trash.
+
+<Tabs label="Document routes">
+<Tab title="Save a draft">
+
+The editor sends back the `saved_at` it last saw. The row is locked before it is
+compared, so someone else's save in between is a `409`, and the editor offers to reload
+or keep its own. A save without it is refused too, unless it is "keep mine" (`force`).
+An autosave becomes a revision at most every ten minutes and is never logged:
+
+<include cwd lang="php" meta='title="app/Services/Documents.php"'>
+  ./snippets/backends/laravel/app/Services/Documents.php#draft
+</include>
+
+</Tab>
+<Tab title="Publish">
+
+The strict check, then the document goes live with its meta copied to the columns, its
+version counted, a `publish` revision and an activity line. A form's address taken by
+another is refused on `meta.slug`, where the editor shows it:
+
+<include cwd lang="php" meta='title="app/Services/Documents.php"'>
+  ./snippets/backends/laravel/app/Services/Documents.php#publish
+</include>
+
+</Tab>
+<Tab title="Delete and restore">
+
+A soft delete. A published document is refused — unpublish it first — and a restore
+whose address another live row took meanwhile fails on the partial unique index, which
+`bootstrap/app.php` answers as `409`:
+
+<include cwd lang="php" meta='title="app/Services/Documents.php"'>
+  ./snippets/backends/laravel/app/Services/Documents.php#delete
+</include>
+
+</Tab>
+<Tab title="The whole service">
+<include cwd lang="php" meta='title="app/Services/Documents.php"'>
+  ./snippets/backends/laravel/app/Services/Documents.php
+</include>
+</Tab>
+<Tab title="The controller">
+<include cwd lang="php" meta='title="app/Http/Controllers/DocumentController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/DocumentController.php
+</include>
+
+<include cwd lang="php" meta='title="app/Http/Controllers/Controller.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/Controller.php
+</include>
+</Tab>
+</Tabs>
+
+The bodies are form requests. Laravel's input reads a JSON object as a PHP array and
+trims its strings, so a document is read from the raw body instead, as it was sent:
+
+<Tabs label="Requests">
+<Tab title="Shared">
+<include cwd lang="php" meta='title="app/Http/Requests/ApiRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/ApiRequest.php
+</include>
+</Tab>
+<Tab title="New">
+<include cwd lang="php" meta='title="app/Http/Requests/CreateDocumentRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/CreateDocumentRequest.php
+</include>
+</Tab>
+<Tab title="Draft">
+<include cwd lang="php" meta='title="app/Http/Requests/SaveDraftRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/SaveDraftRequest.php
+</include>
+</Tab>
+<Tab title="Publish">
+<include cwd lang="php" meta='title="app/Http/Requests/PublishRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/PublishRequest.php
+</include>
+</Tab>
+</Tabs>
+
+The answers are API resources: the `uuid` as `id`, no internal id, people as
+`{ id, name }`:
+
+<Tabs label="Answers">
+<Tab title="A row">
+<include cwd lang="php" meta='title="app/Http/Resources/RowResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/RowResource.php
+</include>
+</Tab>
+<Tab title="A line of a list">
+<include cwd lang="php" meta='title="app/Http/Resources/DocumentSummaryResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/DocumentSummaryResource.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### History
+
+A document's revisions — what it said — for the editor's version panel, and its
+activity — what happened to it — for a timeline of yours. A revision's `author` is a
+name; an activity's `actor` is `{ id, name }`:
+
+<Tabs label="History">
+<Tab title="Controller">
+<include cwd lang="php" meta='title="app/Http/Controllers/HistoryController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/HistoryController.php
+</include>
+</Tab>
+<Tab title="Answers">
+<include cwd lang="php" meta='title="app/Http/Resources/RevisionResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/RevisionResource.php
+</include>
+
+<include cwd lang="php" meta='title="app/Http/Resources/ActivityResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/ActivityResource.php
+</include>
+</Tab>
+<Tab title="Request">
+<include cwd lang="php" meta='title="app/Http/Requests/SaveRevisionRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/SaveRevisionRequest.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Forms and their responses
+
+The public side takes no sign-in. The answers are checked by the checker against the
+**published** document, never the draft; a filled trap field is answered as a success
+and stored nowhere; and only the `values` that `validateAnswers` keeps are stored. The
+count goes up in the same statement that checks `maxResponses`, so two visitors cannot
+both take the last place:
+
+<include cwd lang="php" meta='title="app/Http/Controllers/PublicFormController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/PublicFormController.php
+</include>
+
+Your team's side lists the responses, triages them with `PATCH` and deletes them
+softly; only your retention job deletes them for good. A response is found inside its
+form, so another form's id is a `404`:
+
+<Tabs label="Responses">
+<Tab title="Controller">
+<include cwd lang="php" meta='title="app/Http/Controllers/FormResponseController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/FormResponseController.php
+</include>
+</Tab>
+<Tab title="Requests">
+<include cwd lang="php" meta='title="app/Http/Requests/SubmitFormRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/SubmitFormRequest.php
+</include>
+
+<include cwd lang="php" meta='title="app/Http/Requests/TriageResponseRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/TriageResponseRequest.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Cards
+
+A card is issued from a published design only (`422` while it is a draft), and a
+member holds one card of a design that is not revoked: the partial unique index
+`card_issue_one_valid` refuses a second, answered `409`. Revoking keeps the row, so the
+number printed on the card still points at it:
+
+<Tabs label="Cards">
+<Tab title="Controller">
+<include cwd lang="php" meta='title="app/Http/Controllers/CardIssueController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/CardIssueController.php
+</include>
+</Tab>
+<Tab title="Request">
+<include cwd lang="php" meta='title="app/Http/Requests/IssueCardRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/IssueCardRequest.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### Popups
+
+Your site asks which popups may show on a page; the server answers from the indexed
+columns, the dates and the page rules, highest priority first, and `shouldShow` decides
+the rest in the browser. Events add to the day's counters in one upsert. A submission is
+checked by the checker with `validateSubmission`, against the live popup:
+
+<Tabs label="Popups">
+<Tab title="Public">
+<include cwd lang="php" meta='title="app/Http/Controllers/PublicPopupController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/PublicPopupController.php
+</include>
+</Tab>
+<Tab title="Pause">
+
+Pausing takes a popup off the site without touching its document: `{ paused: true }`,
+and `{ paused: false }` to put it back. A draft is a `409`:
+
+<include cwd lang="php" meta='title="app/Http/Controllers/PopupController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/PopupController.php
+</include>
+
+</Tab>
+<Tab title="Request">
+<include cwd lang="php" meta='title="app/Http/Requests/SubmitPopupRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/SubmitPopupRequest.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The library
+
+Saved sections, for the builders that have them, and uploads on Laravel's `public`
+disk. A file is known by its first bytes — PHP's fileinfo reads them — never by its
+name, and the same bytes uploaded twice are one `media` row. PHP refuses an upload past
+`upload_max_filesize` before Laravel sees it: raise it, and `post_max_size`, to the
+library's limit.
+
+<Tabs label="Library">
+<Tab title="Controller">
+<include cwd lang="php" meta='title="app/Http/Controllers/LibraryController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/LibraryController.php
+</include>
+</Tab>
+<Tab title="Requests">
+<include cwd lang="php" meta='title="app/Http/Requests/SaveSectionRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/SaveSectionRequest.php
+</include>
+
+<include cwd lang="php" meta='title="app/Http/Requests/UploadRequest.php"'>
+  ./snippets/backends/laravel/app/Http/Requests/UploadRequest.php
+</include>
+</Tab>
+<Tab title="Answers">
+<include cwd lang="php" meta='title="app/Http/Resources/SectionResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/SectionResource.php
+</include>
+
+<include cwd lang="php" meta='title="app/Http/Resources/MediaResource.php"'>
+  ./snippets/backends/laravel/app/Http/Resources/MediaResource.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### What leaves the server
+
+Your site's published article, and an email rendered for your mailer from the live
+document. Rendering is the email kit's, so it is the checker's too: the HTML is the one
+the editor previewed, and the browser never sends HTML.
+
+<Tabs label="Delivery">
+<Tab title="Articles">
+<include cwd lang="php" meta='title="app/Http/Controllers/PublicArticleController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/PublicArticleController.php
+</include>
+</Tab>
+<Tab title="Emails">
+<include cwd lang="php" meta='title="app/Http/Controllers/EmailController.php"'>
+  ./snippets/backends/laravel/app/Http/Controllers/EmailController.php
+</include>
+</Tab>
+</Tabs>
+
+</Step>
+<Step>
+
+### The routes
+
+Visitors' routes first, with their rate limits; then your team's, behind the sign-in.
+A response, a card issue and a popup's pause have their own routes; every builder gets
+its documents, its history and, where it has one, its library:
+
+<include cwd lang="php" meta='title="routes/api.php"'>
+  ./snippets/backends/laravel/routes/api.php
+</include>
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the document's address,
+`/api/articles/<uuid>`: the row's `uuid`, its public id. For forms, the same file has
+the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+</Step>
+</Steps>

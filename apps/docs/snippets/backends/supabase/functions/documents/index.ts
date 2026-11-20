@@ -1,5 +1,6 @@
 // The documents function: every route of the data model for your team, one
-// Edge Function. {kind} is emails, articles or forms; :id is a row's uuid.
+// Edge Function. {kind} is emails, articles, forms, cards or popups; :id is
+// a row's uuid.
 // Deploy it with `supabase functions deploy documents`.
 import { requireMember, requirePublisher } from '../_shared/auth.ts';
 import {
@@ -12,17 +13,19 @@ import {
   type Json,
 } from '../_shared/http.ts';
 import type { Call } from './call.ts';
+import * as cards from './cards.ts';
 import * as documents from './documents.ts';
 import * as history from './history.ts';
 import { kindOf } from './kinds.ts';
 import * as library from './library.ts';
+import * as popups from './popups.ts';
 import * as responses from './responses.ts';
 
 interface Route {
   method: string;
   path: string;
   handle: (call: Call) => Promise<Response>;
-  /** Publishing and unpublishing need the `publisher` role. */
+  /** Publishing, unpublishing and pausing need the `publisher` role. */
   publisher?: boolean;
 }
 
@@ -52,6 +55,13 @@ const ROUTES: Route[] = [
   { method: 'GET', path: 'forms/:id/responses', handle: responses.summary },
   { method: 'PATCH', path: 'forms/:id/responses/:responseId', handle: responses.triage },
   { method: 'DELETE', path: 'forms/:id/responses/:responseId', handle: responses.remove },
+
+  { method: 'GET', path: 'cards/:id/issues', handle: cards.listIssues },
+  { method: 'POST', path: 'cards/:id/issues', handle: cards.issueCard },
+  { method: 'GET', path: 'cards/:id/issues/:issueId', handle: cards.getIssue },
+  { method: 'POST', path: 'cards/:id/issues/:issueId/revoke', handle: cards.revokeIssue },
+
+  { method: 'PATCH', path: 'popups/:id/pause', handle: popups.pause, publisher: true },
 ];
 
 /** A file comes as multipart and is read by its route; everything else is JSON. */

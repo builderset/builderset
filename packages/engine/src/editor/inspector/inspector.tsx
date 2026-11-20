@@ -88,7 +88,8 @@ function Settings() {
 
 /** Several blocks: keep them as a section, or act on all of them at once. */
 function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
-  const { store, messages, host } = useEditorContext();
+  const { store, messages, host, profile } = useEditorContext();
+  const own = profile.selectionPanel?.({ ids }) ?? null;
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -132,6 +133,7 @@ function MultiInspector({ ids, label }: { ids: NodeId[]; label: string }) {
           <X aria-hidden="true" />
         </Button>
       </div>
+      {own}
       {host.saveSection ? (
         <form
           className="bst:grid bst:gap-1.5"

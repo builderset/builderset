@@ -56,9 +56,12 @@ def _new_columns(kind: Kind, body: NewDocument, user: User) -> dict[str, Any]:
         if not body.slug or not body.locale:
             raise InvalidInputError("A new article needs a slug and a locale.")
         return {"slug": body.slug, "locale": body.locale, "author": user}
-    # A form's address is unique, and a new form often has none yet: this holds
-    # its place until publishing copies document.meta.slug.
-    return {"slug": f"draft-{uuid4()}"}
+    if kind.kit == Kit.FORM:
+        # A form's address is unique, and a new form often has none yet: this
+        # holds its place until publishing copies document.meta.slug.
+        return {"slug": f"draft-{uuid4()}"}
+    # A card design or a popup takes everything from its document.
+    return {}
 
 
 def create_document(db: Session, kind: Kind, body: NewDocument, user: User) -> DocumentRow:
@@ -222,11 +225,12 @@ def _go_live(row: DocumentRow, user: User, later: datetime | None) -> None:
 
 # region lifecycle
 def unpublish(db: Session, kind: Kind, document_id: UUID, user: User) -> DocumentRow:
-    """Readers no longer get it; the document is kept. A form is closed instead:
-    its link keeps working and shows the closed message."""
+    """Readers no longer get it; the document is kept, and a paused popup goes
+    back to draft too. A form is closed instead: its link keeps working and
+    shows the closed message."""
     row = find(db, kind.model, document_id, lock=True)
     before = row.status
-    if before not in (Status.PUBLISHED, Status.SCHEDULED):
+    if before not in (Status.PUBLISHED, Status.SCHEDULED, Status.PAUSED):
         return row
     row.status = kind.unpublished
     if isinstance(row, Article):

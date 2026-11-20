@@ -1,0 +1,58 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "membership",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 3.18,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": []
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": []
+    }
+  },
+  "meta": {
+    "name": "Empty"
+  }
+}

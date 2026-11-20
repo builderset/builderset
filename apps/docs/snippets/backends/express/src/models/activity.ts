@@ -20,6 +20,9 @@ export const ACTIONS = [
   'scheduled', // set to go live later
   'unpublished', // back to draft
   'closed', // a form stopped taking responses
+  'paused', // a popup taken off the site, kept as it is
+  'issued', // a card made out to a member
+  'revoked', // a member's card cancelled
   'reverted', // a revision restored
   'status_changed', // a response's triage
   'deleted', // soft-deleted

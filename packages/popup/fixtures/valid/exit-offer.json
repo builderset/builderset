@@ -1,0 +1,270 @@
+{
+  "schema": "popup/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "type": "modal",
+        "width": 520,
+        "height": 340,
+        "position": "center",
+        "background": "#ffffff",
+        "radius": 18,
+        "shadow": "strong",
+        "overlay": 45,
+        "blur": true,
+        "display": {
+          "trigger": "exit",
+          "delay": 6,
+          "scroll": 50,
+          "selector": "",
+          "pages": "all",
+          "rules": [],
+          "audience": "all",
+          "language": "all",
+          "frequency": "days",
+          "days": 3,
+          "starts": "",
+          "ends": "",
+          "desktop": true,
+          "mobile": true,
+          "priority": 0
+        },
+        "motion": {
+          "enter": "up",
+          "duration": 360,
+          "exit": "fade",
+          "closeX": true,
+          "outside": true,
+          "esc": true,
+          "autoClose": 0
+        }
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6",
+        "n7",
+        "n8"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "rect",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 0,
+          "y": 0,
+          "w": 520,
+          "h": 8,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "radius": 0,
+        "stroke": "",
+        "strokeWidth": 1,
+        "opacity": 1
+      },
+      "name": "Accent"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "icon",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 40,
+          "w": 32,
+          "h": 32,
+          "r": 0
+        },
+        "name": "gift",
+        "color": "#e06a1b",
+        "strokeWidth": 2
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 76,
+          "y": 48,
+          "w": 300,
+          "h": 16,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "PARA SE TË LARGOHENI"
+          }
+        ],
+        "font": "poppins",
+        "size": 13,
+        "weight": 700,
+        "color": "#c2610c",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": 1.4,
+        "uppercase": true,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "heading",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 88,
+          "w": 456,
+          "h": 66,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Merrni 100 € më shumë për makinën tuaj"
+          }
+        ],
+        "font": "sora",
+        "size": 26,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left",
+        "lineHeight": 1.2,
+        "letterSpacing": -0.3,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n5": {
+      "id": "n5",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 162,
+          "w": 456,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Kërkoni vlerësimin sot dhe ne shtojmë 100 € në ofertën me shkrim. Vlen deri më {{offer.ends}}."
+          }
+        ],
+        "font": "poppins",
+        "size": 14,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "left",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "uppercase": false,
+        "highlight": "",
+        "highlightRadius": 0,
+        "action": "none",
+        "url": "",
+        "newTab": false
+      }
+    },
+    "n6": {
+      "id": "n6",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 32,
+          "y": 236,
+          "w": 220,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Merrni ofertën"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#ffffff",
+        "fill": "#e06a1b",
+        "radius": 10,
+        "action": "link",
+        "url": "/vleresim?oferta=100",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      }
+    },
+    "n7": {
+      "id": "n7",
+      "type": "button",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 268,
+          "y": 236,
+          "w": 220,
+          "h": 46,
+          "r": 0
+        },
+        "text": [
+          {
+            "text": "Jo, faleminderit"
+          }
+        ],
+        "font": "poppins",
+        "size": 15,
+        "weight": 600,
+        "color": "#111827",
+        "fill": "#f3f4f6",
+        "radius": 10,
+        "action": "close",
+        "url": "",
+        "newTab": false,
+        "thanks": "Thank you! We will be in touch soon."
+      },
+      "name": "No thanks"
+    },
+    "n8": {
+      "id": "n8",
+      "type": "close",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 478,
+          "y": 16,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "color": "#6b7280",
+        "fill": "#f3f4f6"
+      }
+    }
+  },
+  "meta": {
+    "name": "Ofertë në largim"
+  }
+}

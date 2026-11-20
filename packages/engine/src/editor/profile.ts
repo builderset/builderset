@@ -84,6 +84,15 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
    */
   canvasFrame?: 'page' | 'bare' | 'none' | undefined;
   /**
+   * The whole board in place of the engine's page canvas, for a kit whose
+   * elements are not a flow of blocks: a card or a popup, each element placed
+   * at its own x and y (see `FreeStage`). The stage handles selection, drops
+   * and moves itself; `renderCanvas` still draws the previews.
+   */
+  stage?: ComponentType | undefined;
+  /** Replaces the left rail's Layers tab (a free canvas lists the topmost first). */
+  layersPanel?: ComponentType | undefined;
+  /**
    * Draws a document as readers see it — no editing: the preview over the
    * editor, and the library's peek at a block. Without one, the canvas
    * renderer draws it with its text shown plain.
@@ -170,6 +179,11 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
    * Return null to fall back to the shared tabs for that block.
    */
   nodePanel?: ((args: { id: string; type: string }) => ReactNode) | undefined;
+  /**
+   * Drawn in the inspector above the actions on several selected blocks: a
+   * free canvas aligns and spreads them (`FreeArrange`).
+   */
+  selectionPanel?: ((args: { ids: readonly string[] }) => ReactNode) | undefined;
   /**
    * Whether a block may be removed. A block it refuses (a template's required
    * field) stays, and so does anything holding one; the editor says why with

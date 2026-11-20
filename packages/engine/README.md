@@ -131,6 +131,16 @@ The look is twenty-one CSS variables, each with a light and a dark default; [src
 | `onChange` | `(value: string \| null) => void` | yes      | Called with a hex value, a token's value, or `null` for none.                    |
 | `nullable` | `boolean`                         | yes      | Offers a "none" swatch first, which clears the colour.                           |
 
+#### `DockToggle`
+
+| Prop              | Type                         | Required | What it does |
+| ----------------- | ---------------------------- | -------- | ------------ |
+| `label`           | `string`                     | yes      |              |
+| `keys`            | `string`                     |          |              |
+| `pressed`         | `boolean`                    | yes      |              |
+| `onPressedChange` | `(pressed: boolean) => void` | yes      |              |
+| `children`        | `ReactNode`                  | yes      | The icon.    |
+
 #### `FontField`
 
 | Prop       | Type                              | Required | What it does                                                                       |
@@ -138,6 +148,58 @@ The look is twenty-one CSS variables, each with a light and a dark default; [src
 | `value`    | `string \| null`                  | yes      | The selected font's key, from the profile's fonts; empty means the inherited font. |
 | `onChange` | `(value: string \| null) => void` | yes      | Called with the picked font's key, or `null` for the inherited font.               |
 | `nullable` | `boolean`                         | yes      | Offers the inherited font at the top of the list, which clears the choice.         |
+
+#### `FreeArrange`
+
+| Prop       | Type                | Required | What it does                                                                          |
+| ---------- | ------------------- | -------- | ------------------------------------------------------------------------------------- |
+| `ids`      | `readonly string[]` | yes      | The selected elements.                                                                |
+| `artboard` | `FreeBoard`         | yes      | The artboard they sit on: one element aligns to it.                                   |
+| `title`    | `ReactNode`         |          | Replaces the alignment heading ("Align to card").                                     |
+| `decimals` | `number`            |          | The unit's decimals, so aligned frames are rounded as the kit keeps them. Default: 2. |
+
+#### `FreeLayersPanel`
+
+| Prop         | Type                               | Required | What it does                                                           |
+| ------------ | ---------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `artboardId` | `string`                           | yes      | The artboard whose elements are listed.                                |
+| `summary`    | `ReactNode`                        |          | Over the rows, on the left: "Front · 12 layers". Default: "12 layers". |
+| `hint`       | `ReactNode`                        |          | Under the rows. Default: how to restack and rename.                    |
+| `iconOf`     | `(node: BuilderNode) => ReactNode` |          | A row's icon. Default: the element's registry icon.                    |
+| `previewOf`  | `(node: BuilderNode) => string`    |          | A row's text after the name. Default: `props.text` as plain text.      |
+
+#### `FreeLayoutFields`
+
+| Prop   | Type       | Required | What it does |
+| ------ | ---------- | -------- | ------------ |
+| `id`   | `string`   | yes      |              |
+| `unit` | `FreeUnit` | yes      |              |
+
+#### `FreeStage`
+
+| Prop            | Type                                                     | Required | What it does                                                                                                       |
+| --------------- | -------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| `artboard`      | `FreeArtboard`                                           | yes      |                                                                                                                    |
+| `unit`          | `FreeUnit`                                               | yes      |                                                                                                                    |
+| `renderElement` | `(node: BuilderNode, args: FreeRenderArgs) => ReactNode` | yes      | The element's content, filling its frame (a box of `w × px` by `h × px` CSS pixels).                               |
+| `editable`      | `(node: BuilderNode) => boolean`                         |          | Double-click or Enter starts editing its text (sets the store's `editingId`). Default: never.                      |
+| `keepRatio`     | `(node: BuilderNode) => boolean`                         |          | Resizing keeps its proportions without Shift (a QR code, a photo). Default: never.                                 |
+| `sizeOf`        | `FreeSizeOf`                                             | yes      | A new element's size when dropped from the library.                                                                |
+| `guides`        | `boolean`                                                | yes      | Draw the pink snap guides while moving, and snap to `snapX`/`snapY`. Edges, centre and other elements always snap. |
+| `caption`       | `ReactNode`                                              |          | Above / below the artboard: "Front · working view, not to scale" / "Flip to back · F".                             |
+| `footer`        | `ReactNode`                                              |          |                                                                                                                    |
+| `label`         | `string`                                                 |          | The stage region's accessible name. Default: the editor's `free.stage` word.                                       |
+| `snapThreshold` | `number`                                                 |          | How close, in SCREEN pixels, an edge must come to a line to snap to it. Default: 6.                                |
+
+#### `IssueList`
+
+| Prop     | Type               | Required | What it does |
+| -------- | ------------------ | -------- | ------------ |
+| `issues` | `readonly Issue[]` | yes      |              |
+
+#### `LanguageBar`
+
+No props.
 
 #### `LanguageSwitch`
 
@@ -177,6 +239,13 @@ No props.
 | `size`          | `"md" \| "sm"`                    |          | `sm` is a shorter box with narrower buttons, for tight rows. Default: `'md'`.                                         |
 | `className`     | `string`                          |          | Applied to the outer box.                                                                                             |
 
+#### `ReadyCard`
+
+| Prop     | Type               | Required | What it does |
+| -------- | ------------------ | -------- | ------------ |
+| `issues` | `readonly Issue[]` | yes      |              |
+| `action` | `string`           | yes      |              |
+
 #### `RichTextInput`
 
 | Prop        | Type                        | Required | What it does                                                                |
@@ -193,6 +262,13 @@ No props.
 | `name`     | `string`                   | yes      | The prop's name, which picks the field's label.                               |
 | `value`    | `Padding`                  | yes      | The four sides, in pixels.                                                    |
 | `onChange` | `(value: Padding) => void` | yes      | Called with all four sides on each change, each a whole number from 0 to 160. |
+
+#### `TemplateGallery`
+
+| Prop    | Type               | Required | What it does                                                                                                                                                                                             |
+| ------- | ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `look`  | `"grid" \| "list"` |          | `list`: a row per template with a sketch of its blocks (an article's). `grid`: two columns of cards showing the template itself, scaled down (an email's, where the look is the point). Default: `list`. |
+| `title` | `string`           |          | Above the gallery. Default: the editor's "Start from a template".                                                                                                                                        |
 
 <!-- /props -->
 
@@ -404,6 +480,17 @@ Plus the props of the element it draws (React).
 | `options`       | `readonly SegmentedOption<T>[]` | yes      | The choices, in order.                                                                     |
 | `className`     | `string`                        |          | Applied to the group.                                                                      |
 | `aria-label`    | `string`                        |          | The accessible name, when there is no visible label.                                       |
+
+#### `SegmentedTabs`
+
+| Prop            | Type                         | Required | What it does                                                           |
+| --------------- | ---------------------------- | -------- | ---------------------------------------------------------------------- |
+| `value`         | `T`                          | yes      |                                                                        |
+| `onValueChange` | `(value: T) => void`         | yes      |                                                                        |
+| `tabs`          | `readonly SegmentedTab<T>[]` | yes      |                                                                        |
+| `stacked`       | `boolean`                    |          | The icon above the label rather than beside it: a panel's main switch. |
+| `className`     | `string`                     |          |                                                                        |
+| `aria-label`    | `string`                     |          |                                                                        |
 
 #### `Select`
 

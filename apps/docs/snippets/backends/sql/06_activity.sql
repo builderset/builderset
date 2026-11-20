@@ -14,6 +14,7 @@ create table activity (
   -- What it happened to
   subject_type varchar(30) not null check (subject_type in (
                  'email_template', 'article', 'form', 'form_response',
+                 'card_design', 'card_issue', 'popup', 'popup_submission',
                  'saved_section', 'media')),
   subject_id   bigint not null,
 
@@ -26,6 +27,9 @@ create table activity (
                  'scheduled',       -- set to go live later
                  'unpublished',     -- back to draft
                  'closed',          -- a form stopped taking responses
+                 'paused',          -- a popup taken off the site, kept as it is
+                 'issued',          -- a card made out to a member
+                 'revoked',         -- a member's card cancelled
                  'reverted',        -- a revision restored
                  'status_changed',  -- a response's triage
                  'deleted',         -- soft-deleted

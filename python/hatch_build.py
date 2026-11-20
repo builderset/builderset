@@ -22,6 +22,8 @@ ASSETS = (
     ("packages/email/schema/email.schema.json", "email/schema.json"),
     ("packages/email/fixtures/render_data.json", "email/render_data.json"),
     ("packages/form/schema/form.schema.json", "form/schema.json"),
+    ("packages/card/schema/card.schema.json", "card/schema.json"),
+    ("packages/popup/schema/popup.schema.json", "popup/schema.json"),
 )
 
 

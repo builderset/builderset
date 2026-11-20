@@ -1,0 +1,10 @@
+/*
+ * The form kit's stylesheet, inside the `builderset` layer. Each kit's sheet
+ * carries the engine's reset, and several kits load on this page, in whatever
+ * order the visitor meets them: layered, a later reset can only reach other
+ * layered rules.
+ * Its own look (`form.css`, plain CSS under one class) comes again, unlayered:
+ * it wins over every kit's reset, whatever the order.
+ */
+@import '@builderset/form/styles.css' layer(builderset);
+@import '@builderset/form/form.css';

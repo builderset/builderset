@@ -1,11 +1,13 @@
 # builderset (Python)
 
-Validate Builderset documents and form answers, and render emails, in Python —
-the server side of the [Builderset](../README.md) builders. It checks an article,
-an email or a form the way the TypeScript packages do, with the same error codes;
-checks a form's answers exactly as the browser did; and renders an email to the
-same HTML and text, byte for byte: the email a backend sends is the one the
-editor previewed.
+Validate Builderset documents, form answers and popup submissions, and render
+emails, in Python — the server side of the [Builderset](../README.md) builders.
+It checks an article, an email, a form, a card or a popup the way the TypeScript
+packages do, with the same error codes; checks a form's answers and a popup's
+submission exactly as the browser did; fills a card with a member's data;
+decides whether a popup shows with the browser's own rules; and renders an email
+to the same HTML and text, byte for byte: the email a backend sends is the one
+the editor previewed.
 
 Same version as the npm packages, released together. Until Builderset is
 public, the wheel is attached to each GitHub release rather than published to
@@ -95,6 +97,65 @@ the other takes.
 
 There is no form renderer in Python: the form renderer is React
 (`@builderset/form/render`).
+
+## Cards
+
+```python
+from builderset.card import check_card, fields_used, fill_card, is_print_blocking
+
+issues = check_card(design, locales=["sq", "en"], check_media_key=media_rule)
+if any(is_print_blocking(issue) for issue in issues):
+    raise ValueError([issue.as_dict() for issue in issues])
+
+needed = fields_used(design)  # ["member.name", "member.number", …]
+card = fill_card(design, {"member.name": "Arben Hoxha", "member.number": "MA 0248 1173"})
+```
+
+`check_card(document, *, fields, locales, check_media_key)` reports `checkCard`'s
+codes: text or a code outside the safe area, text under 6 pt, a QR code under
+15 mm, a bank card without its chip, an unsafe link in a QR code, a field the
+project does not have (`fields`, default the example member fields). A draft may
+still carry `DRAFT_TOLERATES` (`is_draft_blocking`); approving it for print
+refuses every error (`is_print_blocking`).
+
+`fill_card(document, record)` returns a copy with the member's values written
+in — the card a member holds, frozen when it is issued — with the same rules as
+`CardView` in the browser; `fields_used` lists the fields the printed sides use.
+
+## Popups
+
+```python
+from builderset.popup import check_popup, pick_popup, should_show, validate_submission
+
+issues = check_popup(popup, locales=["sq", "en"])
+
+context = {
+    "path": "/blog/shitja",
+    "device": "mobile",
+    "language": "sq",
+    "returning": False,
+    "now": now_ms,
+    "seen": {},
+}
+if should_show(popup, context):
+    ...
+best = pick_popup(live_popups, context)  # the highest display.priority that shows
+
+result = validate_submission(popup, body["values"])
+if not result.ok:
+    return 422, result.as_dict()["errors"]
+store(result.values)  # the inputs the popup asks, nothing else
+```
+
+`check_popup(document, *, locales, variables, check_media_key)` reports
+`checkPopup`'s codes: no way to close it, a button without a link, an input
+without a name or two with one, shown on every visit, an interstitial on page
+load. `should_show` and `why_hidden` are the browser's `shouldShow` and
+`whyHidden`: the device, the dates, the pages (`*` for any part of an address),
+the audience, the language and how often, with the context's TypeScript names —
+`path`, `device`, `language`, `returning`, `now` (milliseconds), `today`, `seen`
+and `session`. `validate_submission(popup, values)` keeps the answers to the
+inputs the popup asks and checks each one as the browser did.
 
 ## Media keys are your rule
 

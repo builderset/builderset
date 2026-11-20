@@ -7,6 +7,17 @@ import {
   type ArticleDocument,
 } from '@builderset/article';
 import {
+  checkCard,
+  createCardRegistry,
+  FIELD_PATH,
+  fieldsUsed,
+  isDraftBlocking as cardDraftBlocks,
+  isPrintBlocking as cardPrintBlocks,
+  parseCard,
+  type CardDocument,
+  type CardRecord,
+} from '@builderset/card';
+import {
   checkEmail,
   createEmailRegistry,
   isDraftBlocking as emailDraftBlocks,
@@ -24,6 +35,14 @@ import {
   parseForm,
   type FormDocument,
 } from '@builderset/form';
+import {
+  checkPopup,
+  createPopupRegistry,
+  isDraftBlocking as popupDraftBlocks,
+  isPublishBlocking as popupPublishBlocks,
+  parsePopup,
+  type PopupDocument,
+} from '@builderset/popup';
 
 import { refused } from './http';
 
@@ -48,6 +67,8 @@ const registries = {
   email: createEmailRegistry(),
   article: createArticleRegistry(),
   form: createFormRegistry(),
+  card: createCardRegistry(),
+  popup: createPopupRegistry(),
 };
 export type Kit = keyof typeof registries;
 
@@ -94,6 +115,47 @@ export function checkFormDocument(raw: unknown, level: Level): Checked<FormDocum
   if (checked.ok && level === 'publish' && !checked.document.meta.slug)
     return { ok: false, issues: [error('meta.slugMissing', { path: 'meta.slug' })] };
   return checked;
+}
+
+/** A card's "publish" is approving it for print: `isPrintBlocking` is that level. */
+export function checkCardDocument(raw: unknown, level: Level): Checked<CardDocument> {
+  const document = parseCard(raw, registries.card);
+  const issues = checkCard(raw as CardDocument, registries.card, { locales: LOCALES });
+  return verdict(document, issues, level === 'draft' ? cardDraftBlocks : cardPrintBlocks);
+}
+
+export function checkPopupDocument(raw: unknown, level: Level): Checked<PopupDocument> {
+  const document = parsePopup(raw, registries.popup);
+  const issues = checkPopup(raw as PopupDocument, registries.popup, { locales: LOCALES });
+  return verdict(document, issues, level === 'draft' ? popupDraftBlocks : popupPublishBlocks);
+}
+
+/** The longest value a card's field takes: a name, a number, a photo's address. */
+const FIELD_MAX_LENGTH = 500;
+
+/**
+ * What a card is filled in with when it is issued: a flat map from a field's
+ * path to its text, as the card kit reads it. Every field the design prints
+ * must be there, so no card leaves with `{{member.name}}` on it; fields it
+ * does not print are dropped before they are frozen into the card.
+ */
+export function checkCardData(raw: unknown, design: CardDocument): Checked<CardRecord> {
+  const given =
+    typeof raw === 'object' && raw !== null && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
+  const issues: Issue[] = [];
+  for (const [path, value] of Object.entries(given)) {
+    if (!FIELD_PATH.test(path) || typeof value !== 'string' || value.length > FIELD_MAX_LENGTH)
+      issues.push(error('data.fieldInvalid', { path: `data.${path}` }));
+  }
+  const data: Record<string, string> = {};
+  for (const path of fieldsUsed(design)) {
+    const value = Object.hasOwn(given, path) ? given[path] : undefined;
+    if (typeof value === 'string' && value.trim()) data[path] = value.trim();
+    else issues.push(error('data.fieldMissing', { path: `data.${path}` }));
+  }
+  return issues.length ? { ok: false, issues } : { ok: true, document: data };
 }
 
 /**

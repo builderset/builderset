@@ -1,0 +1,150 @@
+{
+  "empty.json": {
+    "errors": [
+      "popup.empty"
+    ],
+    "warnings": []
+  },
+  "no-close.json": {
+    "errors": [
+      "popup.noClose"
+    ],
+    "warnings": []
+  },
+  "close-hidden-by-setting.json": {
+    "errors": [
+      "popup.noClose"
+    ],
+    "warnings": []
+  },
+  "link-missing.json": {
+    "errors": [
+      "action.linkMissing"
+    ],
+    "warnings": []
+  },
+  "unsafe-button-link.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": [
+      "input.noSubmit"
+    ]
+  },
+  "unsafe-text-link.json": {
+    "errors": [
+      "url.unsafe"
+    ],
+    "warnings": []
+  },
+  "input-name-missing.json": {
+    "errors": [
+      "input.nameMissing"
+    ],
+    "warnings": []
+  },
+  "input-name-duplicate.json": {
+    "errors": [
+      "input.nameDuplicate"
+    ],
+    "warnings": []
+  },
+  "no-device.json": {
+    "errors": [
+      "display.noDevice"
+    ],
+    "warnings": []
+  },
+  "selector-missing.json": {
+    "errors": [
+      "display.selectorMissing"
+    ],
+    "warnings": []
+  },
+  "pages-missing.json": {
+    "errors": [
+      "display.pagesMissing"
+    ],
+    "warnings": []
+  },
+  "rule-invalid.json": {
+    "errors": [
+      "display.ruleInvalid"
+    ],
+    "warnings": []
+  },
+  "dates-invalid.json": {
+    "errors": [
+      "display.datesInvalid"
+    ],
+    "warnings": []
+  },
+  "missing-child.json": {
+    "errors": [
+      "document.missingChild"
+    ],
+    "warnings": []
+  },
+  "orphan.json": {
+    "errors": [
+      "document.orphan"
+    ],
+    "warnings": []
+  },
+  "unknown-element.json": {
+    "errors": [
+      "element.unknown"
+    ],
+    "warnings": []
+  },
+  "frame-missing.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "props-wrong-type.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "name-malformed.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "format-malformed.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "not-a-popup.json": {
+    "errors": [
+      "document.malformed"
+    ],
+    "warnings": []
+  },
+  "translation-too-long.json": {
+    "errors": [
+      "props.invalid"
+    ],
+    "warnings": []
+  },
+  "every-warning.json": {
+    "errors": [
+      "action.linkMissing"
+    ],
+    "warnings": [
+      "display.everyVisit",
+      "display.interstitial",
+      "element.outside",
+      "image.altMissing",
+      "input.labelMissing",
+      "input.noSubmit",
+      "variable.unknown"
+    ]
+  }
+}

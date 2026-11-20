@@ -9,7 +9,7 @@ import type { Action } from './activity';
 import type { Audited, PersonColumn } from './base';
 
 /**
- * What the three document tables share: the live document, the draft since,
+ * What the five document tables share: the live document, the draft since,
  * and the two clocks. `updated_at` follows any change to the row; `saved_at`
  * only a write of the document, and is what the editor sends back to catch a
  * stale save.
@@ -20,7 +20,7 @@ export interface DocumentColumns<D, S extends string> {
   /** Work in progress since the last publish; null when there is none. */
   draft_document: D | null;
   saved_at: Date;
-  /** Counts publishes: a revision and a form response record the one they belong to. */
+  /** Counts publishes: a revision, a form response and a card record the one they belong to. */
   version: number;
   published_at: Date | null;
   published_by_id: number | null;
@@ -31,8 +31,17 @@ export type DocumentRow<D = EngineDocument> = Audited & DocumentColumns<D, strin
 /** In front of readers. Deleting a published document is refused: unpublish it first. */
 export const PUBLISHED = 'published';
 
-/** What unpublishing takes back: live now, or set to go live. */
-export const UNPUBLISHABLE: readonly string[] = ['published', 'scheduled'];
+/** What unpublishing takes back: live now, set to go live, or a popup paused. */
+export const UNPUBLISHABLE: readonly string[] = ['published', 'scheduled', 'paused'];
+
+/** The tables that keep a document. Each has its own revisions table, with a real foreign key. */
+export type DocumentTable = 'email_template' | 'article' | 'form' | 'card_design' | 'popup';
+
+/** Where a document's revisions are: `form_revision`, by `form_id`. */
+export interface RevisionTarget {
+  table: `${DocumentTable}_revision`;
+  parent: `${DocumentTable}_id`;
+}
 
 // ── Revisions ────────────────────────────────────────────────────────────────
 
@@ -68,11 +77,8 @@ export interface Transition<S extends string> {
  * request ever is.
  */
 export interface DocumentModel<D extends EngineDocument, R extends DocumentRow<D>> {
-  table: 'email_template' | 'article' | 'form';
-  revisions: {
-    table: 'email_template_revision' | 'article_revision' | 'form_revision';
-    parent: 'email_template_id' | 'article_id' | 'form_id';
-  };
+  table: DocumentTable;
+  revisions: RevisionTarget;
   kit: Kit;
   noun: string;
   statuses: readonly R['status'][];

@@ -1,12 +1,12 @@
 ---
 title: Engine
-description: For people building a kit — an element's definition, the registry, the operations, and the editor profile a kit supplies.
+description: For people building a kit — an element's definition, the registry, the operations, the editor profile a kit supplies, and the free canvas a card or a popup is built on.
 ---
 
 _This page describes Builderset 0.4.0._
 
 A project uses a kit and rarely needs this page. A [custom element](/docs/guides/custom-elements)
-is an `ElementDefinition`; a new kit (popups, pages) is a set of them plus an
+is an `ElementDefinition`; a new kit (pages, slides) is a set of them plus an
 `EditorProfile`.
 
 ## An element
@@ -34,3 +34,98 @@ kind of document. A kit supplies the parts that are not:
 <include cwd lang="ts" meta='title="@builderset/engine/editor — EditorProfile"'>
   ../../packages/engine/src/editor/profile.ts#profile
 </include>
+
+Most of it is one function or component. Five parts change what kind of editor it is:
+
+| Part             | What it does                                                                                                                            |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `canvasFrame`    | `page` (an article's reading measure), `bare` (the renderer draws the whole page: an email's backdrop), `none` (the kit draws its own card: a form) |
+| `stage`          | The whole board in place of the page canvas: a [free canvas](#a-free-canvas), elements at their own x and y — a card, a popup              |
+| `layersPanel`    | The left rail's Layers tab, in place of the tree: a free canvas lists the topmost element first                                          |
+| `nodePanel`      | The inspector's body for one selected element, in place of the shared Content, Style and Advanced tabs. Return `null` to keep them       |
+| `selectionPanel` | Drawn in the inspector above the actions on several selected elements: aligning and spreading them                                       |
+
+## A free canvas
+
+For a kit whose elements are not a flow of blocks but sit at their own place — a
+card's logo, a popup's button. The engine draws the artboard, the elements (through
+the kit's `renderElement`), the selection with its eight handles and the rotate
+handle, the snap guides, the marquee, the drop from the library, the layers, and the
+arrange and layout fields. The kit supplies the document, the elements' look and its
+units. The [card](/docs/guides/card) and [popup](/docs/guides/popup) kits are built
+this way.
+
+### The document
+
+The artboard is a container node — a card's side, a popup's root. Its children are
+the placed elements, in stacking order: the last one is on top. Every placed element
+has `props.frame`, in the kit's units from the artboard's top-left corner, turned
+clockwise about its centre:
+
+<include cwd lang="ts" meta='title="@builderset/engine — FreeFrame"'>
+  ../../packages/engine/src/core/frame.ts#frame
+</include>
+
+Put `frame: freeFrameSchema` in the element's props schema and
+`frame: { ...UNPLACED_FRAME }` in its defaults: a frame with no size has not been
+placed yet, and `placeNewNodes` gives it one when it is added. The node's own
+`hidden`, `locked` and `name` are used: hidden elements are dimmed on the stage,
+locked ones can be selected but not moved, and the name is the layer's.
+
+<include cwd lang="tsx" meta='title="sticker.tsx"'>
+  ./snippets/guides/free-canvas.tsx#element
+</include>
+
+`frameOf`, `frameBounds`, `isPlaced` and `normalizeAngle` are in the core too, for a
+kit's checks and its server-side renderer: no React.
+
+### The stage and its panels
+
+`FreeStage` takes the artboard (its id and size, corners, background, bleed, extra
+snap lines, and layers under and over the elements that never catch the pointer),
+the unit, and how to draw an element. Inside the artboard one unit is `unit.px` CSS
+pixels at every zoom: the kit draws at natural size. `FreeLayersPanel` is the Layers
+tab, `FreeArrange` aligns and spreads a selection, and `FreeLayoutFields` edits one
+element's place, size, rotation, lock and name:
+
+<include cwd lang="tsx" meta='title="sticker.tsx"'>
+  ./snippets/guides/free-canvas.tsx#stage
+</include>
+
+And their place in the profile:
+
+<include cwd lang="tsx" meta='title="sticker.tsx"'>
+  ./snippets/guides/free-canvas.tsx#profile
+</include>
+
+Every prop of `FreeStage`, `FreeLayersPanel`, `FreeArrange` and `FreeLayoutFields`
+is in [Props](/docs/reference/props#freestage). The shapes they take:
+
+<include cwd lang="ts" meta='title="@builderset/engine/editor — the free canvas"'>
+  ../../packages/engine/src/editor/free/types.ts
+</include>
+
+### What the stage does
+
+- **Select**: click; Shift, Ctrl or ⌘ adds or removes; drag on the empty artboard
+  for a marquee; Escape clears; Ctrl/⌘ A selects every visible, unlocked element.
+- **Move**: drag. Shift keeps to one axis; Alt does not snap. The selection snaps to
+  the artboard's edges and centre, to `snapX`/`snapY` and to the other elements,
+  with guides, and a tooltip says where it is in the unit ("X 12.5 mm Y 4 mm").
+- **Resize** with eight handles, also on a rotated element; Shift or `keepRatio`
+  keeps the proportions. **Rotate** with the round handle: it snaps to 0, 45, 90…;
+  Shift snaps to 15° steps.
+- **Keyboard**: the arrows nudge by `unit.nudge`, Shift by `unit.bigNudge`, and a
+  held arrow is one undo step; Enter or a double-click edits text (`editable`);
+  Ctrl/⌘ ] and [ restack. Each element is focusable and the stage is a labelled
+  region; moves are announced.
+- **Drop** from the library: a box the element's size (`sizeOf`) follows the
+  pointer, snapping as a move does, and the element lands at that frame.
+- One drag, resize, rotate or marquee is **one undo step**.
+
+The functions under the panels work on a draft, one undo step each inside
+`updateDocument`: `placeNewNodes`, `alignNodes`, `distributeNodes`, `moveFramesBy`
+and `writeFrame`; `useFreeCommands(decimals)` wraps them for a component. The
+geometry — `snapAxis`, `resizeFrame`, `rotateFrom`, `unionBounds`, `formatUnit` — is
+pure. The words are `messages.free.*` in the editor's locales; a host overrides any
+through `messages`.

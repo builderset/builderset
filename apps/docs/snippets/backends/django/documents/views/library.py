@@ -19,9 +19,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..audit import actor_of, record_activity, soft_delete, stamp
-from ..errors import NotAccepted, Refused, TooLarge, find
+from ..errors import Missing, NotAccepted, Refused, TooLarge, find
 from ..kinds import Kind
-from ..models import Action, Media, MediaKind, SavedSection
+from ..models import SECTION_KITS, Action, Kit, Media, MediaKind, SavedSection
 from ..permissions import StaffView
 from ..serializers import MediaSerializer, SectionSerializer
 from .common import body_of
@@ -44,22 +44,29 @@ def section_issues(name: Any, fragment: Any) -> list[dict[str, str]]:
     return issues
 
 
+def library_of(kind: Kind) -> Kit:
+    """The kit whose sections the path names. Cards and popups keep none: 404."""
+    if kind.kit not in SECTION_KITS:
+        raise Missing(message=f"A {kind.noun} has no saved sections.")
+    return kind.kit
+
+
 class Sections(StaffView):
     """GET /api/{kind}/sections: the editor's ``loadSections``. POST: ``saveSection``."""
 
     model = SavedSection
 
     def get(self, request: Request, kind: Kind) -> Response:
-        sections = SavedSection.objects.live().filter(kit=kind.kit).order_by("name")
+        sections = SavedSection.objects.live().filter(kit=library_of(kind)).order_by("name")
         return Response(SectionSerializer(sections, many=True).data)
 
     @transaction.atomic
     def post(self, request: Request, kind: Kind) -> Response:
-        body, actor = body_of(request), actor_of(request)
+        kit, body, actor = library_of(kind), body_of(request), actor_of(request)
         name, fragment = body.get("name"), body.get("fragment")
         if issues := section_issues(name, fragment):
             raise Refused(issues=issues)
-        section = SavedSection(kit=kind.kit, name=name.strip(), fragment=fragment)
+        section = SavedSection(kit=kit, name=name.strip(), fragment=fragment)
         stamp(section, actor)
         section.save()
         record_activity(section, Action.CREATED, actor)
@@ -74,7 +81,7 @@ class SectionDetail(StaffView):
 
     @transaction.atomic
     def delete(self, request: Request, kind: Kind, section_id: UUID) -> Response:
-        sections = SavedSection.objects.live().select_for_update().filter(kit=kind.kit)
+        sections = SavedSection.objects.live().select_for_update().filter(kit=library_of(kind))
         soft_delete(find(sections, "section", uuid=section_id), actor_of(request))
         return Response(status=204)
 

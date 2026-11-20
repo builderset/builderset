@@ -8,7 +8,8 @@ Two different things are called language here:
 - **The editor's language** — its buttons, menus and messages. English is built in;
   Albanian (`sq`) and German (`de`) come with each kit.
 - **The content's languages** — the languages a document itself is written in. An
-  email can carry its text in several; a reader gets theirs.
+  email, an article, a form, a card or a popup can carry its text in several; a
+  reader gets theirs.
 
 _This page describes Builderset 0.4.0._
 
@@ -31,8 +32,9 @@ _This page describes Builderset 0.4.0._
 
 ## Rendering a language
 
-`renderEmail(document, { locale: 'de' })` and `<ArticleRenderer locale="de" />`
-pick the content's language. Words not yet translated read in the document's base
+`renderEmail(document, { locale: 'de' })`, `<ArticleRenderer locale="de" />`,
+`<FormView locale="de" />` and `<PopupView locale="de" />` pick the content's
+language. Words not yet translated read in the document's base
 language rather than disappearing.
 
 Dates and numbers inside an email are formatted for `sq`, `en` and `de` today, in

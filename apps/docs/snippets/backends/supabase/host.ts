@@ -2,6 +2,7 @@ import type { EngineDocument } from '@builderset/engine';
 import { createRestHost } from '@builderset/engine/host';
 import type { FormResponses } from '@builderset/form/editor';
 import type { FormSubmission } from '@builderset/form/render';
+import type { PopupEvent } from '@builderset/popup/render';
 
 /** Your Supabase project, as the browser knows it. */
 export interface SupabaseProject {
@@ -16,8 +17,8 @@ export interface SupabaseProject {
   accessToken: () => Promise<string | undefined>;
 }
 
-/** The three builders' routes differ only in this segment. */
-export type DocumentKind = 'emails' | 'articles' | 'forms';
+/** The five builders' routes differ only in this segment. */
+export type DocumentKind = 'emails' | 'articles' | 'forms' | 'cards' | 'popups';
 
 /** The user's token when signed in; the anon key, which is no user, when not. */
 async function authHeaders(project: SupabaseProject): Promise<Record<string, string>> {
@@ -106,5 +107,45 @@ export async function loadResponses(
       // The tab shows "when" as words; the server sends the instant.
       when: new Date(row.when).toLocaleString(),
     })),
+  };
+}
+
+/**
+ * PopupView's `onEvent` and `onSubmit`, on your site:
+ * `<PopupView document={popup.document} {...popupHandlers(project, popup.id)} />`.
+ * An event goes straight to record_popup_event through the REST API; a
+ * submission to the popups function, which checks it again.
+ */
+export function popupHandlers(project: SupabaseProject, popupId: string) {
+  return {
+    onEvent(event: PopupEvent) {
+      // keepalive: the count still arrives when the visitor leaves the page.
+      void fetch(`${project.url}/rest/v1/rpc/record_popup_event`, {
+        method: 'POST',
+        keepalive: true,
+        headers: {
+          apikey: project.anonKey,
+          Authorization: `Bearer ${project.anonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ p_popup: popupId, p_event: event }),
+      });
+    },
+    async onSubmit(values: Record<string, string>) {
+      const response = await fetch(
+        functionUrl(project, `popups/${encodeURIComponent(popupId)}/submissions`),
+        {
+          method: 'POST',
+          headers: { ...(await authHeaders(project)), 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            values,
+            path: location.pathname,
+            locale: document.documentElement.lang || null,
+          }),
+        },
+      );
+      // false keeps the visitor on the popup, answers and all.
+      return response.ok;
+    },
   };
 }

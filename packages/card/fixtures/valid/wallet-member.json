@@ -1,0 +1,284 @@
+{
+  "schema": "card/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {
+        "format": "wallet",
+        "width": 85.6,
+        "height": 53.98,
+        "radius": 4,
+        "sides": 2,
+        "print": {
+          "bleed": 3,
+          "safe": 3,
+          "dpi": 300,
+          "colour": "cmyk",
+          "material": "pvc",
+          "finish": "matte",
+          "quantity": 250
+        },
+        "source": ""
+      },
+      "children": [
+        "front",
+        "back"
+      ]
+    },
+    "front": {
+      "id": "front",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "front",
+        "background": "#111827",
+        "image": null
+      },
+      "children": [
+        "n1",
+        "n2",
+        "n3",
+        "n4",
+        "n5",
+        "n6"
+      ]
+    },
+    "back": {
+      "id": "back",
+      "type": "side",
+      "v": 1,
+      "props": {
+        "face": "back",
+        "background": "#ffffff",
+        "image": null
+      },
+      "children": [
+        "n7",
+        "n8",
+        "n9"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "ellipse",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 55,
+          "y": -25,
+          "w": 50,
+          "h": 50,
+          "r": 0
+        },
+        "fill": "#e06a1b",
+        "stroke": "",
+        "strokeWidth": 0,
+        "opacity": 1
+      },
+      "name": "Orange circle"
+    },
+    "n2": {
+      "id": "n2",
+      "type": "logo",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 5,
+          "w": 26.7,
+          "h": 5,
+          "r": 0
+        },
+        "text": "marrimauto",
+        "font": "sora",
+        "size": 10.4,
+        "color": "#ffffff",
+        "media": null
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "label",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 26,
+          "w": 30,
+          "h": 3,
+          "r": 0
+        },
+        "text": "Anëtari",
+        "font": "poppins",
+        "size": 6.5,
+        "weight": 600,
+        "color": "#9ca3af",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.2,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n4": {
+      "id": "n4",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 29.5,
+          "w": 60,
+          "h": 6,
+          "r": 0
+        },
+        "text": "{{member.name}}",
+        "font": "sora",
+        "size": 12,
+        "weight": 700,
+        "color": "#ffffff",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member name"
+    },
+    "n5": {
+      "id": "n5",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 40,
+          "w": 30,
+          "h": 4,
+          "r": 0
+        },
+        "text": "{{member.tier}}",
+        "font": "poppins",
+        "size": 7.5,
+        "weight": 700,
+        "color": "#e06a1b",
+        "align": "left",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0.1,
+        "upper": true,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Tier"
+    },
+    "n6": {
+      "id": "n6",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 40,
+          "y": 40,
+          "w": 40.6,
+          "h": 4,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7.5,
+        "weight": 600,
+        "color": "#d1d5db",
+        "align": "right",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      },
+      "name": "Member number"
+    },
+    "n7": {
+      "id": "n7",
+      "type": "qr",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 27.8,
+          "y": 4,
+          "w": 30,
+          "h": 30,
+          "r": 0
+        },
+        "data": "{{member.qr}}",
+        "color": "#111827",
+        "background": "#ffffff",
+        "level": "M"
+      }
+    },
+    "n8": {
+      "id": "n8",
+      "type": "field",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 37,
+          "w": 75.6,
+          "h": 4,
+          "r": 0
+        },
+        "text": "{{member.number}}",
+        "font": "mono",
+        "size": 7.5,
+        "weight": 600,
+        "color": "#111827",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.25,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    },
+    "n9": {
+      "id": "n9",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "frame": {
+          "x": 5,
+          "y": 43,
+          "w": 75.6,
+          "h": 6,
+          "r": 0
+        },
+        "text": "Tregojeni ekranin në pikën e kontrollit.",
+        "font": "poppins",
+        "size": 7,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "center",
+        "valign": "top",
+        "lineHeight": 1.45,
+        "letterSpacing": 0,
+        "upper": false,
+        "background": "",
+        "backgroundRadius": 0
+      }
+    }
+  },
+  "meta": {
+    "name": "Anëtarësi në portofol"
+  }
+}

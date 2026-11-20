@@ -3,7 +3,7 @@
  * only, and turned into the code a developer pastes into their own project.
  */
 
-export type Kit = 'email' | 'article' | 'form';
+export type Kit = 'email' | 'article' | 'form' | 'card' | 'popup';
 export type Theme = 'light' | 'dark' | 'auto';
 export type EditorLanguage = 'en' | 'sq' | 'de';
 
@@ -22,6 +22,24 @@ export const TEMPLATES = {
     { id: 'quote-request', label: 'Quote request' },
     { id: 'job-application', label: 'Job application' },
     { id: 'nps-survey', label: 'NPS survey' },
+    { id: 'empty', label: 'Empty' },
+  ],
+  // A card template's id, or an empty card.
+  card: [
+    { id: 'gold-membership', label: 'Gold membership' },
+    { id: 'staff-id', label: 'Staff ID' },
+    { id: 'payment-card', label: 'Payment card' },
+    { id: 'sales-advisor', label: 'Business card' },
+    { id: 'member-badge', label: 'Event badge' },
+    { id: 'empty', label: 'Empty' },
+  ],
+  // A popup template's id, or an empty modal.
+  popup: [
+    { id: 'newsletter-modal', label: 'Newsletter modal' },
+    { id: 'exit-offer', label: 'Exit offer' },
+    { id: 'cookie-bar', label: 'Cookie bar' },
+    { id: 'feedback-slidein', label: 'Feedback slide-in' },
+    { id: 'valuation-drawer', label: 'Side drawer' },
     { id: 'empty', label: 'Empty' },
   ],
 } as const satisfies Record<Kit, readonly { id: string; label: string }[]>;
@@ -55,13 +73,19 @@ export interface Settings {
   font: string;
   language: EditorLanguage;
   severalContentLanguages: boolean;
-  output: 'json' | 'html' | 'text' | 'page' | 'form';
+  output: 'json' | 'html' | 'text' | 'page' | 'form' | 'card' | 'popup';
   showOutput: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   kit: 'email',
-  template: { email: 'starter', article: 'kitchen-sink', form: 'quote-request' },
+  template: {
+    email: 'starter',
+    article: 'kitchen-sink',
+    form: 'quote-request',
+    card: 'gold-membership',
+    popup: 'newsletter-modal',
+  },
   theme: 'auto',
   pageDark: false,
   primary: '',
@@ -146,7 +170,13 @@ const quote = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, 
 
 /** The editor, with the current settings, as JSX to paste into a project. */
 export function jsxFor(settings: Settings): string {
-  const name = { email: 'EmailEditor', article: 'ArticleEditor', form: 'FormEditor' }[settings.kit];
+  const name = {
+    email: 'EmailEditor',
+    article: 'ArticleEditor',
+    form: 'FormEditor',
+    card: 'CardEditor',
+    popup: 'PopupEditor',
+  }[settings.kit];
   const lines = [
     `<${name}`,
     '  document={document}',

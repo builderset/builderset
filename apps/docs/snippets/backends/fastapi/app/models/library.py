@@ -10,11 +10,17 @@ from app.models.base import Audited, Base, one_of
 
 
 class Kit(StrEnum):
-    """Which builder a section belongs to."""
+    """Which builder: the checks its documents get, and its saved sections."""
 
     EMAIL = "email"
     ARTICLE = "article"
     FORM = "form"
+    CARD = "card"
+    POPUP = "popup"
+
+
+#: The builders whose editors keep a library of sections. Cards and popups keep none.
+SECTION_KITS = (Kit.EMAIL, Kit.ARTICLE, Kit.FORM)
 
 
 class MediaKind(StrEnum):
@@ -31,7 +37,7 @@ class SavedSection(Audited, Base):
     to action. Deleting one hides it from the editor; documents keep their copy."""
 
     __tablename__ = "saved_section"
-    __table_args__ = (one_of("kit", Kit),)
+    __table_args__ = (one_of("kit", SECTION_KITS),)
 
     kit: Mapped[str] = mapped_column(String(16))
     name: Mapped[str] = mapped_column(String(120))

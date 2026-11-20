@@ -1,15 +1,16 @@
 ---
 title: Django
-description: The three builders' backend in Django — models for every table with who made, changed and deleted each row, revisions and an activity log, Django REST framework views, and the builderset Python package checking each document and form response with the editor's own codes.
+description: The five builders' backend in Django — models for every table with who made, changed and deleted each row, revisions and an activity log, Django REST framework views, card issues and the popups' public routes, and the builderset Python package checking each document, form response and popup submission with the editor's own codes.
 ---
 
 _This page describes Builderset 0.4.0._
 
-At the end a Django app stores email templates, articles and forms, with who made,
-changed and deleted each row and when; keeps their revisions and a log of what
-happened to them; refuses an unsafe or stale save with the same issue codes as the
-editor; and takes form responses checked exactly as the form in the browser checked
-them. The tables and routes are the ones in
+At the end a Django app stores email templates, articles, forms, card designs and
+popups, with who made, changed and deleted each row and when; keeps their revisions
+and a log of what happened to them; refuses an unsafe or stale save with the same
+issue codes as the editor; takes form responses and popup submissions checked exactly
+as the browser checked them; and issues cards to members. The tables and routes are
+the ones in
 [Data model and API](/docs/guides/backend/data-model); the checks come from the
 `builderset` package, whose install is in [Python](/docs/reference/python):
 
@@ -75,10 +76,35 @@ a queryset where every query says which rows it means: `live()` or `deleted()`.
   ./snippets/backends/django/documents/models/forms.py
 </include>
 </Tab>
+<Tab title="Cards">
+
+A card design, its revisions, and the cards issued from it. A card freezes the
+design's version and the member's data, and its number is never reused.
+
+<include cwd lang="python" meta='title="documents/models/cards.py"'>
+  ./snippets/backends/django/documents/models/cards.py
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+A popup, its revisions, what visitors sent through it, and its counters per day. The
+display rules stay in the document; the columns copy what the site's one query needs.
+
+<include cwd lang="python" meta='title="documents/models/popups.py"'>
+  ./snippets/backends/django/documents/models/popups.py
+</include>
+
+</Tab>
 <Tab title="Library">
+
+`Kit` names every builder; saved sections are kept for emails, articles and forms
+only.
+
 <include cwd lang="python" meta='title="documents/models/library.py"'>
   ./snippets/backends/django/documents/models/library.py
 </include>
+
 </Tab>
 <Tab title="Activity">
 <include cwd lang="python" meta='title="documents/models/activity.py"'>
@@ -95,8 +121,11 @@ Where the tables differ from the SQL: Django keeps `updated_at` itself, `auto_no
 made in `psql` leaves it as it was. Its `Now()` is `statement_timestamp()`, not
 `now()`; `sha256` is a `varchar(64)`; the revision index of email templates is
 `email_template_revision_hist`, because Django caps index names at 30 characters;
-and its foreign keys are checked at commit. Each builder also has a `publish_*`
-permission beside Django's own add, change, delete and view.
+the card number's unique index comes with a unique constraint of the same name, and
+`card_issue_one_valid` reads `not status = 'revoked'`, the same rule; and its foreign
+keys are checked at commit. Each builder also has a `publish_*` permission beside
+Django's own add, change, delete and view: for a card design it is the approval for
+print, for a popup it covers pausing too.
 
 </Step>
 <Step>
@@ -104,8 +133,8 @@ permission beside Django's own add, change, delete and view.
 ### The checks
 
 One function checks every document: lenient for a draft, which may be unfinished but
-never unsafe, and strict for publishing. Each kit names what a draft may still carry,
-the same list the editor uses:
+never unsafe, and strict for publishing — for a card design, approving it for print.
+Each kit names what a draft may still carry, the same list the editor uses:
 
 <include cwd lang="python" meta='title="documents/checks.py"'>
   ./snippets/backends/django/documents/checks.py
@@ -146,18 +175,21 @@ or `422` with the body the editor reads.
 </Step>
 <Step>
 
-### One set of views for three builders
+### One set of views for five builders
 
-What differs between emails, articles and forms is a small table: the model, the
-kit, the columns copied from the document's meta, and what publishing and
-unpublishing also change:
+What differs between the builders is a small table: the model, the kit, the columns
+copied from the document, and what publishing and unpublishing also change. A card
+design copies its format and size from its root node; a popup copies its dates and
+priority, widened to whole days anywhere in the world, so the site asks one indexed
+question:
 
 <include cwd lang="python" meta='title="documents/kinds.py"'>
   ./snippets/backends/django/documents/kinds.py
 </include>
 
-A path converter turns `emails`, `articles` or `forms` in the address into its row of
-that table, so the views are written once. Ids in paths are the rows' `uuid`:
+A path converter turns `emails`, `articles`, `forms`, `cards` or `popups` in the
+address into its row of that table, so the views are written once. Ids in paths are
+the rows' `uuid`; `/api/cards/sections` and `/api/popups/sections` answer `404`:
 
 <Tabs label="Routes">
 <Tab title="Routes">
@@ -221,8 +253,9 @@ for a job of yours to set it live; a form's address taken by another is refused 
   ./snippets/backends/django/documents/views/documents.py#publish
 </include>
 
-Unpublishing leaves an email or an article a draft, and a form `closed`: its link
-keeps working and shows the closed message. A live document cannot be deleted —
+Unpublishing leaves a form `closed` — its link keeps working and shows the closed
+message — and anything else a draft, a paused popup too. A live document cannot be
+deleted —
 `DELETE` answers `409` until it is unpublished — and a deleted one answers `404`
 everywhere but `restore`.
 
@@ -244,6 +277,44 @@ send the last response at once:
 
 The throttle answers `429` past the rate in
 `REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["form_responses"]`.
+
+</Step>
+<Step>
+
+### Cards
+
+A card is issued from a published design only — `422` while it is a draft — and from
+its live version: `fields_used` names the member's data it prints, every one is
+required, and only those are frozen into the issue. The answer carries the card as it
+is printed, the design filled in by `fill_card`. A member holds one card of a design
+that is not revoked: the partial unique index `card_issue_one_valid` refuses a second,
+answered `409`. Revoking keeps the row, so the number printed on the card still points
+at it:
+
+<include cwd lang="python" meta='title="documents/views/cards.py"'>
+  ./snippets/backends/django/documents/views/cards.py#issue
+</include>
+
+</Step>
+<Step>
+
+### The popups' public routes
+
+Your site asks which popups may show on a page; the server answers from the indexed
+columns, the dates, then the page and language rules with the kit's `path_matches` and
+`language_matches`, highest priority first. `should_show` — `shouldShow` in the
+browser — decides the rest: the audience, how often, the device. Events add to the
+day's counters in one upsert; a submission is checked with `validate_submission`
+against the live popup, and only its `values` are stored:
+
+<include cwd lang="python" meta='title="documents/views/popups.py"'>
+  ./snippets/backends/django/documents/views/popups.py#public
+</include>
+
+`PATCH /api/popups/:id/pause` takes `{ paused }` and answers `{ status }`; it changes
+only the status, so the document and `saved_at` stay as they are, and a draft answers
+`409`. The throttle's rate is
+`REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["popup_submissions"]`.
 
 </Step>
 <Step>
@@ -278,6 +349,24 @@ trash.
 
 <include cwd lang="python" meta='title="documents/views/forms.py"'>
   ./snippets/backends/django/documents/views/forms.py
+</include>
+
+</Tab>
+<Tab title="Cards">
+
+Issuing a card, the cards made from a design, and revoking one.
+
+<include cwd lang="python" meta='title="documents/views/cards.py"'>
+  ./snippets/backends/django/documents/views/cards.py
+</include>
+
+</Tab>
+<Tab title="Popups">
+
+The public routes, and pausing.
+
+<include cwd lang="python" meta='title="documents/views/popups.py"'>
+  ./snippets/backends/django/documents/views/popups.py
 </include>
 
 </Tab>

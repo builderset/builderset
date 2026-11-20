@@ -12,10 +12,13 @@ from rest_framework.response import Response
 from .models import (
     Activity,
     Article,
+    CardDesign,
+    CardIssue,
     EmailTemplate,
     Form,
     FormResponse,
     Media,
+    Popup,
     Revision,
     SavedSection,
 )
@@ -85,6 +88,48 @@ class FormSerializer(DocumentSerializer):
     class Meta:
         model = Form
         fields = (*DOCUMENT_FIELDS, "slug", "name", "closed_at", "closed_by", "response_count")
+
+
+class CardDesignSerializer(DocumentSerializer):
+    # Numbers, as the document has them, not the decimal column's strings.
+    width_mm = serializers.FloatField(read_only=True)
+    height_mm = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = CardDesign
+        fields = (*DOCUMENT_FIELDS, "name", "format", "width_mm", "height_mm", "sides")
+
+
+class PopupSerializer(DocumentSerializer):
+    class Meta:
+        model = Popup
+        fields = (*DOCUMENT_FIELDS, "name", "type", "starts_at", "ends_at", "priority")
+
+
+class CardIssueSerializer(AuditedSerializer):
+    """A card made out to a member. ``design`` is the design's public id."""
+
+    design = serializers.UUIDField(source="card_design.uuid", read_only=True)
+    revoked_by = PersonField()
+
+    class Meta:
+        model = CardIssue
+        fields = (
+            *AUDIT_FIELDS,
+            *("design", "design_version", "member_ref", "number", "data"),
+            *("status", "delivery", "valid_until", "printed_at"),
+            *("revoked_at", "revoked_by", "revoke_reason"),
+        )
+
+
+class PublicPopupSerializer(serializers.ModelSerializer):
+    """A popup as your site gets it: PopupView draws the document, shouldShow decides."""
+
+    id = serializers.UUIDField(source="uuid", read_only=True)
+
+    class Meta:
+        model = Popup
+        fields = ("id", "version", "document")
 
 
 class PublicArticleSerializer(serializers.ModelSerializer):

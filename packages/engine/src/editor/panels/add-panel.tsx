@@ -2,11 +2,14 @@
 
 import { parentOf, type Fragment } from '../../core';
 import { Search, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import { DRAG_TYPE_MIME, setActiveDrag, setDragChip } from '../canvas/drop';
 import { useEditor, useEditorContext } from '../context';
+import { QuietBoundary, renderReadOnly } from '../chrome/read-only';
 import { ElementIcon } from '../icons';
+import { usePortalContainer } from '../ui';
 import { elementChoices, matchChoices, type ElementChoice } from '../text/slash-menu';
 
 /**
@@ -44,6 +47,31 @@ export function AddPanel() {
   };
 
   const selected = useEditor((state) => state.selection.length > 0);
+  const [peek, setPeek] = useState<{ type: string; top: number; left: number } | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(
+    () => () => {
+      clearTimeout(timer.current);
+    },
+    [],
+  );
+  /** Hover a tile a moment: a card beside the panel shows the block, filled in. */
+  const onPeek = (type: string | null, element?: HTMLElement) => {
+    clearTimeout(timer.current);
+    if (!type || !element) {
+      setPeek(null);
+      return;
+    }
+    timer.current = setTimeout(() => {
+      const tile = element.getBoundingClientRect();
+      const panel = element.closest('.bld-panel')?.getBoundingClientRect();
+      setPeek({
+        type,
+        top: Math.max(12, Math.min(tile.top - 20, window.innerHeight - 300)),
+        left: (panel?.right ?? tile.right) + 10,
+      });
+    }, 380);
+  };
   const recentChoices = recent
     .map((type) => all.find((choice) => choice.type === type))
     .filter((choice): choice is ElementChoice => !!choice);
@@ -94,7 +122,7 @@ export function AddPanel() {
       <div className="bld-scroll bst:flex-1 bst:overflow-y-auto bst:px-3 bst:pb-4">
         {query ? (
           matches.length ? (
-            <Grid choices={matches} onInsert={insert} />
+            <Grid choices={matches} onInsert={insert} onPeek={onPeek} />
           ) : (
             <div className="bst:grid bst:justify-items-center bst:gap-1.5 bst:px-4 bst:py-7 bst:text-center bst:text-xs bst:text-muted-foreground">
               <b className="bst:text-[13px] bst:text-foreground">{messages.noElementsFound}</b>
@@ -147,7 +175,7 @@ export function AddPanel() {
                   title={messages.categories[category] ?? category}
                   count={inCategory.length}
                 >
-                  <Grid choices={inCategory} onInsert={insert} />
+                  <Grid choices={inCategory} onInsert={insert} onPeek={onPeek} />
                 </Group>
               );
             })}
@@ -157,6 +185,7 @@ export function AddPanel() {
           {messages.addHint(selected ? 'below' : 'end')}
         </p>
       </div>
+      {peek ? <Peek {...peek} below={selected} /> : null}
     </div>
   );
 }
@@ -173,7 +202,10 @@ function Chip({ choice, onInsert }: { choice: ElementChoice; onInsert: (type: st
       onDragStart={(event) => {
         event.dataTransfer.setData(DRAG_TYPE_MIME, choice.type);
         event.dataTransfer.effectAllowed = 'copy';
-        setDragChip(event.dataTransfer, `+ ${choice.name}`);
+        setDragChip(event.dataTransfer, choice.name, {
+          icon: choice.icon,
+          detail: choice.description,
+        });
         setActiveDrag({ kind: 'type', type: choice.type });
       }}
       onDragEnd={() => {
@@ -210,12 +242,60 @@ function Group({
   );
 }
 
+/** The block as it will look, filled in from the kit's sample, with its name and use. */
+function Peek({
+  type,
+  top,
+  left,
+  below,
+}: {
+  type: string;
+  top: number;
+  left: number;
+  below: boolean;
+}) {
+  const { profile, messages } = useEditorContext();
+  const container = usePortalContainer();
+  const sample = useMemo(() => profile.sampleOf?.(type) ?? null, [profile, type]);
+  if (!container) return null;
+  return createPortal(
+    <div
+      role="tooltip"
+      style={{ top, left }}
+      className="bst:pointer-events-none bst:fixed bst:z-[60] bst:w-[300px] bst:animate-[bst-zoom-in_200ms_var(--bst-ease-enter)] bst:overflow-hidden bst:rounded-[14px] bst:border bst:border-border bst:bg-card bst:text-foreground bst:shadow-[0_2px_6px_rgb(20_23_30/0.08),0_24px_60px_rgb(20_23_30/0.18)]"
+    >
+      {sample ? (
+        <div className="bst:relative bst:h-[150px] bst:overflow-hidden bst:bg-background bst:p-4">
+          <div className="bst:w-[520px] bst:origin-top-left bst:scale-[0.52]">
+            <QuietBoundary>
+              {renderReadOnly(profile, { doc: sample, viewport: 'desktop' })}
+            </QuietBoundary>
+          </div>
+          <span className="bst:absolute bst:inset-x-0 bst:bottom-0 bst:h-8 bst:bg-gradient-to-t bst:from-background bst:to-transparent" />
+        </div>
+      ) : null}
+      <div className="bst:grid bst:gap-0.5 bst:px-3 bst:pt-2.5 bst:pb-3">
+        <b className="bst:text-[13px] bst:font-semibold">{messages.elements[type]?.name ?? type}</b>
+        <span className="bst:text-xs bst:text-muted-foreground">
+          {messages.elements[type]?.description}
+        </span>
+        <small className="bst:mt-1 bst:text-[11px] bst:text-muted-foreground/80">
+          {messages.addHint(below ? 'below' : 'end')}
+        </small>
+      </div>
+    </div>,
+    container,
+  );
+}
+
 function Grid({
   choices,
   onInsert,
+  onPeek,
 }: {
   choices: ElementChoice[];
   onInsert: (type: string) => void;
+  onPeek?: (type: string | null, element?: HTMLElement) => void;
 }) {
   return (
     <div className="bst:grid bst:grid-cols-3 bst:gap-1.5">
@@ -228,10 +308,20 @@ function Grid({
             animationDelay: `${String(Math.min(index, 10) * 12)}ms`,
           }}
           draggable
+          onMouseEnter={(event) => {
+            onPeek?.(choice.type, event.currentTarget);
+          }}
+          onMouseLeave={() => {
+            onPeek?.(null);
+          }}
           onDragStart={(event) => {
+            onPeek?.(null);
             event.dataTransfer.setData(DRAG_TYPE_MIME, choice.type);
             event.dataTransfer.effectAllowed = 'copy';
-            setDragChip(event.dataTransfer, `+ ${choice.name}`);
+            setDragChip(event.dataTransfer, choice.name, {
+              icon: choice.icon,
+              detail: choice.description,
+            });
             setActiveDrag({ kind: 'type', type: choice.type });
           }}
           onDragEnd={() => {

@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   useMediaQuery,
 } from './ui';
-import { Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
+import { Image, Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   useCallback,
@@ -37,6 +37,8 @@ import { HistorySheet } from './chrome/history-sheet';
 import { SideDrawer } from './chrome/side-drawer';
 import { CommandPalette } from './chrome/command-palette';
 import { Dock } from './chrome/dock';
+import { DragLayer } from './chrome/drag-layer';
+import { PreviewOverlay } from './chrome/preview';
 import { LanguageBar } from './chrome/language-switch';
 import { TopBar } from './chrome/top-bar';
 import { cn } from './cn';
@@ -44,6 +46,7 @@ import { registerEngine } from './one-engine';
 import {
   EditorProvider,
   useEditor,
+  useEditorContext,
   useProfile,
   type EditorContextValue,
   type RecordFacts,
@@ -56,6 +59,7 @@ import { useHtmlLang } from './locale';
 import { resolveMessages, type DeepPartial, type EditorMessages } from './messages';
 import { AddPanel } from './panels/add-panel';
 import { LayersPanel } from './panels/layers-panel';
+import { MediaPanel } from './panels/media-panel';
 import { TemplatesPanel } from './panels/templates-panel';
 import { createEditorStore, type EditorStore, type LeftTab } from './store';
 
@@ -311,6 +315,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   const [history, setHistory] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
   const [command, setCommand] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
   // Focus mode: both panels away, and back as they were.
   const [focus, setFocus] = useState<{ left: boolean; right: boolean } | null>(null);
   const toggleFocus = useCallback(() => {
@@ -487,7 +492,10 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
       const typing = isTyping(event.target);
       const key = event.key.toLowerCase();
 
-      if (mod && key === 'k') {
+      if (mod && event.shiftKey && key === 'p') {
+        event.preventDefault();
+        setPreviewing(true);
+      } else if (mod && key === 'k') {
         event.preventDefault();
         setCommand(true);
       } else if (mod && key === '\\') {
@@ -579,7 +587,9 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
           setScheduling(true);
         }}
         onUnpublish={unpublish ? () => void unpublish() : undefined}
-        onPreview={preview ? () => void preview() : undefined}
+        onPreview={() => {
+          setPreviewing(true);
+        }}
         onDuplicate={onDuplicate}
         onDelete={
           onDelete
@@ -735,6 +745,15 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
         </nav>
       ) : null}
 
+      <DragLayer />
+      <PreviewOverlay
+        open={previewing}
+        onClose={() => {
+          setPreviewing(false);
+        }}
+        onOpenSite={preview ? () => void preview() : undefined}
+      />
+
       {/* ── Dialogs ── */}
       <CommandPalette
         open={command}
@@ -748,7 +767,9 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
           onShortcuts: () => {
             setShortcuts(true);
           },
-          onPreview: preview ? () => void preview() : undefined,
+          onPreview: () => {
+            setPreviewing(true);
+          },
           onHistory: host.loadRevisions
             ? () => {
                 setHistory(true);
@@ -895,7 +916,10 @@ function LeftRail({
   onTab: (tab: LeftTab) => void;
   messages: EditorMessages;
 }) {
-  const order: LeftTab[] = ['add', 'layers', 'templates'];
+  const { registry } = useEditorContext();
+  // Pictures to place: only for a kit with an image block.
+  const withMedia = registry.has('image');
+  const order: LeftTab[] = ['add', 'layers', 'templates', 'media'];
   const [from, setFrom] = useState(tab);
   // Which way the new pane slides in: from the side of the tab it came from.
   const direction = Math.sign(order.indexOf(tab) - order.indexOf(from)) || 1;
@@ -917,6 +941,15 @@ function LeftRail({
             label: messages.templates,
             icon: <LayoutTemplate aria-hidden="true" />,
           },
+          ...(withMedia
+            ? [
+                {
+                  value: 'media' as const,
+                  label: messages.media,
+                  icon: <Image aria-hidden="true" />,
+                },
+              ]
+            : []),
         ]}
         className="bst:mx-3 bst:mt-0.5 bst:mb-3 bst:shrink-0"
       />
@@ -931,7 +964,15 @@ function LeftRail({
             transition={{ duration: 0.36, ease: [0.2, 0.8, 0.2, 1] }}
             className="bst:h-full"
           >
-            {tab === 'add' ? <AddPanel /> : tab === 'layers' ? <LayersPanel /> : <ThirdTab />}
+            {tab === 'add' ? (
+              <AddPanel />
+            ) : tab === 'layers' ? (
+              <LayersPanel />
+            ) : tab === 'media' && withMedia ? (
+              <MediaPanel />
+            ) : (
+              <ThirdTab />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

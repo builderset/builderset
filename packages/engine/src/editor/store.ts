@@ -39,7 +39,7 @@ import { splitEdit, splitMeta } from './translate';
  * edits one itself.
  */
 
-export type LeftTab = 'add' | 'layers' | 'templates';
+export type LeftTab = 'add' | 'layers' | 'templates' | 'media';
 export type RightTab = 'content' | 'style' | 'advanced';
 export type SaveState = 'idle' | 'saving' | 'error' | 'conflict';
 

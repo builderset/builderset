@@ -81,6 +81,8 @@ export interface BuilderHost<TDoc extends EngineDocument = EngineDocument> {
   oembed?(url: string): Promise<OEmbedInfo | null>;
   /** Copy a picture from another server into our storage (an imported email's images). */
   importImage?(url: string): Promise<UploadResult>;
+  /** The project's pictures, for the media tab: newest first. Without it, the tab shows the document's own and this session's uploads. */
+  listMedia?(): Promise<UploadResult[]>;
   loadSections?(): Promise<SavedSection[]>;
   saveSection?(name: string, fragment: Fragment): Promise<SavedSection | null>;
   toast(kind: 'success' | 'error' | 'info', message: string): void;

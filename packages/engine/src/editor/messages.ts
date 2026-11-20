@@ -209,6 +209,45 @@ export interface EditorMessages {
   addHint: (where: 'below' | 'end') => string;
   /** A style choice left to the default, or to the larger screen. */
   styleAuto: string;
+  /** The target that deletes the blocks dropped on it, while they are dragged. */
+  dropToDelete: string;
+  /** Layers: the tree of blocks, or the outline the headings make. */
+  blocksView: string;
+  outlineView: string;
+  intro: string;
+  outlineHint: string;
+  layersHint: string;
+  /** Templates: start from one, by adding it at the end or replacing the page. */
+  templatesStart: string;
+  useTemplate: string;
+  addToEnd: string;
+  replaceAll: string;
+  blockCount: (count: number) => string;
+  /** The media tab. */
+  media: string;
+  searchMedia: string;
+  dropFiles: string;
+  fileHint: string;
+  inDocument: string;
+  mediaLibrary: string;
+  justUploaded: string;
+  noMedia: string;
+  dragToPage: string;
+  /** The preview over the editor. */
+  backToEditing: string;
+  openOnSite: string;
+  /** History: what changed between a version and the draft. */
+  whatChanged: string;
+  comparedWithDraft: string;
+  sameAsDraft: string;
+  added: string;
+  removed: string;
+  changed: string;
+  /** Several blocks selected. */
+  hideFromReaders: string;
+  saveAsSection: string;
+  /** The chip that shows every category. */
+  all: string;
 }
 
 /** Any part of a set of words, at any depth: what a host overrides. */

@@ -18,7 +18,7 @@ export {
   type EditorContextValue,
   type RecordFacts,
 } from './context';
-export type { EditorProfile, TemplateSpec } from './profile';
+export type { EditorProfile, TemplateBlock, TemplateCategory, TemplateSpec } from './profile';
 export type { EditableTextField } from '../core';
 export { IssueList, ReadyCard, useIssues, useJumpToIssue } from './chrome/issues';
 export {

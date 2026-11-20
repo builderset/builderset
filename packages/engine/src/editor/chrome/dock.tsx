@@ -29,6 +29,7 @@ import { useDeferredValue, useMemo, type ReactNode } from 'react';
 
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
+import { useDragSession } from './drag-layer';
 import { IssueList } from './issues';
 
 const DEVICES: { value: Breakpoint; icon: ReactNode; keys: string }[] = [
@@ -75,6 +76,8 @@ export function Dock({
     [doc, registry],
   );
   const open = issues.length;
+  // Out of the way while something is dragged: the delete target takes its place.
+  const dragging = useDragSession().payload !== null;
 
   const icon = 'bst:size-[34px] bst:rounded-[9px] bst:[&_svg]:size-4';
 
@@ -82,7 +85,11 @@ export function Dock({
     <div
       role="toolbar"
       aria-label={messages.breakpoint}
-      className="bld-dock bst:absolute bst:bottom-4 bst:left-1/2 bst:z-30 bst:flex bst:-translate-x-1/2 bst:items-center bst:gap-0.5 bst:rounded-[14px] bst:border bst:border-border bst:bg-card bst:p-[5px] bst:whitespace-nowrap bst:shadow-[0_2px_6px_rgb(20_23_30/0.08),0_24px_60px_rgb(20_23_30/0.18)]"
+      className={cn(
+        'bld-dock bst:absolute bst:bottom-4 bst:left-1/2 bst:z-30 bst:flex bst:-translate-x-1/2 bst:transition-[opacity,translate] bst:duration-300 bst:ease-[cubic-bezier(.2,.8,.2,1)]',
+        dragging && 'bst:pointer-events-none bst:translate-y-5 bst:opacity-0',
+        'bst:items-center bst:gap-0.5 bst:rounded-[14px] bst:border bst:border-border bst:bg-card bst:p-[5px] bst:whitespace-nowrap bst:shadow-[0_2px_6px_rgb(20_23_30/0.08),0_24px_60px_rgb(20_23_30/0.18)]',
+      )}
     >
       <Tooltip content={canUndo ? `${messages.undo}: ${undoLabel ?? ''}` : messages.nothingToUndo}>
         <Button

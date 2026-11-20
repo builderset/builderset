@@ -103,3 +103,48 @@
 .bld-panel fieldset {
   min-width: 0;
 }
+
+/*
+ * The panels' fields, as the editor's design has them: white fields on the
+ * frame, 34px tall, 12.5px type, a soft ring on focus; labels a size up and
+ * semibold; a switch whose "off" track can be seen against the frame.
+ */
+.builderset .bld-panel {
+  --bst-field-h: 34px;
+  font-size: 12.5px;
+}
+.bld-panel [data-slot='input'],
+.bld-panel [data-slot='select-trigger'],
+.bld-panel [data-slot='textarea'] {
+  font-size: 12.5px;
+  border-radius: 8px;
+  background-color: var(--builderset-surface, var(--bst-d-surface));
+}
+.bld-panel [data-slot='input'],
+.bld-panel [data-slot='select-trigger'] {
+  height: 34px;
+}
+.bld-panel [data-slot='label'] {
+  font-size: 12px;
+  font-weight: 600;
+}
+.bld-panel [data-slot='switch'][data-state='unchecked'] {
+  background-color: color-mix(
+    in oklab,
+    var(--builderset-foreground, var(--bst-d-foreground)) 18%,
+    transparent
+  );
+}
+.bld-panel .bst\:text-sm {
+  font-size: 12.5px;
+}
+.bld-panel .bst\:text-xs {
+  font-size: 11.5px;
+}
+.bld-panel [data-slot='button'] {
+  height: 30px;
+  font-size: 12px;
+}
+.bld-panel [data-slot='button'][class~='bst:px-0'] {
+  width: 30px;
+}

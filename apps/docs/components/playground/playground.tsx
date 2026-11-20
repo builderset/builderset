@@ -2,7 +2,6 @@
 
 import '@builderset/email/styles.css';
 import '@builderset/article/styles.css';
-import '@builderset/article/content.css';
 
 import {
   createArticleRegistry,

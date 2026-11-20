@@ -112,3 +112,11 @@
     transform: translateY(-5px) scale(1);
   }
 }
+
+/* The command menu: drops in a little, from just above where it lands. */
+@keyframes bst-palette-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}

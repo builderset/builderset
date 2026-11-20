@@ -14,6 +14,7 @@ import {
   type MouseEvent,
 } from 'react';
 
+import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { languageName } from '../messages';
 import { InlineText } from '../text/inline-text';
@@ -79,6 +80,7 @@ export function Canvas() {
   // What is drawn: the document in the language being written.
   const view = useEditor((state) => state.view);
   const lang = useEditor((state) => state.lang);
+  const multilingual = useEditor((state) => state.doc.i18n?.enabled === true);
   const viewport = useEditor((state) => state.viewport);
   const zoom = useEditor((state) => state.zoom);
   const pageRef = useRef<HTMLDivElement>(null);
@@ -190,32 +192,33 @@ export function Canvas() {
   return (
     <div
       ref={scrollRef}
-      className="bld-canvas bst:relative bst:h-full bst:overflow-x-hidden bst:overflow-y-auto bst:bg-muted/40"
+      className="bld-canvas bst:relative bst:h-full bst:overflow-x-hidden bst:overflow-y-auto"
       onClick={(event) => {
         if (event.target === event.currentTarget) store.getState().select([]);
       }}
     >
       {lang ? (
-        <p
-          role="status"
-          className="bst:sticky bst:top-3 bst:z-20 bst:mx-auto bst:mt-3 bst:w-fit bst:max-w-[90%] bst:rounded-full bst:border bst:border-primary/30 bst:bg-primary/10 bst:px-4 bst:py-1.5 bst:text-center bst:text-xs bst:font-medium bst:text-primary bst:shadow-xs bst:backdrop-blur"
-        >
+        <p role="status" className="bst:sr-only">
           {messages.writingIn(languageName(lang, messages.languages))}
         </p>
       ) : null}
       <motion.div
-        className="bst:mx-auto bst:py-6"
+        className={cn('bst:mx-auto bst:pb-[130px]', multilingual ? 'bst:pt-[60px]' : 'bst:pt-8')}
         initial={false}
         animate={{ width: pageWidth * scale }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
       >
         <div
           style={{ width: pageWidth, zoom: scale }}
-          className={
-            bare
-              ? 'bst:min-h-[70vh] bst:overflow-hidden bst:rounded-card bst:border bst:border-border bst:shadow-sm'
-              : 'bst:min-h-[70vh] bst:rounded-card bst:border bst:border-border bst:bg-background bst:shadow-sm'
-          }
+          data-device={viewport}
+          className={cn(
+            'bld-page bst:min-h-[70vh] bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)] bst:transition-[border-radius] bst:duration-400',
+            bare ? 'bst:overflow-hidden' : 'bst:bg-background',
+            viewport === 'tablet' &&
+              'bst:rounded-[22px] bst:shadow-[0_0_0_7px_#0c0d10,0_0_0_8px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
+            viewport === 'mobile' &&
+              'bst:rounded-[30px] bst:shadow-[0_0_0_8px_#0c0d10,0_0_0_9px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
+          )}
         >
           <div
             ref={pageRef}

@@ -184,6 +184,31 @@ export interface EditorMessages {
   elements: Record<string, ElementText>;
   issueText: Record<string, string>;
   fieldLabels: Record<string, string>;
+  /** The top bar's search button and the command menu it opens (Ctrl K). */
+  commandSearch: string;
+  commandPlaceholder: string;
+  commandActions: string;
+  commandGoTo: string;
+  commandInsert: string;
+  commandNothing: string;
+  commandMove: string;
+  commandRun: string;
+  /** Both panels away, only the page: Ctrl \. */
+  focusMode: string;
+  /** The language bar over the canvas: "Editing in  SQ | EN | DE". */
+  editingIn: string;
+  /** The status chip once a published document has unpublished changes. */
+  publishedEdited: string;
+  /** The dock's issues button, and the card at the top of the document settings. */
+  toCheck: (count: number) => string;
+  ready: string;
+  readyTitle: (count: number, action: string) => string;
+  readyOk: (action: string) => string;
+  fix: string;
+  /** Under the element library. */
+  addHint: (where: 'below' | 'end') => string;
+  /** A style choice left to the default, or to the larger screen. */
+  styleAuto: string;
 }
 
 /** Any part of a set of words, at any depth: what a host overrides. */

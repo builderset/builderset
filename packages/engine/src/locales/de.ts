@@ -160,6 +160,26 @@ export const de: EditorMessages = {
     'i18n.structureInBase':
       'Elemente in der Grundsprache hinzufügen oder entfernen — eine Übersetzung ändert nur die Wörter.',
   },
+  commandSearch: 'Suchen oder Befehl ausführen',
+  commandPlaceholder: 'Aktionen, Blöcke und Überschriften suchen…',
+  commandActions: 'Aktionen',
+  commandGoTo: 'Gehe zu',
+  commandInsert: 'Einfügen',
+  commandNothing: 'Nichts gefunden',
+  commandMove: 'zum Bewegen',
+  commandRun: 'zum Ausführen',
+  focusMode: 'Fokusmodus',
+  editingIn: 'Bearbeiten auf',
+  publishedEdited: 'Veröffentlicht · geändert',
+  toCheck: (count) => `${String(count)} zu prüfen`,
+  ready: 'Bereit',
+  readyTitle: (count) =>
+    `${String(count)} ${count === 1 ? 'Punkt' : 'Punkte'} vor dem Veröffentlichen prüfen`,
+  readyOk: () => 'Bereit zum Veröffentlichen',
+  fix: 'Beheben',
+  addHint: (where) =>
+    `Block auf die Seite ziehen oder klicken, um ihn ${where === 'below' ? 'unter dem gewählten Block' : 'am Ende'} einzufügen.`,
+  styleAuto: 'Auto',
 };
 
 export default de;

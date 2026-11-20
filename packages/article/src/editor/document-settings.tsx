@@ -7,19 +7,20 @@ import {
   Label,
   Textarea,
   ToggleFlag,
+  SegmentedTabs,
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@builderset/engine/ui';
-import { Check, X } from 'lucide-react';
+import { Check, FileText, Rocket, Search, X } from 'lucide-react';
 import { Fragment, useId, useState, type ReactNode } from 'react';
 
 import {
   MediaField,
   MultilingualToggle,
   NumberStepper,
+  ReadyCard,
   useEditorContext,
+  useIssues,
 } from '@builderset/engine/editor';
 
 import type { SeoMeta } from '../core';
@@ -99,42 +100,68 @@ function useSections(tab: SettingsTab) {
 export function DocumentSettings() {
   const { messages } = useEditorContext();
   const words = useArticleWords();
-  const [tab, setTab] = useState('general');
+  const issues = useIssues();
+  const [tab, setTab] = useState<'general' | 'seo' | 'publishing'>('general');
+  const seoIssues = issues.filter((issue) => issue.code.startsWith('seo.')).length;
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
-      <div className="bst:flex bst:h-11 bst:shrink-0 bst:flex-col bst:justify-center bst:border-b bst:border-border bst:px-3">
-        <p className="bst:text-sm bst:font-semibold">{messages.document}</p>
-        <p className="bst:text-xs bst:text-muted-foreground">{words.nothingSelected}</p>
-      </div>
       <Tabs
         value={tab}
-        onValueChange={setTab}
+        onValueChange={(value) => {
+          setTab(value as typeof tab);
+        }}
         className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
       >
-        <TabsList className="bst:mx-3 bst:grid bst:shrink-0 bst:grid-cols-3 bst:gap-0">
-          <TabsTrigger value="general" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.general}
-          </TabsTrigger>
-          <TabsTrigger value="seo" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {messages.seo}
-          </TabsTrigger>
-          <TabsTrigger value="publishing" className="bst:px-2 bst:py-1.5 bst:text-xs">
-            {words.publishing}
-          </TabsTrigger>
-        </TabsList>
-        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
-          <TabsContent value="general" className="bst:space-y-4 bst:p-4">
+        <SegmentedTabs
+          aria-label={messages.document}
+          value={tab}
+          onValueChange={setTab}
+          tabs={[
+            { value: 'general', label: messages.general, icon: <FileText aria-hidden="true" /> },
+            {
+              value: 'seo',
+              label: messages.seo,
+              icon: <Search aria-hidden="true" />,
+              badge: seoIssues ? (
+                <em className="bst:rounded-md bst:bg-destructive/12 bst:px-[5px] bst:py-px bst:text-[10.5px] bst:font-bold bst:text-destructive bst:not-italic">
+                  {seoIssues}
+                </em>
+              ) : undefined,
+            },
+            {
+              value: 'publishing',
+              label: words.publishing,
+              icon: <Rocket aria-hidden="true" />,
+            },
+          ]}
+          className="bst:mx-4 bst:mt-1 bst:mb-1 bst:shrink-0"
+        />
+        <div className="bld-scroll bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+          <TabsContent value="general" className="bst:space-y-4 bst:px-4 bst:pt-3.5 bst:pb-6">
+            <Ready />
             <General />
           </TabsContent>
-          <TabsContent value="seo" className="bst:space-y-4 bst:p-4">
+          <TabsContent value="seo" className="bst:space-y-4 bst:px-4 bst:pt-3.5 bst:pb-6">
             <Seo />
           </TabsContent>
-          <TabsContent value="publishing" className="bst:space-y-4 bst:p-4">
+          <TabsContent value="publishing" className="bst:space-y-4 bst:px-4 bst:pt-3.5 bst:pb-6">
             <Publishing />
           </TabsContent>
         </div>
       </Tabs>
     </div>
+  );
+}
+
+/** What to fix before the article goes out, at the top of General. */
+function Ready() {
+  const { messages, record } = useEditorContext();
+  const issues = useIssues();
+  return (
+    <ReadyCard
+      issues={issues}
+      action={record.status === 'published' ? messages.update : messages.publish}
+    />
   );
 }
 

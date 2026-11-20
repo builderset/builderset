@@ -229,6 +229,25 @@ export const sq: EditorMessages = {
     'meta.coverMissing': 'Pa imazh kryesor',
     'button.labelMissing': 'Buton pa etiketë',
   },
+  commandSearch: 'Kërko ose jep një komandë',
+  commandPlaceholder: 'Kërko veprime, blloqe dhe tituj…',
+  commandActions: 'Veprime',
+  commandGoTo: 'Shko te',
+  commandInsert: 'Shto',
+  commandNothing: 'Nuk u gjet asgjë',
+  commandMove: 'për të lëvizur',
+  commandRun: 'për ta ekzekutuar',
+  focusMode: 'Pa shpërqendrime',
+  editingIn: 'Po shkruani në',
+  publishedEdited: 'Publikuar · ndryshuar',
+  toCheck: (count) => `${String(count)} për t'u parë`,
+  ready: 'Gati',
+  readyTitle: (count) => `${String(count)} gjëra për t'u parë para publikimit`,
+  readyOk: () => 'Gati për publikim',
+  fix: 'Rregullo',
+  addHint: (where) =>
+    `Tërhiqeni një bllok në faqe, ose klikoni për ta shtuar ${where === 'below' ? 'poshtë bllokut të zgjedhur' : 'në fund'}.`,
+  styleAuto: 'Auto',
 };
 
 export default sq;

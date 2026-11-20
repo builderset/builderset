@@ -236,6 +236,26 @@ export const en: EditorMessages = {
     'props.invalid': 'A block has invalid settings',
   },
   fieldLabels: {},
+  commandSearch: 'Search or run a command',
+  commandPlaceholder: 'Search actions, blocks and headings…',
+  commandActions: 'Actions',
+  commandGoTo: 'Go to',
+  commandInsert: 'Insert',
+  commandNothing: 'Nothing found',
+  commandMove: 'to move',
+  commandRun: 'to run',
+  focusMode: 'Focus mode',
+  editingIn: 'Editing in',
+  publishedEdited: 'Published · edited',
+  toCheck: (count) => `${String(count)} to check`,
+  ready: 'Ready',
+  readyTitle: (count, action) =>
+    `${String(count)} ${count === 1 ? 'thing' : 'things'} to check before you ${action.toLowerCase()}`,
+  readyOk: (action) => `Ready to ${action.toLowerCase()}`,
+  fix: 'Fix',
+  addHint: (where) =>
+    `Drag a block onto the page, or click to add it ${where === 'below' ? 'below the selected block' : 'at the end'}.`,
+  styleAuto: 'Auto',
 };
 
 export default en;

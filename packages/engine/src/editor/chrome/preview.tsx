@@ -56,7 +56,9 @@ export function PreviewOverlay({
 
   if (!open) return null;
   const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
-  const bare = profile.canvasFrame === 'bare';
+  // `none`: the kit's preview draws its own card (a form), so no page around it.
+  const frameless = profile.canvasFrame === 'none';
+  const bare = profile.canvasFrame === 'bare' || frameless;
 
   return (
     <div
@@ -123,11 +125,19 @@ export function PreviewOverlay({
         <div
           style={{ width: widths[device] }}
           className={cn(
-            'bst:h-fit bst:max-w-full bst:shrink-0 bst:animate-[bst-palette-in_450ms_cubic-bezier(.34,1.4,.5,1)] bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)] bst:transition-[width] bst:duration-500 bst:ease-[cubic-bezier(.2,.8,.2,1)]',
-            bare ? 'bst:overflow-hidden' : 'bst:bg-background bst:px-6 bst:py-10 bst:sm:px-12',
-            device === 'tablet' &&
+            'bst:h-fit bst:max-w-full bst:shrink-0 bst:animate-[bst-palette-in_450ms_cubic-bezier(.34,1.4,.5,1)] bst:transition-[width] bst:duration-500 bst:ease-[cubic-bezier(.2,.8,.2,1)]',
+            !frameless &&
+              'bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)]',
+            frameless
+              ? ''
+              : bare
+                ? 'bst:overflow-hidden'
+                : 'bst:bg-background bst:px-6 bst:py-10 bst:sm:px-12',
+            !frameless &&
+              device === 'tablet' &&
               'bst:rounded-[22px] bst:shadow-[0_0_0_7px_#0c0d10,0_0_0_8px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
-            device === 'mobile' &&
+            !frameless &&
+              device === 'mobile' &&
               'bst:rounded-[30px] bst:shadow-[0_0_0_8px_#0c0d10,0_0_0_9px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
           )}
         >

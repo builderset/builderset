@@ -21,6 +21,7 @@ import {
   type ContentLocale,
   type ElementRegistry,
   type Fragment,
+  type BuilderNode,
   type NodeId,
   type NodePatch,
 } from '../core';
@@ -135,6 +136,12 @@ export interface CreateEditorOptions<TDoc extends EngineDocument> {
   onRefused?: ((code: string) => void) | undefined;
   /** See `EditorProfile.onNodeUpdated`. */
   onNodeUpdated?: ((draft: TDoc, nodeId: NodeId, registry: ElementRegistry) => void) | undefined;
+  /** See `EditorProfile.defaultParent`. */
+  defaultParent?: ((doc: TDoc) => NodeId | null | undefined) | undefined;
+  /** See `EditorProfile.canRemove`. */
+  canRemove?: ((node: BuilderNode) => boolean) | undefined;
+  /** See `EditorProfile.onNodesAdded`. */
+  onNodesAdded?: ((draft: TDoc, ids: NodeId[], registry: ElementRegistry) => void) | undefined;
 }
 
 /** What the canvas and the inspector show: the document in the language being written. */
@@ -147,6 +154,9 @@ export function createEditorStore<TDoc extends EngineDocument>({
   registry,
   onRefused,
   onNodeUpdated,
+  defaultParent,
+  canRemove,
+  onNodesAdded,
 }: CreateEditorOptions<TDoc>): EditorStore<TDoc> {
   const history = new History<TDoc>(document);
 
@@ -232,6 +242,13 @@ export function createEditorStore<TDoc extends EngineDocument>({
       if (last) {
         const parent = parentOf(doc, last);
         if (parent) return { parentId: parent.id, index: indexInParent(doc, last) + 1 };
+      }
+      // Nothing selected: the end of the container the kit names (a form's
+      // current step), or of the document.
+      const home = defaultParent?.(doc);
+      const homeNode = home ? doc.nodes[home] : undefined;
+      if (homeNode && (!type || registry.canContain(homeNode.type, type))) {
+        return { parentId: homeNode.id, index: homeNode.children?.length ?? 0 };
       }
       return { parentId: doc.root, index: doc.nodes[doc.root]?.children?.length ?? 0 };
     };
@@ -321,7 +338,11 @@ export function createEditorStore<TDoc extends EngineDocument>({
         }
         const result = commit(
           `Add ${type}`,
-          (draft) => insert(draft, registry, where.parentId, where.index, fragment),
+          (draft) => {
+            const ids = insert(draft, registry, where.parentId, where.index, fragment);
+            onNodesAdded?.(draft, ids, registry);
+            return ids;
+          },
           { select: (ids) => (block ? [block] : ids) },
         );
         if (!result.ok) return null;
@@ -332,7 +353,11 @@ export function createEditorStore<TDoc extends EngineDocument>({
         const where = target ?? defaultTarget();
         const result = commit(
           label,
-          (draft) => insert(draft, registry, where.parentId, where.index, fragment),
+          (draft) => {
+            const ids = insert(draft, registry, where.parentId, where.index, fragment);
+            onNodesAdded?.(draft, ids, registry);
+            return ids;
+          },
           { select: (ids) => ids },
         );
         return result.ok ? result.value : [];
@@ -435,6 +460,18 @@ export function createEditorStore<TDoc extends EngineDocument>({
       removeNodes(ids) {
         if (ids.length === 0) return false;
         const { doc } = get();
+        // A block the kit keeps (a template's required field), or one holding
+        // such a block, stops the whole removal.
+        if (canRemove) {
+          const kept = (id: NodeId): boolean => {
+            const node = doc.nodes[id];
+            return !!node && (!canRemove(node) || (node.children ?? []).some(kept));
+          };
+          if (ids.some(kept)) {
+            onRefused?.('node.locked');
+            return false;
+          }
+        }
         const first = ids[0];
         const parent = first ? parentOf(doc, first) : undefined;
         const index = first ? indexInParent(doc, first) : -1;
@@ -448,9 +485,17 @@ export function createEditorStore<TDoc extends EngineDocument>({
         return true;
       },
       duplicateNodes(ids) {
-        const result = commit('Duplicate', (draft) => duplicateNodes(draft, registry, ids), {
-          select: (copies) => copies,
-        });
+        const result = commit(
+          'Duplicate',
+          (draft) => {
+            const copies = duplicateNodes(draft, registry, ids);
+            onNodesAdded?.(draft, copies, registry);
+            return copies;
+          },
+          {
+            select: (copies) => copies,
+          },
+        );
         return result.ok ? result.value : [];
       },
       wrapNodes(ids, type) {

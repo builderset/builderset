@@ -2,6 +2,7 @@
 
 import '@builderset/email/styles.css';
 import '@builderset/article/styles.css';
+import '@builderset/form/styles.css';
 
 import {
   createArticleRegistry,
@@ -29,6 +30,17 @@ import { sq as emailSq } from '@builderset/email/locales/sq';
 import { DEFAULT_BRAND, renderEmail } from '@builderset/email/render';
 import emptyEmail from '@builderset/email/fixtures/valid/empty.json';
 import { demoEmailType } from './demo-email-type';
+import {
+  createFormDocument,
+  createFormRegistry,
+  parseForm,
+  type FormDocument,
+} from '@builderset/form';
+import { buildTemplateForm, FORM_TEMPLATES, FormEditor } from '@builderset/form/editor';
+import { createMemoryHost as formMemoryHost } from '@builderset/form/host';
+import { de as formDe } from '@builderset/form/locales/de';
+import { sq as formSq } from '@builderset/form/locales/sq';
+import { FormView } from '@builderset/form/render';
 import { themeVariables } from '@builderset/engine';
 import {
   Badge,
@@ -51,6 +63,7 @@ import {
   ArrowLeft,
   Check,
   Code2,
+  ClipboardList,
   Copy,
   Mail,
   Newspaper,
@@ -82,6 +95,7 @@ import {
 
 const emailRegistry = createEmailRegistry();
 const articleRegistry = createArticleRegistry();
+const formRegistry = createFormRegistry();
 
 /** A template's document, or the one this browser kept from last time. */
 function startingEmail(template: string): EmailDocument {
@@ -98,6 +112,15 @@ function startingArticle(template: string): ArticleDocument {
   if (kept.ok && kept.doc) return kept.doc;
   const empty = template === 'empty' ? parseArticle(emptyArticle, articleRegistry).doc : null;
   return empty ?? kitchenSinkDocument(articleRegistry);
+}
+
+function startingForm(template: string): FormDocument {
+  const kept = parseForm(readDocument('form', template), formRegistry);
+  if (kept) return kept;
+  const chosen = FORM_TEMPLATES.find((candidate) => candidate.id === template);
+  return chosen
+    ? buildTemplateForm(formRegistry, chosen, { meta: { slug: chosen.id } })
+    : createFormDocument({ name: 'New form', title: 'A new form', slug: 'new-form' });
 }
 
 /** A picture this tab uploaded, or the site's sample for the templates' made-up keys. */
@@ -169,13 +192,16 @@ export function Playground() {
   const [article, setArticle] = useState<ArticleDocument>(() =>
     startingArticle(settings.template.article),
   );
+  const [form, setForm] = useState<FormDocument>(() => startingForm(settings.template.form));
   // Made once per editor: the document it starts from, and every save kept here.
   const hosts = useMemo(() => {
     const emailStart = startingEmail(settings.template.email);
     const articleStart = startingArticle(settings.template.article);
+    const formStart = startingForm(settings.template.form);
     return {
       emailStart,
       articleStart,
+      formStart,
       email: withSampleMedia(
         emailMemoryHost<EmailDocument>({
           document: emailStart,
@@ -194,6 +220,15 @@ export function Playground() {
           },
         }),
       ),
+      form: withSampleMedia(
+        formMemoryHost<FormDocument>({
+          document: formStart,
+          onSave: (document) => {
+            setForm(document);
+            writeDocument('form', settings.template.form, document);
+          },
+        }),
+      ),
     };
     // Once per editorKey: the templates it names are part of it.
   }, [editorKey]);
@@ -201,11 +236,12 @@ export function Playground() {
   useEffect(() => {
     setEmail(hosts.emailStart);
     setArticle(hosts.articleStart);
+    setForm(hosts.formStart);
   }, [hosts]);
 
   // One function per editor, so the rendered email is not redone on every render.
   const resolveMedia = useMemo(() => {
-    const host = kit === 'email' ? hosts.email : hosts.article;
+    const host = kit === 'email' ? hosts.email : kit === 'form' ? hosts.form : hosts.article;
     return (key: string) => host.resolveMedia(key);
   }, [kit, hosts]);
 
@@ -243,6 +279,18 @@ export function Playground() {
         record={RECORD}
         locales={{ sq: emailSq, de: emailDe }}
         storageKey={`builderset-playground:recovery:email:${template}`}
+      />
+    ) : kit === 'form' ? (
+      <FormEditor
+        key={editorKey}
+        {...common}
+        document={hosts.formStart}
+        registry={formRegistry}
+        host={hosts.form}
+        record={RECORD}
+        locales={{ sq: formSq, de: formDe }}
+        publicUrl={(slug) => `https://example.com/f/${slug}`}
+        storageKey={`builderset-playground:recovery:form:${template}`}
       />
     ) : (
       <ArticleEditor
@@ -301,6 +349,7 @@ export function Playground() {
                     kit={kit}
                     email={email}
                     article={article}
+                    form={form}
                     settings={settings}
                     set={set}
                     copied={copied}
@@ -370,6 +419,15 @@ function Bar({
                 <span className="pg-seg">
                   <Newspaper aria-hidden="true" />
                   Article
+                </span>
+              ),
+            },
+            {
+              value: 'form',
+              label: (
+                <span className="pg-seg">
+                  <ClipboardList aria-hidden="true" />
+                  Form
                 </span>
               ),
             },
@@ -595,12 +653,19 @@ function Customize({
 
 // ── the output ────────────────────────────────────────────────────────────
 
-const LABELS = { json: 'Document', html: 'Email', text: 'Plain text', page: 'Page' } as const;
+const LABELS = {
+  json: 'Document',
+  html: 'Email',
+  text: 'Plain text',
+  page: 'Page',
+  form: 'Live form',
+} as const;
 
 function Output({
   kit,
   email,
   article,
+  form,
   settings,
   set,
   copied,
@@ -610,13 +675,19 @@ function Output({
   kit: Kit;
   email: EmailDocument;
   article: ArticleDocument;
+  form: FormDocument;
   settings: Settings;
   set: (patch: Partial<Settings>) => void;
   copied: string | null;
   onCopy: (what: string, text: string) => Promise<void>;
   resolveMedia: (key: string) => string;
 }) {
-  const tabs = kit === 'email' ? (['json', 'html', 'text'] as const) : (['json', 'page'] as const);
+  const tabs =
+    kit === 'email'
+      ? (['json', 'html', 'text'] as const)
+      : kit === 'form'
+        ? (['json', 'form'] as const)
+        : (['json', 'page'] as const);
   const active = (tabs as readonly string[]).includes(settings.output) ? settings.output : 'json';
   const rendered = useMemo(
     () =>
@@ -626,8 +697,8 @@ function Output({
     [kit, email, resolveMedia],
   );
   const json = useMemo(
-    () => JSON.stringify(kit === 'email' ? email : article, null, 2),
-    [kit, email, article],
+    () => JSON.stringify(kit === 'email' ? email : kit === 'form' ? form : article, null, 2),
+    [kit, email, article, form],
   );
   const dark = settings.theme === 'dark' || (settings.theme === 'auto' && settings.pageDark);
   const copyable =
@@ -696,6 +767,12 @@ function Output({
           </div>
         ) : null}
         {active === 'text' && rendered ? <pre className="pg-pre wrap">{rendered.text}</pre> : null}
+        {active === 'form' ? (
+          // The form as visitors get it: steps, logic and checks working; nothing is sent.
+          <div className="pg-live-form">
+            <FormView document={form} locale="en" assetUrl={resolveMedia} onSubmit={() => true} />
+          </div>
+        ) : null}
         {active === 'page' ? (
           // The page around the article, in the theme the article is shown in.
           <div className={dark ? 'pg-page dark' : 'pg-page light'}>

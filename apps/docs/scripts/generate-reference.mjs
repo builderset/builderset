@@ -5,6 +5,7 @@
  *
  *   reference/email-blocks.mdx      createEmailRegistry() + the English locale
  *   reference/article-elements.mdx  createArticleRegistry() + the English locale
+ *   reference/form-fields.mdx       createFormRegistry() + the English locale
  *   reference/issues.mdx            every issue code, with its message
  *   reference/css-variables.mdx     the public variables, from the theme's own files
  *   reference/props.mdx             every prop, from the tables in the packages' READMEs
@@ -22,6 +23,8 @@ import { createArticleRegistry } from '@builderset/article';
 import { en as articleEn } from '@builderset/article/locales/en';
 import { createEmailRegistry } from '@builderset/email';
 import { en as emailEn } from '@builderset/email/locales/en';
+import { createFormRegistry } from '@builderset/form';
+import { en as formEn } from '@builderset/form/locales/en';
 import { TOKEN_NAMES, z } from '@builderset/engine';
 import { en as engineEn } from '@builderset/engine/locales/en';
 
@@ -124,12 +127,35 @@ function elementsPage(registry, locale, kit) {
     }
   }
   const total = registry.all().length;
+  const { title, what, plural, factory } = KIT_PAGES[kit];
   return page(
-    kit === 'email' ? 'Email blocks' : 'Article elements',
-    `Every ${kit === 'email' ? 'block of the email kit' : 'element of the article kit'}: its type, where it may go, its props and their defaults.`,
-    `${total} ${kit === 'email' ? 'blocks' : 'elements'}, as \`create${kit === 'email' ? 'Email' : 'Article'}Registry()\` holds them. A prop's type is its JSON Schema type; the document stores exactly these props.\n\n${sections.join('\n\n')}`,
+    title,
+    `Every ${what}: its type, where it may go, its props and their defaults.`,
+    `${total} ${plural}, as \`${factory}()\` holds them. A prop's type is its JSON Schema type; the document stores exactly these props.\n\n${sections.join('\n\n')}`,
   );
 }
+
+/** How each kit's elements page names them. */
+const KIT_PAGES = {
+  email: {
+    title: 'Email blocks',
+    what: 'block of the email kit',
+    plural: 'blocks',
+    factory: 'createEmailRegistry',
+  },
+  article: {
+    title: 'Article elements',
+    what: 'element of the article kit',
+    plural: 'elements',
+    factory: 'createArticleRegistry',
+  },
+  form: {
+    title: 'Form fields',
+    what: 'field of the form kit',
+    plural: 'fields',
+    factory: 'createFormRegistry',
+  },
+};
 
 // ── issues ─────────────────────────────────────────────────────────────────
 
@@ -138,6 +164,7 @@ function issuesPage() {
     ['Every kit', engineEn.issueText ?? {}],
     ['Email', emailEn.workspace?.issueText ?? {}],
     ['Article', articleEn.workspace?.issueText ?? {}],
+    ['Form', formEn.workspace?.issueText ?? {}],
   ];
   const rows = new Map();
   for (const [kit, messages] of sources) {
@@ -252,6 +279,7 @@ function propsPage() {
 const pages = {
   'email-blocks.mdx': elementsPage(createEmailRegistry(), emailEn, 'email'),
   'article-elements.mdx': elementsPage(createArticleRegistry(), articleEn, 'article'),
+  'form-fields.mdx': elementsPage(createFormRegistry(), formEn, 'form'),
   'issues.mdx': issuesPage(),
   'css-variables.mdx': cssVariablesPage(),
   'props.mdx': propsPage(),

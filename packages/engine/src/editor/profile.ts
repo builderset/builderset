@@ -1,4 +1,5 @@
 import type {
+  BuilderNode,
   Breakpoint,
   EditableTextField,
   ElementRegistry,
@@ -78,9 +79,10 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   /**
    * `page`: a page with a reading measure, the profile's `canvasHeader` above
    * the blocks. `bare`: the renderer draws the whole page itself (an email's
-   * backdrop). Default: `page`.
+   * backdrop). `none`: no page at all — the renderer draws its own card on
+   * the board (a form). Default: `page`.
    */
-  canvasFrame?: 'page' | 'bare' | undefined;
+  canvasFrame?: 'page' | 'bare' | 'none' | undefined;
   /**
    * Draws a document as readers see it — no editing: the preview over the
    * editor, and the library's peek at a block. Without one, the canvas
@@ -126,6 +128,8 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   paragraphType: string;
   /** Variables the text toolbar can insert (as chips). */
   variables?: readonly { path: string; label: string; group?: string | undefined }[] | undefined;
+  /** The document in numbers, in the dock: "8 fields · 3 steps". Default: words and reading time. */
+  summaryOf?: ((doc: TDoc) => string) | undefined;
   /** The name the top bar shows. */
   titleOf: (doc: TDoc) => string;
   /** Show the Style tab (the shared per-breakpoint style model). Default: true. */
@@ -153,6 +157,31 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   fontsPreviewUrl?: string | undefined;
   /** Extra dialogs or listeners rendered inside the editor (an email's HTML import). */
   overlays?: ComponentType | undefined;
+  /**
+   * Where a block goes when it is added with nothing selected: the end of this
+   * container (a form's current step). Without one, or when it cannot hold the
+   * block, the end of the document.
+   */
+  defaultParent?: ((doc: TDoc) => string | null | undefined) | undefined;
+  /**
+   * The inspector's body for a selected block, in place of the Content, Style
+   * and Advanced tabs: a kit whose blocks need their own editors (a form
+   * field's choices, checks and logic). The crumb and the header stay.
+   * Return null to fall back to the shared tabs for that block.
+   */
+  nodePanel?: ((args: { id: string; type: string }) => ReactNode) | undefined;
+  /**
+   * Whether a block may be removed. A block it refuses (a template's required
+   * field) stays, and so does anything holding one; the editor says why with
+   * the `node.locked` issue text.
+   */
+  canRemove?: ((node: BuilderNode) => boolean) | undefined;
+  /**
+   * Called inside the same undo step after blocks are added — inserted,
+   * dropped, pasted or duplicated — with the ids of the pieces added (their
+   * insides are in the draft too): a form gives each new field its own key.
+   */
+  onNodesAdded?: ((draft: TDoc, ids: string[], registry: ElementRegistry) => void) | undefined;
   /** Structures the host offers as drag-and-drop fragments (email rows). */
   structures?:
     readonly { id: string; label: string; icon?: ReactNode; build: () => Fragment }[] | undefined;

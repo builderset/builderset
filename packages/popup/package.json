@@ -1,6 +1,6 @@
 {
   "name": "@builderset/popup",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Popup builder: modals, slide-ins, bars, drawers and full-screen offers, with display rules, motion and the same checks on the server.",
   "license": "MIT",
   "keywords": [

@@ -9,4 +9,4 @@ the browser did.
 
 #: Written by ``tooling/sync-python-version.mjs`` from the npm packages' version:
 #: one version for the whole product.
-__version__ = "0.3.0"
+__version__ = "0.4.0"

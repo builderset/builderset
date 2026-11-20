@@ -20,6 +20,9 @@ export default defineConfig({
           setupFiles: ['./src/render/test-setup.ts', './src/editor/test-setup.ts'],
           include: ['src/**/*.test.{ts,tsx}'],
           exclude: ['src/**/*.node.test.ts'],
+          // The first editor test pays for loading the whole editor into jsdom: seconds
+          // on a shared CI runner, over the 5 s default.
+          testTimeout: 20_000,
         },
       },
       {

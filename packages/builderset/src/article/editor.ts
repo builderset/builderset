@@ -2,9 +2,11 @@
 'use client';
 
 export {
+  ARTICLE_TEMPLATE_CATEGORIES,
   ARTICLE_TEMPLATES,
   ArticleEditor,
   articleProfile,
+  defineTemplate,
   DocumentSettings,
   SETTINGS_FIELDS,
   SettingsFieldRow,
@@ -21,6 +23,8 @@ export type {
   ArticleMessages,
   ArticleProfileOptions,
   ArticleSettingsOptions,
+  ArticleTemplate,
+  ArticleTemplateCategory,
   ArticleWords,
   SettingsField,
   SettingsSection,

@@ -1,0 +1,158 @@
+{
+  "schema": "form/document",
+  "version": 1,
+  "root": "root",
+  "nodes": {
+    "root": {
+      "id": "root",
+      "type": "root",
+      "v": 1,
+      "props": {},
+      "children": [
+        "n3"
+      ]
+    },
+    "n1": {
+      "id": "n1",
+      "type": "text",
+      "v": 1,
+      "props": {
+        "label": "Plate",
+        "key": "plate",
+        "help": "",
+        "required": false,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "placeholder": "",
+        "defaultValue": ""
+      }
+    },
+    "n2": {
+      "id": "n2",
+      "type": "consent",
+      "v": 1,
+      "props": {
+        "label": "Consent",
+        "key": "consent",
+        "help": "",
+        "required": true,
+        "lock": "",
+        "protect": false,
+        "readonly": false,
+        "prefill": "",
+        "checks": {
+          "minLength": null,
+          "maxLength": null,
+          "min": null,
+          "max": null,
+          "pattern": "none",
+          "regex": "",
+          "message": ""
+        },
+        "width": "full",
+        "logic": {
+          "enabled": false,
+          "match": "all",
+          "rules": []
+        },
+        "hideFromVisitors": false,
+        "text": "I agree.",
+        "linkText": "",
+        "linkUrl": ""
+      }
+    },
+    "n3": {
+      "id": "n3",
+      "type": "step",
+      "v": 1,
+      "props": {
+        "title": "One"
+      },
+      "children": [
+        "n1",
+        "n2"
+      ]
+    }
+  },
+  "meta": {
+    "name": "",
+    "title": "Broken on purpose",
+    "intro": "",
+    "slug": ""
+  },
+  "settings": {
+    "progress": "bar",
+    "buttons": {
+      "submit": "Send",
+      "next": "Continue",
+      "back": "Back"
+    },
+    "marker": "asterisk",
+    "saveProgress": true,
+    "prefill": true,
+    "after": {
+      "mode": "message",
+      "title": "Thank you! We got it.",
+      "message": "We will get back to you soon.",
+      "redirectUrl": ""
+    },
+    "autoReply": {
+      "enabled": true,
+      "to": "plate",
+      "fromName": "",
+      "replyTo": "",
+      "subject": "We got your message, {{name}}",
+      "body": "Hello {{name}},\n\nThank you for writing to us. We will get back to you soon."
+    },
+    "notify": {
+      "enabled": false,
+      "recipients": []
+    },
+    "webhook": "",
+    "spam": {
+      "captcha": "invisible",
+      "honeypot": true,
+      "blockDisposable": false,
+      "rateLimit": true
+    },
+    "limits": {
+      "oncePer": "none",
+      "maxResponses": null,
+      "opensAt": null,
+      "closesAt": null,
+      "closedMessage": "This form no longer takes responses."
+    },
+    "privacy": {
+      "keepMonths": 12,
+      "storeIp": false
+    },
+    "style": {
+      "look": "light",
+      "width": 640,
+      "labels": "top",
+      "size": "m",
+      "radius": "m",
+      "accent": "#2f5cf0",
+      "font": "system",
+      "fullWidthButtons": false
+    }
+  }
+}

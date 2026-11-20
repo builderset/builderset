@@ -1,0 +1,103 @@
+---
+title: 'Quick start: email'
+description: An email editor in a Next.js app, saving to your own routes and sending from your server. About 10 minutes.
+---
+
+At the end you have an email editor on a page of your Next.js app. It saves through
+your own API routes, and a route of yours renders the email to HTML on the server,
+ready to send. Every file below is from
+[`examples/next-shadcn`](https://github.com/builderset/builderset/tree/development/examples/next-shadcn),
+which is built and tested on every change.
+
+_This page describes Builderset 0.4.0._
+
+<Steps>
+<Step>
+
+### Install
+
+Until Builderset is public, its packages are on GitHub Packages, which needs a token
+even to read. Create a classic token with only the `read:packages` scope, set it as
+`GITHUB_PACKAGES_TOKEN` in your environment, and add an `.npmrc` beside your
+`package.json`:
+
+<include cwd lang="ini" meta='title=".npmrc"'>
+  ./snippets/npmrc
+</include>
+
+Then install the email kit:
+
+<include cwd lang="bash">
+  ./snippets/install-email.sh
+</include>
+
+</Step>
+<Step>
+
+### The editor page
+
+The page is a Server Component: it reads the email from your storage and hands it to
+the editor.
+
+<include cwd lang="tsx" meta='title="app/emails/[id]/edit/page.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/page.tsx
+</include>
+
+The editor itself runs in the browser only, so it is loaded with `next/dynamic` and
+`ssr: false`. Two stylesheets come with it: the editor's own, and `shadcn.css`, which
+gives it your project's colours if your project uses shadcn's tokens (leave it out
+otherwise). `createRestHost` connects the editor to your routes:
+
+<include cwd lang="tsx" meta='title="app/emails/[id]/edit/email-edit.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/email-edit.tsx
+</include>
+
+</Step>
+<Step>
+
+### Your routes
+
+The editor asks your API for the email and saves it back. The example keeps each
+email in a JSON file; in your project these are rows in your database, with these
+fields:
+
+<include cwd lang="ts" meta='title="lib/store.ts"'>
+  ../../examples/next-shadcn/lib/store.ts#stored-email
+</include>
+
+Reading an email:
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/route.ts"'>
+  ../../examples/next-shadcn/app/api/emails/[id]/route.ts
+</include>
+
+Saving a draft — checked on the server with the same rules as in the editor, and
+refused with `409` if someone else saved in the meantime:
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/draft/route.ts"'>
+  ../../examples/next-shadcn/app/api/emails/[id]/draft/route.ts
+</include>
+
+Publishing is the same pattern, in
+[`publish/route.ts`](https://github.com/builderset/builderset/blob/development/examples/next-shadcn/app/api/emails/%5Bid%5D/publish/route.ts).
+
+</Step>
+<Step>
+
+### Send it
+
+On the server, `renderEmail` turns the document into HTML and plain text — no React,
+no browser. Fill the variables with `data`, and hand the result to your mail
+provider:
+
+<include cwd lang="ts" meta='title="app/api/emails/[id]/send/route.ts"'>
+  ../../examples/next-shadcn/app/api/emails/[id]/send/route.ts
+</include>
+
+</Step>
+</Steps>
+
+## Done
+
+Open `/emails/welcome/edit`: the editor shows the starter email, saves to your
+routes, and `POST /api/emails/welcome/send` returns the HTML a recipient would get.

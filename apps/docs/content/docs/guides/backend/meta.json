@@ -1,0 +1,14 @@
+{
+  "title": "Backend setup",
+  "pages": [
+    "data-model",
+    "sql",
+    "supabase",
+    "django",
+    "fastapi",
+    "express",
+    "next-drizzle",
+    "next-prisma",
+    "fastapi-sqlalchemy"
+  ]
+}

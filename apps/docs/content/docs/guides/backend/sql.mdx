@@ -1,0 +1,44 @@
+---
+title: SQL
+description: The PostgreSQL schema for every builder — email templates, articles, forms and responses, revisions, sections, media — and the queries that keep two editors from overwriting each other.
+---
+
+_This page describes Builderset 0.4.0._
+
+The tables of the [data model](/docs/guides/backend/data-model) as one PostgreSQL
+migration. Any framework can run it as it is, or recreate it with its own migrations:
+[Django](/docs/guides/backend/django), [FastAPI](/docs/guides/backend/fastapi) and
+[Node.js](/docs/guides/backend/express) build these same tables, and
+[Supabase](/docs/guides/backend/supabase) adds row-level security on top.
+
+<include cwd lang="sql" meta='title="schema.sql"'>
+  ./snippets/backends/sql/schema.sql
+</include>
+
+## Why it is shaped this way
+
+- **One JSON column per version, not a table per block.** The document is checked as
+  a whole and stored as a whole; nothing reads or writes inside it. A relational copy
+  of the tree would be a second source that can disagree with the first.
+- **`document` and `draft_document`.** Readers get `document`. Autosaves go to
+  `draft_document`, so a half-written article never reaches the site, and publishing
+  copies the checked draft into `document` in one statement.
+- **`saved_at` with milliseconds.** The editor sends back the value it last saw. The
+  save is an `update … where id = $1 and saved_at = $2`: if another save got there
+  first, it changes no row, and the route answers `409` instead of overwriting.
+- **Copies of the meta for lists.** An article's `title` and `excerpt`, a form's
+  `slug` and `name` are written from `document.meta` in the same transaction as the
+  document. Lists and search read these, and an index serves them.
+- **Responses keep the version they answered.** Every publish records a `publish`
+  revision, so a response's `form_version` finds the document it answered, even after
+  the form was edited.
+- **A partial unique index** keeps one active design per email type, so the mailer
+  never has to choose.
+
+## Other databases
+
+MySQL 8 and MariaDB have a `JSON` type: use it for the documents, `datetime(3)` for
+the timestamps, and an `enum` or a check for the statuses; the partial indexes become
+plain indexes and the one-active-design rule a check in the publish route. SQLite
+stores the JSON as text, which is fine for a small site: the documents are always
+read and written whole.

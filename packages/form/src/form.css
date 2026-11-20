@@ -1,0 +1,760 @@
+/*
+ * @builderset/form/form.css — how a form looks to the people who fill it in.
+ *
+ * Plain CSS, every rule under `.bsf`, every choice the form makes (accent,
+ * corners, field height, width, font, look) a variable the renderer sets on
+ * the form from its settings. Load it on any page that shows a form; the
+ * editor and the preview use the same file, so what the builder shows is what
+ * visitors get. It carries no reset and no utilities, and is safe beside any
+ * other stylesheet.
+ */
+
+.bsf {
+  --bsf-accent: #2f5cf0;
+  --bsf-radius: 10px;
+  --bsf-h: 46px;
+  --bsf-width: 640px;
+  --bsf-font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bsf-bg: #ffffff;
+  --bsf-ink: #1b1e22;
+  --bsf-mute: #6b7280;
+  --bsf-line: #e3e5ea;
+  --bsf-input: #ffffff;
+  --bsf-bad: #d1373a;
+
+  box-sizing: border-box;
+  width: min(var(--bsf-width), 100%);
+  margin: 0 auto;
+  padding: 36px 40px 32px;
+  border-radius: 18px;
+  background: var(--bsf-bg);
+  color: var(--bsf-ink);
+  font: 400 15px/1.5 var(--bsf-font);
+  box-shadow:
+    0 0 0 1px rgb(15 17 22 / 0.05),
+    0 20px 50px rgb(20 23 30 / 0.1);
+  text-align: left;
+}
+.bsf *,
+.bsf *::before,
+.bsf *::after {
+  box-sizing: border-box;
+}
+.bsf.bsf-mobile {
+  padding: 26px 20px 24px;
+  border-radius: 24px;
+}
+
+/* head */
+.bsf-head {
+  margin-bottom: 22px;
+}
+.bsf-title {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.bsf-intro {
+  margin: 0;
+  color: var(--bsf-mute);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* progress */
+.bsf-progress {
+  margin: 0 0 22px;
+}
+.bsf-progress-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: var(--bsf-mute);
+  font-size: 12.5px;
+}
+.bsf-progress-line b {
+  color: var(--bsf-ink);
+  font-weight: 600;
+}
+.bsf-progress-bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--bsf-line);
+}
+.bsf-progress-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--bsf-accent);
+  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bsf-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 22px;
+  color: var(--bsf-mute);
+  font-size: 12.5px;
+}
+.bsf-steps > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.bsf-steps b {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--bsf-line);
+  border-radius: 50%;
+  font-size: 11px;
+}
+.bsf-steps .bsf-on {
+  color: var(--bsf-ink);
+  font-weight: 600;
+}
+.bsf-steps .bsf-on b {
+  border-color: var(--bsf-accent);
+  color: var(--bsf-accent);
+}
+.bsf-steps .bsf-done b {
+  border-color: var(--bsf-accent);
+  background: var(--bsf-accent);
+  color: #fff;
+}
+.bsf-steps > i {
+  flex: 1;
+  min-width: 14px;
+  height: 1.5px;
+  background: var(--bsf-line);
+}
+
+/* the grid of fields */
+.bsf-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px 16px;
+}
+.bsf-field {
+  position: relative;
+  grid-column: span 2;
+  min-width: 0;
+}
+.bsf-field.bsf-half {
+  grid-column: span 1;
+}
+.bsf.bsf-mobile .bsf-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.bsf.bsf-mobile .bsf-field {
+  grid-column: span 1;
+}
+.bsf-label {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 7px;
+  color: var(--bsf-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.bsf-req {
+  color: var(--bsf-accent);
+  font-style: normal;
+  font-weight: 700;
+}
+.bsf-opt {
+  color: var(--bsf-mute);
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 400;
+}
+.bsf-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--bsf-mute);
+  font-size: 12.5px;
+}
+.bsf-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: var(--bsf-bad);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+/* inputs */
+.bsf-input {
+  width: 100%;
+  min-width: 0;
+  height: var(--bsf-h);
+  padding: 0 14px;
+  border: 1px solid var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-input);
+  color: var(--bsf-ink);
+  font: inherit;
+  outline: 0;
+  appearance: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+textarea.bsf-input {
+  height: auto;
+  min-height: 104px;
+  padding: 12px 14px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.bsf-input::placeholder {
+  color: var(--bsf-mute);
+  opacity: 0.7;
+}
+.bsf-input:focus {
+  border-color: var(--bsf-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bsf-accent) 18%, transparent);
+}
+.bsf-field.bsf-bad .bsf-input,
+.bsf-field.bsf-bad .bsf-option,
+.bsf-field.bsf-bad .bsf-drop,
+.bsf-field.bsf-bad .bsf-consent {
+  border-color: var(--bsf-bad);
+}
+.bsf-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+.bsf-group .bsf-input {
+  flex: 1;
+}
+.bsf-addon {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--bsf-line);
+  background: color-mix(in srgb, var(--bsf-line) 35%, var(--bsf-input));
+  color: var(--bsf-mute);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.bsf-addon.bsf-before {
+  border-right: 0;
+  border-radius: var(--bsf-radius) 0 0 var(--bsf-radius);
+}
+.bsf-addon.bsf-after {
+  border-left: 0;
+  border-radius: 0 var(--bsf-radius) var(--bsf-radius) 0;
+}
+.bsf-group:has(.bsf-before) .bsf-input {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.bsf-group:has(.bsf-after) .bsf-input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.bsf-select {
+  padding-right: 36px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+}
+.bsf-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+.bsf-stack {
+  display: grid;
+  gap: 10px;
+}
+.bsf.bsf-mobile .bsf-two {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* choices */
+.bsf-options {
+  display: grid;
+  gap: 8px;
+}
+.bsf-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.bsf-option input,
+.bsf-consent input,
+.bsf-scale input,
+.bsf-stars input,
+.bsf-captcha input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.bsf-mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--bsf-line);
+  border-radius: 50%;
+  background: var(--bsf-input);
+  transition: all 0.15s;
+}
+input[type='checkbox'] + .bsf-mark {
+  border-radius: 6px;
+}
+.bsf-option input:checked + .bsf-mark,
+.bsf-consent input:checked + .bsf-mark {
+  border-color: var(--bsf-accent);
+  background: var(--bsf-accent);
+  box-shadow: inset 0 0 0 4px var(--bsf-input);
+}
+input[type='checkbox']:checked + .bsf-mark {
+  box-shadow: none;
+  background: var(--bsf-accent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+}
+.bsf-option input:focus-visible + .bsf-mark {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bsf-accent) 25%, transparent);
+}
+.bsf-options.bsf-buttons {
+  display: flex;
+  flex-wrap: wrap;
+}
+.bsf-options.bsf-buttons .bsf-option {
+  height: 40px;
+  padding: 0 15px;
+  border: 1px solid var(--bsf-line);
+  border-radius: 999px;
+  background: var(--bsf-input);
+  font-size: 14px;
+  transition: all 0.15s;
+}
+.bsf-options.bsf-buttons .bsf-mark {
+  display: none;
+}
+.bsf-options.bsf-buttons .bsf-option:has(input:checked) {
+  border-color: var(--bsf-accent);
+  background: color-mix(in srgb, var(--bsf-accent) 12%, var(--bsf-input));
+  color: var(--bsf-accent);
+  font-weight: 600;
+}
+.bsf-options.bsf-cards {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.bsf-options.bsf-cards .bsf-option {
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-input);
+}
+.bsf-options.bsf-cards .bsf-option:has(input:checked) {
+  border-color: var(--bsf-accent);
+  box-shadow: 0 0 0 1px var(--bsf-accent);
+}
+.bsf-yesno .bsf-option {
+  min-width: 84px;
+  justify-content: center;
+}
+
+/* stars, score, slider */
+.bsf-stars {
+  display: flex;
+  gap: 6px;
+}
+.bsf-stars label {
+  color: var(--bsf-line);
+  cursor: pointer;
+}
+.bsf-stars svg {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+}
+.bsf-stars label.bsf-on {
+  color: #f2b04e;
+}
+.bsf-scale {
+  display: grid;
+  grid-template-columns: repeat(var(--bsf-count, 11), minmax(0, 1fr));
+  gap: 5px;
+}
+.bsf-scale span {
+  display: grid;
+  place-items: center;
+  height: 42px;
+  border: 1px solid var(--bsf-line);
+  border-radius: 8px;
+  background: var(--bsf-input);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bsf-scale label:has(input:checked) span {
+  border-color: var(--bsf-accent);
+  background: var(--bsf-accent);
+  color: #fff;
+}
+.bsf-scale-ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: var(--bsf-mute);
+  font-size: 12px;
+}
+.bsf.bsf-mobile .bsf-scale {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.bsf-slider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.bsf-slider input {
+  flex: 1;
+  accent-color: var(--bsf-accent);
+}
+.bsf-slider output {
+  min-width: 44px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* consent, files, signature */
+.bsf-consent {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-input);
+  font-size: 13.5px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.bsf-consent .bsf-mark {
+  margin-top: 1px;
+}
+.bsf-consent a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--bsf-accent);
+  text-underline-offset: 3px;
+}
+.bsf-drop {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 22px 16px;
+  border: 1.5px dashed var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-input);
+  color: var(--bsf-mute);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.bsf-drop:hover {
+  border-color: var(--bsf-accent);
+}
+.bsf-drop svg {
+  width: 24px;
+  height: 24px;
+}
+.bsf-drop b {
+  color: var(--bsf-ink);
+  font-size: 14px;
+  font-weight: 500;
+}
+.bsf-drop u {
+  color: var(--bsf-accent);
+}
+.bsf-drop small {
+  font-size: 12px;
+}
+.bsf-drop em {
+  color: var(--bsf-accent);
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 600;
+}
+.bsf-drop input {
+  display: none;
+}
+.bsf-signature {
+  position: relative;
+  height: 120px;
+  overflow: hidden;
+  border: 1px solid var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-input);
+}
+.bsf-signature canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+.bsf-signature::after {
+  position: absolute;
+  right: 14px;
+  bottom: 30px;
+  left: 14px;
+  border-top: 1px dashed var(--bsf-line);
+  content: '';
+  pointer-events: none;
+}
+.bsf-signature span {
+  position: absolute;
+  bottom: 10px;
+  left: 14px;
+  color: var(--bsf-mute);
+  font-size: 12px;
+  pointer-events: none;
+}
+.bsf-signature.bsf-signed span {
+  opacity: 0;
+}
+.bsf-signature button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--bsf-mute);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* content blocks */
+.bsf-heading {
+  margin: 6px 0 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.bsf-text {
+  margin: 0;
+  color: var(--bsf-mute);
+  font-size: 14.5px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.bsf-rule {
+  margin: 6px 0;
+  border: 0;
+  border-top: 1px solid var(--bsf-line);
+}
+.bsf-image {
+  display: block;
+  width: 100%;
+  border-radius: var(--bsf-radius);
+}
+.bsf-image.bsf-empty {
+  display: grid;
+  place-items: center;
+  height: 140px;
+  background: var(--bsf-line);
+  color: var(--bsf-mute);
+}
+.bsf-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px dashed var(--bsf-line);
+  border-radius: var(--bsf-radius);
+  color: var(--bsf-mute);
+  font-size: 12.5px;
+}
+.bsf-note code {
+  color: var(--bsf-ink);
+  font-size: 12px;
+}
+
+/* buttons */
+.bsf-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+.bsf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  height: var(--bsf-h);
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--bsf-radius);
+  background: var(--bsf-accent);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    transform 0.2s;
+}
+.bsf-button:hover {
+  filter: brightness(1.06);
+}
+.bsf-button:active {
+  transform: scale(0.98);
+}
+.bsf-button[aria-busy='true'] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.bsf-back {
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--bsf-mute);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.bsf.bsf-full-buttons .bsf-nav {
+  flex-direction: column-reverse;
+  align-items: stretch;
+}
+.bsf.bsf-full-buttons .bsf-button {
+  width: 100%;
+}
+.bsf-captcha {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px 14px;
+  border: 1px solid var(--bsf-line);
+  border-radius: 8px;
+  background: var(--bsf-input);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.bsf-captcha .bsf-mark {
+  border-radius: 4px;
+}
+.bsf-captcha.bsf-bad {
+  border-color: var(--bsf-bad);
+}
+.bsf-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* after sending */
+.bsf-thanks {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 30px 10px;
+  text-align: center;
+}
+.bsf-thanks-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--bsf-accent) 14%, transparent);
+  color: var(--bsf-accent);
+}
+.bsf-thanks-icon svg {
+  width: 30px;
+  height: 30px;
+}
+.bsf-thanks b {
+  font-size: 22px;
+  font-weight: 700;
+}
+.bsf-thanks p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--bsf-mute);
+  font-size: 15px;
+  white-space: pre-line;
+}
+.bsf-thanks .bsf-button {
+  margin-top: 16px;
+}
+
+/* label positions */
+.bsf.bsf-labels-left .bsf-field.bsf-asks {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: start;
+}
+.bsf.bsf-labels-left .bsf-field.bsf-asks > .bsf-label {
+  grid-row: 1 / 4;
+  margin: 0;
+  padding-top: 12px;
+}
+.bsf.bsf-labels-left .bsf-field.bsf-half {
+  grid-column: span 2;
+}
+.bsf.bsf-labels-inside .bsf-field.bsf-boxed > .bsf-label {
+  position: absolute;
+  top: 7px;
+  left: 15px;
+  z-index: 1;
+  margin: 0;
+  color: var(--bsf-mute);
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.bsf.bsf-labels-inside .bsf-field.bsf-boxed .bsf-input {
+  height: calc(var(--bsf-h) + 6px);
+  padding-top: 16px;
+}
+.bsf.bsf-labels-inside .bsf-field.bsf-boxed textarea.bsf-input {
+  padding-top: 24px;
+}
+.bsf.bsf-mobile.bsf-labels-left .bsf-field.bsf-asks {
+  display: block;
+}
+.bsf.bsf-mobile.bsf-labels-left .bsf-field.bsf-asks > .bsf-label {
+  margin-bottom: 7px;
+  padding-top: 0;
+}

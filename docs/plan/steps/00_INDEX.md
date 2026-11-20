@@ -114,7 +114,7 @@ pnpm test:examples                          # the example apps from packed tarba
 
 Tick a step when every box in its **Done when** list is ticked.
 
-- [ ] 01 Decisions and accounts — D1–D4, D6 and D7 are decided; D5, D8 and the accounts are open: [DECISIONS.md](../DECISIONS.md)
+- [ ] 01 Decisions and accounts — D1–D4, D6, D7 and D9 are decided; D5, D8 and the npm and PyPI accounts are open: [DECISIONS.md](../DECISIONS.md)
 - [x] 02 Regroup the folders
 - [x] 03 Split the engine from the article kit
 - [x] 04 The editor's own UI kit
@@ -127,12 +127,12 @@ Tick a step when every box in its **Done when** list is ticked.
 - [x] 10 Styles and theming
 - [x] 11 The all-in-one package
 - [x] 12 Example apps and the test matrix
-- [x] 13 Publishing and releases — `0.1.0` and `0.2.0` are on GitHub Packages under `latest`
+- [x] 13 Publishing and releases — every release on GitHub Packages under `latest`, the latest `0.3.0`, with the Python wheel on its GitHub release
 - [x] **M2 — installable**
-- [x] 14 Adopt the packages in MotorsAL — on Builderset `0.2.0`, in production since 2026-11-16
-- [ ] 15 The Python package
-- [ ] **M3 — MotorsAL runs on it**
-- [ ] 16 Docs site and playground
+- [x] 14 Adopt the packages in MotorsAL — in production since 2026-11-16, now on `0.3.0`
+- [x] 15 The Python package — `builderset` 0.3.0, the wheel on the GitHub release (D9); MotorsAL's API runs on it
+- [x] **M3 — MotorsAL runs on it** — 2026-11-19: the editors on `@builderset/*` and the API on `builderset`, both 0.3.0, in production
+- [ ] 16 Docs site and playground — built: every page of the tree (guides, the three backend examples, the generated and hand-written reference), the playground, the landing page (`apps/landing`), the repository's files. Left: both Vercel projects connected (docs-builderset, builderset), the backends workflow's first CI run, the stranger test (two developers), then M4
 - [ ] **M4 — public**
 - [ ] 17 The popup builder
 - [ ] **M5 — the engine is proven; release 1.0**

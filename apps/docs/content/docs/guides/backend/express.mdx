@@ -1,0 +1,136 @@
+---
+title: Node.js and Express
+description: The three builders' backend in Node.js — Express routes over Postgres with pg and plain SQL, checked by the kits' own functions, one router for emails, articles and forms.
+---
+
+_This page describes Builderset 0.4.0._
+
+At the end an Express server stores email templates, articles and forms, refuses an
+unsafe or stale save with the editor's own issue codes, and takes form responses
+checked by the same `validateAnswers` the form ran in the browser. There is no ORM:
+the queries are written against the tables of the [SQL schema](/docs/guides/backend/sql),
+and the routes are the ones in [Data model and API](/docs/guides/backend/data-model).
+It needs `express`, `pg` and the three kits from npm. For the same routes as Next.js
+route handlers with an ORM, see [Next.js and Drizzle](/docs/guides/backend/next-drizzle).
+
+<Steps>
+<Step>
+
+### The tables
+
+Run [`schema.sql`](/docs/guides/backend/sql) as your first migration. The server
+holds one pool:
+
+<include cwd lang="ts" meta='title="db.ts"'>
+  ./snippets/backends/express/db.ts
+</include>
+
+</Step>
+<Step>
+
+### The checks
+
+Every document is checked before it is stored, with the editor's own rules: a draft
+may be unfinished but never unsafe, and publishing refuses every error. A refusal
+carries the issue codes, so the editor shows each problem on its block:
+
+<include cwd lang="ts" meta='title="checks.ts"'>
+  ./snippets/backends/express/checks.ts
+</include>
+
+</Step>
+<Step>
+
+### One router for three builders
+
+The routes are written once, in `documentRouter(kind)`. What differs between emails,
+articles and forms is a small table: the table name, the kit's check, the columns
+copied from the document's meta, what a new row needs. The table and column names in
+the SQL come only from here, never from a request:
+
+<include cwd lang="ts" meta='title="documents.ts"'>
+  ./snippets/backends/express/documents.ts#kinds
+</include>
+
+The server mounts it once per builder, behind your sign-in:
+
+<include cwd lang="ts" meta='title="server.ts"'>
+  ./snippets/backends/express/server.ts
+</include>
+
+</Step>
+<Step>
+
+### Saving a draft
+
+The editor sends back the `saved_at` it last saw. A different one on the row means
+someone else saved in between: `409`, and the editor offers to reload or keep its
+own. The update is conditional, so two saves at the same instant cannot both win:
+
+<include cwd lang="ts" meta='title="documents.ts"'>
+  ./snippets/backends/express/documents.ts#draft
+</include>
+
+</Step>
+<Step>
+
+### Publishing
+
+The strict check, then the document goes live with its meta copied to the columns,
+in one transaction. Publishing is its own permission. An email type keeps one active
+design; an article with a future `scheduled_at` waits for a job of yours to set it
+live; a form's address taken by another is refused on `meta.slug`, where the editor
+shows it:
+
+<include cwd lang="ts" meta='title="documents.ts"'>
+  ./snippets/backends/express/documents.ts#publish
+</include>
+
+Creating, reading, the list and unpublishing are in the same router. Unpublishing
+leaves an email or an article a draft, and a form `closed`: its link keeps working
+and shows the closed message. Revisions and saved sections have their tables; their
+routes are a list and an insert with the same check, and until you add them the
+editor hides those features.
+
+</Step>
+<Step>
+
+### The form's public routes
+
+No sign-in. The answers are checked against the **published** document, never the
+draft; a filled trap field is answered as a success and stored nowhere; and only the
+`values` that `validateAnswers` keeps are stored, so an answer to a question the
+visitor was not shown never reaches the table. The count goes up in the same
+statement that checks `maxResponses`, so two visitors cannot both take the last
+place:
+
+<include cwd lang="ts" meta='title="forms.ts"'>
+  ./snippets/backends/express/forms.ts
+</include>
+
+</Step>
+<Step>
+
+### Uploads
+
+An upload checks the file's type by its first bytes and its size, stores it under a
+new key, and answers with the key and its address. The Next.js example's
+[`lib/uploads.ts`](/docs/guides/backend/next-drizzle#uploads) is plain Node and works
+here as it is, behind a multipart parser such as `multer`; a `media` row records
+each file.
+
+</Step>
+<Step>
+
+### Point the editor at it
+
+[`createRestHost`](/docs/guides/host#createresthost) with the document's address,
+`/api/emails/42`, `/api/articles/7` or `/api/forms/3`. For forms, the same file has
+the Responses tab's loader and the public page's `onSubmit`:
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/backends/host.ts
+</include>
+
+</Step>
+</Steps>

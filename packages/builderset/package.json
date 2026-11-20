@@ -2,11 +2,12 @@
   "name": "builderset",
   "version": "0.3.0",
   "private": true,
-  "description": "Block builders for React: email and article editors on one engine, with a typed JSON document any backend can validate and render.",
+  "description": "Block builders for React: email, article and form editors on one engine, with a typed JSON document any backend can validate and render.",
   "license": "MIT",
   "keywords": [
     "block-editor",
     "email-builder",
+    "form-builder",
     "article-editor",
     "page-builder",
     "drag-and-drop",
@@ -88,8 +89,29 @@
       "types": "./dist/article/locales/*.d.ts",
       "default": "./dist/article/locales/*.js"
     },
+    "./form": {
+      "types": "./dist/form/index.d.ts",
+      "default": "./dist/form/index.js"
+    },
+    "./form/render": {
+      "types": "./dist/form/render.d.ts",
+      "default": "./dist/form/render.js"
+    },
+    "./form/host": {
+      "types": "./dist/form/host.d.ts",
+      "default": "./dist/form/host.js"
+    },
+    "./form/editor": {
+      "types": "./dist/form/editor.d.ts",
+      "default": "./dist/form/editor.js"
+    },
+    "./form/locales/*": {
+      "types": "./dist/form/locales/*.d.ts",
+      "default": "./dist/form/locales/*.js"
+    },
     "./styles.css": "./dist/styles.css",
     "./article/content.css": "./dist/article/content.css",
+    "./form/form.css": "./dist/form/form.css",
     "./theme/shadcn.css": "./dist/theme/shadcn.css",
     "./theme/shadcn-hsl.css": "./dist/theme/shadcn-hsl.css",
     "./package.json": "./package.json"
@@ -107,7 +129,8 @@
   "dependencies": {
     "@builderset/article": "workspace:*",
     "@builderset/email": "workspace:*",
-    "@builderset/engine": "workspace:*"
+    "@builderset/engine": "workspace:*",
+    "@builderset/form": "workspace:*"
   },
   "peerDependencies": {
     "react": "^19.0.0",

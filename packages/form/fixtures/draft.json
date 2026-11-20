@@ -1,0 +1,12 @@
+{
+  "tolerates": [
+    "form.noFields",
+    "field.labelMissing",
+    "field.optionsMissing",
+    "field.keyDuplicate",
+    "autoReply.noEmailField",
+    "after.redirectMissing",
+    "consent.textMissing",
+    "i18n.locale.unknown"
+  ]
+}

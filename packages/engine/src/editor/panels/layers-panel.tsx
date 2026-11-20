@@ -11,7 +11,7 @@ import {
   type NodeId,
   type RichText,
 } from '../../core';
-import { ChevronRight, Eye, EyeOff, Lock, LockOpen } from 'lucide-react';
+import { ChevronRight, Eye, EyeOff, Layers, ListTree, Lock, LockOpen } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState, type DragEvent, type KeyboardEvent } from 'react';
 
@@ -19,6 +19,7 @@ import { DRAG_NODES_MIME, setActiveDrag, setDragChip } from '../canvas/drop';
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { ElementIcon } from '../icons';
+import { Button, SegmentedTabs } from '../ui';
 
 /** A short preview of a node's text, so ten paragraphs are not ten "Paragraph"s. */
 function preview(node: BuilderNode): string {
@@ -59,24 +60,166 @@ export function LayersPanel() {
     });
   }, [doc, selection]);
 
+  const { messages } = useEditorContext();
+  const [view, setView] = useState<'blocks' | 'outline'>('blocks');
+
+  // For the summary over the rows: what can fold, and how many blocks there are.
+  const containers = Object.values(doc.nodes).filter(
+    (node) => node.id !== doc.root && (node.children?.length ?? 0) > 0,
+  );
+  const leaves = Object.values(doc.nodes).filter((node) => !node.children).length;
+  const anyOpen = containers.some((node) => !collapsed.has(node.id));
+
   return (
-    <div
-      role="tree"
-      aria-multiselectable="true"
-      className="bst:h-full bst:overflow-y-auto bst:p-2 bst:text-sm"
-    >
-      {root?.children?.map((id) => (
-        <Row
-          key={id}
-          id={id}
-          depth={0}
-          doc={doc}
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          drop={drop}
-          setDrop={setDrop}
-        />
-      ))}
+    <div className="bst:flex bst:h-full bst:flex-col">
+      <SegmentedTabs
+        aria-label={messages.layers}
+        value={view}
+        onValueChange={setView}
+        tabs={[
+          { value: 'blocks', label: messages.blocksView, icon: <Layers aria-hidden="true" /> },
+          { value: 'outline', label: messages.outlineView, icon: <ListTree aria-hidden="true" /> },
+        ]}
+        className="bst:mx-3 bst:mb-2.5 bst:shrink-0 bst:rounded-[10px] bst:[&_[role=tab]]:h-[26px] bst:[&_[role=tab]]:text-xs"
+      />
+      {view === 'blocks' && containers.length > 0 ? (
+        <div className="bst:flex bst:shrink-0 bst:items-center bst:justify-between bst:gap-2 bst:px-4 bst:pb-1.5 bst:text-[11.5px] bst:text-muted-foreground">
+          <span className="bst:truncate bst:tabular-nums">
+            {messages.layersSummary(root?.children?.length ?? 0, leaves)}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="xs"
+            onClick={() => {
+              setCollapsed(() =>
+                anyOpen ? new Set(containers.map((node) => node.id)) : new Set<NodeId>(),
+              );
+            }}
+          >
+            {anyOpen ? messages.collapseAll : messages.expandAll}
+          </Button>
+        </div>
+      ) : null}
+      {view === 'blocks' ? (
+        <div className="bld-scroll bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+          <div role="tree" aria-multiselectable="true" className="bst:px-2 bst:pb-2 bst:text-sm">
+            {root?.children?.map((id) => (
+              <Row
+                key={id}
+                id={id}
+                depth={0}
+                doc={doc}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                drop={drop}
+                setDrop={setDrop}
+              />
+            ))}
+          </div>
+          <p className="bst:px-4 bst:pb-4 bst:text-[11.5px] bst:leading-snug bst:text-muted-foreground">
+            {messages.layersHint}
+          </p>
+        </div>
+      ) : (
+        <Outline />
+      )}
+    </div>
+  );
+}
+
+/** The words a node's own props show a reader — not its children's. */
+function wordsIn(node: BuilderNode): number {
+  let text = '';
+  const collect = (value: unknown, key?: string) => {
+    if (typeof value === 'string') {
+      if (
+        key === 'text' ||
+        key === 'title' ||
+        key === 'caption' ||
+        key === 'question' ||
+        key === 'answer' ||
+        key === 'label'
+      )
+        text += ` ${value}`;
+    } else if (Array.isArray(value)) {
+      for (const item of value) collect(item, key);
+    } else if (value && typeof value === 'object') {
+      for (const [inner, child] of Object.entries(value))
+        collect(child, inner === 'text' ? 'text' : inner);
+    }
+  };
+  collect(node.props);
+  return text.split(/s+/).filter(Boolean).length;
+}
+
+/**
+ * The article as its headings make it: one row per section — and the
+ * opening before the first heading — with how many words each holds. Click a
+ * row to go to its heading.
+ */
+function Outline() {
+  const { store, messages } = useEditorContext();
+  const doc = useEditor((state) => state.view);
+  const selection = useEditor((state) => state.selection);
+  const root = doc.nodes[doc.root];
+  const sections: { heading: BuilderNode | null; words: number }[] = [{ heading: null, words: 0 }];
+  // In reading order, through sections and columns: a heading anywhere starts a section.
+  const walk = (id: NodeId) => {
+    const node = doc.nodes[id];
+    if (!node) return;
+    if (node.type === 'heading') sections.push({ heading: node, words: 0 });
+    else {
+      const last = sections[sections.length - 1];
+      if (last) last.words += wordsIn(node);
+    }
+    node.children?.forEach(walk);
+  };
+  root?.children?.forEach(walk);
+  const shown = sections.filter((section, index) => index > 0 || section.words > 0);
+  return (
+    <div className="bld-scroll bst:min-h-0 bst:flex-1 bst:overflow-y-auto bst:px-2 bst:pb-2">
+      {shown.map((section, index) => {
+        const heading = section.heading;
+        const level = typeof heading?.props.level === 'number' ? heading.props.level : 2;
+        const on = heading ? selection.includes(heading.id) : false;
+        return (
+          <button
+            key={heading?.id ?? `intro-${String(index)}`}
+            type="button"
+            disabled={!heading}
+            onClick={() => {
+              if (!heading) return;
+              store.getState().select([heading.id]);
+              document
+                .querySelector(`[data-node="${CSS.escape(heading.id)}"]`)
+                ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }}
+            style={{ paddingLeft: level > 2 ? 26 : 8 }}
+            className={cn(
+              'bst:flex bst:h-[34px] bst:w-full bst:cursor-pointer bst:items-center bst:gap-2 bst:rounded-lg bst:pr-2 bst:text-left bst:transition-colors bst:disabled:cursor-default',
+              on ? 'bst:bg-primary/12 bst:text-primary' : 'bst:hover:bg-accent',
+            )}
+          >
+            <ElementIcon
+              name={heading ? 'heading' : 'pilcrow'}
+              className={cn(
+                'bst:size-[15px] bst:shrink-0',
+                on ? 'bst:text-primary' : 'bst:text-muted-foreground',
+              )}
+            />
+            <b className="bst:min-w-0 bst:flex-1 bst:truncate bst:text-[12.5px] bst:font-semibold">
+              {heading ? preview(heading) || messages.untitled : messages.intro}
+            </b>
+            <span className="bst:shrink-0 bst:text-xs bst:text-muted-foreground bst:tabular-nums">
+              {messages.words(section.words)}
+            </span>
+          </button>
+        );
+      })}
+      <p className="bst:px-2 bst:pt-2 bst:pb-4 bst:text-[11.5px] bst:leading-snug bst:text-muted-foreground">
+        {messages.outlineHint}
+      </p>
     </div>
   );
 }
@@ -180,6 +323,7 @@ function Row({
           setDragChip(
             event.dataTransfer,
             ids.length > 1 ? messages.multipleSelected(ids.length) : label,
+            { icon: registry.get(node.type)?.icon, detail: preview(node), count: ids.length },
           );
           requestAnimationFrame(() => {
             setActiveDrag({ kind: 'nodes', ids });

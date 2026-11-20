@@ -1,0 +1,81 @@
+name: Backend examples
+
+# The three backend examples (docs/plan/steps/16, part 5), each against a real
+# Postgres: a service container here, a Testcontainers one on a laptop. Their
+# tests set TEST_DATABASE_URL; the root `pnpm test` does not run them.
+on:
+  pull_request:
+    paths:
+      [
+        'examples/backends/**',
+        'packages/**',
+        'python/**',
+        'pnpm-lock.yaml',
+        '.github/workflows/backends.yml',
+      ]
+  push:
+    branches: [development, staging, production]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backends-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  node:
+    name: ${{ matrix.example }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example: [next-drizzle, next-prisma]
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries 15
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The example imports @builderset/email from the workspace, as built.
+      - run: pnpm turbo build --filter=example-backend-${{ matrix.example }}^...
+      - run: pnpm --filter example-backend-${{ matrix.example }} test:db
+
+  python:
+    name: fastapi-sqlalchemy
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 2s --health-timeout 5s --health-retries 15
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+    defaults:
+      run:
+        working-directory: examples/backends/fastapi-sqlalchemy
+    steps:
+      # The whole repository: the package is installed from python/, whose
+      # build copies packages/*/schema into it, and the tests read the email
+      # kit's fixtures.
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --frozen ruff check .
+      - run: uv run --frozen ruff format --check .
+      - run: uv run --frozen mypy
+      - run: uv run --frozen pytest

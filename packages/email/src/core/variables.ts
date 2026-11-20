@@ -15,6 +15,7 @@ import { z } from 'zod';
 
 export const VARIABLE_PATH = /^[a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*){0,4}$/;
 
+// #region formats
 export const FORMATS = [
   'date',
   'date_long',
@@ -26,6 +27,7 @@ export const FORMATS = [
   'lower',
   'capitalize',
 ] as const;
+// #endregion formats
 export type VariableFormat = (typeof FORMATS)[number];
 
 /** `{{ path }}` or `{{ path | format }}`, spaces optional. */
@@ -76,6 +78,7 @@ export const variableSpecSchema: z.ZodType<VariableSpec> = z.lazy(() =>
   }),
 );
 
+// #region types
 export interface VariableSpec {
   name: string;
   label: Record<string, string>;
@@ -149,6 +152,7 @@ export const SYSTEM_VARIABLES: VariableSpec[] = [
     type: 'number',
   },
 ];
+// #endregion types
 
 export interface FlatVariable {
   path: string;

@@ -184,6 +184,74 @@ export interface EditorMessages {
   elements: Record<string, ElementText>;
   issueText: Record<string, string>;
   fieldLabels: Record<string, string>;
+  /** The top bar's search button and the command menu it opens (Ctrl K). */
+  commandSearch: string;
+  commandPlaceholder: string;
+  commandActions: string;
+  commandGoTo: string;
+  commandInsert: string;
+  commandNothing: string;
+  commandMove: string;
+  commandRun: string;
+  /** Both panels away, only the page: Ctrl \. */
+  focusMode: string;
+  /** The language bar over the canvas: "Editing in  SQ | EN | DE". */
+  editingIn: string;
+  /** The status chip once a published document has unpublished changes. */
+  publishedEdited: string;
+  /** The dock's issues button, and the card at the top of the document settings. */
+  toCheck: (count: number) => string;
+  ready: string;
+  readyTitle: (count: number, action: string) => string;
+  readyOk: (action: string) => string;
+  fix: string;
+  /** Under the element library. */
+  addHint: (where: 'below' | 'end') => string;
+  /** A style choice left to the default, or to the larger screen. */
+  styleAuto: string;
+  /** The target that deletes the blocks dropped on it, while they are dragged. */
+  dropToDelete: string;
+  /** Layers: the tree of blocks, or the outline the headings make. */
+  blocksView: string;
+  outlineView: string;
+  intro: string;
+  outlineHint: string;
+  layersHint: string;
+  /** Over the layers: how many at the top level, and blocks in all. */
+  layersSummary: (top: number, blocks: number) => string;
+  collapseAll: string;
+  expandAll: string;
+  /** Templates: start from one, by adding it at the end or replacing the page. */
+  templatesStart: string;
+  useTemplate: string;
+  addToEnd: string;
+  replaceAll: string;
+  blockCount: (count: number) => string;
+  /** The media tab. */
+  media: string;
+  searchMedia: string;
+  dropFiles: string;
+  fileHint: string;
+  inDocument: string;
+  mediaLibrary: string;
+  justUploaded: string;
+  noMedia: string;
+  dragToPage: string;
+  /** The preview over the editor. */
+  backToEditing: string;
+  openOnSite: string;
+  /** History: what changed between a version and the draft. */
+  whatChanged: string;
+  comparedWithDraft: string;
+  sameAsDraft: string;
+  added: string;
+  removed: string;
+  changed: string;
+  /** Several blocks selected. */
+  hideFromReaders: string;
+  saveAsSection: string;
+  /** The chip that shows every category. */
+  all: string;
 }
 
 /** Any part of a set of words, at any depth: what a host overrides. */

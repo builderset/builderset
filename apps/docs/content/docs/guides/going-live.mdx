@@ -1,0 +1,74 @@
+---
+title: Going live
+description: The checklists to run before writers and readers depend on it, and the questions every integration asks.
+---
+
+_This page describes Builderset 0.4.0._
+
+## The frontend
+
+- The kit and its stylesheet are imported, on the editor's page only, in the browser
+  ([Frontend setup](/docs/guides/frontend)).
+- The editor has its own route, or a box with a height and `contain: layout`.
+- The host has `save`, `upload`, `resolveMedia` and `toast`; `save` never throws
+  ([The host adapter](/docs/guides/host)).
+- The theme matches your app in light and dark ([Theme](/docs/guides/theme)).
+- `storageKey` is unique per document and user.
+- Email: the brand and each email type's variables are passed
+  ([Sending email](/docs/guides/email)).
+
+## The backend
+
+- The `document`, `draft_document` and `saved_at` columns exist
+  ([Backend setup](/docs/guides/backend)).
+- The draft route checks the permission, the `saved_at` and the document, in that
+  order.
+- The publish route checks strictly, and is a permission of its own.
+- Articles: publishing copies `meta` to the list columns in the same transaction.
+- Uploads are checked for type and size on the server, under a key the server builds.
+- No route stores HTML sent by the browser.
+- Routes that fetch a URL a user typed refuse private addresses
+  ([Security](/docs/guides/security)).
+- Revisions are recorded on manual saves and publishes, and autosaves are limited.
+
+## Before writers use it
+
+- Two browsers on one document: the second save shows the conflict dialog.
+- Cut the network while typing: "could not save", then it recovers.
+- Close the tab with unsaved work and reopen it: the work is offered back.
+- A request with a hand-made invalid document is refused with `422`.
+- Email: a test send to Gmail, Outlook and Apple Mail, light and dark, with real data
+  and the longest values you can think of.
+- Article: the page with JavaScript off, and its structured data in a validator.
+
+## Questions
+
+**Do I need Tailwind?** No. The stylesheet is compiled, and it touches nothing of
+your page's.
+
+**Does it work without Next.js?** Yes: any React 19 app. The server parts — the
+renderers and the checks — run in plain Node.
+
+**My backend is not JavaScript.** Python has the [`builderset` package](/docs/reference/python),
+with the checks and the email renderer. Any other language validates with the kit's
+JSON Schema, and can render an email through a small Node function it calls with the
+document and the data.
+
+**Can I use MongoDB, MySQL or SQLite?** Yes. A document is one JSON value, and nothing
+queries inside it.
+
+**Can I skip drafts and revisions?** Revisions, yes: leave those host methods out.
+Not the draft column, if the document is ever live — without it, autosave changes
+what readers see.
+
+**Can I change the JSON from a script?** It is your data. Run it through
+`checkEmail` or `checkArticle` afterwards.
+
+**Can a writer paste HTML?** Not as HTML: a document holds none, which is why it is
+safe to render. Pasted HTML is turned into blocks; the email kit imports an existing
+email's HTML, and the article kit imports HTML and Markdown.
+
+**Where do variables come from at send time?** From your code: the `data` you pass to
+`renderEmail`. The type you gave the editor only says what a writer may use.
+
+**Two kits in one project?** Install both, or `builderset`, at the same version.

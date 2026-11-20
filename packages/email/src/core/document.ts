@@ -16,6 +16,7 @@ export const EMAIL_SCHEMA = 'email/document' as const;
 export const EMAIL_VERSION = 1;
 export const EMAIL_ROOT = 'root';
 
+// #region shape
 export const emailSettingsSchema = z.object({
   /** The content column, in px. 600 is what every client handles well. */
   width: px(480, 800),
@@ -67,6 +68,7 @@ export interface EmailDocument extends EngineDocument<EmailMeta> {
   schema: typeof EMAIL_SCHEMA;
   settings: EmailSettings;
 }
+// #endregion shape
 
 export const defaultSettings = (): EmailSettings => ({
   width: 600,

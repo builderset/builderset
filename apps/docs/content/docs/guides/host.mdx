@@ -1,0 +1,56 @@
+---
+title: The host adapter
+description: The one object between the editor and your backend — what it must do, the two ready-made ones, and writing your own. About 10 minutes.
+---
+
+The editor owns nothing: no database, no routes, no login, no file storage. Every
+time it needs one of those it calls its **host**, an object you pass as the `host`
+prop. At the end of this page you can pick a ready-made host or write one against
+the API you already have.
+
+_This page describes Builderset 0.4.0._
+
+## Pick one
+
+| Your situation                       | Use                                                                                                      |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| No API yet, or one you can shape     | `createRestHost` — it speaks [one REST shape](/docs/guides/backend#the-rest-shape-createresthost-speaks) |
+| An API that exists, in its own shape | A host of your own, below                                                                                |
+| A demo, a test, a story              | `createMemoryHost` — keeps everything in memory                                                          |
+
+All three come from `@builderset/email/host` and `@builderset/article/host` (the
+same code, re-exported by each kit).
+
+## createRestHost
+
+`baseUrl` is the document's address; the rest are optional:
+
+<include cwd lang="tsx" meta='title="email-edit.tsx"'>
+  ../../examples/next-shadcn/app/emails/[id]/edit/email-edit.tsx
+</include>
+
+- `savedAt` is the `saved_at` the page was loaded with. The editor sends it back on
+  every save, so the server can see that someone else saved in the meantime.
+- `paths: { revisions: null }` leaves out an endpoint your API does not have; the
+  editor hides that feature.
+- `headers` adds an `Authorization` or CSRF header to every request.
+- `onRecord` tells the page what the server says about the record (status, publish
+  date) after each write, for the editor's `record` prop.
+
+## Your own
+
+Write the four required methods; leave out any optional one and its feature
+disappears from the editor. Never throw from `save`: answer with `ok: false` and a
+message, and the editor shows it and retries.
+
+<include cwd lang="ts" meta='title="host.ts"'>
+  ./snippets/guides/host-by-hand.ts
+</include>
+
+## The whole contract
+
+Every method, its arguments and what it must return:
+
+<include cwd lang="ts" meta='title="@builderset/engine/host — BuilderHost"'>
+  ../../packages/engine/src/host/types.ts
+</include>

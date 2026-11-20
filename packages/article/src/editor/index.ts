@@ -12,7 +12,13 @@ export {
   type ArticleMessages,
   type ArticleWords,
 } from './words';
-export { ARTICLE_TEMPLATES } from './templates';
+export {
+  ARTICLE_TEMPLATE_CATEGORIES,
+  ARTICLE_TEMPLATES,
+  defineTemplate,
+  type ArticleTemplate,
+  type ArticleTemplateCategory,
+} from '../templates';
 export { DocumentSettings, SettingsFieldRow } from './document-settings';
 export { TitleField } from './title-field';
 export {

@@ -2,11 +2,25 @@
   "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@builderset/engine", "@builderset/email", "@builderset/article", "builderset"]],
+  "fixed": [
+    [
+      "@builderset/engine",
+      "@builderset/email",
+      "@builderset/article",
+      "@builderset/form",
+      "builderset"
+    ]
+  ],
   "access": "restricted",
   "baseBranch": "development",
   "updateInternalDependencies": "patch",
-  "privatePackages": { "version": true, "tag": false },
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  },
   "ignore": ["example-vite-react", "example-next-shadcn", "example-node-render"],
-  "snapshot": { "useCalculatedVersion": true, "prereleaseTemplate": "{tag}.{datetime}" }
+  "snapshot": {
+    "useCalculatedVersion": true,
+    "prereleaseTemplate": "{tag}.{datetime}"
+  }
 }

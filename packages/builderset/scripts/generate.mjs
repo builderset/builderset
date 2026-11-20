@@ -41,6 +41,12 @@ const DOORS = {
     host: ['host.d.ts', false],
     editor: ['editor/index.d.ts', true],
   },
+  form: {
+    index: ['core/index.d.ts', false],
+    render: ['render/index.d.ts', true],
+    host: ['host.d.ts', false],
+    editor: ['editor/index.d.ts', true],
+  },
 };
 
 const specifier = (kit, door) => `@builderset/${kit}${door === 'index' ? '' : `/${door}`}`;

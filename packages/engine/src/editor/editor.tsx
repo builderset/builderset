@@ -215,6 +215,9 @@ export function BuilderEditor<
       document: props.document,
       registry: props.registry,
       onNodeUpdated: props.profile.onNodeUpdated,
+      defaultParent: props.profile.defaultParent,
+      canRemove: props.profile.canRemove,
+      onNodesAdded: props.profile.onNodesAdded,
       onRefused: (code) => {
         hostRef.current.toast(
           'error',

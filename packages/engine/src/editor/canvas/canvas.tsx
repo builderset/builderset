@@ -75,7 +75,9 @@ function nodeElement(target: EventTarget | null): HTMLElement | null {
 export function Canvas() {
   const { registry, messages, store, profile } = useEditorContext();
   const widths = profile.canvasWidths ?? VIEWPORT_WIDTH;
-  const bare = profile.canvasFrame === 'bare';
+  // `none`: the kit draws its own card (a form); `bare`: the page without padding (an email).
+  const frameless = profile.canvasFrame === 'none';
+  const bare = profile.canvasFrame === 'bare' || frameless;
   const doc = useEditor((state) => state.doc);
   // What is drawn: the document in the language being written.
   const view = useEditor((state) => state.view);
@@ -216,11 +218,15 @@ export function Canvas() {
           style={{ width: pageWidth, zoom: scale }}
           data-device={viewport}
           className={cn(
-            'bld-page bst:min-h-[70vh] bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)] bst:transition-[border-radius] bst:duration-400',
-            bare ? 'bst:overflow-hidden' : 'bst:bg-background',
-            viewport === 'tablet' &&
+            'bld-page bst:min-h-[70vh] bst:transition-[border-radius] bst:duration-400',
+            !frameless &&
+              'bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)]',
+            frameless ? '' : bare ? 'bst:overflow-hidden' : 'bst:bg-background',
+            !frameless &&
+              viewport === 'tablet' &&
               'bst:rounded-[22px] bst:shadow-[0_0_0_7px_#0c0d10,0_0_0_8px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
-            viewport === 'mobile' &&
+            !frameless &&
+              viewport === 'mobile' &&
               'bst:rounded-[30px] bst:shadow-[0_0_0_8px_#0c0d10,0_0_0_9px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
           )}
         >

@@ -1896,6 +1896,12 @@ html.bs-anim .bs-prose > :not(.is-in) {
 .pg .pg-page.light {
   background: #ffffff;
 }
+/* The live form, on a muted page, as a site would show it. */
+.pg .pg-live-form {
+  min-height: 100%;
+  padding: 20px 14px;
+  background: var(--pg-muted);
+}
 .pg .pg-output-foot {
   display: flex;
   align-items: center;

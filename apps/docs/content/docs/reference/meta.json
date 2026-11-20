@@ -5,6 +5,8 @@
     "email-blocks",
     "article",
     "article-elements",
+    "form",
+    "form-fields",
     "engine",
     "host",
     "props",

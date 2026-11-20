@@ -221,7 +221,9 @@ export function Dock({
       ) : null}
       <Rule />
       <span className="bst:hidden bst:px-1.5 bst:font-mono bst:text-xs bst:text-muted-foreground bst:tabular-nums bst:xl:inline">
-        {messages.words(words)} · {messages.readingTime(minutes)}
+        {profile.summaryOf
+          ? profile.summaryOf(doc)
+          : `${messages.words(words)} · ${messages.readingTime(minutes)}`}
       </span>
       <Popover>
         <PopoverTrigger asChild>

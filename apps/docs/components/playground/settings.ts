@@ -3,7 +3,7 @@
  * only, and turned into the code a developer pastes into their own project.
  */
 
-export type Kit = 'email' | 'article';
+export type Kit = 'email' | 'article' | 'form';
 export type Theme = 'light' | 'dark' | 'auto';
 export type EditorLanguage = 'en' | 'sq' | 'de';
 
@@ -15,6 +15,13 @@ export const TEMPLATES = {
   ],
   article: [
     { id: 'kitchen-sink', label: 'Every element' },
+    { id: 'empty', label: 'Empty' },
+  ],
+  // A form template's id, or an empty form.
+  form: [
+    { id: 'quote-request', label: 'Quote request' },
+    { id: 'job-application', label: 'Job application' },
+    { id: 'nps-survey', label: 'NPS survey' },
     { id: 'empty', label: 'Empty' },
   ],
 } as const satisfies Record<Kit, readonly { id: string; label: string }[]>;
@@ -48,13 +55,13 @@ export interface Settings {
   font: string;
   language: EditorLanguage;
   severalContentLanguages: boolean;
-  output: 'json' | 'html' | 'text' | 'page';
+  output: 'json' | 'html' | 'text' | 'page' | 'form';
   showOutput: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   kit: 'email',
-  template: { email: 'starter', article: 'kitchen-sink' },
+  template: { email: 'starter', article: 'kitchen-sink', form: 'quote-request' },
   theme: 'auto',
   pageDark: false,
   primary: '',
@@ -139,11 +146,11 @@ const quote = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, 
 
 /** The editor, with the current settings, as JSX to paste into a project. */
 export function jsxFor(settings: Settings): string {
-  const name = settings.kit === 'email' ? 'EmailEditor' : 'ArticleEditor';
+  const name = { email: 'EmailEditor', article: 'ArticleEditor', form: 'FormEditor' }[settings.kit];
   const lines = [
     `<${name}`,
     '  document={document}',
-    ...(settings.kit === 'email' ? ['  registry={registry}'] : []),
+    ...(settings.kit === 'article' ? [] : ['  registry={registry}']),
     '  host={host}',
     ...(settings.kit === 'email' ? ['  type={null}', '  brand={DEFAULT_BRAND}'] : []),
     '  record={record}',

@@ -219,6 +219,8 @@ function NodeInspector({ id }: { id: NodeId }) {
   if (!node) return null;
   const definition = registry.get(node.type);
   const schema = propsSchema(registry, node.type);
+  // A kit's own editors for this block, when it has them.
+  const own = profile.nodePanel?.({ id, type: node.type }) ?? null;
 
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
@@ -270,78 +272,82 @@ function NodeInspector({ id }: { id: NodeId }) {
           <X aria-hidden="true" />
         </Button>
       </div>
-      <Tabs
-        value={tab}
-        onValueChange={(value) => {
-          store.getState().setRightTab(value as RightTab);
-        }}
-        className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
-      >
-        <SegmentedTabs
-          aria-label={messages.settings}
+      {own ? (
+        <div className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col">{own}</div>
+      ) : (
+        <Tabs
           value={tab}
           onValueChange={(value) => {
-            store.getState().setRightTab(value);
+            store.getState().setRightTab(value as RightTab);
           }}
-          tabs={[
-            { value: 'content', label: messages.content, icon: <Pilcrow aria-hidden="true" /> },
-            ...(showStyle
-              ? [
-                  {
-                    value: 'style' as const,
-                    label: messages.style,
-                    icon: <Paintbrush aria-hidden="true" />,
-                  },
-                ]
-              : []),
-            {
-              value: 'advanced',
-              label: messages.advanced,
-              icon: <SlidersHorizontal aria-hidden="true" />,
-            },
-          ]}
-          className="bst:mx-4 bst:mt-3.5 bst:mb-1 bst:shrink-0"
-        />
-        <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
-          <TabsContent value="content" className="bst:px-4 bst:pt-3.5 bst:pb-6">
-            {schema && Object.keys(schema.properties ?? {}).length ? (
-              <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
-                <ObjectFields
-                  schema={schema}
-                  value={node.props}
-                  mediaKind={MEDIA_KIND[node.type] ?? 'image'}
-                  onChange={(props) => {
-                    const changed = Object.keys(props).find(
-                      (key) => props[key] !== node.props[key],
-                    );
-                    const patch: Record<string, unknown> = { ...props };
-                    // A freshly uploaded picture replaces one still waiting to be.
-                    if (node.type === 'image' && changed === 'media' && props.media) {
-                      patch.pendingUrl = null;
-                    }
-                    store
-                      .getState()
-                      .updateNode(
-                        id,
-                        { props: patch },
-                        `Edit ${changed ?? 'block'}`,
-                        `prop:${id}:${changed ?? ''}`,
+          className="bst:flex bst:min-h-0 bst:flex-1 bst:flex-col"
+        >
+          <SegmentedTabs
+            aria-label={messages.settings}
+            value={tab}
+            onValueChange={(value) => {
+              store.getState().setRightTab(value);
+            }}
+            tabs={[
+              { value: 'content', label: messages.content, icon: <Pilcrow aria-hidden="true" /> },
+              ...(showStyle
+                ? [
+                    {
+                      value: 'style' as const,
+                      label: messages.style,
+                      icon: <Paintbrush aria-hidden="true" />,
+                    },
+                  ]
+                : []),
+              {
+                value: 'advanced',
+                label: messages.advanced,
+                icon: <SlidersHorizontal aria-hidden="true" />,
+              },
+            ]}
+            className="bst:mx-4 bst:mt-3.5 bst:mb-1 bst:shrink-0"
+          />
+          <div className="bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
+            <TabsContent value="content" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              {schema && Object.keys(schema.properties ?? {}).length ? (
+                <fieldset disabled={!!node.locked} className="bst:disabled:opacity-60">
+                  <ObjectFields
+                    schema={schema}
+                    value={node.props}
+                    mediaKind={MEDIA_KIND[node.type] ?? 'image'}
+                    onChange={(props) => {
+                      const changed = Object.keys(props).find(
+                        (key) => props[key] !== node.props[key],
                       );
-                  }}
-                />
-              </fieldset>
-            ) : (
-              <p className="bst:text-sm bst:text-muted-foreground">—</p>
-            )}
-          </TabsContent>
-          <TabsContent value="style" className="bst:px-4 bst:pt-3.5 bst:pb-6">
-            <StylePanel id={id} />
-          </TabsContent>
-          <TabsContent value="advanced" className="bst:px-4 bst:pt-3.5 bst:pb-6">
-            <AdvancedPanel id={id} />
-          </TabsContent>
-        </div>
-      </Tabs>
+                      const patch: Record<string, unknown> = { ...props };
+                      // A freshly uploaded picture replaces one still waiting to be.
+                      if (node.type === 'image' && changed === 'media' && props.media) {
+                        patch.pendingUrl = null;
+                      }
+                      store
+                        .getState()
+                        .updateNode(
+                          id,
+                          { props: patch },
+                          `Edit ${changed ?? 'block'}`,
+                          `prop:${id}:${changed ?? ''}`,
+                        );
+                    }}
+                  />
+                </fieldset>
+              ) : (
+                <p className="bst:text-sm bst:text-muted-foreground">—</p>
+              )}
+            </TabsContent>
+            <TabsContent value="style" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              <StylePanel id={id} />
+            </TabsContent>
+            <TabsContent value="advanced" className="bst:px-4 bst:pt-3.5 bst:pb-6">
+              <AdvancedPanel id={id} />
+            </TabsContent>
+          </div>
+        </Tabs>
+      )}
     </div>
   );
 }

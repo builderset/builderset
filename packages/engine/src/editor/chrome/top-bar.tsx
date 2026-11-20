@@ -160,6 +160,7 @@ export function TopBar(actions: TopBarActions) {
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const published = record.status === 'published';
+  const Actions = profile.topBarActions;
 
   return (
     <header className="bst:relative bst:z-30 bst:flex bst:h-[58px] bst:shrink-0 bst:items-center bst:gap-2 bst:bg-background bst:px-3">
@@ -235,6 +236,7 @@ export function TopBar(actions: TopBarActions) {
             </Button>
           </Tooltip>
         ) : null}
+        {Actions ? <Actions /> : null}
         {actions.onPreview ? (
           <Button
             type="button"

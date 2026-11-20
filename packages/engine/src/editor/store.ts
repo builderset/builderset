@@ -39,7 +39,8 @@ import { splitEdit, splitMeta } from './translate';
  * edits one itself.
  */
 
-export type LeftTab = 'add' | 'layers' | 'templates' | 'media';
+/** The left rail's built-in tabs, or the `id` of one of the profile's `sideTabs`. */
+export type LeftTab = 'add' | 'layers' | 'templates' | 'media' | (string & {});
 export type RightTab = 'content' | 'style' | 'advanced';
 export type SaveState = 'idle' | 'saving' | 'error' | 'conflict';
 

@@ -28,6 +28,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentType,
   type ReactNode,
 } from 'react';
 
@@ -47,7 +48,6 @@ import {
   EditorProvider,
   useEditor,
   useEditorContext,
-  useProfile,
   type EditorContextValue,
   type RecordFacts,
 } from './context';
@@ -306,6 +306,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   const leftOpen = useEditor((state) => state.leftOpen);
   const rightOpen = useEditor((state) => state.rightOpen);
   const leftTab = useEditor((state) => state.leftTab);
+  const railTabs = useRailTabs(messages);
   const desktop = useMediaQuery('(min-width: 1024px)', true);
   const phone = !useMediaQuery('(min-width: 640px)', true);
 
@@ -658,7 +659,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
                   onClose={() => {
                     setMobilePanel(null);
                   }}
-                  title={messages[leftTab]}
+                  title={railTabs.find((tab) => tab.value === leftTab)?.label ?? messages.add}
                 >
                   <div className="bld-panel bst:h-[60vh]">{leftPanel}</div>
                 </Sheet>
@@ -901,10 +902,52 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
   );
 }
 
-/** The left rail's third tab: the profile's, or the templates and saved sections. */
-function ThirdTab() {
-  const Panel = useProfile().templatesPanel ?? TemplatesPanel;
-  return <Panel />;
+interface RailTab {
+  value: LeftTab;
+  label: string;
+  icon: ReactNode;
+  Panel: ComponentType;
+}
+
+/**
+ * The left rail's tabs, in order: Add, Layers, the third tab (templates, or
+ * the profile's own panel under its own name), Media when pictures can be
+ * placed, then the profile's `sideTabs`.
+ */
+function useRailTabs(messages: EditorMessages): RailTab[] {
+  const { registry, profile } = useEditorContext();
+  const withMedia = profile.mediaTab ?? registry.has('image');
+  return [
+    { value: 'add', label: messages.add, icon: <Plus aria-hidden="true" />, Panel: AddPanel },
+    {
+      value: 'layers',
+      label: messages.layers,
+      icon: <Layers aria-hidden="true" />,
+      Panel: LayersPanel,
+    },
+    {
+      value: 'templates',
+      label: profile.templatesTab?.label ?? messages.templates,
+      icon: profile.templatesTab?.icon ?? <LayoutTemplate aria-hidden="true" />,
+      Panel: profile.templatesPanel ?? TemplatesPanel,
+    },
+    ...(withMedia
+      ? [
+          {
+            value: 'media',
+            label: messages.media,
+            icon: <Image aria-hidden="true" />,
+            Panel: MediaPanel,
+          },
+        ]
+      : []),
+    ...(profile.sideTabs ?? []).map((tab) => ({
+      value: tab.id,
+      label: tab.label,
+      icon: tab.icon,
+      Panel: tab.panel,
+    })),
+  ];
 }
 
 function LeftRail({
@@ -916,47 +959,30 @@ function LeftRail({
   onTab: (tab: LeftTab) => void;
   messages: EditorMessages;
 }) {
-  const { registry } = useEditorContext();
-  // Pictures to place: only for a kit with an image block.
-  const withMedia = registry.has('image');
-  const order: LeftTab[] = ['add', 'layers', 'templates', 'media'];
+  const tabs = useRailTabs(messages);
+  const current = tabs.find((item) => item.value === tab) ?? tabs[0];
+  const order = tabs.map((item) => item.value);
   const [from, setFrom] = useState(tab);
   // Which way the new pane slides in: from the side of the tab it came from.
   const direction = Math.sign(order.indexOf(tab) - order.indexOf(from)) || 1;
+  const Panel = current?.Panel ?? AddPanel;
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
       <SegmentedTabs
         aria-label={messages.add}
         stacked
-        value={tab}
+        value={current?.value ?? 'add'}
         onValueChange={(value) => {
           setFrom(tab);
           onTab(value);
         }}
-        tabs={[
-          { value: 'add', label: messages.add, icon: <Plus aria-hidden="true" /> },
-          { value: 'layers', label: messages.layers, icon: <Layers aria-hidden="true" /> },
-          {
-            value: 'templates',
-            label: messages.templates,
-            icon: <LayoutTemplate aria-hidden="true" />,
-          },
-          ...(withMedia
-            ? [
-                {
-                  value: 'media' as const,
-                  label: messages.media,
-                  icon: <Image aria-hidden="true" />,
-                },
-              ]
-            : []),
-        ]}
+        tabs={tabs.map(({ value, label, icon }) => ({ value, label, icon }))}
         className="bst:mx-3 bst:mt-0.5 bst:mb-3 bst:shrink-0"
       />
       <div className="bst:relative bst:min-h-0 bst:flex-1 bst:overflow-hidden">
         <AnimatePresence mode="popLayout" initial={false} custom={direction}>
           <motion.div
-            key={tab}
+            key={current?.value ?? 'add'}
             custom={direction}
             initial={{ opacity: 0, x: direction * 26 }}
             animate={{ opacity: 1, x: 0 }}
@@ -964,15 +990,7 @@ function LeftRail({
             transition={{ duration: 0.36, ease: [0.2, 0.8, 0.2, 1] }}
             className="bst:h-full"
           >
-            {tab === 'add' ? (
-              <AddPanel />
-            ) : tab === 'layers' ? (
-              <LayersPanel />
-            ) : tab === 'media' && withMedia ? (
-              <MediaPanel />
-            ) : (
-              <ThirdTab />
-            )}
+            <Panel />
           </motion.div>
         </AnimatePresence>
       </div>

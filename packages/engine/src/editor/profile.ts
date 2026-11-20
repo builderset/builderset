@@ -8,10 +8,23 @@ import type {
 } from '../core';
 import type { ComponentType, ReactNode } from 'react';
 
-/** One block of a template: its type, and the props that differ from the element's defaults. */
+/**
+ * One block of a template: its type, the props that differ from the element's
+ * defaults and, for a container, what goes inside it (an email's section ›
+ * row › columns). A container given no `children` gets its usual first ones.
+ */
 export interface TemplateBlock {
   type: string;
   props?: Record<string, unknown>;
+  children?: readonly TemplateBlock[] | undefined;
+}
+
+/** A tab a profile adds to the left rail, after the built-in ones: an email's Variables. */
+export interface SideTab {
+  id: string;
+  label: string;
+  icon: ReactNode;
+  panel: ComponentType;
 }
 
 /** A group the templates panel lists templates under: Newsletters, Guides, … */
@@ -25,7 +38,7 @@ export interface TemplateCategory {
  * A starting layout the templates panel offers, under one category: blocks
  * inserted as one fragment (one undo takes them out), or replacing the page.
  */
-export interface TemplateSpec {
+export interface TemplateSpec<TDoc extends EngineDocument = EngineDocument> {
   id: string;
   /** The `id` of one of the profile's `templateCategories`. */
   category: string;
@@ -33,7 +46,13 @@ export interface TemplateSpec {
   name: Record<string, string>;
   /** One line on what it is for, by language code. */
   description?: Record<string, string> | undefined;
-  blocks: TemplateBlock[];
+  blocks: readonly TemplateBlock[];
+  /**
+   * What else changes when the template REPLACES the page, inside the same
+   * undo step: an email's subject, preheader and colours. Not called for
+   * "Add to end", which only adds blocks.
+   */
+  apply?: ((draft: TDoc) => void) | undefined;
 }
 
 /**
@@ -72,7 +91,10 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
     | undefined;
   /** A small document showing one block filled in, for the library's peek at it. */
   sampleOf?: ((type: string) => TDoc | null) | undefined;
-  /** Drawn above the blocks on a `page` canvas, even while it is empty: an article's title. */
+  /**
+   * Drawn above the blocks, even while the page is empty: an article's title,
+   * an email's inbox header.
+   */
   canvasHeader?: ComponentType | undefined;
   /** The widest the page gets per device. */
   canvasWidths?: Record<Breakpoint, number> | undefined;
@@ -80,8 +102,18 @@ export interface EditorProfile<TDoc extends EngineDocument = EngineDocument> {
   settingsPanel?: ComponentType | undefined;
   /** Replaces the left rail's third tab. */
   templatesPanel?: ComponentType | undefined;
+  /** The third tab's name and icon, when `templatesPanel` is something else (an email's Modules). */
+  templatesTab?: { label?: string | undefined; icon?: ReactNode } | undefined;
+  /** Offer the Media tab. Default: when the registry has an `image` block. */
+  mediaTab?: boolean | undefined;
+  /** More tabs for the left rail, after the built-in ones. */
+  sideTabs?: readonly SideTab[] | undefined;
+  /** Buttons the dock shows after the zoom: an email's example data and dark preview. */
+  dockItems?: ComponentType | undefined;
+  /** Buttons the top bar shows before Preview: an email's "Send test". */
+  topBarActions?: ComponentType | undefined;
   /** The starting layouts the default third tab offers, above the saved sections. */
-  templates?: readonly TemplateSpec[] | undefined;
+  templates?: readonly TemplateSpec<TDoc>[] | undefined;
   /** The templates' categories, in the order the panel lists them. */
   templateCategories?: readonly TemplateCategory[] | undefined;
   /** What blocks publishing. */

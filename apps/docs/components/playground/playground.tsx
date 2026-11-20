@@ -28,6 +28,7 @@ import { de as emailDe } from '@builderset/email/locales/de';
 import { sq as emailSq } from '@builderset/email/locales/sq';
 import { DEFAULT_BRAND, renderEmail } from '@builderset/email/render';
 import emptyEmail from '@builderset/email/fixtures/valid/empty.json';
+import { demoEmailType } from './demo-email-type';
 import { themeVariables } from '@builderset/engine';
 import {
   Badge,
@@ -229,8 +230,16 @@ export function Playground() {
         document={hosts.emailStart}
         registry={emailRegistry}
         host={hosts.email}
-        type={null}
+        type={demoEmailType}
         brand={DEFAULT_BRAND}
+        // Nothing leaves the playground: the test is "sent" after a moment.
+        onSendTest={() =>
+          new Promise<boolean>((resolve) => {
+            setTimeout(() => {
+              resolve(true);
+            }, 600);
+          })
+        }
         record={RECORD}
         locales={{ sq: emailSq, de: emailDe }}
         storageKey={`builderset-playground:recovery:email:${template}`}

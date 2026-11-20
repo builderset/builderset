@@ -2,6 +2,7 @@
 
 import {
   BREAKPOINTS,
+  parentOf,
   replaceableTypes,
   resolveStyle,
   setStyleValue,
@@ -39,7 +40,7 @@ import {
   X,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useId, useMemo, useState, type ReactNode } from 'react';
+import { Fragment as Keyed, useId, useMemo, useState, type ReactNode } from 'react';
 import { z } from 'zod';
 
 import { cn } from '../cn';
@@ -200,26 +201,50 @@ function NodeInspector({ id }: { id: NodeId }) {
   const storedTab = useEditor((state) => state.rightTab);
   const showStyle = profile.styleTab !== false;
   const tab = !showStyle && storedTab === 'style' ? 'content' : storedTab;
+  // The containers it sits in, outermost first, by the names the layers show.
+  // (As one string, so the panel redraws only when the chain itself changes.)
+  const chain = useEditor((state) => {
+    const steps: { id: NodeId; label: string }[] = [];
+    let parent = parentOf(state.view, id);
+    while (parent && parent.id !== state.view.root) {
+      steps.unshift({
+        id: parent.id,
+        label: parent.name ?? messages.elements[parent.type]?.name ?? parent.type,
+      });
+      parent = parentOf(state.view, parent.id);
+    }
+    return JSON.stringify(steps);
+  });
+  const ancestors = useMemo(() => JSON.parse(chain) as { id: NodeId; label: string }[], [chain]);
   if (!node) return null;
   const definition = registry.get(node.type);
   const schema = propsSchema(registry, node.type);
 
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
-      {/* Document › Paragraph: the way back to the document's settings. */}
-      <div className="bst:flex bst:shrink-0 bst:items-center bst:gap-1.5 bst:px-4 bst:pt-1 bst:text-xs bst:text-muted-foreground">
-        <button
-          type="button"
-          className="bst:cursor-pointer bst:font-medium bst:text-primary bst:hover:underline"
-          onClick={() => {
-            store.getState().select([]);
-          }}
-        >
-          {messages.document}
-        </button>
-        <ChevronRight className="bst:size-3.5" aria-hidden="true" />
-        <span className="bst:truncate">{messages.elements[node.type]?.name ?? node.type}</span>
-      </div>
+      {/* Document › Section › Column › Text: the way back up, a step at a time. */}
+      <nav
+        aria-label={messages.layers}
+        className="bst:flex bst:shrink-0 bst:items-center bst:gap-1 bst:overflow-hidden bst:px-4 bst:pt-1 bst:text-xs bst:text-muted-foreground"
+      >
+        {[{ id: null, label: messages.document }, ...ancestors].map((step) => (
+          <Keyed key={step.id ?? 'document'}>
+            <button
+              type="button"
+              className="bst:min-w-0 bst:shrink bst:cursor-pointer bst:truncate bst:font-medium bst:text-primary bst:hover:underline"
+              onClick={() => {
+                store.getState().select(step.id ? [step.id] : []);
+              }}
+            >
+              {step.label}
+            </button>
+            <ChevronRight className="bst:size-3.5 bst:shrink-0" aria-hidden="true" />
+          </Keyed>
+        ))}
+        <span className="bst:shrink-0 bst:truncate">
+          {messages.elements[node.type]?.name ?? node.type}
+        </span>
+      </nav>
       <div className="bst:grid bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto] bst:items-start bst:gap-2 bst:px-4 bst:pt-2">
         <div className="bst:min-w-0">
           <p className="bst:flex bst:items-center bst:gap-2 bst:truncate bst:text-[13.5px] bst:font-semibold">

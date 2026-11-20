@@ -19,7 +19,7 @@ import { DRAG_NODES_MIME, setActiveDrag, setDragChip } from '../canvas/drop';
 import { cn } from '../cn';
 import { useEditor, useEditorContext } from '../context';
 import { ElementIcon } from '../icons';
-import { SegmentedTabs } from '../ui';
+import { Button, SegmentedTabs } from '../ui';
 
 /** A short preview of a node's text, so ten paragraphs are not ten "Paragraph"s. */
 function preview(node: BuilderNode): string {
@@ -63,6 +63,13 @@ export function LayersPanel() {
   const { messages } = useEditorContext();
   const [view, setView] = useState<'blocks' | 'outline'>('blocks');
 
+  // For the summary over the rows: what can fold, and how many blocks there are.
+  const containers = Object.values(doc.nodes).filter(
+    (node) => node.id !== doc.root && (node.children?.length ?? 0) > 0,
+  );
+  const leaves = Object.values(doc.nodes).filter((node) => !node.children).length;
+  const anyOpen = containers.some((node) => !collapsed.has(node.id));
+
   return (
     <div className="bst:flex bst:h-full bst:flex-col">
       <SegmentedTabs
@@ -75,6 +82,25 @@ export function LayersPanel() {
         ]}
         className="bst:mx-3 bst:mb-2.5 bst:shrink-0 bst:rounded-[10px] bst:[&_[role=tab]]:h-[26px] bst:[&_[role=tab]]:text-xs"
       />
+      {view === 'blocks' && containers.length > 0 ? (
+        <div className="bst:flex bst:shrink-0 bst:items-center bst:justify-between bst:gap-2 bst:px-4 bst:pb-1.5 bst:text-[11.5px] bst:text-muted-foreground">
+          <span className="bst:truncate bst:tabular-nums">
+            {messages.layersSummary(root?.children?.length ?? 0, leaves)}
+          </span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="xs"
+            onClick={() => {
+              setCollapsed(() =>
+                anyOpen ? new Set(containers.map((node) => node.id)) : new Set<NodeId>(),
+              );
+            }}
+          >
+            {anyOpen ? messages.collapseAll : messages.expandAll}
+          </Button>
+        </div>
+      ) : null}
       {view === 'blocks' ? (
         <div className="bld-scroll bst:min-h-0 bst:flex-1 bst:overflow-y-auto">
           <div role="tree" aria-multiselectable="true" className="bst:px-2 bst:pb-2 bst:text-sm">

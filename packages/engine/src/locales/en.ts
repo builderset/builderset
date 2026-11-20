@@ -263,6 +263,10 @@ export const en: EditorMessages = {
   outlineHint: 'Words per section, from your headings. Click one to jump to it.',
   layersHint:
     'Drag rows to reorder. Shift-click to select several, then save them as a section. Double-click a name to rename it.',
+  layersSummary: (top, blocks) =>
+    `${String(top)} at the top · ${String(blocks)} ${blocks === 1 ? 'block' : 'blocks'}`,
+  collapseAll: 'Collapse all',
+  expandAll: 'Expand all',
   templatesStart: 'Start from a template',
   useTemplate: 'Use',
   addToEnd: 'Add to end',

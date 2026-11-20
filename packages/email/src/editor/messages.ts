@@ -88,4 +88,34 @@ export interface EmailSettingsWords {
   columns: (count: number) => string;
   type: string;
   variables: string;
+  /** The dock's switch: the canvas filled with the email type's sample. */
+  exampleData: string;
+  /** Over the canvas while it shows example data. */
+  showingExampleData: string;
+  /** The inbox preview's two ways: variables as chips, or filled in. */
+  showVariables: string;
+  darkPreview: string;
+  darkPreviewHint: string;
+  /** "to {{recipient.email}}" in the inbox header. */
+  to: string;
+  sendTest: string;
+  sendTestTitle: string;
+  sendTestHint: string;
+  send: string;
+  testSent: (address: string) => string;
+  searchVariables: string;
+  variablesHint: string;
+  clickTextFirst: string;
+  allVariables: (count: number) => string;
+  /** The group of variables of the email's own type. */
+  thisEmail: string;
+  /** "With example data: 48 characters." */
+  characters: (count: number) => string;
+  fromThisEmail: string;
+  fromThisEmailHint: string;
+  sectionNumber: (index: number) => string;
+  importHint: string;
+  startFrom: string;
+  linksInEmail: string;
+  noLinks: string;
 }

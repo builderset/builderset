@@ -44,6 +44,48 @@ function Rule() {
   return <span className="bst:mx-[5px] bst:h-5 bst:w-px bst:bg-border" aria-hidden="true" />;
 }
 
+const ICON_BUTTON = 'bst:size-[34px] bst:rounded-[9px] bst:[&_svg]:size-4';
+
+/**
+ * A switch in the dock, for a profile's `dockItems`: an icon that stays
+ * lit while it is on, its name and shortcut in a tooltip.
+ */
+export function DockToggle({
+  label,
+  keys,
+  pressed,
+  onPressedChange,
+  children,
+}: {
+  label: string;
+  keys?: string | undefined;
+  pressed: boolean;
+  onPressedChange: (pressed: boolean) => void;
+  /** The icon. */
+  children: ReactNode;
+}) {
+  return (
+    <Tooltip content={keys ? `${label} · ${keys}` : label}>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label={label}
+        aria-pressed={pressed}
+        className={cn(
+          ICON_BUTTON,
+          pressed && 'bst:bg-primary/12 bst:text-primary bst:hover:bg-primary/16',
+        )}
+        onClick={() => {
+          onPressedChange(!pressed);
+        }}
+      >
+        {children}
+      </Button>
+    </Tooltip>
+  );
+}
+
 /**
  * The floating dock at the foot of the canvas: undo and redo, the device and
  * the zoom, the document in numbers, whether it is ready, focus mode and the
@@ -60,7 +102,7 @@ export function Dock({
   onFocus: () => void;
   onShortcuts: () => void;
 }) {
-  const { store, messages, registry } = useEditorContext();
+  const { store, messages, registry, profile } = useEditorContext();
   const canUndo = useEditor((state) => state.canUndo);
   const canRedo = useEditor((state) => state.canRedo);
   const undoLabel = useEditor((state) => state.undoLabel);
@@ -79,7 +121,8 @@ export function Dock({
   // Out of the way while something is dragged: the delete target takes its place.
   const dragging = useDragSession().payload !== null;
 
-  const icon = 'bst:size-[34px] bst:rounded-[9px] bst:[&_svg]:size-4';
+  const icon = ICON_BUTTON;
+  const Extra = profile.dockItems;
 
   return (
     <div
@@ -170,6 +213,12 @@ export function Dock({
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+      {Extra ? (
+        <>
+          <Rule />
+          <Extra />
+        </>
+      ) : null}
       <Rule />
       <span className="bst:hidden bst:px-1.5 bst:font-mono bst:text-xs bst:text-muted-foreground bst:tabular-nums bst:xl:inline">
         {messages.words(words)} · {messages.readingTime(minutes)}

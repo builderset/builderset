@@ -106,7 +106,7 @@ export function Canvas() {
     () => profile.renderCanvas({ doc: view, editText, viewport, locale: lang ?? undefined }),
     [view, lang, editText, profile, viewport],
   );
-  const Header = bare ? undefined : profile.canvasHeader;
+  const Header = profile.canvasHeader;
 
   const empty = (doc.nodes[doc.root]?.children?.length ?? 0) === 0;
 

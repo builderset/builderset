@@ -26,7 +26,7 @@ server library. You bring the theme, the language and the database.
 **[Documentation](https://docs-builderset.vercel.app/docs)** ·
 **[Playground](https://docs-builderset.vercel.app/playground)**
 
-> **Status: 0.4.0, on GitHub Packages.** The packages are used in production, but
+> **Status: 0.5.0, on GitHub Packages.** The packages are used in production, but
 > they are not on npm yet and the API may change before 1.0. Installing needs a
 > token until then — see [Install](https://docs-builderset.vercel.app/docs/install).
 

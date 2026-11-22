@@ -7,7 +7,7 @@
 //   POST   /documents/{kind}/:id/unpublish
 //   DELETE /documents/{kind}/:id             to the trash
 //   POST   /documents/{kind}/:id/restore     out of it
-import { error as issue } from 'npm:@builderset/engine@0.4.0';
+import { error as issue } from 'npm:@builderset/engine@0.5.0';
 
 import { present, presentOne, restore, softDelete } from '../_shared/audit.ts';
 import {

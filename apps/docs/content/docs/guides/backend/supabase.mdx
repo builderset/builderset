@@ -3,7 +3,7 @@ title: Supabase
 description: The five builders on Supabase — the audited tables with row-level security, every write as one Postgres function, a Storage bucket for media, and Edge Functions that check every document, form response and popup submission.
 ---
 
-_This page describes Builderset 0.4.0._
+_This page describes Builderset 0.5.0._
 
 At the end your Supabase project stores email templates, articles, forms, card designs
 and popups with who made, changed and deleted every row, keeps their revisions and an
@@ -154,7 +154,7 @@ from the request. A card's publish is its approval for print, so it is checked w
   ./snippets/backends/supabase/functions/documents/kinds.ts
 </include>
 
-These files run in Deno, as Edge Functions do: `npm:@builderset/form@0.4.0` loads the
+These files run in Deno, as Edge Functions do: `npm:@builderset/form@0.5.0` loads the
 kit from npm, and `Deno.env` holds the project's URL and service-role key. Unlike the
 rest of the code in these docs, they are not type-checked by the site's build, which
 runs Node.

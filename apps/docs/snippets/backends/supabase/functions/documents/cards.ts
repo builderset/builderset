@@ -3,8 +3,8 @@
 //   POST /documents/cards/:id/issues                   { member_ref, data, delivery, valid_until }
 //   GET  /documents/cards/:id/issues/:issueId          one card, filled in for a reprint
 //   POST /documents/cards/:id/issues/:issueId/revoke   { reason }
-import { FIELD_PATH, fieldsUsed, fillCard, type CardDocument } from 'npm:@builderset/card@0.4.0';
-import { error as issue, type Issue } from 'npm:@builderset/engine@0.4.0';
+import { FIELD_PATH, fieldsUsed, fillCard, type CardDocument } from 'npm:@builderset/card@0.5.0';
+import { error as issue, type Issue } from 'npm:@builderset/engine@0.5.0';
 
 import { present, presentOne } from '../_shared/audit.ts';
 import {

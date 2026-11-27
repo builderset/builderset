@@ -1,5 +1,17 @@
 # builderset
 
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies [f83fa89]
+  - @builderset/engine@0.5.1
+  - @builderset/email@0.5.1
+  - @builderset/article@0.5.1
+  - @builderset/card@0.5.1
+  - @builderset/form@0.5.1
+  - @builderset/popup@0.5.1
+
 ## 0.5.0
 
 ### Minor Changes

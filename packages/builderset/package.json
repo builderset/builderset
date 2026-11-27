@@ -1,6 +1,6 @@
 {
   "name": "builderset",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Builders for React: email, article, form, card and popup editors on one engine, with a typed JSON document any backend can validate and render.",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "@builderset/engine",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "The engine under every Builderset kit: a typed node tree, operations with undo, the host contract and a generic block editor for React.",
   "license": "MIT",
   "keywords": [

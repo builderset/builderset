@@ -1,6 +1,6 @@
 {
   "name": "@builderset/form",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Form builder: multi-step forms with logic and checks, a typed document, a React renderer and the same validation on the server.",
   "license": "MIT",
   "keywords": [

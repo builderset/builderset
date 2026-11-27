@@ -14,7 +14,7 @@ public, the wheel is attached to each GitHub release rather than published to
 PyPI ([DECISIONS.md](../docs/plan/DECISIONS.md), D9):
 
 ```bash
-pip install ./builderset-0.5.1-py3-none-any.whl
+pip install ./builderset-0.5.2-py3-none-any.whl
 ```
 
 Python 3.11 or newer. Depends on `jsonschema` and `tzdata`.

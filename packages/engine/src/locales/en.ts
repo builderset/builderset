@@ -153,6 +153,7 @@ export const en: EditorMessages = {
   restore: 'Restore',
   discard: 'Discard',
   revisions: 'History',
+  revisionsHint: 'Every saved version. Pick one to compare it with the draft.',
   noRevisions: 'No saved versions yet.',
   revisionKinds: { autosave: 'Autosave', manual: 'Saved', publish: 'Published' },
   restoreRevision: 'Restore this version',

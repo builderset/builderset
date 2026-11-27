@@ -91,7 +91,7 @@ export function SendTest() {
           icon={<Send aria-hidden="true" />}
           className="bst:h-8 bst:rounded-[9px] bst:bg-card"
         >
-          <span className="bst:hidden bst:lg:inline">{w.sendTest}</span>
+          <span className="bst:hidden bst:@min-[1300px]/bar:inline">{w.sendTest}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="bst:w-80 bst:p-3">

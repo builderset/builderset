@@ -100,7 +100,7 @@ function SaveIndicator() {
     <span
       role="status"
       aria-live="polite"
-      className="bst:hidden bst:items-center bst:gap-1.5 bst:px-2 bst:text-xs bst:whitespace-nowrap bst:text-muted-foreground bst:lg:inline-flex"
+      className="bst:hidden bst:items-center bst:gap-1.5 bst:px-2 bst:text-xs bst:whitespace-nowrap bst:text-muted-foreground bst:@min-[900px]/bar:inline-flex"
     >
       {icon ?? (
         <span
@@ -108,7 +108,7 @@ function SaveIndicator() {
           aria-hidden="true"
         />
       )}
-      <span className="bst:hidden bst:xl:inline">{text}</span>
+      <span className="bst:hidden bst:@min-[1600px]/bar:inline">{text}</span>
     </span>
   );
 }
@@ -120,7 +120,7 @@ function StatusPill() {
   const published = record.status === 'published';
   const scheduled = !published && !!record.scheduledAt;
   const base =
-    'bst:hidden bst:h-[22px] bst:shrink-0 bst:items-center bst:gap-[5px] bst:rounded-full bst:px-2 bst:text-[11.5px] bst:font-semibold bst:whitespace-nowrap bst:sm:inline-flex';
+    'bst:hidden bst:h-[22px] bst:shrink-0 bst:items-center bst:gap-[5px] bst:rounded-full bst:px-2 bst:text-[11.5px] bst:font-semibold bst:whitespace-nowrap bst:@min-[640px]/bar:inline-flex';
   if (scheduled) {
     return (
       <span className={cn(base, 'bst:bg-warn/14 bst:text-warn')}>
@@ -150,9 +150,13 @@ const iconButton = 'bst:size-8 bst:rounded-lg bst:text-muted-foreground bst:hove
 
 /**
  * The top bar: where you are (back, the blocks panel, "Articles / title" and
- * its state) on the left; what you do with it (saved, the command menu,
- * history, preview, publish, the settings panel) on the right. How you look at
- * the page — undo, the device, the zoom — is on the dock over the canvas.
+ * its state) on the left; the command menu in the middle of the bar; what you
+ * do with it (saved, history, preview, publish, the settings panel) on the
+ * right. How you look at the page — undo, the device, the zoom — is on the dock
+ * over the canvas.
+ *
+ * Three columns, the outer two equal, so the search sits at the bar's exact
+ * centre whatever each side holds.
  */
 export function TopBar(actions: TopBarActions) {
   const { store, messages, record, profile } = useEditorContext();
@@ -163,65 +167,73 @@ export function TopBar(actions: TopBarActions) {
   const Actions = profile.topBarActions;
 
   return (
-    <header className="bst:relative bst:z-30 bst:flex bst:h-[58px] bst:shrink-0 bst:items-center bst:gap-2 bst:bg-background bst:px-3">
-      <Tooltip content={messages.back} side="bottom">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={messages.back}
-          className={iconButton}
-          onClick={actions.onBack}
-        >
-          <ArrowLeft aria-hidden="true" />
-        </Button>
-      </Tooltip>
-      <Tooltip content={`${messages.add} · [`} side="bottom">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label={messages.add}
-          aria-pressed={leftOpen}
-          className={cn(
-            iconButton,
-            'bst:hidden bst:md:inline-flex',
-            leftOpen && 'bst:bg-primary/12 bst:text-primary bst:hover:text-primary',
-          )}
-          onClick={() => {
-            store.getState().toggleLeft();
-          }}
-        >
-          <PanelLeft aria-hidden="true" />
-        </Button>
-      </Tooltip>
+    <header className="bst:@container/bar bst:relative bst:z-30 bst:grid bst:h-[58px] bst:shrink-0 bst:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] bst:items-center bst:gap-3 bst:bg-background bst:px-3">
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:gap-2">
+        <Tooltip content={messages.back} side="bottom">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={messages.back}
+            className={iconButton}
+            onClick={actions.onBack}
+          >
+            <ArrowLeft aria-hidden="true" />
+          </Button>
+        </Tooltip>
+        <Tooltip content={`${messages.add} · [`} side="bottom">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={messages.add}
+            aria-pressed={leftOpen}
+            className={cn(
+              iconButton,
+              'bst:hidden bst:md:inline-flex',
+              leftOpen && 'bst:bg-primary/12 bst:text-primary bst:hover:text-primary',
+            )}
+            onClick={() => {
+              store.getState().toggleLeft();
+            }}
+          >
+            <PanelLeft aria-hidden="true" />
+          </Button>
+        </Tooltip>
 
-      {/* "Articles / Title" and the state it is in. */}
-      <div className="bst:ml-1 bst:flex bst:min-w-0 bst:items-center bst:gap-1.5 bst:text-[12.5px] bst:text-muted-foreground">
-        <span className="bst:hidden bst:whitespace-nowrap bst:2xl:inline">{messages.back}</span>
-        <span className="bst:hidden bst:text-muted-foreground/60 bst:2xl:inline">/</span>
-        <b className="bst:max-w-[280px] bst:truncate bst:text-[13.5px] bst:font-semibold bst:text-foreground">
-          {title || messages.untitled}
-        </b>
-        <StatusPill />
+        {/* "Articles / Title" and the state it is in. */}
+        <div className="bst:ml-1 bst:flex bst:min-w-0 bst:items-center bst:gap-1.5 bst:text-[12.5px] bst:text-muted-foreground">
+          <span className="bst:hidden bst:whitespace-nowrap bst:@min-[1700px]/bar:inline">
+            {messages.back}
+          </span>
+          <span className="bst:hidden bst:text-muted-foreground/60 bst:@min-[1700px]/bar:inline">
+            /
+          </span>
+          <b className="bst:max-w-[280px] bst:truncate bst:text-[13.5px] bst:font-semibold bst:text-foreground">
+            {title || messages.untitled}
+          </b>
+          <StatusPill />
+        </div>
       </div>
 
-      <div className="bst:ml-auto bst:flex bst:min-w-0 bst:items-center bst:gap-1">
+      {/* The command menu, at the bar's centre: a field once the bar is 1100px wide, its icon below. */}
+      <button
+        type="button"
+        onClick={actions.onCommand}
+        aria-label={messages.commandSearch}
+        className="bld-focus bst:inline-flex bst:h-[34px] bst:w-[34px] bst:cursor-pointer bst:items-center bst:justify-center bst:gap-2 bst:rounded-[10px] bst:border bst:border-border bst:bg-card bst:text-[12.5px] bst:text-muted-foreground bst:transition-colors bst:hover:border-border-strong bst:hover:text-foreground bst:@min-[1100px]/bar:w-[240px] bst:@min-[1100px]/bar:justify-start bst:@min-[1100px]/bar:pr-1.5 bst:@min-[1100px]/bar:pl-[11px] bst:@min-[1400px]/bar:w-[320px]"
+      >
+        <Search className="bst:size-4 bst:shrink-0" aria-hidden="true" />
+        <span className="bst:hidden bst:flex-1 bst:truncate bst:text-left bst:@min-[1100px]/bar:inline">
+          {messages.commandSearch}
+        </span>
+        <kbd className="bst:hidden bst:rounded-[5px] bst:border bst:border-border bst:bg-background bst:px-[5px] bst:py-[3px] bst:font-mono bst:text-[11px] bst:leading-none bst:text-muted-foreground bst:@min-[1100px]/bar:inline">
+          Ctrl K
+        </kbd>
+      </button>
+
+      <div className="bst:flex bst:min-w-0 bst:items-center bst:justify-end bst:gap-1">
         <SaveIndicator />
-        <button
-          type="button"
-          onClick={actions.onCommand}
-          aria-label={messages.commandSearch}
-          className="bld-focus bst:mx-1 bst:inline-flex bst:h-[34px] bst:w-[34px] bst:cursor-pointer bst:items-center bst:justify-center bst:gap-2 bst:rounded-[10px] bst:border bst:border-border bst:bg-card bst:text-[12.5px] bst:text-muted-foreground bst:transition-colors bst:hover:border-border-strong bst:hover:text-foreground bst:2xl:w-auto bst:2xl:min-w-[250px] bst:2xl:justify-start bst:2xl:pr-1.5 bst:2xl:pl-[11px]"
-        >
-          <Search className="bst:size-4 bst:shrink-0" aria-hidden="true" />
-          <span className="bst:hidden bst:flex-1 bst:text-left bst:2xl:inline">
-            {messages.commandSearch}
-          </span>
-          <kbd className="bst:hidden bst:rounded-[5px] bst:border bst:border-border bst:bg-background bst:px-[5px] bst:py-[3px] bst:font-mono bst:text-[11px] bst:leading-none bst:text-muted-foreground bst:2xl:inline">
-            Ctrl K
-          </kbd>
-        </button>
         {actions.onHistory ? (
           <Tooltip content={messages.revisions} side="bottom">
             <Button
@@ -246,7 +258,7 @@ export function TopBar(actions: TopBarActions) {
             onClick={actions.onPreview}
             className="bst:h-8 bst:rounded-[9px] bst:bg-card"
           >
-            <span className="bst:hidden bst:lg:inline">{messages.preview}</span>
+            <span className="bst:hidden bst:@min-[1300px]/bar:inline">{messages.preview}</span>
           </Button>
         ) : null}
 

@@ -154,6 +154,7 @@ export const sq: EditorMessages = {
   restore: 'Rikthe',
   discard: 'Hidh',
   revisions: 'Historiku',
+  revisionsHint: 'Çdo version i ruajtur. Zgjidhni një për ta krahasuar me draftin.',
   noRevisions: 'Asnjë version i ruajtur ende.',
   revisionKinds: { autosave: 'Ruajtje automatike', manual: 'Ruajtur', publish: 'Publikuar' },
   restoreRevision: 'Rikthe këtë version',

@@ -253,7 +253,7 @@ export function ModulesPanel() {
             <Spinner />
           </div>
         ) : modules.length === 0 ? (
-          <EmptyState size="compact" icon={<Boxes aria-hidden="true" />} title={w.noModules} />
+          <EmptyState size="inline" icon={<Boxes aria-hidden="true" />} title={w.noModules} />
         ) : (
           <div className="bst:grid bst:gap-1.5 bst:px-3">
             {modules.map((module) => {

@@ -18,7 +18,17 @@ import {
   TooltipProvider,
   useMediaQuery,
 } from './ui';
-import { Image, Layers, LayoutTemplate, Plus, Redo2, Settings2, Undo2 } from 'lucide-react';
+import {
+  CalendarClock,
+  Image,
+  Keyboard,
+  Layers,
+  LayoutTemplate,
+  Plus,
+  Redo2,
+  Settings2,
+  Undo2,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
   useCallback,
@@ -887,6 +897,7 @@ function Workspace<TDoc extends EngineDocument, TRecord extends RecordFacts>({
           setShortcuts(false);
         }}
         title={messages.shortcuts}
+        icon={<Keyboard aria-hidden="true" />}
       >
         <dl className="bst:grid bst:grid-cols-[auto_1fr] bst:gap-x-6 bst:gap-y-2 bst:text-sm">
           {messages.shortcutList.map(([keys, action]) => (
@@ -1120,6 +1131,7 @@ function ScheduleDialog({
       onClose={onClose}
       title={messages.schedule.replace('…', '')}
       description={messages.scheduleHint}
+      icon={<CalendarClock aria-hidden="true" />}
     >
       <div className="bst:space-y-4">
         <div className="bst:space-y-1.5">

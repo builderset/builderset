@@ -24,7 +24,11 @@ import { cn } from '../cn';
 export interface EmptyStateProps {
   /** The heading, naming what is missing. Default: the editor's "No results". */
   title?: string | undefined;
-  /** One sentence under the title on what would go here. Default: the editor's hint for no results. */
+  /**
+   * One sentence under the title on what would go here. Default: the editor's
+   * hint for no results — only under the default title; a state with a title
+   * of its own shows no second line unless it is given one.
+   */
   description?: string | undefined;
   /** Shown in the tile at the centre. Default: an inbox. */
   icon?: ReactNode;
@@ -34,9 +38,11 @@ export interface EmptyStateProps {
    * `default` holds the same floor as the loading and error states, so a table
    * does not change height between them. `compact` is for an empty SECTION
    * inside a form or a card, where that floor would push everything below it
-   * off the screen.
+   * off the screen. `inline` is a single quiet row — an icon tile and the
+   * sentence on a dashed card — for an empty list inside a side panel, under a
+   * heading that already names it.
    */
-  size?: 'default' | 'compact' | undefined;
+  size?: 'default' | 'compact' | 'inline' | undefined;
   /**
    * A dashed card around it — for an empty state standing on its own in a form,
    * where there is no table or panel edge to frame it. Off inside a table,
@@ -176,6 +182,36 @@ export function EmptyState({
 }: EmptyStateProps) {
   const messages = useMessages();
   const compact = size === 'compact';
+  const hint = description ?? (title === undefined ? messages.noResultsHint : undefined);
+
+  if (size === 'inline') {
+    return (
+      <div
+        className={cn(
+          'bst:mx-3 bst:flex bst:animate-[bst-rise_var(--bst-dur-4)_var(--bst-ease-enter)] bst:items-center bst:gap-3 bst:rounded-[12px] bst:border bst:border-dashed bst:border-border bst:bg-muted/25 bst:p-3',
+          className,
+        )}
+      >
+        <span
+          aria-hidden="true"
+          className="bst:grid bst:size-9 bst:shrink-0 bst:place-items-center bst:rounded-[10px] bst:border bst:border-border bst:bg-gradient-to-b bst:from-card bst:to-muted bst:text-muted-foreground bst:shadow-[0_1px_2px_rgb(0_0_0/0.06)] bst:[&_svg]:size-4"
+        >
+          {icon ?? <Inbox aria-hidden="true" />}
+        </span>
+        <span className="bst:min-w-0 bst:flex-1">
+          <p className="bst:text-[12px] bst:leading-snug bst:text-muted-foreground">
+            {title ?? messages.noResults}
+          </p>
+          {hint ? (
+            <p className="bst:mt-0.5 bst:text-[11.5px] bst:leading-snug bst:text-muted-foreground/80">
+              {hint}
+            </p>
+          ) : null}
+          {action ? <div className="bst:mt-2">{action}</div> : null}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -200,14 +236,16 @@ export function EmptyState({
       >
         {title ?? messages.noResults}
       </p>
-      <p
-        className={cn(
-          'bst:mt-1.5 bst:max-w-sm bst:leading-relaxed bst:text-muted-foreground',
-          compact ? 'bst:text-xs' : 'bst:text-sm',
-        )}
-      >
-        {description ?? messages.noResultsHint}
-      </p>
+      {hint ? (
+        <p
+          className={cn(
+            'bst:mt-1.5 bst:max-w-sm bst:leading-relaxed bst:text-muted-foreground',
+            compact ? 'bst:text-xs' : 'bst:text-sm',
+          )}
+        >
+          {hint}
+        </p>
+      ) : null}
       {action ? <div className={compact ? 'bst:mt-4' : 'bst:mt-5'}>{action}</div> : null}
     </div>
   );

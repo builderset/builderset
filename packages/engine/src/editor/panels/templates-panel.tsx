@@ -187,11 +187,6 @@ const CARD =
 const TILE =
   'bst:group bst:relative bst:grid bst:content-start bst:gap-2 bst:rounded-[12px] bst:border bst:border-border bst:bg-card bst:p-1.5 bst:pb-2 bst:text-left bst:transition-[border-color,translate,box-shadow] bst:duration-200 bst:ease-[cubic-bezier(.34,1.4,.5,1)] bst:hover:-translate-y-0.5 bst:hover:border-primary/40 bst:hover:shadow-[0_10px_24px_rgb(20_23_30/0.1)]';
 
-const CHIP_ON =
-  'bst:h-7 bst:cursor-pointer bst:rounded-full bst:border bst:border-foreground bst:bg-foreground bst:px-[11px] bst:text-xs bst:font-semibold bst:text-background';
-const CHIP_OFF =
-  'bst:h-7 bst:cursor-pointer bst:rounded-full bst:border bst:border-border bst:px-[11px] bst:text-xs bst:font-semibold bst:text-muted-foreground bst:transition-colors bst:hover:border-border-strong bst:hover:text-foreground';
-
 export interface TemplateGalleryProps {
   /**
    * `list`: a row per template with a sketch of its blocks (an article's).
@@ -204,7 +199,7 @@ export interface TemplateGalleryProps {
 }
 
 /**
- * The profile's templates under their categories, with category chips: each
+ * The profile's templates under their categories' headings: each
  * one is added to the end of the page or replaces it ("Use", then which).
  * Either way it is one step that one undo takes back.
  */
@@ -212,7 +207,6 @@ export function TemplateGallery({ look = 'list', title }: TemplateGalleryProps) 
   const { registry, messages, store, host, profile, locale } = useEditorContext();
   const templates = useMemo(() => profile.templates ?? [], [profile.templates]);
   const [asking, setAsking] = useState<string | null>(null);
-  const [only, setOnly] = useState<string | null>(null);
   const summary = useSummary();
   const groups = useMemo(
     () => groupByCategory(templates, profile.templateCategories ?? []),
@@ -309,105 +303,83 @@ export function TemplateGallery({ look = 'list', title }: TemplateGalleryProps) 
       <h3 className="bst:px-4 bst:pt-1 bst:pb-2 bst:text-xs bst:font-semibold bst:text-muted-foreground">
         {title ?? messages.templatesStart}
       </h3>
-      {groups.length > 1 ? (
-        <div className="bst:flex bst:flex-wrap bst:gap-1.5 bst:px-3 bst:pb-3">
-          {[
-            { id: null, label: messages.all },
-            ...groups.map((group) => ({ id: group.id, label: local(group.name) ?? group.id })),
-          ].map((chip) => (
-            <button
-              key={chip.id ?? 'all'}
-              type="button"
-              aria-pressed={only === chip.id}
-              onClick={() => {
-                setOnly(chip.id);
-              }}
-              className={only === chip.id ? CHIP_ON : CHIP_OFF}
-            >
-              {chip.label}
-            </button>
-          ))}
-        </div>
-      ) : null}
-      {groups
-        .filter((group) => only === null || group.id === only)
-        .map((group) => (
-          <div key={group.id} className="bst:pb-3">
-            {groups.length > 1 ? (
-              <h4 className="bst:flex bst:items-center bst:gap-1.5 bst:px-4 bst:pb-1.5 bst:text-xs bst:font-semibold bst:text-foreground/85">
-                {local(group.name) ?? group.id}
-                <em className="bst:font-medium bst:text-muted-foreground bst:not-italic">
-                  {group.templates.length}
-                </em>
-              </h4>
-            ) : null}
-            <div
-              className={
-                look === 'grid'
-                  ? 'bst:grid bst:grid-cols-2 bst:items-start bst:gap-2 bst:px-3'
-                  : 'bst:grid bst:gap-2 bst:px-3'
-              }
-            >
-              {group.templates.map((template) => {
-                const types = leafTypes(template.blocks);
-                const label = local(template.name) ?? template.id;
-                const line = local(template.description) ?? summary(types);
-                const thumbnail = thumbnails?.get(template.id);
-                if (look === 'grid') {
-                  return (
-                    <div key={template.id} className={TILE}>
-                      <button
-                        type="button"
-                        aria-expanded={asking === template.id}
-                        title={line}
-                        onClick={() => {
-                          setAsking(asking === template.id ? null : template.id);
-                        }}
-                        className="bld-focus bst:grid bst:cursor-pointer bst:gap-2 bst:rounded-[8px] bst:text-left"
-                      >
-                        {thumbnail ? <Thumbnail doc={thumbnail} /> : <Sketch types={types} />}
-                        <span className="bst:min-w-0 bst:px-1">
-                          <b className="bst:block bst:truncate bst:text-[12.5px] bst:font-semibold">
-                            {label}
-                          </b>
-                          <small className="bst:line-clamp-2 bst:text-[11px] bst:leading-snug bst:text-muted-foreground">
-                            {line}
-                          </small>
-                        </span>
-                      </button>
-                      {ask(template, label, types.length)}
-                    </div>
-                  );
-                }
+      {groups.map((group) => (
+        <div key={group.id} className="bst:pb-3">
+          {groups.length > 1 ? (
+            <h4 className="bst:flex bst:items-center bst:gap-1.5 bst:px-4 bst:pb-1.5 bst:text-xs bst:font-semibold bst:text-foreground/85">
+              {local(group.name) ?? group.id}
+              <em className="bst:font-medium bst:text-muted-foreground bst:not-italic">
+                {group.templates.length}
+              </em>
+            </h4>
+          ) : null}
+          <div
+            className={
+              look === 'grid'
+                ? 'bst:grid bst:grid-cols-2 bst:items-start bst:gap-2 bst:px-3'
+                : 'bst:grid bst:gap-2 bst:px-3'
+            }
+          >
+            {group.templates.map((template) => {
+              const types = leafTypes(template.blocks);
+              const label = local(template.name) ?? template.id;
+              const line = local(template.description) ?? summary(types);
+              const thumbnail = thumbnails?.get(template.id);
+              if (look === 'grid') {
                 return (
-                  <div key={template.id} className={CARD}>
-                    <Sketch types={types} />
-                    <span className="bst:min-w-0">
-                      <b className="bst:block bst:truncate bst:text-[13px] bst:font-semibold">
-                        {label}
-                      </b>
-                      <small className="bst:block bst:truncate bst:text-[11.5px] bst:text-muted-foreground">
-                        {line}
-                      </small>
-                    </span>
-                    <Button
+                  <div key={template.id} className={TILE}>
+                    <button
                       type="button"
-                      variant="outline"
-                      size="xs"
-                      className="bst:opacity-0 bst:transition-opacity bst:group-hover:opacity-100 bst:focus-visible:opacity-100"
+                      aria-expanded={asking === template.id}
+                      title={line}
                       onClick={() => {
                         setAsking(asking === template.id ? null : template.id);
                       }}
+                      className="bld-focus bst:grid bst:cursor-pointer bst:gap-2 bst:rounded-[8px] bst:text-left"
                     >
-                      {messages.useTemplate}
-                    </Button>
+                      {thumbnail ? <Thumbnail doc={thumbnail} /> : <Sketch types={types} />}
+                      <span className="bst:min-w-0 bst:px-1">
+                        <b className="bst:block bst:truncate bst:text-[12.5px] bst:font-semibold">
+                          {label}
+                        </b>
+                        <small className="bst:line-clamp-2 bst:text-[11px] bst:leading-snug bst:text-muted-foreground">
+                          {line}
+                        </small>
+                      </span>
+                    </button>
                     {ask(template, label, types.length)}
                   </div>
                 );
-              })}
-            </div>
+              }
+              return (
+                <div key={template.id} className={CARD}>
+                  <Sketch types={types} />
+                  <span className="bst:min-w-0">
+                    <b className="bst:block bst:truncate bst:text-[13px] bst:font-semibold">
+                      {label}
+                    </b>
+                    <small className="bst:block bst:truncate bst:text-[11.5px] bst:text-muted-foreground">
+                      {line}
+                    </small>
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    className="bst:opacity-0 bst:transition-opacity bst:group-hover:opacity-100 bst:focus-visible:opacity-100"
+                    onClick={() => {
+                      setAsking(asking === template.id ? null : template.id);
+                    }}
+                  >
+                    {messages.useTemplate}
+                  </Button>
+                  {ask(template, label, types.length)}
+                </div>
+              );
+            })}
           </div>
-        ))}
+        </div>
+      ))}
     </section>
   );
 }
@@ -511,7 +483,7 @@ function SavedSections() {
         </div>
       ) : sections.length === 0 ? (
         <EmptyState
-          size="compact"
+          size="inline"
           icon={<BookmarkPlus aria-hidden="true" />}
           title={messages.noSections}
         />

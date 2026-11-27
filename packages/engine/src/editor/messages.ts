@@ -138,6 +138,8 @@ export interface EditorMessages {
   restore: string;
   discard: string;
   revisions: string;
+  /** Under the history drawer's title. */
+  revisionsHint: string;
   noRevisions: string;
   revisionKinds: Record<string, string>;
   restoreRevision: string;

@@ -110,6 +110,8 @@ export const de: EditorMessages = {
   restore: 'Wiederherstellen',
   discard: 'Verwerfen',
   revisions: 'Verlauf',
+  revisionsHint:
+    'Jede gespeicherte Version. Wählen Sie eine, um sie mit dem Entwurf zu vergleichen.',
   saved: 'Gespeichert.',
   published: 'Veröffentlicht.',
   scheduled: 'Geplant.',

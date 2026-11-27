@@ -157,7 +157,7 @@ export function ShareButton() {
           icon={<Link2 aria-hidden="true" />}
           className="bst:h-8 bst:rounded-[9px] bst:bg-card"
         >
-          <span className="bst:hidden bst:lg:inline">{words.share}</span>
+          <span className="bst:hidden bst:@min-[1300px]/bar:inline">{words.share}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="bst:grid bst:w-96 bst:gap-3 bst:p-3.5">

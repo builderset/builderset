@@ -11,7 +11,7 @@ import {
   pathMatches,
   validateSubmission,
   type PopupDocument,
-} from 'npm:@builderset/popup@0.5.1';
+} from 'npm:@builderset/popup@0.5.2';
 
 import { userIdOf } from '../_shared/auth.ts';
 import {

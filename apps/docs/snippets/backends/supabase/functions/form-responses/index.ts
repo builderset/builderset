@@ -3,7 +3,7 @@
 // signed-in visitor's token. Nobody may insert into form_response through the
 // REST API: this function checks the answers, then stores them with the
 // service role. Deploy it with `supabase functions deploy form-responses`.
-import { validateAnswers, type Answers, type FormDocument } from 'npm:@builderset/form@0.5.1';
+import { validateAnswers, type Answers, type FormDocument } from 'npm:@builderset/form@0.5.2';
 
 import { userIdOf } from '../_shared/auth.ts';
 import {

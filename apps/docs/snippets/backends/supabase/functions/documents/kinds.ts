@@ -6,7 +6,7 @@ import {
   isDraftBlocking as articleDraftBlocks,
   isPublishBlocking as articlePublishBlocks,
   parseArticle,
-} from 'npm:@builderset/article@0.5.0';
+} from 'npm:@builderset/article@0.5.1';
 import {
   checkCard,
   createCardRegistry,
@@ -14,7 +14,7 @@ import {
   isPrintBlocking as cardPrintBlocks,
   parseCard,
   type CardDocument,
-} from 'npm:@builderset/card@0.5.0';
+} from 'npm:@builderset/card@0.5.1';
 import {
   checkEmail,
   createEmailRegistry,
@@ -23,13 +23,13 @@ import {
   parseEmail,
   type EmailDocument,
   type EmailType,
-} from 'npm:@builderset/email@0.5.0';
+} from 'npm:@builderset/email@0.5.1';
 import {
   error,
   type ElementRegistry,
   type EngineDocument,
   type Issue,
-} from 'npm:@builderset/engine@0.5.0';
+} from 'npm:@builderset/engine@0.5.1';
 import {
   checkForm,
   createFormRegistry,
@@ -37,7 +37,7 @@ import {
   isPublishBlocking as formPublishBlocks,
   parseForm,
   type FormDocument,
-} from 'npm:@builderset/form@0.5.0';
+} from 'npm:@builderset/form@0.5.1';
 import {
   checkPopup,
   createPopupRegistry,
@@ -45,7 +45,7 @@ import {
   isPublishBlocking as popupPublishBlocks,
   parsePopup,
   type PopupDocument,
-} from 'npm:@builderset/popup@0.5.0';
+} from 'npm:@builderset/popup@0.5.1';
 
 import { HttpError, notFound, type Json } from '../_shared/http.ts';
 

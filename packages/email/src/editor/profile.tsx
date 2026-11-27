@@ -32,7 +32,7 @@ import { EMAIL_TEMPLATE_CATEGORIES, EMAIL_TEMPLATES, toTemplateSpec } from '../t
 import { EmailDockItems, SendTest } from './canvas-actions';
 import { ColumnsIcon } from './columns-icon';
 import { ImportHtmlHost } from './import-html-host';
-import { EmailFrame, EmailReadOnly, MailHeader, type EmailDrawing } from './mail-frame';
+import { EmailFrame, EmailReadOnly, type EmailDrawing } from './mail-frame';
 import type { EmailWords } from './messages';
 import { ModulesPanel } from './modules-panel';
 import { EmailSettingsPanel } from './settings-panel';
@@ -164,7 +164,6 @@ export function emailProfile({
     ),
     sampleOf: (blockType) => sampleOf(registry, blockType),
     canvasFrame: 'bare',
-    canvasHeader: MailHeader,
     canvasWidths: { desktop: 760, tablet: 680, mobile: 390 },
     settingsPanel: EmailSettingsPanel,
     overlays: ImportHtmlHost,

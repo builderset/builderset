@@ -981,8 +981,10 @@ export function EmailCanvas({
     <div
       style={{
         background: color(settings.backdrop, context),
-        padding: '24px 0',
-        minHeight: '100%',
+        // On the editor's board the backdrop is the work area: as tall as the
+        // board, and clear of the dock at the end (the engine's page variables).
+        padding: '24px 0 calc(24px + var(--bld-page-end, 0px))',
+        minHeight: 'var(--bld-page-min, 100%)',
       }}
     >
       {(root?.children ?? []).map((id) => {

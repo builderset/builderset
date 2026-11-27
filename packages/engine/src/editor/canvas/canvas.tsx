@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type DragEvent,
   type MouseEvent,
 } from 'react';
@@ -37,25 +38,41 @@ import { Overlay } from './overlay';
  */
 export const VIEWPORT_WIDTH = { desktop: 1200, tablet: 820, mobile: 390 } as const;
 
-/** Breathing room around the page inside the canvas, per side. */
+/** Breathing room around a kit's own card (a form) inside the canvas, per side. */
 const GUTTER = 24;
 
-/** The canvas area's width, kept current as panels open and the window resizes. */
-function useWidth(ref: React.RefObject<HTMLElement | null>): number {
-  const [width, setWidth] = useState(0);
+/** Room the multi-language bar takes above the page, in screen pixels. */
+const LANGUAGE_BAR = 60;
+
+/**
+ * Room below the last block, in screen pixels, so it can scroll clear of the
+ * dock. On a page that fills the board this is the page's own end, in the
+ * page's colour; a kit that draws its whole page (an email) reads it as
+ * `--bld-page-end`.
+ */
+const DOCK_ROOM = 130;
+
+/** The canvas area's size, kept current as panels open and the window resizes. */
+function useSize(ref: React.RefObject<HTMLElement | null>): { width: number; height: number } {
+  const [size, setSize] = useState({ width: 0, height: 0 });
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) return;
-    setWidth(element.clientWidth);
-    const observer = new ResizeObserver(() => {
-      setWidth(element.clientWidth);
-    });
+    const measure = () => {
+      setSize((current) =>
+        current.width === element.clientWidth && current.height === element.clientHeight
+          ? current
+          : { width: element.clientWidth, height: element.clientHeight },
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => {
       observer.disconnect();
     };
   }, [ref]);
-  return width;
+  return size;
 }
 
 function nodeElement(target: EventTarget | null): HTMLElement | null {
@@ -90,12 +107,23 @@ export function Canvas() {
   const [drop, setDrop] = useState<DropTarget | null>(null);
   const scale = zoom / 100;
   useFlip(pageRef, doc, scale);
-  const available = useWidth(scrollRef);
-  // In page pixels: what fits beside the gutters at this zoom, never more than
-  // the device's width. Until the first measure, the device width.
-  const pageWidth = available
-    ? Math.max(320, Math.min(widths[viewport], (available - GUTTER * 2) / scale))
-    : widths[viewport];
+  const board = useSize(scrollRef);
+  const available = board.width;
+  // A page (an article) or a kit's whole page (an email) IS the work area: it
+  // fills the board, edge to edge and top to bottom, with nothing drawn around
+  // it that the document does not control. On a tablet or a phone it keeps the
+  // device's width, still from the top of the board to the bottom. Only a kit
+  // that draws its own card (a form) floats it on the board, with gutters.
+  const fills = !frameless;
+  const device = viewport !== 'desktop';
+  const top = multilingual ? LANGUAGE_BAR : 0;
+  // In page pixels. Until the first measure, the device width.
+  const pageWidth = !available
+    ? widths[viewport]
+    : fills && !device
+      ? Math.max(320, available / scale)
+      : Math.max(320, Math.min(widths[viewport], (available - (fills ? 0 : GUTTER * 2)) / scale));
+  const pageMinHeight = board.height ? Math.max(0, board.height - top) / scale : undefined;
 
   const editText = useCallback(
     (field: EditableTextField) => (
@@ -209,34 +237,44 @@ export function Canvas() {
         </p>
       ) : null}
       <motion.div
-        className={cn('bst:mx-auto bst:pb-[130px]', multilingual ? 'bst:pt-[60px]' : 'bst:pt-8')}
+        className={cn(
+          'bst:mx-auto',
+          !fills && 'bst:pb-[130px]',
+          !fills && !multilingual && 'bst:pt-8',
+        )}
+        style={{ paddingTop: top || undefined }}
         initial={false}
         animate={{ width: pageWidth * scale }}
         transition={{ type: 'spring', stiffness: 260, damping: 32 }}
       >
         <div
-          style={{ width: pageWidth, zoom: scale }}
+          style={
+            {
+              width: pageWidth,
+              zoom: scale,
+              minHeight: fills ? pageMinHeight : undefined,
+              // For a kit that draws its whole page: how tall the board is, and
+              // the room to leave under the last block for the dock.
+              '--bld-page-min': fills && pageMinHeight ? `${String(pageMinHeight)}px` : undefined,
+              '--bld-page-end': fills ? `${String(DOCK_ROOM / scale)}px` : undefined,
+            } as CSSProperties
+          }
           data-device={viewport}
           className={cn(
-            'bld-page bst:min-h-[70vh] bst:transition-[border-radius] bst:duration-400',
-            !frameless &&
-              'bst:rounded-[14px] bst:shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_20px_50px_rgb(20_23_30/0.14)]',
-            frameless ? '' : bare ? 'bst:overflow-hidden' : 'bst:bg-background',
-            !frameless &&
-              viewport === 'tablet' &&
-              'bst:rounded-[22px] bst:shadow-[0_0_0_7px_#0c0d10,0_0_0_8px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
-            !frameless &&
-              viewport === 'mobile' &&
-              'bst:rounded-[30px] bst:shadow-[0_0_0_8px_#0c0d10,0_0_0_9px_#33363d,0_30px_60px_rgb(0_0_0/0.25)]',
+            'bld-page',
+            frameless ? 'bst:min-h-[70vh]' : bare ? 'bst:overflow-hidden' : 'bst:bg-background',
+            // A tablet or a phone: the device's width, its edges a hairline.
+            fills && device && 'bst:shadow-[0_0_0_1px_rgb(0_0_0/0.08)]',
           )}
         >
           <div
             ref={pageRef}
             role="presentation"
-            className={
+            className={bare ? 'bst:relative' : 'bst:relative bst:px-6 bst:pt-10 bst:sm:px-12'}
+            style={
               bare
-                ? 'bst:relative bst:min-h-[70vh]'
-                : 'bst:relative bst:px-6 bst:py-10 bst:sm:px-12'
+                ? { minHeight: fills ? pageMinHeight : undefined }
+                : { paddingBottom: DOCK_ROOM / scale }
             }
             onClick={onClick}
             onMouseOver={(event) => {
@@ -252,7 +290,7 @@ export function Canvas() {
             }}
             onDrop={onDrop}
           >
-            <article className={bare ? 'bst:min-h-[70vh]' : 'bst:mx-auto bst:max-w-measure'}>
+            <article className={bare ? undefined : 'bst:mx-auto bst:max-w-measure'}>
               {Header ? <Header /> : null}
               {empty ? (
                 <EmptyState

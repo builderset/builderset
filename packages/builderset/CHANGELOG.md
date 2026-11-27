@@ -1,5 +1,17 @@
 # builderset
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies [9f137d0]
+  - @builderset/engine@0.5.2
+  - @builderset/email@0.5.2
+  - @builderset/article@0.5.2
+  - @builderset/form@0.5.2
+  - @builderset/card@0.5.2
+  - @builderset/popup@0.5.2
+
 ## 0.5.1
 
 ### Patch Changes

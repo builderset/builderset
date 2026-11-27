@@ -11,4 +11,4 @@ as the browser did; ``builderset.card`` fills a card with a member's data and
 
 #: Written by ``tooling/sync-python-version.mjs`` from the npm packages' version:
 #: one version for the whole product.
-__version__ = "0.5.1"
+__version__ = "0.5.2"

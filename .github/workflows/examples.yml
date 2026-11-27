@@ -1,9 +1,19 @@
-name: Examples
+name: 🧪 Builderset - Examples From A Registry
+run-name: 🧪 Install And Test The Examples On ${{ github.head_ref || github.ref_name }}
 
-# The examples, installed from a local registry outside the workspace and
-# tested in three browsers (docs/plan/steps/12). The slow job: it runs when the
-# packages, the examples or the tooling change, and on every push to the
-# release branches.
+# The examples, installed from a local registry outside the workspace, the way a
+# stranger installs them (docs/plan/steps/12). Four runners in parallel, then
+# one verdict:
+#
+#   ✉️ Plain Node Renderer ──┐
+#   🟦 Chromium ─────────────┤
+#   🦊 Firefox ──────────────┼──▶ 🛡️ Examples Verdict
+#   🧭 WebKit ───────────────┘
+#
+# Each browser job publishes the packages to its own Verdaccio, installs
+# vite-react and next-shadcn from it, builds them and runs their Playwright
+# suites in that one browser. The slow workflow: it runs when the packages, the
+# examples or the tooling change, and on every push to the release branches.
 on:
   pull_request:
     paths:
@@ -25,25 +35,99 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  examples:
-    name: Examples from a registry, in three browsers
+  node-render:
+    name: ✉️ Plain Node Renderer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ✉️ 05 - Publish, Install And Render Against The Golden Files
+        run: pnpm test:examples --example node-render
+
+  browsers:
+    name: ${{ matrix.icon }} ${{ matrix.title }} Editor Examples
     # Not ubuntu-latest: that is Ubuntu 26.04, which Playwright 1.58 cannot
     # install its browsers on. Move up with Playwright.
     runs-on: ubuntu-24.04
     timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            title: Chromium
+            icon: 🟦
+          - browser: firefox
+            title: Firefox
+            icon: 🦊
+          - browser: webkit
+            title: WebKit
+            icon: 🧭
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Playwright's browsers
-        run: pnpm --filter example-vite-react exec playwright install --with-deps chromium firefox webkit
-      - run: pnpm test:examples
-      - uses: actions/upload-artifact@v4
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ${{ matrix.icon }} 05 - Install ${{ matrix.title }} For Playwright
+        run: pnpm --filter example-vite-react exec playwright install --with-deps ${{ matrix.browser }}
+      - name: 🧪 06 - Publish, Install, Build And Test vite-react And next-shadcn
+        run: >
+          pnpm test:examples --example vite-react --example next-shadcn
+          -- --project=${{ matrix.browser }}
+      - name: 📤 07 - Upload The Playwright Report
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: examples/*/playwright-report
+
+  verdict:
+    name: 🛡️ Examples Verdict
+    needs: [node-render, browsers]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📝 01 - Write The Examples Summary
+        env:
+          NODE_RENDER: ${{ needs.node-render.result }}
+          BROWSERS: ${{ needs.browsers.result }}
+        run: |
+          mark() { case "$1" in success) echo "✅ Passed";; skipped) echo "⏭️ Skipped";; cancelled) echo "🚫 Cancelled";; *) echo "❌ Failed";; esac; }
+          {
+            echo "## 🧪 Builderset Examples From A Registry"
+            echo ""
+            echo "| Runner | Verdict | What It Proves |"
+            echo "| --- | --- | --- |"
+            echo "| ✉️ Plain Node Renderer | $(mark "$NODE_RENDER") | node-render installs from the registry and renders the golden emails byte for byte. |"
+            echo "| 🌐 Chromium, Firefox, WebKit | $(mark "$BROWSERS") | vite-react and next-shadcn install, build and pass their editor suites in each browser. |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: 🛡️ 02 - Report The Verdict
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != success ]; then
+              echo "::error::An example did not pass. Open the failed job above; its Playwright report is attached."
+              exit 1
+            fi
+          done
+          echo "Every example passed."

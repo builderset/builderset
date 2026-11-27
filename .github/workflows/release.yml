@@ -1,9 +1,14 @@
-name: Release
+name: 🚀 Builderset - Release
+run-name: 🚀 Release Builderset From ${{ github.ref_name }}
 
 # Publishes to GitHub Packages (decision D3), with the workflow's own token.
 #   staging     a pre-release of the waiting changesets, under the `alpha` tag
 #   production  a "Version packages" pull request; merging it publishes, and
 #               attaches the Python wheel to a GitHub release (decision D9)
+#
+#                                 ┌──▶ 🧪 Alpha Pre-Release            (staging)
+#   🏗️ Build & Verify Packages ──┤
+#                                 └──▶ 📦 Version Or Publish ──▶ 🏷️ Tags & Python Wheel   (production)
 on:
   push:
     branches: [staging, production]
@@ -16,46 +21,112 @@ permissions:
   packages: write # GitHub Packages
 
 jobs:
-  release:
+  verify:
+    name: 🏗️ Build & Verify Packages
     # GitHub Packages names a package after the repository's owner, so only the
     # builderset organisation can publish @builderset/*.
     if: github.repository_owner == 'builderset'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🏗️ 05 - Build Every Package
+        run: pnpm build
+      - name: 🔍 06 - Check What Consumers Install
+        run: pnpm check:packages
+
+  alpha:
+    name: 🧪 Alpha Pre-Release
+    needs: verify
+    if: github.ref_name == 'staging'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: packages
     steps:
-      - uses: actions/checkout@v5
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24 For GitHub Packages
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
           registry-url: https://npm.pkg.github.com
           scope: '@builderset'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm check:packages
-      - uses: astral-sh/setup-uv@v6
-        if: github.ref_name == 'production'
-
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🏗️ 05 - Build Every Package
+        run: pnpm build
       # A snapshot: versions like 0.1.0-alpha.20261115093000, written in this
       # run only and never committed. Nothing is published when no changeset
       # is waiting.
-      - name: Alpha pre-release
-        if: github.ref_name == 'staging'
+      - name: 🧪 06 - Publish The Waiting Changesets Under alpha
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pnpm changeset version --snapshot alpha
           if git diff --quiet -- 'packages/*/package.json'; then
             echo "No changeset is waiting: nothing to publish."
+            echo "### 🧪 Alpha Pre-Release" >> "$GITHUB_STEP_SUMMARY"
+            echo "⏭️ No changeset is waiting: nothing was published." >> "$GITHUB_STEP_SUMMARY"
           else
             pnpm changeset publish --tag alpha --no-git-tag
+            {
+              echo "### 🧪 Alpha Pre-Release"
+              echo ""
+              echo "| Package | Version |"
+              echo "| --- | --- |"
+              for manifest in packages/*/package.json; do
+                node -e "const m=require('./$manifest'); if(!m.private) console.log('| ' + m.name + ' | ' + m.version + ' |')"
+              done
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Release
-        if: github.ref_name == 'production'
+  publish:
+    name: 📦 Version Or Publish
+    needs: verify
+    if: github.ref_name == 'production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: packages
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24 For GitHub Packages
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@builderset'
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🏗️ 05 - Build Every Package
+        run: pnpm build
+      - name: ⚙️ 06 - Set Up uv
+        uses: astral-sh/setup-uv@v6
+      # Changesets waiting: opens or updates "Version packages". None waiting:
+      # publishes the versions npm does not have yet.
+      - name: 📦 07 - Open Version Packages Or Publish
         uses: changesets/action@v1
         with:
           # `changeset version`, then the same version into the Python package
@@ -68,25 +139,52 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  wheel:
+    name: 🏷️ Tags & Python Wheel
+    needs: publish
+    if: github.ref_name == 'production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: packages
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24 For GitHub Packages
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@builderset'
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: ⚙️ 05 - Set Up uv
+        uses: astral-sh/setup-uv@v6
       # Makes sure the version npm has is complete: its git tags, and a GitHub
       # release v<version> carrying the Python wheel (decision D9) — the file
       # MotorsAL vendors. On every push to production, and a no-op once done, so
       # a run that failed half-way is finished by the next push.
       #
-      # It reads the commit that was pushed, never the working tree: when the
-      # action above opens "Version packages", it leaves that branch checked
-      # out, with the NEXT version in it. The wheel is built from the version's
-      # own tag, so a later push to production cannot put newer code in it.
-      - name: Tags, and the Python wheel on a GitHub release
-        if: github.ref_name == 'production'
+      # It reads the commit that was pushed, never another branch: the job
+      # before may have opened "Version packages" with the NEXT version in it.
+      # The wheel is built from the version's own tag, so a later push to
+      # production cannot put newer code in it.
+      - name: 🏷️ 06 - Tag The Version And Attach The Wheel
+        id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git checkout --quiet --force "$GITHUB_SHA"
           version=$(node -p "require('./packages/engine/package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           if ! npm view "@builderset/engine@$version" version >/dev/null 2>&1; then
             echo "$version is not on the registry yet: nothing to release."
+            echo "outcome=waiting" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -97,6 +195,7 @@ jobs:
           release_commit=$(git rev-parse "@builderset/engine@$version^{commit}")
           if ! git cat-file -e "$release_commit:python/pyproject.toml" 2>/dev/null; then
             echo "$version has no Python package (it came in 0.3.0)."
+            echo "outcome=no-python" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -104,6 +203,7 @@ jobs:
           wheel="builderset-$python_version-py3-none-any.whl"
           if gh release view "v$version" --json assets --jq '.assets[].name' 2>/dev/null | grep -qx "$wheel"; then
             echo "v$version already carries $wheel."
+            echo "outcome=done-before" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -132,3 +232,27 @@ jobs:
             gh release create "v$version" python/dist/*.whl python/dist/*.tar.gz \
               --target "$release_commit" --title "$version" --notes-file notes.md
           fi
+          echo "outcome=released" >> "$GITHUB_OUTPUT"
+          cp notes.md "$RUNNER_TEMP/notes.md"
+      - name: 📝 07 - Write The Release Summary
+        if: always()
+        env:
+          OUTCOME: ${{ steps.release.outputs.outcome }}
+          VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          case "$OUTCOME" in
+            released) line="✅ v$VERSION is tagged, and its GitHub release carries the Python wheel." ;;
+            done-before) line="✅ v$VERSION was already complete: nothing to do." ;;
+            no-python) line="🏷️ v$VERSION is tagged; it has no Python package." ;;
+            waiting) line="⏳ $VERSION is not on the registry yet: the Version packages pull request is waiting." ;;
+            *) line="❌ The release step did not finish. Open its log above." ;;
+          esac
+          {
+            echo "## 🚀 Builderset Release"
+            echo ""
+            echo "$line"
+            if [ -f "$RUNNER_TEMP/notes.md" ]; then
+              echo ""
+              cat "$RUNNER_TEMP/notes.md"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

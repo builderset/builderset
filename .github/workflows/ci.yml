@@ -1,5 +1,18 @@
-name: CI
+name: ✅ Builderset - Continuous Integration
+run-name: ✅ Validate Builderset On ${{ github.head_ref || github.ref_name }}
 
+# Seven checks fan out in parallel, then one verdict joins them:
+#
+#   🧹 Lint & Format ───┐
+#   🧠 Type Safety ─────┤
+#   📦 Package Contract ┤
+#   📝 Changeset ───────┼──▶ 🛡️ CI Verdict
+#   🔐 Secret Scan ─────┤
+#   🧪 Node Tests ──────┤   (a matrix: every Node on a push, the newest on a PR)
+#   🐍 Python Package ──┘   (a matrix: every Python on a push, the newest on a PR)
+#
+# Each check reports on its own, so a format slip shows in a minute instead of
+# behind the test matrix, and the verdict is the one name to require.
 on:
   pull_request:
   push:
@@ -13,52 +26,124 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  quality:
-    name: Lint, types, format, secrets
+  lint:
+    name: 🧹 Lint & Format Gate
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
-        with:
-          # The whole history, for the secret scan.
-          fetch-depth: 0
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
       # --frozen-lockfile: fail on a lockfile that does not match the
       # manifests, rather than silently resolving something else.
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm format:check
-      # A pull request that changes a package says so in a changeset. Not the
-      # two release pull requests, which change the packages by consuming the
-      # changesets: "Version packages" (changeset-release/production into
-      # production) and the merge of production back into development.
-      - name: A changeset for every package change
-        if: >-
-          github.event_name == 'pull_request' &&
-          github.head_ref != 'production' &&
-          !startsWith(github.head_ref, 'changeset-release/')
-        run: pnpm changeset status --since=origin/${{ github.base_ref }}
-      # lint and typecheck built the packages; this checks what was built:
-      # 'use client' lines, imports, the manifests (publint) and the types as
-      # each kind of consumer resolves them (arethetypeswrong).
-      - run: pnpm check:packages
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🧹 05 - Lint Every Package
+        run: pnpm lint
+      - name: 🎨 06 - Every File Is Formatted
+        run: pnpm format:check
+
+  types:
+    name: 🧠 Type Safety Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🧠 05 - Typecheck Every Package
+        run: pnpm typecheck
+
+  packages:
+    name: 📦 Package Contract Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🏗️ 05 - Build Every Package
+        run: pnpm build
+      # What was built: 'use client' lines, imports, the manifests (publint)
+      # and the types as each kind of consumer resolves them (arethetypeswrong).
+      - name: 🔍 06 - Check What Consumers Install
+        run: pnpm check:packages
       # The props tables in the packages' READMEs are generated from the built
       # types; this fails when one is out of date (fix: pnpm readme:props).
-      - run: node tooling/readme-props.mjs --check
+      - name: 📖 07 - README Props Tables Are Current
+        run: node tooling/readme-props.mjs --check
+
+  changeset:
+    name: 📝 Changeset Gate
+    # A pull request that changes a package says so in a changeset. Not the two
+    # release pull requests, which change the packages by consuming the
+    # changesets: "Version packages" (changeset-release/production into
+    # production) and the merge of production back into development.
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.head_ref != 'production' &&
+      !startsWith(github.head_ref, 'changeset-release/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 📝 05 - A Changeset For Every Package Change
+        run: pnpm changeset status --since=origin/${{ github.base_ref }}
+
+  secrets:
+    name: 🔐 Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 01 - Checkout The Whole History
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # While the repository is private, GitHub's own secret scanning is not
       # available on the free plan (docs/plan/steps/08_NEW_REPOSITORY.md, part 6).
-      - name: Secret scan
+      - name: 🔐 02 - Scan Every Commit With gitleaks
         run: >
           docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.24.3
           git /repo --redact --no-banner
 
   test:
-    name: Tests on Node ${{ matrix.node }}
+    name: 🧪 Node ${{ matrix.node }} Test Suite
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -66,41 +151,48 @@ jobs:
         # on a pull request, to save the private repository's Actions minutes.
         node: ${{ fromJSON(github.event_name == 'push' && '[20, 22, 24]' || '[24]') }}
     steps:
-      - uses: actions/checkout@v5
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
       # Standalone: pnpm 11 runs on its own Node, so the tests can use Node 20,
       # which pnpm itself no longer supports.
-      - uses: pnpm/action-setup@v4
+      - name: 🧰 02 - Set Up Standalone pnpm
+        uses: pnpm/action-setup@v4
         with:
           standalone: true
       # Install and build on Node 24: the build tool needs Node 22 or newer.
       # What it writes is what the tests below load.
-      - uses: actions/setup-node@v5
+      - name: 🟢 03 - Set Up Node 24 For The Build
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - uses: actions/setup-node@v5
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: 🏗️ 05 - Build Every Package
+        run: pnpm build
+      - name: 🔁 06 - Switch To Node ${{ matrix.node }}
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
-      - name: Every test
+      - name: 🧪 07 - Run Every Test Suite
         if: matrix.node != 20
         run: pnpm test
       # On Node 20 only what a server imports: the `core`, `render` and `host`
       # entries are promised to Node 20 and newer, and the `*.node.test.ts`
       # suites load them with no DOM. The rest of the suites need jsdom, which
       # needs Node 22.
-      - name: Server entries only
+      - name: 🖥️ 07 - Run The Server Entry Suites
         if: matrix.node == 20
         run: pnpm --filter "./packages/*" exec vitest run --project node
       # The email renderer in a plain Node script, against the golden files.
-      - name: examples/node-render
+      - name: ✉️ 08 - Render Emails In Plain Node
         if: matrix.node == 20
         run: pnpm --filter example-node-render test
 
   python:
-    name: Python ${{ matrix.python }}
+    name: 🐍 Python ${{ matrix.python }} Package
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -115,18 +207,68 @@ jobs:
     steps:
       # The whole repository: the tests read packages/*/fixtures and the build
       # copies packages/*/schema into the package.
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
-      - name: One version for npm and Python
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: ⚙️ 02 - Set Up uv
+        uses: astral-sh/setup-uv@v6
+      - name: 🔗 03 - One Version For npm And Python
         run: node ../tooling/sync-python-version.mjs --check
-      - run: uv run --frozen ruff check .
-      - run: uv run --frozen ruff format --check .
-      - run: uv run --frozen mypy
-      - run: uv run --frozen pytest
+      - name: 🧹 04 - Lint With ruff
+        run: uv run --frozen ruff check .
+      - name: 🎨 05 - Every File Is Formatted
+        run: uv run --frozen ruff format --check .
+      - name: 🧠 06 - Typecheck With mypy
+        run: uv run --frozen mypy
+      - name: 🧪 07 - Run The pytest Suite
+        run: uv run --frozen pytest
       # The tests pass in the repository, where the JSON files sit beside the
       # code. The wheel must carry them: build it and use it from a clean
       # environment, outside the repository's import path.
-      - name: The built wheel, installed
+      - name: 🛞 08 - Build The Wheel And Use It From Outside
         run: |
           uv build
           uv run --isolated --no-project --with dist/*.whl python ../tooling/python-wheel-smoke.py ../packages
+
+  verdict:
+    name: 🛡️ CI Verdict
+    needs: [lint, types, packages, changeset, secrets, test, python]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📝 01 - Write The CI Summary
+        env:
+          LINT: ${{ needs.lint.result }}
+          TYPES: ${{ needs.types.result }}
+          PACKAGES: ${{ needs.packages.result }}
+          CHANGESET: ${{ needs.changeset.result }}
+          SECRETS: ${{ needs.secrets.result }}
+          TESTS: ${{ needs.test.result }}
+          PYTHON: ${{ needs.python.result }}
+        run: |
+          mark() { case "$1" in success) echo "✅ Passed";; skipped) echo "⏭️ Skipped";; cancelled) echo "🚫 Cancelled";; *) echo "❌ Failed";; esac; }
+          {
+            echo "## ✅ Builderset Continuous Integration"
+            echo ""
+            echo "| Check | Verdict | What It Guards |"
+            echo "| --- | --- | --- |"
+            echo "| 🧹 Lint & Format | $(mark "$LINT") | ESLint's rules and the kit boundaries, Prettier over every file. |"
+            echo "| 🧠 Type Safety | $(mark "$TYPES") | tsc over every package, app and example. |"
+            echo "| 📦 Package Contract | $(mark "$PACKAGES") | The built packages as consumers install them: publint, arethetypeswrong, README props. |"
+            echo "| 📝 Changeset | $(mark "$CHANGESET") | A changeset for every package change in a pull request. |"
+            echo "| 🔐 Secret Scan | $(mark "$SECRETS") | gitleaks over the whole history. |"
+            echo "| 🧪 Node Tests | $(mark "$TESTS") | Every suite on Node 22 and 24, the server entries on Node 20. |"
+            echo "| 🐍 Python Package | $(mark "$PYTHON") | ruff, mypy, pytest and the built wheel on every supported Python. |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: 🛡️ 02 - Report The Verdict
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != success ] && [ "$result" != skipped ]; then
+              echo "::error::A check did not pass. Open the failed job above for its log."
+              exit 1
+            fi
+          done
+          echo "Every check passed."

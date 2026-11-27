@@ -1,8 +1,13 @@
-name: Backend examples
+name: 🗄️ Builderset - Backend Examples
+run-name: 🗄️ Test The Backend Examples On ${{ github.head_ref || github.ref_name }}
 
 # The three backend examples (docs/plan/steps/16, part 5), each against a real
 # Postgres: a service container here, a Testcontainers one on a laptop. Their
 # tests set TEST_DATABASE_URL; the root `pnpm test` does not run them.
+#
+#   ▲ Next.js + Drizzle ───┐
+#   ◭ Next.js + Prisma ────┼──▶ 🛡️ Backends Verdict
+#   🐍 FastAPI + SQLAlchemy ┘
 on:
   pull_request:
     paths:
@@ -25,12 +30,19 @@ concurrency:
 
 jobs:
   node:
-    name: ${{ matrix.example }}
+    name: ${{ matrix.icon }} ${{ matrix.title }} On Postgres
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        example: [next-drizzle, next-prisma]
+        include:
+          - example: next-drizzle
+            title: Next.js + Drizzle
+            icon: ▲
+          - example: next-prisma
+            title: Next.js + Prisma
+            icon: ◭
     services:
       postgres:
         image: postgres:18-alpine
@@ -42,20 +54,27 @@ jobs:
     env:
       TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: 🧰 02 - Set Up pnpm
+        uses: pnpm/action-setup@v4
+      - name: 🟢 03 - Set Up Node 24
+        uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
+      - name: 📦 04 - Install Workspace Dependencies
+        run: pnpm install --frozen-lockfile
       # The example imports @builderset/email from the workspace, as built.
-      - run: pnpm turbo build --filter=example-backend-${{ matrix.example }}^...
-      - run: pnpm --filter example-backend-${{ matrix.example }} test:db
+      - name: 🏗️ 05 - Build The Packages The Example Imports
+        run: pnpm turbo build --filter=example-backend-${{ matrix.example }}^...
+      - name: 🗄️ 06 - Run The Database Suite
+        run: pnpm --filter example-backend-${{ matrix.example }} test:db
 
   python:
-    name: fastapi-sqlalchemy
+    name: 🐍 FastAPI + SQLAlchemy On Postgres
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:18-alpine
@@ -73,9 +92,49 @@ jobs:
       # The whole repository: the package is installed from python/, whose
       # build copies packages/*/schema into it, and the tests read the email
       # kit's fixtures.
-      - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
-      - run: uv run --frozen ruff check .
-      - run: uv run --frozen ruff format --check .
-      - run: uv run --frozen mypy
-      - run: uv run --frozen pytest
+      - name: 📥 01 - Checkout Repository
+        uses: actions/checkout@v5
+      - name: ⚙️ 02 - Set Up uv
+        uses: astral-sh/setup-uv@v6
+      - name: 🧹 03 - Lint With ruff
+        run: uv run --frozen ruff check .
+      - name: 🎨 04 - Every File Is Formatted
+        run: uv run --frozen ruff format --check .
+      - name: 🧠 05 - Typecheck With mypy
+        run: uv run --frozen mypy
+      - name: 🗄️ 06 - Run The Database Suite
+        run: uv run --frozen pytest
+
+  verdict:
+    name: 🛡️ Backends Verdict
+    needs: [node, python]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📝 01 - Write The Backends Summary
+        env:
+          NODE: ${{ needs.node.result }}
+          PYTHON: ${{ needs.python.result }}
+        run: |
+          mark() { case "$1" in success) echo "✅ Passed";; skipped) echo "⏭️ Skipped";; cancelled) echo "🚫 Cancelled";; *) echo "❌ Failed";; esac; }
+          {
+            echo "## 🗄️ Builderset Backend Examples"
+            echo ""
+            echo "| Backend | Verdict | What It Proves |"
+            echo "| --- | --- | --- |"
+            echo "| ▲ ◭ Next.js + Drizzle, Prisma | $(mark "$NODE") | The routes save, publish, restore and log against a real Postgres. |"
+            echo "| 🐍 FastAPI + SQLAlchemy | $(mark "$PYTHON") | The same routes with the Python package's checks, on Postgres. |"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: 🛡️ 02 - Report The Verdict
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != success ]; then
+              echo "::error::A backend example did not pass. Open the failed job above for its log."
+              exit 1
+            fi
+          done
+          echo "Every backend example passed."

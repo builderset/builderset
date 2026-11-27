@@ -51,7 +51,9 @@ test('a change is saved to the host', async ({ page }) => {
   await expect(page.locator('[data-example-bar]')).not.toHaveAttribute('data-saves', '0', {
     timeout: 8_000,
   });
-  await expect(topBar(page).getByText(/saved/i)).toBeVisible();
+  // The save state is a live region: its words are announced at every width,
+  // though a narrow bar shows only its dot.
+  await expect(topBar(page).getByRole('status')).toHaveText(/saved/i);
 });
 
 test('a menu opens styled, inside the viewport', async ({ page }) => {

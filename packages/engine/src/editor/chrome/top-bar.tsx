@@ -100,6 +100,7 @@ function SaveIndicator() {
     <span
       role="status"
       aria-live="polite"
+      title={text}
       className="bst:hidden bst:items-center bst:gap-1.5 bst:px-2 bst:text-xs bst:whitespace-nowrap bst:text-muted-foreground bst:@min-[900px]/bar:inline-flex"
     >
       {icon ?? (

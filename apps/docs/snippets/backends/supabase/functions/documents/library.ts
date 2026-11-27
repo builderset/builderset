@@ -4,7 +4,7 @@
 //   DELETE /documents/{kind}/sections/:sectionId
 //   POST   /documents/uploads                     a file, from the editor
 import { encodeHex } from 'jsr:@std/encoding@1/hex';
-import { error as issue, readFragmentJson, type MediaKind } from 'npm:@builderset/engine@0.5.0';
+import { error as issue, readFragmentJson, type MediaKind } from 'npm:@builderset/engine@0.5.1';
 import { imageSize } from 'npm:image-size@2.0.4';
 
 import { softDelete } from '../_shared/audit.ts';

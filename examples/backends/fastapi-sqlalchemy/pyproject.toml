@@ -29,7 +29,7 @@ dev = [
 package = false
 
 # The package from this repository, as it is today. A project of your own
-# depends on the released one instead: `builderset==0.5.0`.
+# depends on the released one instead: `builderset==0.5.1`.
 [tool.uv.sources]
 builderset = { path = "../../../python", editable = true }
 
